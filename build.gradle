@@ -1,0 +1,105 @@
+  apply plugin: 'java'
+  apply plugin: 'eclipse'
+  apply plugin: 'maven'
+  apply plugin: 'jacoco'
+
+  sourceCompatibility = 1.6
+  targetCompatibility = 1.6
+
+  version = '1.0.0'
+  
+  description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
+
+  project.ext {
+    pkg = 'jar'
+  }
+  
+  ext {
+    // 1.7.5 or any later version works
+    groovyVersion='2.3.7'
+    junitVersion='4.11'
+  }
+
+  jar {
+    manifest {
+      attributes 'Implementation-Title': 'grengine', 'Implementation-Version': version
+    }
+  }
+
+  dependencies {
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile "junit:junit:$junitVersion"
+  }
+
+  project.group = 'ch.grengine'
+
+  jar {
+    manifest.attributes provider: 'gradle'
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  task sourcesJar(type: Jar, dependsOn:classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+  }
+  
+  javadoc {
+    configure(options) {
+      windowTitle = "Grengine - $project.version"
+      header = 'Grengine'
+      author = true
+      links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://groovy.codehaus.org/api/' ]
+    }
+  }
+
+  task javadocJar(type: Jar, dependsOn:javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+  }
+  
+  test {
+    testLogging.showStandardStreams = true
+  }
+  
+  artifacts {
+    archives sourcesJar 
+    archives javadocJar 
+  }
+  
+  task jacoco(type:JacocoReport) {
+    executionData test
+    sourceSets sourceSets.main
+  }
+  
+  task pom << {
+    pom {
+      project {
+        name 'grengine'
+        description project.description
+        url 'http://www.grengine.ch/'
+        packaging project.ext.pkg
+        licenses {
+          license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+          }
+        }
+        scm {
+          url 'https://github.com/jexler/grengine'
+          connection 'https://github.com/jexler/grengine.git'
+          developerConnection 'https://github.com/jexler/grengine.git'
+        }
+        developers {
+          developer {
+            id 'jexler'
+            name 'Jex Jexler (whois jexler.net)'
+            email 'jex@jexler.net'
+          }
+        }
+      }
+    }.writeTo("$buildDir/libs/${project.name}-${project.version}.pom")
+  }
