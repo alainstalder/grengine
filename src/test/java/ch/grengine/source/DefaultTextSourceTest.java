@@ -48,7 +48,7 @@ public class DefaultTextSourceTest {
         String text = "println 55";
         String name = "FirstScript";
         TextSource s = new DefaultTextSource(text, name);
-        assertEquals("/groovy/script/" + SourceUtil.md5(text) + "/" + name, s.getId());
+        assertEquals("/groovy/script/Script" + SourceUtil.md5(text) + "/" + name, s.getId());
         assertEquals(0, s.getLastModified());
         assertEquals(text, s.getText());
         System.out.println(s);

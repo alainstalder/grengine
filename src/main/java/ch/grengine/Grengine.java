@@ -17,6 +17,7 @@
 package ch.grengine;
 
 import groovy.lang.Binding;
+import groovy.lang.Script;
 
 import java.io.File;
 import java.net.URL;
@@ -74,6 +75,21 @@ import ch.grengine.sources.Sources;
  * <li>{@code load(<loader>,<source>)}
  * <li>{@code create(<loader>,<source>)}
  * <li>{@code source(<source>)}
+ * </ul>
+ * <p>
+ * Grengine performance:
+ * <ul>
+ * <li>In my experience it is crucial to measure performance under circumstances
+ *     that come as close as possible to the actual application.
+ * <li>What can be said independently of actual circumstances is:
+ *     <ul>
+ *     <li>Compiling a very simple script is of the order of <em>milliseconds.</em>
+ *     <li>Running it with Grengine by script text or script file is of the order of <em>microseconds</em>
+ *         (except for the first run or other circumstances where (re-)compilation is mandated).
+ *     <li>Running it from an already created instance of {@link Script} is of the order of <em>nanoseconds</em>.
+ *     </ul>
+ * <li>Run the GrengineVisualPerformanceTest and see the options of {@link DefaultSourceFactory}.
+ * </ul>
  * 
  * @since 1.0
  * 

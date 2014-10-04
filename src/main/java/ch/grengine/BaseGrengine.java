@@ -634,6 +634,7 @@ public abstract class BaseGrengine {
      * Note that the script may throw anything, checked or unchecked.
      * 
      * @return what the script returned
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -647,6 +648,7 @@ public abstract class BaseGrengine {
      * Note that the script may throw anything, checked or unchecked.
      * 
      * @return what the script returned
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -660,6 +662,7 @@ public abstract class BaseGrengine {
      * Note that the script may throw anything, checked or unchecked.
      * 
      * @return what the script returned
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -676,6 +679,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -691,6 +695,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -706,6 +711,9 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * 
+     * @since 1.0
      */
     public Object run(final String text, final Binding binding)
             throws CompileException, LoadException, CreateException {
@@ -719,6 +727,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -734,6 +743,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -749,6 +759,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -765,6 +776,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -780,6 +792,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -795,6 +808,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -810,6 +824,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -825,6 +840,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -841,6 +857,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -858,6 +875,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -873,6 +891,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -888,6 +907,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -903,6 +923,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -918,6 +939,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -933,6 +955,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -949,6 +972,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -964,6 +988,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -979,6 +1004,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -994,6 +1020,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1009,6 +1036,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1024,6 +1052,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1040,6 +1069,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1055,6 +1085,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1070,6 +1101,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1085,6 +1117,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1100,6 +1133,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1115,6 +1149,7 @@ public abstract class BaseGrengine {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
+     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */

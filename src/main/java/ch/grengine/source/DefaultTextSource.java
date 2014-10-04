@@ -75,7 +75,7 @@ public class DefaultTextSource extends BaseSource implements TextSource {
         if (desiredClassName == null) {
             throw new IllegalArgumentException("Desired class name is null.");
         }
-        id = "/groovy/script/" + SourceUtil.md5(text) + "/" + desiredClassName;
+        id = "/groovy/script/Script" + SourceUtil.md5(text) + "/" + desiredClassName;
         this.text = text;
     }
 

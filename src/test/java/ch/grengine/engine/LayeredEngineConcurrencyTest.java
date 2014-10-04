@@ -161,7 +161,7 @@ public class LayeredEngineConcurrencyTest {
         System.out.println("Script runs: " + totalRuns);
         long t1 = System.currentTimeMillis();
         System.out.println("Duration: " + (t1 - t0) + " ms");
-        System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ps");
+        System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
         assertEquals(n, nCodeChanges);
 
         assertFalse(failed);

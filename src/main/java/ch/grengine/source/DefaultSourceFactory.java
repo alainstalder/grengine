@@ -42,9 +42,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultSourceFactory implements SourceFactory {
             
     private final Builder builder;
+    
+    private final boolean trackTextSourceId;
+    // key is script text, value is ID of text source
+    private final Map<String,String> textSourceIdTrackingMap;
+    
+    private final boolean trackFileSourceLastModified;
+    // key is file id, value is file last modified
+    private final Map<String,Long> fileLastModifiedTrackingMap;
+    private long fileLastModifiedLatencyMs;
+    private volatile long fileLastModifiedLastChecked;
+    
     private final boolean trackUrlContent;
     private final long urlTrackingLatencyMs;
-    private Map<Source,TrackingInfo> trackingMap;
+    private Map<Source,TrackingInfo> urlContentTrackingMap;
     
     /**
      * constructor from builder.
@@ -53,9 +64,18 @@ public class DefaultSourceFactory implements SourceFactory {
      */
     protected DefaultSourceFactory(final Builder builder) {
         this.builder = builder.commit();
+
+        trackTextSourceId = builder.isTrackTextSourceIds();
+        textSourceIdTrackingMap = new ConcurrentHashMap<String,String>();
+        
+        trackFileSourceLastModified = builder.isTrackFileSourceLastModified();
+        fileLastModifiedTrackingMap = new ConcurrentHashMap<String,Long>();
+        fileLastModifiedLatencyMs = builder.getFileLastModifiedTrackingLatencyMs();
+        fileLastModifiedLastChecked = 0;
+        
         trackUrlContent = builder.isTrackUrlContent();
         urlTrackingLatencyMs = builder.getUrlTrackingLatencyMs();
-        trackingMap = new ConcurrentHashMap<Source,TrackingInfo>();
+        urlContentTrackingMap = new ConcurrentHashMap<Source,TrackingInfo>();
     }
 
     /**
@@ -69,23 +89,35 @@ public class DefaultSourceFactory implements SourceFactory {
 
     @Override
     public Source fromText(final String text) {
-        return new DefaultTextSource(text);
+        if (trackTextSourceId) {
+            return new SourceIdTrackingTextSource(text);
+        } else {
+            return new DefaultTextSource(text);
+        }
     }
 
     @Override
     public Source fromText(final String text, final String desiredClassName) {
-        return new DefaultTextSource(text, desiredClassName);
+        if (trackTextSourceId) {
+            return new SourceIdTrackingTextSource(text, desiredClassName);
+        } else {
+            return new DefaultTextSource(text, desiredClassName);
+        }
     }
 
     @Override
     public Source fromFile(final File file) {
-        return new DefaultFileSource(file);
+        if (trackFileSourceLastModified) {
+            return new LastModifiedTrackingFileSource(file);
+        } else {
+            return new DefaultFileSource(file);
+        }
     }
 
     @Override
     public Source fromUrl(final URL url) {
         if (trackUrlContent) {
-            return new TrackingUrlSource(url);
+            return new ContentTrackingUrlSource(url);
         } else {
             return new DefaultUrlSource(url);
         }
@@ -97,7 +129,7 @@ public class DefaultSourceFactory implements SourceFactory {
      * @since 1.0
      */
     public void clearCache() {
-        trackingMap.clear();
+        urlContentTrackingMap.clear();
     }
     
     /**
@@ -108,10 +140,90 @@ public class DefaultSourceFactory implements SourceFactory {
     public Builder getBuilder() {
         return builder;
     }
+
     
-    class TrackingUrlSource extends DefaultUrlSource {
+    class SourceIdTrackingTextSource extends BaseSource implements TextSource {
         
-        private TrackingUrlSource(URL url) {
+        private final String text;
+        
+        public SourceIdTrackingTextSource(final String text) {
+            if (text == null) {
+                throw new IllegalArgumentException("Text is null.");
+            }
+            id = textSourceIdTrackingMap.get(text);
+            if (id == null) {
+                id = "/groovy/script/Script" + SourceUtil.md5(text);
+                textSourceIdTrackingMap.put(text, id);
+            }
+            this.text = text;
+        }
+
+        public SourceIdTrackingTextSource(final String text, final String desiredClassName) {
+            if (text == null) {
+                throw new IllegalArgumentException("Text is null.");
+            }
+            if (desiredClassName == null) {
+                throw new IllegalArgumentException("Desired class name is null.");
+            }
+            id = textSourceIdTrackingMap.get(text);
+            if (id == null) {
+                id = "/groovy/script/Script" + SourceUtil.md5(text);
+                textSourceIdTrackingMap.put(text, id);
+            }
+            id += "/" + desiredClassName;
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return this.getClass().getSimpleName() + "[ID=" + getId() +
+                    ", text='" + SourceUtil.getTextStartNoLinebreaks(getText(), 200) + "']";
+        }
+        
+        @Override
+        public String getText() {
+            return text;
+        }
+
+    }
+    
+    
+    private long getFileSourceLastModified(File file, String id) {
+        Long lastMod = fileLastModifiedTrackingMap.get(id);
+        if (lastMod == null) {
+            lastMod = file.lastModified();
+            fileLastModifiedTrackingMap.put(id, lastMod);
+            fileLastModifiedLastChecked = System.currentTimeMillis();
+            return lastMod;
+        }
+        // check both boundaries of the interval to exclude problems with leap seconds etc.
+        long diff = System.currentTimeMillis() - fileLastModifiedLastChecked;
+        if (fileLastModifiedLastChecked != 0 && diff >= 0 && diff < fileLastModifiedLatencyMs) {
+            return lastMod;
+        }
+        lastMod = file.lastModified();
+        fileLastModifiedTrackingMap.put(id, lastMod);
+        fileLastModifiedLastChecked = System.currentTimeMillis();
+        return lastMod;
+    }
+    
+    class LastModifiedTrackingFileSource extends DefaultFileSource {
+        
+        public LastModifiedTrackingFileSource(File file) {
+            super(file);
+        }
+        
+        @Override
+        public long getLastModified() {
+            return getFileSourceLastModified(getFile(), id);
+        }
+
+    }
+
+    
+    class ContentTrackingUrlSource extends DefaultUrlSource {
+        
+        private ContentTrackingUrlSource(URL url) {
             super(url);
         }
         
@@ -126,7 +238,7 @@ public class DefaultSourceFactory implements SourceFactory {
         @Override
         public long getLastModified() {
 
-            TrackingInfo info = trackingMap.get(this);
+            TrackingInfo info = urlContentTrackingMap.get(this);
             if (info != null) {
                 // check both boundaries of the interval to exclude problems with leap seconds etc.
                 long diff = System.currentTimeMillis() - info.lastChecked;
@@ -137,7 +249,7 @@ public class DefaultSourceFactory implements SourceFactory {
 
             synchronized(this) {
                 // prevent multiple updates
-                info = trackingMap.get(this);
+                info = urlContentTrackingMap.get(this);
                 if (info != null) {
                     long diff = System.currentTimeMillis() - info.lastChecked;
                     if (diff >= 0 && diff < urlTrackingLatencyMs) {
@@ -148,10 +260,10 @@ public class DefaultSourceFactory implements SourceFactory {
                 String textHashNew = getTextHash();
                 long now = System.currentTimeMillis();
                 if (info != null && info.textHash.equals(textHashNew)) {
-                    trackingMap.put(this, new TrackingInfo(now, info.lastModified, info.textHash));
+                    urlContentTrackingMap.put(this, new TrackingInfo(now, info.lastModified, info.textHash));
                     return info.lastModified;
                 } else {
-                    trackingMap.put(this, new TrackingInfo(now, now, textHashNew));
+                    urlContentTrackingMap.put(this, new TrackingInfo(now, now, textHashNew));
                     return now;
                 }
             }
@@ -170,6 +282,7 @@ public class DefaultSourceFactory implements SourceFactory {
         }
     }
     
+    
     /**
      * Builder for {@link SourceFactory} instances.
      * 
@@ -186,9 +299,13 @@ public class DefaultSourceFactory implements SourceFactory {
          * @since 1.0
          */
         public static final long DEFAULT_URL_TRACKING_LATENCY_MS = 60000L;
+        public static final long DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS = 1000L;
         
         private boolean isCommitted;
         
+        private boolean trackTextSourceIds = false;
+        private boolean trackFileSourceLastModified = false;
+        private long fileLastModifiedTrackingLatencyMs = -1;
         private boolean trackUrlContent = false;
         private long urlTrackingLatencyMs = -1;
         
@@ -199,6 +316,48 @@ public class DefaultSourceFactory implements SourceFactory {
          */
         public Builder() {
             isCommitted = false;
+        }
+
+        /**
+         * sets whether to track (cache) text source IDs, default is not to track.
+         * 
+         * @throws IllegalStateException if the builder had already been used to create an instance
+         * 
+         * @since 1.0.1
+         */
+        public Builder setTrackTextSourceIds(final boolean trackTextSourceIds) {
+            check();
+            this.trackTextSourceIds = trackTextSourceIds;
+            return this;
+        }
+
+        /**
+         * sets whether to track (cache) file source last modified, default is not to track.
+         * 
+         * @throws IllegalStateException if the builder had already been used to create an instance
+         * 
+         * @since 1.0.1
+         */
+        public Builder setTrackFileSourceLastModified(final boolean trackFileSourceLastModified) {
+            check();
+            this.trackFileSourceLastModified = trackFileSourceLastModified;
+            return this;
+        }
+
+        /**
+         * sets latency for tracking file last modified of file sources,
+         * defaults is {@link #DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS}.
+         * <p>
+         * Only has an effect if also set to track file source last modified.
+         * 
+         * @throws IllegalStateException if the builder had already been used to create an instance
+         * 
+         * @since 1.0.1
+         */
+        public Builder setFileLastModifiedTrackingLatencyMs(final long fileLastModifiedTrackingLatencyMs) {
+            check();
+            this.fileLastModifiedTrackingLatencyMs = fileLastModifiedTrackingLatencyMs;
+            return this;
         }
 
         /**
@@ -217,6 +376,8 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * sets latency for tracking URL content, defaults is {@link #DEFAULT_URL_TRACKING_LATENCY_MS}.
+         * <p>
+         * Only has an effect if also set to track URL content.
          * 
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
@@ -228,6 +389,33 @@ public class DefaultSourceFactory implements SourceFactory {
             return this;
         }
 
+        /**
+         * gets whether to track (cache) text source IDs, default is not to track.
+         * 
+         * @since 1.0.1
+         */
+        public boolean isTrackTextSourceIds() {
+            return trackTextSourceIds;
+        }
+
+        /**
+         * gets whether to track (cache) file source last modified, default is not to track.
+         * 
+         * @since 1.0.1
+         */
+        public boolean isTrackFileSourceLastModified() {
+            return trackFileSourceLastModified;
+        }
+
+        /**
+         * gets latency for tracking file last modified of file sources.
+         * 
+         * @since 1.0.1
+         */
+        public long getFileLastModifiedTrackingLatencyMs() {
+            return fileLastModifiedTrackingLatencyMs;
+        }
+        
         /**
          * gets whether to track URL content.
          * 
@@ -250,6 +438,9 @@ public class DefaultSourceFactory implements SourceFactory {
             if (!isCommitted) {
                 if (urlTrackingLatencyMs < 0) {
                     urlTrackingLatencyMs = DEFAULT_URL_TRACKING_LATENCY_MS;
+                }
+                if (fileLastModifiedTrackingLatencyMs < 0) {
+                    fileLastModifiedTrackingLatencyMs = DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS;
                 }
                 isCommitted = true;
             }
