@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -321,6 +322,10 @@ public class GrengineTest {
     @Test
     public void testConstructFromDirWithoutSubdirs_WithCompilerConfig() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
+        Set<String> scriptExtensions = new HashSet<String>();
+        scriptExtensions.add("groovy");
+        scriptExtensions.add("funky");
+        config.setScriptExtensions(scriptExtensions);
 
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
@@ -346,6 +351,10 @@ public class GrengineTest {
         DefaultGroovyCompilerFactory compilerFactory = 
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        
+        // check that script extensions set from compiler configuration
+        assertEquals(scriptExtensions, 
+                ((DirBasedSources)gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
         
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
@@ -382,6 +391,10 @@ public class GrengineTest {
     @Test
     public void testConstructFromDirWithSubdirs_WithCompilerConfiguration() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
+        Set<String> scriptExtensions = new HashSet<String>();
+        scriptExtensions.add("groovy");
+        scriptExtensions.add("funky");
+        config.setScriptExtensions(scriptExtensions);
 
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
@@ -407,6 +420,10 @@ public class GrengineTest {
         DefaultGroovyCompilerFactory compilerFactory = 
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        
+        // check that script extensions set from compiler configuration
+        assertEquals(scriptExtensions, 
+                ((DirBasedSources)gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
         
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));

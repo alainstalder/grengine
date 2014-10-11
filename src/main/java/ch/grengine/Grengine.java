@@ -171,6 +171,8 @@ public class Grengine extends BaseGrengine {
      * constructor for a Grengine based on scripts in a given script
      * directory, without subdirectories, and with a top code cache.
      * <p>
+     * Script extensions are the single extension "groovy".
+     * <p>
      * Load modes are "current first" for the script directory code layer
      * and "parent first" for the top code cache.
      * <p>
@@ -190,6 +192,9 @@ public class Grengine extends BaseGrengine {
     /**
      * constructor for a Grengine based on scripts in a given script
      * directory, without subdirectories, and with a top code cache.
+     * <p>
+     * Script extensions are taken from the given compiler configuration,
+     * which defaults to the single extension "groovy".
      * <p>
      * Load modes are "current first" for the script directory code layer
      * and "parent first" for the top code cache.
@@ -214,6 +219,8 @@ public class Grengine extends BaseGrengine {
      * directory, optionally including subdirectories (recursively),
      * and with a top code cache.
      * <p>
+     * Script extensions are the single extension "groovy".
+     * <p>
      * Load modes are "current first" for the script directory code layer
      * and "parent first" for the top code cache.
      * <p>
@@ -234,6 +241,9 @@ public class Grengine extends BaseGrengine {
      * constructor for a Grengine based on scripts in a given script
      * directory, optionally including subdirectories (recursively),
      * and with a top code cache.
+     * <p>
+     * Script extensions are taken from the given compiler configuration,
+     * which defaults to the single extension "groovy".
      * <p>
      * Load modes are "current first" for the script directory code layer
      * and "parent first" for the top code cache.
@@ -332,6 +342,7 @@ public class Grengine extends BaseGrengine {
         TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
         Engine engine = new LayeredEngine.Builder().setTopCodeCacheFactory(topCodeCacheFactory).build();
         Sources sources = new DirBasedSources.Builder(dir)
+                .setScriptExtensions(config.getScriptExtensions())
                 .setCompilerFactory(compilerFactory)
                 .setDirMode(dirMode)
                 .build();

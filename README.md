@@ -7,7 +7,7 @@ Fast, easy-to-use and highly customizable.
 
 Uses only the compiler from the Groovy JDK, not the `GroovyClassLoader`*, `GroovyShell` or `GroovyScriptEngine`.
 
-See [grengine.ch](http://www.grengine.ch/) for javadoc, downloads and more.
+See [grengine.ch](http://www.grengine.ch/) for user manual, javadoc, downloads and more.
 
 Features
 --------
@@ -25,17 +25,6 @@ Building
 * Quick build: `gradle clean build`
 * Full build: `gradle clean build pom jacoco`
 * Create eclipse project: `gradle eclipse`
-
-Usage
------
-
-A user manual may be provided in the future; for the moment:
-
-* See the javadoc of `Grengine` and `BaseGrengine` for how to run/create/load scripts.
-* See all interfaces, like `Source`, `Sources`, etc. to get a grasp of the concepts.
-* Check out all the Builder classes for options when creating objects.
-* See the source code and especially all the unit tests for how it is used.
-* Try it out!
 
 License
 -------

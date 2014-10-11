@@ -213,8 +213,8 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * 
      * @since 1.0
      */
-    public static Class<?> loadClassBySourceAndName(ClassLoader classLoader, final Source source, final String name)
-            throws LoadException {
+    public static Class<?> loadClassBySourceAndName(final ClassLoader classLoader, final Source source, 
+            final String name) throws LoadException {
         BytecodeClassLoader loader = null;
         if (classLoader instanceof SourceClassLoader) {
             loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);

@@ -61,7 +61,7 @@ public class ClassNameConflictException extends GrengineException {
      * that contain a class with that name, but only if the class name
      * occurred more than once in the code layers.
      * 
-     * @return map or null if had not been not checked
+     * @return map or null if had not been checked
      * 
      * @since 1.0
      */
@@ -74,7 +74,7 @@ public class ClassNameConflictException extends GrengineException {
      * that contain a class with that name, but only if the class name
      * occurred also in the parent class loader.
      * 
-     * @return map or null if had not been not checked
+     * @return map or null if had not been checked
      * 
      * @since 1.0
      */
