@@ -29,6 +29,7 @@
   dependencies {
     compile "org.codehaus.groovy:groovy-all:$groovyVersion"
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.apache.ivy:ivy:2.4.0"
   }
 
   project.group = 'ch.grengine'
