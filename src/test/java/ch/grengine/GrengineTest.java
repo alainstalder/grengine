@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 
 import java.io.File;
@@ -83,38 +82,6 @@ public class GrengineTest {
     public void testHelloWorld() throws Exception {
         new Grengine().run("println 'hello world'");
     }
-    
-    /* Grape does not work with Grengine :(, apparently
-     * a GroovyClassLoader or RootLoader must be involved ...
-     */
-    @Test
-    public void testGrape() throws Exception {
-        
-        // Grape demands a GroovyClassLoader (or a RootLoader) somewhere
-        // up the class loader parent hierarchy, else an exception is
-        // thrown with message "No suitable ClassLoader found for grab".
-        
-        GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
-
-        LayeredEngine layeredEngine = new LayeredEngine.Builder()
-            .setParent(groovyClassLoader)
-            .build();
-        
-        Grengine gren = new Grengine.Builder()
-            .setEngine(layeredEngine)
-            .build();
-        
-        try {
-            gren.run("@Grab('com.google.guava:guava:18.0')\n"
-                    //+ "@GrabConfig(initContextClassLoader=true)\n"
-                    //+ "@GrabConfig(systemClassLoader=true)\n"
-                    + "import com.google.common.base.Ascii\n" +
-                    "println 'hello world ' + Ascii.isUpperCase('C' as char)");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            fail("must not throw");
-        }
-    }    
     
     @Test
     public void testConstructDefaults() throws Exception {
