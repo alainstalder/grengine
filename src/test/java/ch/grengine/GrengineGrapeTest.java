@@ -34,8 +34,18 @@ import ch.grengine.except.CreateException;
 import ch.grengine.sources.DirBasedSources;
 
 /**
- * Tests interaction of Grengine and Groovy Grape.
+ * Simple tests related to using Groovy Grape with Grengine.
  * 
+ * First of all, as of Groovy/Grape 2.4.3 and Ivy 2.4.0 (and older versions),
+ * Grape/Ivy is not thread-safe, see bug GROOVY-7407. In a nutshell, you can
+ * use it to compile/run Groovy scripts with a single instance of
+ * GroovyClassLoader (resp. equivalently with a single instance of GroovyShell
+ * which contains a single GroovyClassLoader) at a time. Any other instances
+ * cannot compile/run Groovy scripts at the same time without the risk of
+ * failing due to unprotected concurrent access to some things in Grape/Ivy.
+ * 
+ * Regarding Grengine and Groovy Grape:
+ *   
  * In principle, a GroovyClassLoader (or a RootLoader) must be present
  * somewhere up the class loader parent hierarchy when using Grape to
  * pull external dependencies, else a RuntimeException is thrown with
@@ -43,7 +53,19 @@ import ch.grengine.sources.DirBasedSources;
  * 
  * With Grengine, a GroovyClassLoader is normally only used for compilation,
  * but not at runtime, so if Grape is needed, a GroovyClassLoader should
- * be set as parent of the LayeredEngine (or somewhere further up).
+ * be set as parent (of the LayeredEngine, or somewhere further up).
+ * 
+ * But then you have already at least two different instances of a
+ * GroovyClassLoader, one during compilation and one at runtime of Groovy
+ * scripts, which will both try to access shared resources without
+ * sufficient synchronization in Grape/Ivy and there is no way to
+ * synchronize in Grengine. (Using the same GroovyClassLoader instance
+ * is not possible because the one used during compilation accumulates
+ * compiled Groovy scripts as loaded classes.)
+ * 
+ * Hence, currently Grape cannot be supported by Grengine, except for simple
+ * tests like the ones below - at least not without patching Grape and/or Ivy
+ * or a stroke of genius (or an official fix in Grape/Ivy, of course).
  * 
  * @author Alain Stalder
  *
@@ -57,7 +79,7 @@ public class GrengineGrapeTest {
     public static final String NO_GRAB_EXCEPTION_MESSAGE = "No suitable ClassLoader found for grab";
     
     @Test
-    public void testGrapeSingleScript_WithoutGroovyClassLoader() throws Exception {
+    public void testNoGrapeByDefault() throws Exception {
         
         Grengine gren = new Grengine();
         
@@ -78,7 +100,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testGrapeSingleScript_WithGroovyClassLoader() throws Exception {
+    public void testSingleScript() throws Exception {
         
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
 
@@ -101,7 +123,7 @@ public class GrengineGrapeTest {
     }
     
     @Test
-    public void testTwoScripts_WithGroovyClassLoader() throws Exception {
+    public void testTwoScripts() throws Exception {
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
         TestUtil.setFileText(f1, "return Util.isUpperCase('C' as char)");
