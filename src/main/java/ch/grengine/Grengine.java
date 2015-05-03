@@ -97,25 +97,25 @@ import ch.grengine.sources.Sources;
  * @author Made in Switzerland.
  */
 public class Grengine extends BaseGrengine {
-    
+
     /** constant for an infinite latency (static). */
     public static long LATENCY_MS_INFINITE_STATIC = Long.MAX_VALUE;
-    
+
     private final Builder builder;
     private final List<Sources> sourcesLayers;
     private final long latencyMs;
-    
+
     private volatile List<Long> lastModifiedList;
     private volatile long lastChecked;
     private volatile GrengineException lastUpdateException;
     private final UpdateExceptionNotifier updateExceptionNotifier;
-    
+
     /**
      * constructor from builder.
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need
      * to make sure all sources could be compiled without errors.
-     * 
+     *
      * @since 1.0
      */
     protected Grengine(Builder builder) {
@@ -124,7 +124,7 @@ public class Grengine extends BaseGrengine {
         sourceFactory = builder.getSourceFactory();
         sourcesLayers = builder.getSourcesLayers();
         latencyMs = builder.getLatencyMs();
-        
+
         // initialize such that sources layers will be loaded at first update
         // further below, even if sources are immutable or latency is infinite
         int n = sourcesLayers.size();
@@ -136,37 +136,68 @@ public class Grengine extends BaseGrengine {
         lastUpdateException = null;
         updateExceptionNotifier = builder.getUpdateExceptionNotifier();
         updateEngineIfSourcesLayersModified();
-        
+
         loader = engine.getLoader();
     }
-    
+
     /**
      * constructor for a Grengine without any (static) code layers,
      * but with a top code cache.
      * <p>
      * Constructed from a builder with default settings.
-     * 
+     *
      * @since 1.0
      */
     public Grengine() {
         this(new Builder());
     }
-    
+
     /**
      * constructor for a Grengine without any (static) code layers,
      * but with a top code cache.
      * <p>
      * Constructed from a builder with default settings.
-     * 
+     *
      * @param config compiler configuration to use for compiling all sources
      * @throws IllegalArgumentException if the compiler configuration is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config) {
-        this(builderFromCompilerConfiguration(config));
+        this(builderEmpty((ClassLoader)null, true, config, false));
     }
-    
+
+    /**
+     * constructor for a Grengine without any (static) code layers,
+     * but with a top code cache.
+     * <p>
+     * Constructed from a builder with default settings.
+     *
+     * @param parent parent class loader for the engine
+     * @throws IllegalArgumentException if the parent class loader is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent) {
+        this(builderEmpty(parent, false, (CompilerConfiguration)null, true));
+    }
+
+    /**
+     * constructor for a Grengine without any (static) code layers,
+     * but with a top code cache.
+     * <p>
+     * Constructed from a builder with default settings.
+     *
+     * @param parent parent class loader for the engine
+     * @param config compiler configuration to use for compiling all sources
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final CompilerConfiguration config) {
+        this(builderEmpty(parent, false, config, false));
+    }
+
     /**
      * constructor for a Grengine based on scripts in a given script
      * directory, without subdirectories, and with a top code cache.
@@ -180,15 +211,38 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
      * @throws IllegalArgumentException if the directory is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final File dir) {
-        this(builderFromDir(dir, DirMode.NO_SUBDIRS));
+        this(builderFromDir((ClassLoader)null, true, (CompilerConfiguration)null, true, dir, DirMode.NO_SUBDIRS));
     }
-    
+
+    /**
+     * constructor for a Grengine based on scripts in a given script
+     * directory, without subdirectories, and with a top code cache.
+     * <p>
+     * Script extensions are the single extension "groovy".
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
+     * @param parent parent class loader for the engine
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final File dir) {
+        this(builderFromDir(parent, false, (CompilerConfiguration)null, true, dir, DirMode.NO_SUBDIRS));
+    }
+
     /**
      * constructor for a Grengine based on scripts in a given script
      * directory, without subdirectories, and with a top code cache.
@@ -203,16 +257,40 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
      * @param config compiler configuration to use for compiling all sources
      * @throws IllegalArgumentException if any argument is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final File dir) {
-        this(builderFromDir(config, dir, DirMode.NO_SUBDIRS));
+        this(builderFromDir((ClassLoader)null, true, config, false, dir, DirMode.NO_SUBDIRS));
     }
 
+    /**
+     * constructor for a Grengine based on scripts in a given script
+     * directory, without subdirectories, and with a top code cache.
+     * <p>
+     * Script extensions are taken from the given compiler configuration,
+     * which defaults to the single extension "groovy".
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
+     * @param parent parent class loader for the engine
+     * @param config compiler configuration to use for compiling all sources
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final CompilerConfiguration config, final File dir) {
+        this(builderFromDir(parent, false, config, false, dir, DirMode.NO_SUBDIRS));
+    }
 
     /**
      * constructor for a Grengine based on scripts in a given script
@@ -228,15 +306,39 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
      * @throws IllegalArgumentException if any argument is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final File dir, final DirMode dirMode) {
-        this(builderFromDir(dir, dirMode));
+        this(builderFromDir((ClassLoader)null, true, (CompilerConfiguration)null, true, dir, dirMode));
     }
-    
+
+    /**
+     * constructor for a Grengine based on scripts in a given script
+     * directory, optionally including subdirectories (recursively),
+     * and with a top code cache.
+     * <p>
+     * Script extensions are the single extension "groovy".
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
+     * @param parent parent class loader for the engine
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(ClassLoader parent, final File dir, final DirMode dirMode) {
+        this(builderFromDir(parent, false, (CompilerConfiguration)null, true, dir, dirMode));
+    }
+
     /**
      * constructor for a Grengine based on scripts in a given script
      * directory, optionally including subdirectories (recursively),
@@ -252,17 +354,42 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
      * @param config compiler configuration to use for compiling all sources
      * @throws IllegalArgumentException if any argument is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final File dir, final DirMode dirMode) {
-        this(builderFromDir(config, dir, dirMode));
+        this(builderFromDir((ClassLoader)null, true, config, false, dir, dirMode));
     }
 
-    
+    /**
+     * constructor for a Grengine based on scripts in a given script
+     * directory, optionally including subdirectories (recursively),
+     * and with a top code cache.
+     * <p>
+     * Script extensions are taken from the given compiler configuration,
+     * which defaults to the single extension "groovy".
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
+     * @param parent parent class loader for the engine
+     * @param config compiler configuration to use for compiling all sources
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final CompilerConfiguration config, final File dir, final DirMode dirMode) {
+        this(builderFromDir(parent, false, config, false, dir, dirMode));
+    }
+
     /**
      * constructor for a Grengine based on a collection of URL-based scripts,
      * with a top code cache, and with tracking URLs based on content.
@@ -275,15 +402,15 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
      * @throws IllegalArgumentException if the URL collection is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final Collection<URL> urls) {
-        this(builderFromUrls(urls));        
+        this(builderFromUrls((ClassLoader)null, true, (CompilerConfiguration)null, true, urls));
     }
-    
+
     /**
      * constructor for a Grengine based on a collection of URL-based scripts,
      * with a top code cache, and with tracking URLs based on content.
@@ -296,40 +423,87 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
-     * 
+     *
+     * @param parent parent class loader for the engine
+     * @throws IllegalArgumentException if the URL collection is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final Collection<URL> urls) {
+        this(builderFromUrls(parent, false, (CompilerConfiguration)null, true, urls));
+    }
+
+    /**
+     * constructor for a Grengine based on a collection of URL-based scripts,
+     * with a top code cache, and with tracking URLs based on content.
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Uses a {@link DefaultSourceFactory} with tracking URL content set to true.
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
      * @param config compiler configuration to use for compiling all sources
      * @throws IllegalArgumentException if any argument is null
-     * 
+     *
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final Collection<URL> urls) {
-        this(builderFromUrls(config, urls));        
+        this(builderFromUrls((ClassLoader)null, true, config, false, urls));
     }
-    
-    
-    private static Builder builderFromCompilerConfiguration(final CompilerConfiguration config) {
-        if (config == null) {
+
+    /**
+     * constructor for a Grengine based on a collection of URL-based scripts,
+     * with a top code cache, and with tracking URLs based on content.
+     * <p>
+     * Load modes are "current first" for the script directory code layer
+     * and "parent first" for the top code cache.
+     * <p>
+     * Uses a {@link DefaultSourceFactory} with tracking URL content set to true.
+     * Constructed from builders with otherwise default settings.
+     * <p>
+     * Call {@link #getLastUpdateException()} after constructing if you need to make sure
+     * all sources can be compiled without errors.
+     *
+     * @param parent parent class loader for the engine
+     * @param config compiler configuration to use for compiling all sources
+     * @throws IllegalArgumentException if any argument is null
+     *
+     * @since 1.0.3
+     */
+    public Grengine(final ClassLoader parent, final CompilerConfiguration config, final Collection<URL> urls) {
+        this(builderFromUrls(parent, false, config, false, urls));
+    }
+
+    private static Builder builderEmpty(final ClassLoader parent, final boolean allowParentNull,
+                                        final CompilerConfiguration config, final boolean allowConfigNull) {
+        if (parent == null && !allowParentNull) {
+            throw new IllegalArgumentException("Parent class loader is null.");
+        }
+        if (config == null && !allowConfigNull) {
             throw new IllegalArgumentException("Compiler configuration is null.");
         }
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory(config);
+        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+                .setCompilerConfiguration(config)
+                .build();
         TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder().setTopCodeCacheFactory(topCodeCacheFactory).build();
+        Engine engine = new LayeredEngine.Builder()
+                .setParent(parent)
+                .setTopCodeCacheFactory(topCodeCacheFactory)
+                .build();
         return new Builder().setEngine(engine);
     }
-    
-    private static Builder builderFromDir(final File dir, final DirMode dirMode) {
-        if (dir == null) {
-            throw new IllegalArgumentException("Directory is null.");
+
+    private static Builder builderFromDir(final ClassLoader parent, final boolean allowParentNull,
+                                          final CompilerConfiguration config, final boolean allowConfigNull,
+                                          final File dir, final DirMode dirMode) {
+        if (parent == null && !allowParentNull) {
+            throw new IllegalArgumentException("Parent class loader is null.");
         }
-        if (dirMode == null) {
-            throw new IllegalArgumentException("Dir mode is null.");
-        }
-        return new Builder()
-                .setSourcesLayers(new DirBasedSources.Builder(dir).setDirMode(dirMode).build());
-    }
-    
-    private static Builder builderFromDir(final CompilerConfiguration config, final File dir, final DirMode dirMode) {
-        if (config == null) {
+        if (config == null && !allowConfigNull) {
             throw new IllegalArgumentException("Compiler configuration is null.");
         }
         if (dir == null) {
@@ -338,11 +512,16 @@ public class Grengine extends BaseGrengine {
         if (dirMode == null) {
             throw new IllegalArgumentException("Dir mode is null.");
         }
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory(config);
+        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+                .setCompilerConfiguration(config)
+                .build();
         TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder().setTopCodeCacheFactory(topCodeCacheFactory).build();
+        Engine engine = new LayeredEngine.Builder()
+                .setParent(parent)
+                .setTopCodeCacheFactory(topCodeCacheFactory)
+                .build();
         Sources sources = new DirBasedSources.Builder(dir)
-                .setScriptExtensions(config.getScriptExtensions())
+                .setScriptExtensions(config == null ? null : config.getScriptExtensions())
                 .setCompilerFactory(compilerFactory)
                 .setDirMode(dirMode)
                 .build();
@@ -350,28 +529,27 @@ public class Grengine extends BaseGrengine {
                 .setEngine(engine)
                 .setSourcesLayers(sources);
     }
-    
-    private static Builder builderFromUrls(final Collection<URL> urls) {
-        if (urls == null) {
-            throw new IllegalArgumentException("URL collection is null.");
+
+    private static Builder builderFromUrls(final ClassLoader parent, final boolean allowParentNull,
+                                           final CompilerConfiguration config, final boolean allowConfigNull,
+                                           final Collection<URL> urls) {
+        if (parent == null && !allowParentNull) {
+            throw new IllegalArgumentException("Parent class loader is null.");
         }
-        SourceFactory sourceFactory = new DefaultSourceFactory.Builder().setTrackUrlContent(true).build();
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(sourceFactory, urls);
-        return new Builder()
-                .setSourceFactory(sourceFactory)
-                .setSourcesLayers(new FixedSetSources.Builder(sourceSet).setName("URL Sources").build());
-    }
-    
-    private static Builder builderFromUrls(final CompilerConfiguration config, final Collection<URL> urls) {
-        if (config == null) {
+        if (config == null && !allowConfigNull) {
             throw new IllegalArgumentException("Compiler configuration is null.");
         }
         if (urls == null) {
             throw new IllegalArgumentException("URL collection is null.");
         }
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory(config);
+        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+                .setCompilerConfiguration(config)
+                .build();
         TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder().setTopCodeCacheFactory(topCodeCacheFactory).build();
+        Engine engine = new LayeredEngine.Builder()
+                .setParent(parent)
+                .setTopCodeCacheFactory(topCodeCacheFactory)
+                .build();
         SourceFactory sourceFactory = new DefaultSourceFactory.Builder().setTrackUrlContent(true).build();
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(sourceFactory, urls);
         Sources sources = new FixedSetSources.Builder(sourceSet)
@@ -424,8 +602,8 @@ public class Grengine extends BaseGrengine {
         
         int n = sourcesLayers.size();
         List<Long> lastModifiedListNew = new ArrayList<Long>(n);
-        for (int i=0; i<n; i++) {
-            lastModifiedListNew.add(sourcesLayers.get(i).getLastModified());
+        for (Sources sources : sourcesLayers) {
+            lastModifiedListNew.add(sources.getLastModified());
         }
         
         boolean hasChanged = false;

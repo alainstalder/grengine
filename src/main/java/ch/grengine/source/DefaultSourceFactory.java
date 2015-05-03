@@ -50,12 +50,12 @@ public class DefaultSourceFactory implements SourceFactory {
     private final boolean trackFileSourceLastModified;
     // key is file id, value is file last modified
     private final Map<String,Long> fileLastModifiedTrackingMap;
-    private long fileLastModifiedLatencyMs;
+    private final long fileLastModifiedLatencyMs;
     private volatile long fileLastModifiedLastChecked;
     
     private final boolean trackUrlContent;
     private final long urlTrackingLatencyMs;
-    private Map<Source,TrackingInfo> urlContentTrackingMap;
+    private final Map<Source,TrackingInfo> urlContentTrackingMap;
     
     /**
      * constructor from builder.

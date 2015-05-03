@@ -74,6 +74,6 @@ public interface Sources {
      * 
      * @since 1.0
      */
-    public String toString();
+    String toString();
 
 }

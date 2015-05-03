@@ -17,6 +17,7 @@
 package ch.grengine.sources;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +64,14 @@ public class DirBasedSources extends BaseSources {
         
         super.init(builder.getName(), builder.getCompilerFactory(), builder.getLatencyMs());
     }
-    
+
+    /**
+     * gets the updated source set.
+     *
+     * @throws NullPointerException if the script file directory or a subdirectory cannot be listed
+     *
+     * @since 1.0
+     */
     @Override
     protected Set<Source> getSourceSetNew() {
         Set<Source> sourceSet = new HashSet<Source>();
@@ -215,9 +223,7 @@ public class DirBasedSources extends BaseSources {
          */
         public Builder setScriptExtensions(final String... scriptExtensions) {
             Set<String> set = new HashSet<String>();
-            for (String ext : scriptExtensions) {
-                set.add(ext);
-            }
+            Collections.addAll(set, scriptExtensions);
             return setScriptExtensions(set);
         }
 

@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -241,9 +242,7 @@ public class SourceUtil {
      */
     public static Set<Source> sourceArrayToSourceSet(final Source... sourceArray) {
         Set<Source> sourceSet = new HashSet<Source>();
-        for (Source source : sourceArray) {
-            sourceSet.add(source);
-        }
+        Collections.addAll(sourceSet, sourceArray);
         return sourceSet;
     }
 
@@ -267,10 +266,8 @@ public class SourceUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException("No message digest " + algorithm + ".", e);
         }
-        byte[] digestBytes = null;
-        digestBytes = hash.digest(text.getBytes(CHARSET_UTF_8));
-        String digest = DatatypeConverter.printHexBinary(digestBytes);
-        return digest;
+        byte[] digestBytes = hash.digest(text.getBytes(CHARSET_UTF_8));
+        return DatatypeConverter.printHexBinary(digestBytes);
     }
 
     /**

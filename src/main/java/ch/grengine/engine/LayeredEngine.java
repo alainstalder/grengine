@@ -165,9 +165,8 @@ public class LayeredEngine implements Engine {
         write.lock();
         try {
             LayeredClassLoader layeredClassLoader = ((LayeredClassLoader)loader.getSourceClassLoader(engineId));
-            Loader newLoader = new Loader(engineId, nextLoaderNumber++, false,
+            return new Loader(engineId, nextLoaderNumber++, false,
                     layeredClassLoader.cloneWithSeparateTopCodeCache());
-            return newLoader;
         } finally {
             write.unlock();
         }

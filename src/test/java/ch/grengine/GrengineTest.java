@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 
 import java.io.File;
@@ -82,15 +83,15 @@ public class GrengineTest {
     public void testHelloWorld() throws Exception {
         new Grengine().run("println 'hello world'");
     }
-    
+
     @Test
     public void testConstructDefaults() throws Exception {
-        
+
         Grengine.Builder builder = new Grengine.Builder();
         Grengine gren = builder.build();
-        
+
         assertEquals(builder, gren.getBuilder());
-        
+
         assertNotNull(gren.getEngine());
         assertEquals(gren.getBuilder().getEngine(), gren.getEngine());
         assertTrue(gren.getEngine() instanceof LayeredEngine);
@@ -108,7 +109,7 @@ public class GrengineTest {
         assertTrue(gren.getSourceFactory() instanceof DefaultSourceFactory);
 
         assertEquals(0, gren.getBuilder().getSourcesLayers().size());
-        
+
         assertEquals(Grengine.Builder.DEFAULT_LATENCY_MS, gren.getBuilder().getLatencyMs());
     }
 
@@ -150,7 +151,60 @@ public class GrengineTest {
             assertEquals("Builder already used.", e.getMessage());
         }
     }
-    
+
+    @Test
+    public void testConstructEmpty() throws Exception {
+
+        Grengine gren = new Grengine();
+
+        assertNotNull(gren.getEngine());
+        assertEquals(gren.getBuilder().getEngine(), gren.getEngine());
+        assertTrue(gren.getEngine() instanceof LayeredEngine);
+        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        assertEquals(Thread.currentThread().getContextClassLoader(), engine.getBuilder().getParent());
+        assertEquals(LoadMode.CURRENT_FIRST, engine.getBuilder().getLoadMode());
+        assertTrue(engine.getBuilder().isWithTopCodeCache());
+        assertEquals(LoadMode.PARENT_FIRST, engine.getBuilder().getTopLoadMode());
+        assertNotNull(engine.getBuilder().getTopCodeCacheFactory());
+        assertTrue(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers());
+        assertTrue(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers());
+
+        assertNotNull(gren.getSourceFactory());
+        assertEquals(gren.getBuilder().getSourceFactory(), gren.getSourceFactory());
+        assertTrue(gren.getSourceFactory() instanceof DefaultSourceFactory);
+
+        assertEquals(0, gren.getBuilder().getSourcesLayers().size());
+
+        assertEquals(Grengine.Builder.DEFAULT_LATENCY_MS, gren.getBuilder().getLatencyMs());
+    }
+
+    @Test
+    public void testConstructEmpty_WithParent() throws Exception {
+
+        ClassLoader parent = new GroovyClassLoader();
+        Grengine gren = new Grengine(parent);
+
+        assertNotNull(gren.getEngine());
+        assertEquals(gren.getBuilder().getEngine(), gren.getEngine());
+        assertTrue(gren.getEngine() instanceof LayeredEngine);
+        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        assertEquals(parent, engine.getBuilder().getParent());
+        assertEquals(LoadMode.CURRENT_FIRST, engine.getBuilder().getLoadMode());
+        assertTrue(engine.getBuilder().isWithTopCodeCache());
+        assertEquals(LoadMode.PARENT_FIRST, engine.getBuilder().getTopLoadMode());
+        assertNotNull(engine.getBuilder().getTopCodeCacheFactory());
+        assertTrue(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers());
+        assertTrue(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers());
+
+        assertNotNull(gren.getSourceFactory());
+        assertEquals(gren.getBuilder().getSourceFactory(), gren.getSourceFactory());
+        assertTrue(gren.getSourceFactory() instanceof DefaultSourceFactory);
+
+        assertEquals(0, gren.getBuilder().getSourcesLayers().size());
+
+        assertEquals(Grengine.Builder.DEFAULT_LATENCY_MS, gren.getBuilder().getLatencyMs());
+    }
+
     @Test
     public void testConstructFromDirWithoutSubdirs() throws Exception {
         File dir = tempFolder.getRoot();
@@ -167,9 +221,13 @@ public class GrengineTest {
         TestUtil.setFileText(fSub2, "return 2");
         File fSub3 = new File(subDir, "ScriptSub3.groovy");
         TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
-        
+
         Grengine gren = new Grengine(dir);
-        
+
+        // check parent
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         assertEquals(1, gren.run(f2));
@@ -185,7 +243,7 @@ public class GrengineTest {
         } catch (CompileException e) {
             assertTrue(e.getMessage().contains("unable to resolve class ScriptSub2"));
         }
-        
+
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
         gren.loadClass(gren.getLoader(), "Script1");
@@ -201,7 +259,65 @@ public class GrengineTest {
         // this works, because loading by source from top code cache
         gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
     }
-    
+
+    @Test
+    public void testConstructFromDirWithoutSubdirs_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        File subDir = new File(dir, "sub");
+        subDir.mkdir();
+        assertTrue(subDir.exists());
+        File fSub1 = new File(subDir, "ScriptSub1.groovy");
+        TestUtil.setFileText(fSub1, "return new Script1().run()");
+        File fSub2 = new File(subDir, "ScriptSub2.groovy");
+        TestUtil.setFileText(fSub2, "return 2");
+        File fSub3 = new File(subDir, "ScriptSub3.groovy");
+        TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
+
+        Grengine gren = new Grengine(parent, dir);
+
+        // check parent
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        assertEquals(1, gren.run(f2));
+        // found because compiled in top code cache and that one sees Script1 in static layer
+        assertEquals(1, gren.run(fSub1));
+        // found because compiled in top code cache
+        assertEquals(2, gren.run(fSub2));
+        // not found because compiled in top code cache and there ScriptSub2 is not visible
+        // (has its own separate class loader in the top code cache)
+        try {
+            gren.run(fSub3);
+            fail();
+        } catch (CompileException e) {
+            assertTrue(e.getMessage().contains("unable to resolve class ScriptSub2"));
+        }
+
+        // extra: load with class name
+        Source s1 = new DefaultFileSource(f1);
+        gren.loadClass(gren.getLoader(), "Script1");
+        gren.loadClass(gren.getLoader(), s1, "Script1");
+        // not found because only in top code cache, not in static code layers
+        Source sSub1 = new DefaultFileSource(fSub1);
+        try {
+            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            fail();
+        } catch (LoadException e) {
+            assertTrue(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "));
+        }
+        // this works, because loading by source from top code cache
+        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+    }
+
+
     @Test
     public void testConstructFromDirWithSubdirs() throws Exception {
         File dir = tempFolder.getRoot();
@@ -218,16 +334,16 @@ public class GrengineTest {
         TestUtil.setFileText(fSub2, "return 2");
         File fSub3 = new File(subDir, "ScriptSub3.groovy");
         TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
-        
+
         Grengine gren = new Grengine(dir, DirMode.WITH_SUBDIRS_RECURSIVE);
-        
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         assertEquals(1, gren.run(f2));
         assertEquals(1, gren.run(fSub1));
         assertEquals(2, gren.run(fSub2));
         assertEquals(2, gren.run(fSub3));
-        
+
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
         gren.loadClass(gren.getLoader(), "Script1");
@@ -237,7 +353,7 @@ public class GrengineTest {
         gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
     }
 
-    
+
     @Test
     public void testConstructFromDirWithoutSubdirsNoTopCodeCache() throws Exception {
         File dir = tempFolder.getRoot();
@@ -303,22 +419,43 @@ public class GrengineTest {
             assertTrue(e.getMessage().startsWith("Source not found: "));
         }
     }
-    
+
     @Test
     public void testConstructFromCompilerConfig() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
-        
+
         Grengine gren = new Grengine(config);
-        
+
         // check that same compiler configuration
         LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
-        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory = 
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
                 (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
-        DefaultGroovyCompilerFactory compilerFactory = 
+        DefaultGroovyCompilerFactory compilerFactory =
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        // check parent
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
     }
-    
+
+    @Test
+    public void testConstructFromCompilerConfig_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+        CompilerConfiguration config = new CompilerConfiguration();
+
+        Grengine gren = new Grengine(parent, config);
+
+        // check that same compiler configuration
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
+                (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
+        DefaultGroovyCompilerFactory compilerFactory =
+                (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
+        assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        // check parent
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+    }
+
+
     @Test
     public void testConstructFromDirWithoutSubdirs_WithCompilerConfig() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
@@ -341,21 +478,23 @@ public class GrengineTest {
         TestUtil.setFileText(fSub2, "return 2");
         File fSub3 = new File(subDir, "ScriptSub3.groovy");
         TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
-        
+
         Grengine gren = new Grengine(config, dir);
-        
+
         // check that same compiler configuration
         LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
-        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory = 
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
                 (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
-        DefaultGroovyCompilerFactory compilerFactory = 
+        DefaultGroovyCompilerFactory compilerFactory =
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
-        
+        // check parent
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
+
         // check that script extensions set from compiler configuration
-        assertEquals(scriptExtensions, 
+        assertEquals(scriptExtensions,
                 ((DirBasedSources)gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
-        
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         assertEquals(1, gren.run(f2));
@@ -371,7 +510,7 @@ public class GrengineTest {
         } catch (CompileException e) {
             assertTrue(e.getMessage().contains("unable to resolve class ScriptSub2"));
         }
-        
+
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
         gren.loadClass(gren.getLoader(), "Script1");
@@ -387,7 +526,80 @@ public class GrengineTest {
         // this works, because loading by source from top code cache
         gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
     }
-    
+
+    @Test
+    public void testConstructFromDirWithoutSubdirs_WithCompilerConfig_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+        CompilerConfiguration config = new CompilerConfiguration();
+        Set<String> scriptExtensions = new HashSet<String>();
+        scriptExtensions.add("groovy");
+        scriptExtensions.add("funky");
+        config.setScriptExtensions(scriptExtensions);
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        File subDir = new File(dir, "sub");
+        subDir.mkdir();
+        assertTrue(subDir.exists());
+        File fSub1 = new File(subDir, "ScriptSub1.groovy");
+        TestUtil.setFileText(fSub1, "return new Script1().run()");
+        File fSub2 = new File(subDir, "ScriptSub2.groovy");
+        TestUtil.setFileText(fSub2, "return 2");
+        File fSub3 = new File(subDir, "ScriptSub3.groovy");
+        TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
+
+        Grengine gren = new Grengine(parent, config, dir);
+
+        // check that same compiler configuration
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
+                (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
+        DefaultGroovyCompilerFactory compilerFactory =
+                (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
+        assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        // check parent
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+        // check that script extensions set from compiler configuration
+        assertEquals(scriptExtensions,
+                ((DirBasedSources)gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        assertEquals(1, gren.run(f2));
+        // found because compiled in top code cache and that one sees Script1 in static layer
+        assertEquals(1, gren.run(fSub1));
+        // found because compiled in top code cache
+        assertEquals(2, gren.run(fSub2));
+        // not found because compiled in top code cache and there ScriptSub2 is not visible
+        // (has its own separate class loader in the top code cache)
+        try {
+            gren.run(fSub3);
+            fail();
+        } catch (CompileException e) {
+            assertTrue(e.getMessage().contains("unable to resolve class ScriptSub2"));
+        }
+
+        // extra: load with class name
+        Source s1 = new DefaultFileSource(f1);
+        gren.loadClass(gren.getLoader(), "Script1");
+        gren.loadClass(gren.getLoader(), s1, "Script1");
+        // not found because only in top code cache, not in static code layers
+        Source sSub1 = new DefaultFileSource(fSub1);
+        try {
+            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            fail();
+        } catch (LoadException e) {
+            assertTrue(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "));
+        }
+        // this works, because loading by source from top code cache
+        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+    }
+
+
     @Test
     public void testConstructFromDirWithSubdirs_WithCompilerConfiguration() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
@@ -410,28 +622,30 @@ public class GrengineTest {
         TestUtil.setFileText(fSub2, "return 2");
         File fSub3 = new File(subDir, "ScriptSub3.groovy");
         TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
-        
+
         Grengine gren = new Grengine(config, dir, DirMode.WITH_SUBDIRS_RECURSIVE);
-        
+
         // check that same compiler configuration
         LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
-        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory = 
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
                 (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
-        DefaultGroovyCompilerFactory compilerFactory = 
+        DefaultGroovyCompilerFactory compilerFactory =
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
-        
+        // check parent
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
+
         // check that script extensions set from compiler configuration
-        assertEquals(scriptExtensions, 
-                ((DirBasedSources)gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
-        
+        assertEquals(scriptExtensions,
+                ((DirBasedSources) gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         assertEquals(1, gren.run(f2));
         assertEquals(1, gren.run(fSub1));
         assertEquals(2, gren.run(fSub2));
         assertEquals(2, gren.run(fSub3));
-        
+
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
         gren.loadClass(gren.getLoader(), "Script1");
@@ -440,8 +654,106 @@ public class GrengineTest {
         gren.loadClass(gren.getLoader(), "ScriptSub1");
         gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
     }
-    
-    
+
+    @Test
+    public void testConstructFromDirWithSubdirs_WithCompilerConfiguration_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+        CompilerConfiguration config = new CompilerConfiguration();
+        Set<String> scriptExtensions = new HashSet<String>();
+        scriptExtensions.add("groovy");
+        scriptExtensions.add("funky");
+        config.setScriptExtensions(scriptExtensions);
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        File subDir = new File(dir, "sub");
+        subDir.mkdir();
+        assertTrue(subDir.exists());
+        File fSub1 = new File(subDir, "ScriptSub1.groovy");
+        TestUtil.setFileText(fSub1, "return new Script1().run()");
+        File fSub2 = new File(subDir, "ScriptSub2.groovy");
+        TestUtil.setFileText(fSub2, "return 2");
+        File fSub3 = new File(subDir, "ScriptSub3.groovy");
+        TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
+
+        Grengine gren = new Grengine(parent, config, dir, DirMode.WITH_SUBDIRS_RECURSIVE);
+
+        // check that same compiler configuration
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
+                (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
+        DefaultGroovyCompilerFactory compilerFactory =
+                (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
+        assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        // check parent
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+
+        // check that script extensions set from compiler configuration
+        assertEquals(scriptExtensions,
+                ((DirBasedSources) gren.getBuilder().getSourcesLayers().get(0)).getScriptExtensions());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        assertEquals(1, gren.run(f2));
+        assertEquals(1, gren.run(fSub1));
+        assertEquals(2, gren.run(fSub2));
+        assertEquals(2, gren.run(fSub3));
+
+        // extra: load with class name
+        Source s1 = new DefaultFileSource(f1);
+        gren.loadClass(gren.getLoader(), "Script1");
+        gren.loadClass(gren.getLoader(), s1, "Script1");
+        Source sSub1 = new DefaultFileSource(fSub1);
+        gren.loadClass(gren.getLoader(), "ScriptSub1");
+        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+    }
+
+    @Test
+    public void testConstructFromDirWithSubdirs_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        File subDir = new File(dir, "sub");
+        subDir.mkdir();
+        assertTrue(subDir.exists());
+        File fSub1 = new File(subDir, "ScriptSub1.groovy");
+        TestUtil.setFileText(fSub1, "return new Script1().run()");
+        File fSub2 = new File(subDir, "ScriptSub2.groovy");
+        TestUtil.setFileText(fSub2, "return 2");
+        File fSub3 = new File(subDir, "ScriptSub3.groovy");
+        TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
+
+        Grengine gren = new Grengine(parent, dir, DirMode.WITH_SUBDIRS_RECURSIVE);
+
+        // check parent
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        assertEquals(1, gren.run(f2));
+        assertEquals(1, gren.run(fSub1));
+        assertEquals(2, gren.run(fSub2));
+        assertEquals(2, gren.run(fSub3));
+
+        // extra: load with class name
+        Source s1 = new DefaultFileSource(f1);
+        gren.loadClass(gren.getLoader(), "Script1");
+        gren.loadClass(gren.getLoader(), s1, "Script1");
+        Source sSub1 = new DefaultFileSource(fSub1);
+        gren.loadClass(gren.getLoader(), "ScriptSub1");
+        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+    }
+
+
     @Test
     public void testConstructFromUrls() throws Exception {
         File dir = tempFolder.getRoot();
@@ -451,22 +763,58 @@ public class GrengineTest {
         File f2 = new File(dir, "Script2.groovy");
         TestUtil.setFileText(f2, "return new Script1().run()");
         URL u2 = f1.toURI().toURL();
-        
+
         Grengine gren = new Grengine(Arrays.asList(u1));
-        
+
+        // check parent
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         // created in top code cache, Script1 found in static layers
         assertEquals(1, gren.run(f2));
-        
+
         gren = new Grengine(Arrays.asList(u1, u2));
-        
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         // in static layers
         assertEquals(1, gren.run(f2));
     }
-    
+
+    @Test
+    public void testConstructFromUrls_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        URL u1 = f1.toURI().toURL();
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        URL u2 = f1.toURI().toURL();
+
+        Grengine gren = new Grengine(parent, Arrays.asList(u1));
+
+        // check parent
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        // created in top code cache, Script1 found in static layers
+        assertEquals(1, gren.run(f2));
+
+        gren = new Grengine(Arrays.asList(u1, u2));
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        // in static layers
+        assertEquals(1, gren.run(f2));
+    }
+
+
     @Test
     public void testConstructFromUrls_WithCompilerConfiguration() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
@@ -478,31 +826,70 @@ public class GrengineTest {
         File f2 = new File(dir, "Script2.groovy");
         TestUtil.setFileText(f2, "return new Script1().run()");
         URL u2 = f1.toURI().toURL();
-        
+
         Grengine gren = new Grengine(config, Arrays.asList(u1));
-        
+
         // check that same compiler configuration
         LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
-        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory = 
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
                 (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
-        DefaultGroovyCompilerFactory compilerFactory = 
+        DefaultGroovyCompilerFactory compilerFactory =
                 (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
         assertEquals(compilerFactory.getCompilerConfiguration(), config);
-        
+        // check parent
+        assertEquals(Thread.currentThread().getContextClassLoader(), layeredEngine.getBuilder().getParent());
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         // created in top code cache, Script1 found in static layers
         assertEquals(1, gren.run(f2));
-        
+
         gren = new Grengine(Arrays.asList(u1, u2));
-        
+
         assertNull(gren.getLastUpdateException());
         assertEquals(1, gren.run(f1));
         // in static layers
         assertEquals(1, gren.run(f2));
     }
-    
-    
+    @Test
+    public void testConstructFromUrls_WithCompilerConfiguration_WithParent() throws Exception {
+        ClassLoader parent = new GroovyClassLoader();
+        CompilerConfiguration config = new CompilerConfiguration();
+
+        File dir = tempFolder.getRoot();
+        File f1 = new File(dir, "Script1.groovy");
+        TestUtil.setFileText(f1, "return 1");
+        URL u1 = f1.toURI().toURL();
+        File f2 = new File(dir, "Script2.groovy");
+        TestUtil.setFileText(f2, "return new Script1().run()");
+        URL u2 = f1.toURI().toURL();
+
+        Grengine gren = new Grengine(parent, config, Arrays.asList(u1));
+
+        // check that same compiler configuration
+        LayeredEngine layeredEngine = (LayeredEngine)gren.getEngine();
+        DefaultTopCodeCacheFactory defaultTopCodeCacheFactory =
+                (DefaultTopCodeCacheFactory)layeredEngine.getBuilder().getTopCodeCacheFactory();
+        DefaultGroovyCompilerFactory compilerFactory =
+                (DefaultGroovyCompilerFactory)defaultTopCodeCacheFactory.getCompilerFactory();
+        assertEquals(compilerFactory.getCompilerConfiguration(), config);
+        // check parent
+        assertEquals(parent, layeredEngine.getBuilder().getParent());
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        // created in top code cache, Script1 found in static layers
+        assertEquals(1, gren.run(f2));
+
+        gren = new Grengine(Arrays.asList(u1, u2));
+
+        assertNull(gren.getLastUpdateException());
+        assertEquals(1, gren.run(f1));
+        // in static layers
+        assertEquals(1, gren.run(f2));
+    }
+
+
     @Test
     public void testConstructFromCompilerConfigNull() throws Exception {
         try {
@@ -510,6 +897,16 @@ public class GrengineTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Compiler configuration is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromParentParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
         }
     }
 
@@ -524,12 +921,32 @@ public class GrengineTest {
     }
 
     @Test
+    public void testConstructFromDir_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new File("."));
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
+        }
+    }
+
+    @Test
     public void testConstructFromDir_CompilerConfigurationNull() throws Exception {
         try {
             new Grengine((CompilerConfiguration)null, new File("."));
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Compiler configuration is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirAndCompilerConfiguration_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new CompilerConfiguration(), new File("."));
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
         }
     }
 
@@ -562,7 +979,7 @@ public class GrengineTest {
             assertEquals("Compiler configuration is null.", e.getMessage());
         }
     }
-    
+
     @Test
     public void testConstructFromDirWithDirModeAndCompilerConfiguration_DirNull() throws Exception {
         try {
@@ -577,6 +994,77 @@ public class GrengineTest {
     public void testConstructFromDirWithDirModeAndCompilerConfiguration_DirModeNull() throws Exception {
         try {
             new Grengine(new CompilerConfiguration(), new File("."), null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Dir mode is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParent_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new File("."), DirMode.NO_SUBDIRS);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParent_DirNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), (File)null, DirMode.NO_SUBDIRS);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Directory is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParent_DirModeNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), new File("."), null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Dir mode is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParentAndCompilerConfiguration_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new CompilerConfiguration(), new File("."), DirMode.NO_SUBDIRS);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParentAndCompilerConfiguration_CompilerConfigurationNull()
+            throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new File("."), DirMode.NO_SUBDIRS);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Compiler configuration is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParentAndCompilerConfiguration_DirNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), (File)null, DirMode.NO_SUBDIRS);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Directory is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromDirWithDirModeAndParentAndCompilerConfiguration_DirModeNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), new File("."), null);
             fail();
         } catch (IllegalArgumentException e) {
             assertEquals("Dir mode is null.", e.getMessage());
@@ -612,7 +1100,57 @@ public class GrengineTest {
             assertEquals("URL collection is null.", e.getMessage());
         }
     }
-    
+
+    @Test
+    public void testConstructFromUrlsAndParent_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new LinkedList<URL>());
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromUrlsAndParent_UrlsNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), (Collection<URL>)null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("URL collection is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromUrlsAndParentAndCompilerConfiguration_ParentNull() throws Exception {
+        try {
+            new Grengine((ClassLoader)null, new CompilerConfiguration(), new LinkedList<URL>());
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Parent class loader is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromUrlsAndParentAndCompilerConfiguration_CompilerConfigurationNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new LinkedList<URL>());
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("Compiler configuration is null.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConstructFromUrlsAndParentAndCompilerConfiguration_UrlsNull() throws Exception {
+        try {
+            new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), (Collection<URL>)null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals("URL collection is null.", e.getMessage());
+        }
+    }
+
     
     @Test
     public void testMatrixSource() throws Exception {

@@ -51,20 +51,20 @@ public interface Source {
      * 
      * @since 1.0
      */
-    public boolean equals(Object obj);
+    boolean equals(Object obj);
     
     /**
      * returns the hash code of the source ID.
      * 
      * @since 1.0
      */
-    public int hashCode();
+    int hashCode();
     
     /**
      * returns a string suitable for logging.
      * 
      * @since 1.0
      */
-    public String toString();
+    String toString();
 
 }

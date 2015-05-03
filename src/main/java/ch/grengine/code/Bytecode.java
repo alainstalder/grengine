@@ -72,7 +72,7 @@ public class Bytecode {
      */
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[className=" + className + ", bytes="+ bytes + "]";
+        return this.getClass().getSimpleName() + "[className=" + className + ", bytes=" + bytes + "]";
     }
 
 }

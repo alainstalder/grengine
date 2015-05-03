@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-package ch.grengine;
+package ch.grengine.grapetest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -23,6 +23,10 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 
+import ch.grengine.Grengine;
+import ch.grengine.TestUtil;
+import groovy.grape.Grape;
+import groovy.grape.GrapeEngine;
 import groovy.lang.GroovyClassLoader;
 
 import org.junit.Rule;
@@ -62,11 +66,13 @@ import ch.grengine.sources.DirBasedSources;
  * synchronize in Grengine. (Using the same GroovyClassLoader instance
  * is not possible because the one used during compilation accumulates
  * compiled Groovy scripts as loaded classes.)
- * 
- * Hence, currently Grape cannot be supported by Grengine, except for simple
- * tests like the ones below - at least not without patching Grape and/or Ivy
- * or a stroke of genius (or an official fix in Grape/Ivy, of course).
- * 
+ *
+ * Until there is a fix in Groovy, you might want to use the workaround
+ * in {@link WorkaroundGroovy7407WrappingGrapeEngine}, see comments there
+ * and one of the tests below for how to use it.
+ *
+ * Link to bug GROOVY-7407: https://issues.apache.org/jira/browse/GROOVY-7407
+ *
  * @author Alain Stalder
  *
  */
@@ -102,15 +108,7 @@ public class GrengineGrapeTest {
     @Test
     public void testSingleScript() throws Exception {
         
-        GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
-
-        LayeredEngine layeredEngine = new LayeredEngine.Builder()
-            .setParent(groovyClassLoader)
-            .build();
-        
-        Grengine gren = new Grengine.Builder()
-            .setEngine(layeredEngine)
-            .build();
+        Grengine gren = new Grengine(new GroovyClassLoader());
         
         try {
             gren.run("@Grab('com.google.guava:guava:18.0')\n"
@@ -121,7 +119,7 @@ public class GrengineGrapeTest {
             fail("must not throw");
         }
     }
-    
+
     @Test
     public void testTwoScripts() throws Exception {
         File dir = tempFolder.getRoot();
@@ -129,28 +127,58 @@ public class GrengineGrapeTest {
         TestUtil.setFileText(f1, "return Util.isUpperCase('C' as char)");
         File f2 = new File(dir, "Util.groovy");
         TestUtil.setFileText(f2, "@Grab('com.google.guava:guava:18.0')\n"
-                    + "import com.google.common.base.Ascii\n"
-                    + "class Util {\n"
-                    + "  static boolean isUpperCase(def c) {\n"
-                    + "    return Ascii.isUpperCase(c)\n"
-                    + "  }\n"
-                    + "}\n"
-                    );
-        
+                        + "import com.google.common.base.Ascii\n"
+                        + "class Util {\n"
+                        + "  static boolean isUpperCase(def c) {\n"
+                        + "    return Ascii.isUpperCase(c)\n"
+                        + "  }\n"
+                        + "}\n"
+        );
+
         GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
 
-        LayeredEngine layeredEngine = new LayeredEngine.Builder()
-            .setParent(groovyClassLoader)
-            .build();
-        
-        Grengine gren = new Grengine.Builder()
-            .setEngine(layeredEngine)
-            .setSourcesLayers(new DirBasedSources.Builder(dir).build())
-            .build();
-        
+        Grengine gren = new Grengine(groovyClassLoader, dir);
+
         assertNull(gren.getLastUpdateException());
         assertEquals(true, gren.run(f1));
         assertEquals(true, gren.run("return Util.isUpperCase('C' as char)"));
+    }
+
+    // This only tests that the workaround does not break anything obvious.
+    @Test
+    public void testTwoScriptsWithWorkaroundGroovy7407() throws Exception {
+        GrapeEngine originalInstance = Grape.getInstance();
+        try {
+            // Typically you would call this once early per VM, resp. at least
+            // once early per ClassLoader that loaded Grape.class.
+            WorkaroundGroovy7407WrappingGrapeEngine.createAndSet();
+
+            assertTrue("must be true", originalInstance != Grape.getInstance());
+
+            File dir = tempFolder.getRoot();
+            File f1 = new File(dir, "Script1.groovy");
+            TestUtil.setFileText(f1, "return Util.isUpperCase('C' as char)");
+            File f2 = new File(dir, "Util.groovy");
+            TestUtil.setFileText(f2, "@Grab('com.google.guava:guava:18.0')\n"
+                            + "import com.google.common.base.Ascii\n"
+                            + "class Util {\n"
+                            + "  static boolean isUpperCase(def c) {\n"
+                            + "    return Ascii.isUpperCase(c)\n"
+                            + "  }\n"
+                            + "}\n"
+            );
+
+            GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
+
+            Grengine gren = new Grengine(groovyClassLoader, dir);
+
+            assertNull(gren.getLastUpdateException());
+            assertEquals(true, gren.run(f1));
+            assertEquals(true, gren.run("return Util.isUpperCase('C' as char)"));
+        } finally {
+            // Resetting so that other unit tests don't use this workaround
+            WorkaroundGroovy7407WrappingGrapeEngine.setEngine(originalInstance);
+        }
     }
 
 }
