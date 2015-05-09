@@ -33,7 +33,10 @@ public class CodeUtil {
     
     /**
      * converts the given codes to a list of code.
-     * 
+     *
+     * @param codes codes
+     *
+     * @return list of code
      * @throws IllegalArgumentException if the sources array is null
      * 
      * @since 1.0

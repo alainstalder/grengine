@@ -55,7 +55,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script texts,
      * using the default source factory.
+     *
+     * @param texts script texts
      * 
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final Collection<String> texts) {
@@ -65,7 +69,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given script texts,
      * using the default source factory.
-     * 
+     *
+     * @param texts script texts
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final String... texts) {
@@ -75,7 +83,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script texts,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param texts script texts
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Collection<String> texts) {
@@ -89,7 +102,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given script texts,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param texts script texts
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final String... texts) {
@@ -99,7 +117,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given map of desired class name to script text,
      * using the default source factory.
-     * 
+     *
+     * @param texts map of desired class name to script text
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final Map<String,String> texts) {
@@ -109,7 +131,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given map of of desired class name to script text,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param texts map of desired class name to script text
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Map<String,String> texts) {
@@ -124,7 +151,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script files,
      * using the default source factory.
-     * 
+     *
+     * @param files script files
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final Collection<File> files) {
@@ -134,7 +165,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given script files,
      * using the default source factory.
-     * 
+     *
+     * @param files script files
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final File... files) {
@@ -144,7 +179,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script files,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param files script files
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final Collection<File> files) {
@@ -158,7 +198,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given script files,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param files script files
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final File... files) {
@@ -169,7 +214,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script URLs,
      * using the default source factory.
-     * 
+     *
+     * @param urls script URLs
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final Collection<URL> urls) {
@@ -179,7 +228,11 @@ public class SourceUtil {
     /**
      * creates a source set from the given script URLs,
      * using the default source factory.
-     * 
+     *
+     * @param urls script URLs
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final URL... urls) {
@@ -189,7 +242,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given collections of script URLs,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param urls script URLs
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final Collection<URL> urls) {
@@ -203,7 +261,12 @@ public class SourceUtil {
     /**
      * creates a source set from the given script URLs,
      * using the given source factory.
-     * 
+     *
+     * @param sourceFactory source factory
+     * @param urls script URLs
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final URL... urls) {
@@ -213,7 +276,11 @@ public class SourceUtil {
     
     /**
      * converts the given source to a set of source that contains only the given source.
-     * 
+     *
+     * @param source source
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> sourceToSourceSet(final Source source) {
@@ -224,7 +291,11 @@ public class SourceUtil {
 
     /**
      * converts the given collection of source to a set of source.
-     * 
+     *
+     * @param sourceCollection source collection
+     *
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> sourceCollectionToSourceSet(final Collection<Source> sourceCollection) {
@@ -237,7 +308,10 @@ public class SourceUtil {
 
     /**
      * converts the given source varargs or array of source to a set of source.
-     * 
+     *
+     * @param sourceArray source varargs or array of source
+     * @return source set
+     *
      * @since 1.0
      */
     public static Set<Source> sourceArrayToSourceSet(final Source... sourceArray) {
@@ -255,6 +329,8 @@ public class SourceUtil {
      * 
      * @param text the text to hash
      * @param algorithm the hash algorithm to use
+     *
+     * @return hash hex string
      * @throws UnsupportedOperationException if the given hash algorithm is not available
      * 
      * @since 1.0
@@ -277,6 +353,8 @@ public class SourceUtil {
      * is calculated and finally returned as a hex string.
      * 
      * @param text the text to hash
+     *
+     * @return MD5 hash text string
      * @throws UnsupportedOperationException if MD5 is not available (which is very unlikely)
      * 
      * @since 1.0
@@ -294,6 +372,9 @@ public class SourceUtil {
      * 
      * @param text text
      * @param maxLen maximal length of the returned text
+     *
+     * @return start of the given text with line breaks removed
+     *
      * @throws IllegalArgumentException if maxLen is less than 10
      * 
      * @since 1.0
@@ -325,6 +406,8 @@ public class SourceUtil {
      * 
      * @param url URL
      * @param encoding encoding, e.g. "UTF-8"
+     *
+     * @return URL content text
      * @throws IOException if could not read from the URL
      * 
      * @since 1.0
@@ -354,7 +437,11 @@ public class SourceUtil {
      * to the absolute file if getting the canonical file failed.
      * <p>
      * The returned file is thus guaranteed to be an absolute file.
-     * 
+     *
+     * @param file file
+     *
+     * @return canonical or absolute file
+     *
      * @since 1.0
      */
     public static File toCanonicalOrAbsoluteFile(final File file) {

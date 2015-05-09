@@ -47,6 +47,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -66,6 +68,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
 
     /**
      * constructor from given compiler configuration and defaults for all other settings.
+     *
+     * @param compilerConfiguration compiler configuration
      * 
      * @throws IllegalArgumentException if the compiler configuration is null
      * 
@@ -88,6 +92,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
 
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -97,6 +103,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
 
     /**
      * gets the compiler configuration.
+     *
+     * @return compiler configuration
      * 
      * @since 1.0
      */
@@ -131,6 +139,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
         /**
          * sets the compiler configuration,
          * default is a new instance of {@link CompilerConfiguration} with default settings.
+         *
+         * @param compilerConfiguration compiler configuration
          * 
          * @return this, for chaining calls
          * 
@@ -144,6 +154,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
         
         /**
          * gets the compiler configuration.
+         *
+         * @return compiler configuration
          * 
          * @since 1.0
          */
@@ -163,6 +175,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
         
         /**
          * builds a new instance of {@link DefaultGroovyCompilerFactory}.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */

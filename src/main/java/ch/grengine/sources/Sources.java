@@ -38,6 +38,8 @@ public interface Sources {
     
     /**
      * updates the source set, if necessary, and returns it.
+     *
+     * @return source set
      * 
      * @since 1.0
      */
@@ -50,6 +52,8 @@ public interface Sources {
      * You should not rely on this number to increase monotonically or even
      * to represent an actual date and time, but instead consider the sources
      * changed each time this method returns a different value.
+     *
+     * @return last modified
      * 
      * @since 1.0
      */
@@ -57,6 +61,8 @@ public interface Sources {
     
     /**
      * gets the name of the sources.
+     *
+     * @return name of the sources
      * 
      * @since 1.0
      */
@@ -64,6 +70,8 @@ public interface Sources {
 
     /**
      * gets the compiler factory that should be used to compile the sources.
+     *
+     * @return compiler factory
      * 
      * @since 1.0
      */
@@ -71,7 +79,9 @@ public interface Sources {
     
     /**
      * returns a string suitable for logging.
-     * 
+     *
+     * @return a string suitable for logging
+     *
      * @since 1.0
      */
     String toString();

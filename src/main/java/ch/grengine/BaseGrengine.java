@@ -79,6 +79,8 @@ public abstract class BaseGrengine {
     
     /**
      * gets the engine.
+     *
+     * @return engine
      * 
      * @since 1.0
      */
@@ -88,9 +90,11 @@ public abstract class BaseGrengine {
 
     /**
      * gets the default loader instance, which is implicitly used when no specific loader is indicated.
-     * 
+     *
+     * @return default loader instance
+     *
      * @see Engine#getLoader()
-     * 
+     *
      * @since 1.0
      */
     public Loader getLoader() {
@@ -101,6 +105,8 @@ public abstract class BaseGrengine {
      * creates and gets a new attached loader, backed by the same bytecode
      * as all other shared loaders created by this engine
      * and automatically updated if code layers are set.
+     *
+     * @return new attached loader
      * 
      * @since 1.0
      */
@@ -118,6 +124,8 @@ public abstract class BaseGrengine {
      * variables of scripts between sessions (security feature); a detached
      * loader in order to keep code layers constant during the lifetime
      * of the session (consistent behavior of Groovy script calls).
+     *
+     * @return new detached loader
      * 
      * @since 1.0
      */
@@ -131,7 +139,11 @@ public abstract class BaseGrengine {
      * Note that if a class with the main class name is available for loading,
      * but was not compiled as part of a set of {@link Source} that included
      * the given source, that class will not count for loading.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     *
+     * @return main class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -147,7 +159,12 @@ public abstract class BaseGrengine {
      * Note that if a class with the given class name is available for loading,
      * but was not compiled as part of a set of {@link Source} that included
      * the given source, that class will not count for loading.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     * @param name class name
+     *
+     * @return class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -162,7 +179,11 @@ public abstract class BaseGrengine {
      * <p>
      * Note that a top code cache is not searched in this case,
      * because each set of source has its own top loader.
-     * 
+     *
+     * @param loader loader
+     * @param name class name
+     *
+     * @return class
      * @throws LoadException if loading failed, including if the class was not found
      * 
      * @see Engine#loadClass(Loader loader, String name)
@@ -175,7 +196,9 @@ public abstract class BaseGrengine {
     
     /**
      * gets the source factory used to create instances of {@link Source},
-     * often implicitly from script text or file or URL. 
+     * often implicitly from script text or file or URL.
+     *
+     * @return source factory
      * 
      * @since 1.0
      */
@@ -185,6 +208,10 @@ public abstract class BaseGrengine {
 
     /**
      * gets source from script text.
+     *
+     * @param text script text
+     *
+     * @return source
      * 
      * @see SourceFactory#fromText(String text)
      */
@@ -194,7 +221,12 @@ public abstract class BaseGrengine {
 
     /**
      * gets source from script text and desired class name.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return source
+     *
      * @see SourceFactory#fromText(String text, String desiredClassName)
      * 
      * @since 1.0
@@ -205,6 +237,10 @@ public abstract class BaseGrengine {
 
     /**
      * gets source from script file.
+     *
+     * @param file script file
+     *
+     * @return source
      * 
      * @see SourceFactory#fromFile(File file)
      */
@@ -214,7 +250,11 @@ public abstract class BaseGrengine {
     
     /**
      * gets source from script URL.
-     * 
+     *
+     * @param url script URL
+     *
+     * @return source
+     *
      * @see SourceFactory#fromUrl(URL url)
      * 
      * @since 1.0
@@ -228,7 +268,10 @@ public abstract class BaseGrengine {
     /**
      * loads a class (default loader, text-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param text script text
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -241,7 +284,11 @@ public abstract class BaseGrengine {
     /**
      * loads a class (given loader, text-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -254,7 +301,11 @@ public abstract class BaseGrengine {
     /**
      * loads a class (default loader, text-based source with desired class name),
      * compiling first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -267,7 +318,12 @@ public abstract class BaseGrengine {
     /**
      * loads a class (given loader, text-based source with desired class name),
      * compiling first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -281,7 +337,10 @@ public abstract class BaseGrengine {
     /**
      * loads a class (default loader, file-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param file script file
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -294,7 +353,11 @@ public abstract class BaseGrengine {
     /**
      * loads a class (given loader, file-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param file script file
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -307,7 +370,10 @@ public abstract class BaseGrengine {
     /**
      * loads a class (default loader, URL-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param url script URL
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -320,7 +386,11 @@ public abstract class BaseGrengine {
     /**
      * loads a class (given loader, URL-based source),
      * compiling first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param url script URL
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -333,7 +403,10 @@ public abstract class BaseGrengine {
     /**
      * loads a class (default loader, given source),
      * compiling first if necessary.
-     * 
+     *
+     * @param source source
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -346,7 +419,11 @@ public abstract class BaseGrengine {
     /**
      * loads a class (given loader, given source),
      * compiling first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     *
+     * @return loaded class
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * 
@@ -359,7 +436,10 @@ public abstract class BaseGrengine {
     
     /**
      * creates an instance of {@link Script} from the given class.
+     *
+     * @param clazz class
      * 
+     * @return new instance
      * @throws CreateException if could not create the instance or the given class is not a script
      * 
      * @since 1.0
@@ -376,7 +456,10 @@ public abstract class BaseGrengine {
     /**
      * creates a script (default loader, text-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -391,7 +474,11 @@ public abstract class BaseGrengine {
     /**
      * creates a script (given loader, text-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -406,7 +493,11 @@ public abstract class BaseGrengine {
     /**
      * creates a script (default loader, text-based source with desired class name),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -421,7 +512,12 @@ public abstract class BaseGrengine {
     /**
      * creates a script (given loader, text-based source with desired class name),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -436,7 +532,10 @@ public abstract class BaseGrengine {
     /**
      * creates a script (default loader, file-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param file script file
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -451,7 +550,11 @@ public abstract class BaseGrengine {
     /**
      * creates a script (given loader, file-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param file script file
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -466,7 +569,10 @@ public abstract class BaseGrengine {
     /**
      * creates a script (default loader, URL-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param url script URL
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -481,7 +587,11 @@ public abstract class BaseGrengine {
     /**
      * creates a script (given loader, URL-based source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param url script URL
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -496,7 +606,10 @@ public abstract class BaseGrengine {
     /**
      * creates a script (default loader, given source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param source source
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -511,7 +624,11 @@ public abstract class BaseGrengine {
     /**
      * creates a script (given loader, given source),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     *
+     * @return new instance
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
@@ -534,6 +651,8 @@ public abstract class BaseGrengine {
      * creates an empty binding.
      * <p>
      * Same as {@code new Binding()}.
+     *
+     * @return new binding
      * 
      * @since 1.0
      */
@@ -543,7 +662,12 @@ public abstract class BaseGrengine {
 
     /**
      * creates a binding using the given key and value.
-     * 
+     *
+     * @param key key
+     * @param value value
+     *
+     * @return new binding
+     *
      * @since 1.0
      */
     public Binding binding(final String key, final Object value) {
@@ -554,7 +678,14 @@ public abstract class BaseGrengine {
 
     /**
      * creates a binding using the given keys and values.
-     * 
+     *
+     * @param key1 key 1
+     * @param value1 value 1
+     * @param key2 key 2
+     * @param value2 value 2
+     *
+     * @return new binding
+     *
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2) {
@@ -566,7 +697,16 @@ public abstract class BaseGrengine {
 
     /**
      * creates a binding using the given keys and values.
-     * 
+     *
+     * @param key1 key 1
+     * @param value1 value 1
+     * @param key2 key 2
+     * @param value2 value 2
+     * @param key3 key 3
+     * @param value3 value 3
+     *
+     * @return new binding
+     *
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
@@ -580,7 +720,18 @@ public abstract class BaseGrengine {
 
     /**
      * creates a binding using the given keys and values.
-     * 
+     *
+     * @param key1 key 1
+     * @param value1 value 1
+     * @param key2 key 2
+     * @param value2 value 2
+     * @param key3 key 3
+     * @param value3 value 3
+     * @param key4 key 4
+     * @param value4 value 4
+     *
+     * @return new binding
+     *
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
@@ -595,11 +746,23 @@ public abstract class BaseGrengine {
 
     /**
      * creates a binding using the given keys and values.
-     * 
+     *
+     * @param key1 key 1
+     * @param value1 value 1
+     * @param key2 key 2
+     * @param value2 value 2
+     * @param key3 key 3
+     * @param value3 value 3
+     * @param key4 key 4
+     * @param value4 value 4
+     * @param key5 key 5
+     * @param value5 value 5
      * @param moreKeyValuePairs must be an even number of arguments (key/value) and all keys must be strings
      * 
      * @throws IllegalArgumentException if the number of arguments is odd or if a key is not a string
-     * 
+     *
+     * @return new binding
+     *
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
@@ -632,9 +795,11 @@ public abstract class BaseGrengine {
      * runs the given script (empty binding).
      * <p>
      * Note that the script may throw anything, checked or unchecked.
+     *
+     * @param script script
      * 
      * @return what the script returned
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -646,9 +811,12 @@ public abstract class BaseGrengine {
      * runs the given script (given binding).
      * <p>
      * Note that the script may throw anything, checked or unchecked.
-     * 
+     *
+     * @param script script
+     * @param bindingMap binding map
+     *
      * @return what the script returned
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -660,9 +828,12 @@ public abstract class BaseGrengine {
      * runs the given script (given binding).
      * <p>
      * Note that the script may throw anything, checked or unchecked.
-     * 
+     *
+     * @param script script
+     * @param binding binding
+     *
      * @return what the script returned
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -675,11 +846,14 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, text-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -691,11 +865,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, text-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -707,11 +885,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, text-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -723,11 +905,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -739,11 +925,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -755,11 +946,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -772,27 +968,36 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, text-based source with desired class name, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
-    public Object run(final String text, final String name)
+    public Object run(final String text, final String desiredClassName)
             throws CompileException, LoadException, CreateException {
-        return run(loader, sourceFactory.fromText(text, name), new Binding());
+        return run(loader, sourceFactory.fromText(text, desiredClassName), new Binding());
     }
 
     /**
      * creates and runs a script (default loader, text-based source with desired class name, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -804,11 +1009,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, text-based source with desired class name, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -820,11 +1030,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source with desired class name, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -836,11 +1051,17 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source with desired class name, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param desiredClassName desired class name
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - nything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -853,11 +1074,17 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, text-based source with desired class name, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param text script text
+     * @param desiredClassName desired class name
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -871,11 +1098,14 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, file-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param file script file
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -887,11 +1117,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, file-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param file script file
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -903,11 +1137,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, file-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param file script file
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -919,11 +1157,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, file-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param file script file
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -935,11 +1177,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, file-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param file script file
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -951,11 +1198,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, file-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param file script file
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -968,11 +1220,14 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, URL-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param url script URL
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -984,11 +1239,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, URL-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param url script URL
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1000,11 +1259,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, URL-based source, new binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param url script URL
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1016,11 +1279,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, URL-based source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param url script URL
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1032,11 +1299,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, URL-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param url script URL
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1048,11 +1320,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, URL-based source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param url script URL
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1065,11 +1342,14 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, given source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param source source
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1081,11 +1361,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, given source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param source source
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1097,11 +1381,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (default loader, given source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param source source
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1113,11 +1401,15 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, given source, empty binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1129,11 +1421,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, given source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     * @param bindingMap binding map
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */
@@ -1145,11 +1442,16 @@ public abstract class BaseGrengine {
     /**
      * creates and runs a script (given loader, given source, given binding),
      * compiling and loading first if necessary.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     * @param binding binding
+     *
+     * @return what the script returned
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @throws Throwable anything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */

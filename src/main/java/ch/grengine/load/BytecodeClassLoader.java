@@ -182,7 +182,11 @@ public class BytecodeClassLoader extends SourceClassLoader {
     
     /**
      * Helper method for loading the main class of the given source from the given class loader.
-     * 
+     *
+     * @param classLoader class loader
+     * @param source source
+     *
+     * @return main class
      * @throws LoadException if loading failed, including if the class was not found
      * 
      * @since 1.0
@@ -208,7 +212,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
     /**
      * Helper method for loading a class with the given name and from the given source
      * from the given class loader.
-     * 
+     *
+     * @param classLoader class loader
+     * @param source source
+     * @param name class name
+     *
+     * @return class
      * @throws LoadException if loading failed, including if the class was not found
      * 
      * @since 1.0
@@ -240,6 +249,8 @@ public class BytecodeClassLoader extends SourceClassLoader {
     
     /**
      * gets the code.
+     *
+     * @return code
      * 
      * @since 1.0
      */

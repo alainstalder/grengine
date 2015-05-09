@@ -33,6 +33,8 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     
     /**
      * constructor from parent class loader.
+     *
+     * @param parent parent class loader
      * 
      * @since 1.0
      */
@@ -45,7 +47,10 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * <p>
      * First searches for the source, then loads the main class that resulted
      * from compiling the source.
-     * 
+     *
+     * @param source source
+     *
+     * @return main class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -58,7 +63,11 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * <p>
      * First searches for the source, only then for the class with given name
      * as part of the classes that resulted from compiling the source.
-     * 
+     *
+     * @param source source
+     * @param name class name
+     *
+     * @return class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -69,6 +78,8 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     /**
      * tries to find the bytecode class loader that can load classes that were created
      * by compiling the given source.
+     *
+     * @param source source
      * 
      * @return bytecode class loader if found, null otherwise
      * 
@@ -78,6 +89,8 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     
     /**
      * gets the load mode.
+     *
+     * @return load mode
      * 
      * @since 1.0
      */
@@ -85,7 +98,9 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     
     /**
      * creates a clone with identical behavior, typically sharing the same bytecode.
-     * 
+     *
+     * @return clone
+     *
      * @since 1.0
      */
     @Override

@@ -48,6 +48,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
         
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -109,6 +111,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
 
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -118,6 +122,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
 
     /**
      * gets the compiler factory.
+     *
+     * @return compiler factory
      * 
      * @since 1.0
      */
@@ -153,6 +159,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
         
         /**
          * constructor from parent class loader.
+         *
+         * @param parent parent class loader
          * 
          * @since 1.0
          */
@@ -164,7 +172,9 @@ public class DefaultTopCodeCache implements TopCodeCache {
         /**
          * sets the compiler factory,
          * default is a new instance {@link DefaultGroovyCompilerFactory} with default settings
-         * 
+         *
+         * @param compilerFactory compiler factory
+         *
          * @return this, for chaining calls
          * 
          * @since 1.0
@@ -177,6 +187,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
         
         /**
          * gets the parent class loader.
+         *
+         * @return parent class loader
          * 
          * @since 1.0
          */
@@ -186,6 +198,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
         
         /**
          * gets the compiler factory.
+         *
+         * @return compiler factory
          * 
          * @since 1.0
          */
@@ -205,6 +219,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
         
         /**
          * builds a new instance of {@link DefaultGroovyCompiler}.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */

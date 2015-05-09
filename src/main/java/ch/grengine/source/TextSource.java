@@ -29,6 +29,8 @@ public interface TextSource extends Source {
     
     /**
      * gets the script text.
+     *
+     * @return script text
      * 
      * @since 1.0
      */

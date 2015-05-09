@@ -29,7 +29,11 @@ public interface CompilerFactory {
     
     /**
      * creates a new {@link Compiler} instance with given parent class loader.
-     * 
+     *
+     * @param parent parent class loader
+     *
+     * @return new compiler instance
+     *
      * @since 1.0
      */
     Compiler newCompiler(ClassLoader parent);

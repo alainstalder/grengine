@@ -29,7 +29,11 @@ public interface TopCodeCacheFactory {
     
     /**
      * creates a new {@link TopCodeCache} instance with given parent class loader.
+     *
+     * @param parent parent class loader
      * 
+     * @return instance
+     *
      * @since 1.0
      */
     TopCodeCache newTopCodeCache(ClassLoader parent);

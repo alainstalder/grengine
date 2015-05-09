@@ -31,6 +31,8 @@ public interface UrlSource extends Source {
 
     /**
      * gets the script URL.
+     *
+     * @return script URL
      * 
      * @since 1.0
      */

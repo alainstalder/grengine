@@ -54,6 +54,7 @@
       header = 'Grengine'
       author = true
       links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://groovy.codehaus.org/api/' ]
+      tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
     }
   }
 

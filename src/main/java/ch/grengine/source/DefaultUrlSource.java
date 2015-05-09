@@ -38,7 +38,9 @@ public class DefaultUrlSource extends BaseSource implements UrlSource {
     
     /**
      * constructor from URL.
-     * 
+     *
+     * @param url URL
+     *
      * @throws IllegalArgumentException if URL is null
      * 
      * @since 1.0

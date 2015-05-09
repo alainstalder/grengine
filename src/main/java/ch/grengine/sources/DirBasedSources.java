@@ -51,6 +51,8 @@ public class DirBasedSources extends BaseSources {
 
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -68,6 +70,8 @@ public class DirBasedSources extends BaseSources {
     /**
      * gets the updated source set.
      *
+     * @return updated source set
+     *
      * @throws NullPointerException if the script file directory or a subdirectory cannot be listed
      *
      * @since 1.0
@@ -81,6 +85,8 @@ public class DirBasedSources extends BaseSources {
 
     /**
      * gets the script file directory.
+     *
+     * @return script file directory
      * 
      * @since 1.0
      */
@@ -90,6 +96,8 @@ public class DirBasedSources extends BaseSources {
     
     /**
      * gets the dir mode.
+     *
+     * @return dir mode
      * 
      * @since 1.0
      */
@@ -99,6 +107,8 @@ public class DirBasedSources extends BaseSources {
     
     /**
      * gets the set of script extensions.
+     *
+     * @return set of script extensions
      * 
      * @since 1.0
      */
@@ -108,6 +118,8 @@ public class DirBasedSources extends BaseSources {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -172,7 +184,9 @@ public class DirBasedSources extends BaseSources {
          * <p>
          * The given file is immediately converted to the canonical file,
          * with fallback to the absolute file.
-         * 
+         *
+         * @param dir script file directory
+         *
          * @throws IllegalArgumentException if the directory is null
          * 
          * @since 1.0
@@ -187,6 +201,8 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * sets the dir mode, default is not to scan subdirectories.
+         *
+         * @param dirMode dir mode
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -201,6 +217,8 @@ public class DirBasedSources extends BaseSources {
 
         /**
          * sets the script extensions, default is only "groovy".
+         *
+         * @param scriptExtensions script extensions
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -215,7 +233,9 @@ public class DirBasedSources extends BaseSources {
 
         /**
          * sets the script extensions, default is only "groovy".
-         * 
+         *
+         * @param scriptExtensions script extensions
+         *
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
          * 
@@ -230,6 +250,8 @@ public class DirBasedSources extends BaseSources {
         /**
          * sets the sources name, default is the canonical file path,
          * with fallback to the absolute file path.
+         *
+         * @param name sources name
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -245,6 +267,8 @@ public class DirBasedSources extends BaseSources {
         /**
          * sets the compiler factory for compiling sources, default
          * is a new instance of {@link DefaultGroovyCompilerFactory}.
+         *
+         * @param compilerFactory compiler factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -260,6 +284,8 @@ public class DirBasedSources extends BaseSources {
         /**
          * sets the source factory for creating sources from files, default
          * is a new instance of {@link DefaultSourceFactory}.
+         *
+         * @param sourceFactory source factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -275,6 +301,8 @@ public class DirBasedSources extends BaseSources {
         /**
          * sets the latency in milliseconds for checking if script files
          * in the directory have changed, default is {@link #DEFAULT_LATENCY_MS}.
+         *
+         * @param latencyMs latency in milliseconds
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -288,7 +316,9 @@ public class DirBasedSources extends BaseSources {
         }
 
         /**
-         * gets the directory.
+         * gets the script file directory.
+         *
+         * @return script file directory
          * 
          * @since 1.0
          */
@@ -298,14 +328,19 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * gets the dir mode.
+         *
+         * @return dir mode
          * 
          * @since 1.0
          */
         public DirMode getDirMode() {
             return dirMode;
         }
+
         /**
          * gets the script extensions.
+         *
+         * @return script extensions
          * 
          * @since 1.0
          */
@@ -315,6 +350,8 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * gets the sources name.
+         *
+         * @return sources name
          * 
          * @since 1.0
          */
@@ -324,6 +361,8 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * gets the compiler factory.
+         *
+         * @return compiler factory
          * 
          * @since 1.0
          */
@@ -333,14 +372,19 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * gets the source factory.
+         *
+         * @return source factory
          * 
          * @since 1.0
          */
         public SourceFactory getSourceFactory() {
             return sourceFactory;
         }
+
         /**
          * gets the latency in milliseconds.
+         *
+         * @return latency in milliseconds
          * 
          * @since 1.0
          */
@@ -375,7 +419,9 @@ public class DirBasedSources extends BaseSources {
         
         /**
          * builds a new instance of {@link DirBasedSources}.
-         * 
+         *
+         * @return new instance
+         *
          * @since 1.0
          */
         public DirBasedSources build() {

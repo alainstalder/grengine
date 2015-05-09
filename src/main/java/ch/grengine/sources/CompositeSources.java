@@ -47,6 +47,8 @@ public class CompositeSources extends BaseSources {
 
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -68,6 +70,8 @@ public class CompositeSources extends BaseSources {
         
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -102,6 +106,8 @@ public class CompositeSources extends BaseSources {
         
         /**
          * constructor from a collection of sources.
+         *
+         * @param sourcesCollection collection of sources
          * 
          * @throws IllegalArgumentException if the sources collection is null
          * 
@@ -117,6 +123,8 @@ public class CompositeSources extends BaseSources {
 
         /**
          * sets the sources name, default is a generated random ID.
+         *
+         * @param name sources name
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -132,6 +140,8 @@ public class CompositeSources extends BaseSources {
         /**
          * sets the compiler factory for compiling sources, default
          * is a new instance of {@link DefaultGroovyCompilerFactory}.
+         *
+         * @param compilerFactory compiler factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -147,6 +157,8 @@ public class CompositeSources extends BaseSources {
         /**
          * sets the latency in milliseconds for checking if script files
          * in the directory have changed, default is {@link #DEFAULT_LATENCY_MS}.
+         *
+         * @param latencyMs latency in milliseconds
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -161,6 +173,8 @@ public class CompositeSources extends BaseSources {
 
         /**
          * gets the collection of sources.
+         *
+         * @return collection of sources
          * 
          * @since 1.0
          */
@@ -170,6 +184,8 @@ public class CompositeSources extends BaseSources {
         
         /**
          * gets the sources name.
+         *
+         * @return sources name
          * 
          * @since 1.0
          */
@@ -179,6 +195,8 @@ public class CompositeSources extends BaseSources {
         
         /**
          * gets the compiler factory.
+         *
+         * @return compiler factory
          * 
          * @since 1.0
          */
@@ -188,6 +206,8 @@ public class CompositeSources extends BaseSources {
         
         /**
          * gets the latency in milliseconds.
+         *
+         * @return latency in milliseconds
          * 
          * @since 1.0
          */
@@ -213,7 +233,9 @@ public class CompositeSources extends BaseSources {
         
         /**
          * builds a new instance of {@link CompositeSources}.
-         * 
+         *
+         * @return new instance
+         *
          * @since 1.0
          */
         public CompositeSources build() {

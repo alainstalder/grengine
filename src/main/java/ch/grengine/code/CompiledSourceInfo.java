@@ -45,6 +45,7 @@ public class CompiledSourceInfo {
      * 
      * @param source the originating {@link Source} instance
      * @param mainClassName the main class name
+     * @param classNames all class names
      * @param lastModifiedAtCompileTime the last modified at compile time
      * @throws IllegalArgumentException if source or main class name are null
      * 
@@ -69,7 +70,9 @@ public class CompiledSourceInfo {
 
     /**
      * gets the originating {@link Source} instance.
-     * 
+     *
+     * @return originating source
+     *
      * @since 1.0
      */
     public Source getSource() {
@@ -78,6 +81,8 @@ public class CompiledSourceInfo {
 
     /**
      * gets the main class name.
+     *
+     * @return main class name
      * 
      * @since 1.0
      */
@@ -87,6 +92,8 @@ public class CompiledSourceInfo {
 
     /**
      * gets all class names.
+     *
+     * @return all class names
      * 
      * @since 1.0
      */
@@ -96,6 +103,8 @@ public class CompiledSourceInfo {
 
     /**
      * gets the last modified at compile time.
+     *
+     * @return last modified at compile time
      * 
      * @since 1.0
      */
@@ -105,6 +114,8 @@ public class CompiledSourceInfo {
 
     /**
      * returns a string suitable for logging.
+     *
+     * @return a string suitable for logging
      * 
      * @since 1.0
      */

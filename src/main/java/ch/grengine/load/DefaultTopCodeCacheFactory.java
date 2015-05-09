@@ -35,6 +35,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -54,7 +56,9 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
     
     /**
      * constructor from given compiler factory and defaults for all other settings.
-     * 
+     *
+     * @param compilerFactory compiler factory
+     *
      * @throws IllegalArgumentException if the compiler factory is null
      * 
      * @since 1.0
@@ -75,6 +79,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
 
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -84,6 +90,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
 
     /**
      * gets the compiler factory.
+     *
+     * @return compiler factory
      * 
      * @since 1.0
      */
@@ -118,6 +126,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         /**
          * sets the compiler factory,
          * default is a new instance of {@link DefaultGroovyCompilerFactory} with default settings.
+         *
+         * @param compilerFactory compiler factory
          * 
          * @return this, for chaining calls
          * 
@@ -131,6 +141,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         
         /**
          * gets the compiler factory.
+         *
+         * @return compiler factory
          * 
          * @since 1.0
          */
@@ -150,6 +162,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         
         /**
          * builds a new instance of {@link DefaultTopCodeCacheFactory}.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */

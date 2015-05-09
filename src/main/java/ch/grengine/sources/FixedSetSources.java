@@ -40,6 +40,8 @@ public class FixedSetSources extends BaseSources {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -56,6 +58,8 @@ public class FixedSetSources extends BaseSources {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -90,6 +94,8 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * constructor from fixed source set.
+         *
+         * @param sourceSet fixed source set
          * 
          * @throws IllegalArgumentException if the source set is null
          * 
@@ -105,6 +111,8 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * sets the sources name, default is a generated random ID.
+         *
+         * @param name sources name
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -120,6 +128,8 @@ public class FixedSetSources extends BaseSources {
         /**
          * sets the compiler factory for compiling sources, default
          * is a new instance of {@link DefaultGroovyCompilerFactory}.
+         *
+         * @param compilerFactory compiler factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -135,6 +145,8 @@ public class FixedSetSources extends BaseSources {
         /**
          * sets the latency in milliseconds for checking if script files
          * in the directory have changed, default is {@link #DEFAULT_LATENCY_MS}.
+         *
+         * @param latencyMs latency in milliseconds
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -149,6 +161,8 @@ public class FixedSetSources extends BaseSources {
 
         /**
          * gets the fixed source set.
+         *
+         * @return fixed source set
          * 
          * @since 1.0
          */
@@ -158,6 +172,8 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * gets the sources name.
+         *
+         * @return sources name
          * 
          * @since 1.0
          */
@@ -167,6 +183,8 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * gets the compiler factory.
+         *
+         * @return compiler factory
          * 
          * @since 1.0
          */
@@ -176,6 +194,8 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * gets the latency in milliseconds.
+         *
+         * @return latency in milliseconds
          * 
          * @since 1.0
          */
@@ -201,7 +221,9 @@ public class FixedSetSources extends BaseSources {
         
         /**
          * builds a new instance of {@link FixedSetSources}.
-         * 
+         *
+         * @return new instance
+         *
          * @since 1.0
          */
         public FixedSetSources build() {

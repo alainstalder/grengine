@@ -32,6 +32,8 @@ public class CreateException extends GrengineException {
 
     /**
      * constructor from exception message.
+     *
+     * @param message message
      * 
      * @since 1.0
      */
@@ -41,6 +43,9 @@ public class CreateException extends GrengineException {
 
     /**
      * constructor from exception message and causing throwable.
+     *
+     * @param message message
+     * @param cause cause
      * 
      * @since 1.0
      */

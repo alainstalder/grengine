@@ -32,6 +32,10 @@ public interface SourceFactory {
     
     /**
      * gets source from script text.
+     *
+     * @param text script text
+     *
+     * @return source
      * 
      * @since 1.0
      */
@@ -39,21 +43,34 @@ public interface SourceFactory {
     
     /**
      * gets source from script text and desired class name.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
+     * @return source
+     *
      * @since 1.0
      */
     Source fromText(String text, String desiredClassName);
     
     /**
      * gets source from script file.
-     * 
+     *
+     * @param file script file
+     *
+     * @return source
+     *
      * @since 1.0
      */
     Source fromFile(File file);
     
     /**
      * gets source from script URL.
-     * 
+     *
+     * @param url script URL
+     *
+     * @return source
+     *
      * @since 1.0
      */
     Source fromUrl(URL url);

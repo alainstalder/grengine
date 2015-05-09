@@ -28,6 +28,7 @@ package ch.grengine.source;
  * <li>UTF-8 encode the script text to bytes
  * <li>calculate the MD5 hash
  * <li>convert the resulting bytes to a hex string
+ * </ul>
  * <p>
  * The method {@link #getLastModified()} always returns 0.
  * 
@@ -45,7 +46,9 @@ public class DefaultTextSource extends BaseSource implements TextSource {
      * <p>
      * If the script text does not explicitly declare a class, the name
      * of the compiled script class will normally be {@literal "Script<text-hash>"}.
-     * 
+     *
+     * @param text script text
+     *
      * @throws IllegalArgumentException if text is null
      * 
      * @since 1.0
@@ -63,7 +66,10 @@ public class DefaultTextSource extends BaseSource implements TextSource {
      * <p>
      * If the script text does not explicitly declare a class, the name
      * of the compiled script class will normally be the given desired class name.
-     * 
+     *
+     * @param text script text
+     * @param desiredClassName desired class name
+     *
      * @throws IllegalArgumentException if text or desired class name is null
      * 
      * @since 1.0

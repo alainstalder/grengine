@@ -43,7 +43,11 @@ public interface TopCodeCache {
         
     /**
      * gets the code from the cache, recompiling the given source if it had been modified.
-     * 
+     *
+     * @param source source
+     *
+     * @return code
+     *
      * @throws CompileException if compilation failed
      * @throws IllegalArgumentException if source is null
      * 
@@ -55,6 +59,7 @@ public interface TopCodeCache {
      * sets the parent class loader and clears the cache.
      * 
      * @param parent parent class loader
+     *
      * @throws IllegalArgumentException if parent is null
      * 
      * @since 1.0
@@ -63,6 +68,8 @@ public interface TopCodeCache {
     
     /**
      * gets the parent class loader.
+     *
+     * @return parent class loader
      * 
      * @since 1.0
      */
@@ -77,6 +84,8 @@ public interface TopCodeCache {
     
     /**
      * creates a clone with the same cached bytecode.
+     *
+     * @return clone
      * 
      * @since 1.0
      */

@@ -42,7 +42,8 @@ public class ClassNameConflictAnalyzer {
      * that contain a class with that name.
      * 
      * @param codeLayers code layers
-     * 
+     *
+     * @return map of class name to list of code layers
      * @throws IllegalArgumentException if code layers are null
      * 
      * @since 1.0
@@ -72,7 +73,8 @@ public class ClassNameConflictAnalyzer {
      * occurs more than once in the code layers.
      * 
      * @param codeLayers code layers
-     * 
+     *
+     * @return map of class name to list of code layers
      * @throws IllegalArgumentException if code layers are null
      * 
      * @since 1.0
@@ -103,7 +105,8 @@ public class ClassNameConflictAnalyzer {
      * 
      * @param parent parent class loader
      * @param codeLayers code layers
-     * 
+     *
+     * @return map of class name to list of code layers
      * @throws IllegalArgumentException if the parent class loader or code layers are null
      * 
      * @since 1.0

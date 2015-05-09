@@ -42,6 +42,8 @@ public interface Engine {
     
     /**
      * gets the default attached loader.
+     *
+     * @return default attached loader
      * 
      * @since 1.0
      */
@@ -51,7 +53,9 @@ public interface Engine {
      * creates and gets a new attached loader, backed by the same bytecode
      * as all other shared loaders created by this engine
      * and automatically updated if code layers are set.
-     * 
+     *
+     * @return new attached loader
+     *
      * @since 1.0
      */
     Loader newAttachedLoader();
@@ -66,7 +70,9 @@ public interface Engine {
      * variables of scripts between sessions (security feature); a detached
      * loader in order to keep code layers constant during the lifetime
      * of the session (consistent behavior of Groovy script calls).
-     * 
+     *
+     * @return new detached loader
+     *
      * @since 1.0
      */
     Loader newDetachedLoader();
@@ -77,7 +83,11 @@ public interface Engine {
      * Note that if a class with the main class name is available for loading,
      * but was not compiled as part of a set of {@link Source} that included
      * the given source, that class will not count for loading.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     *
+     * @return loaded class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -91,7 +101,12 @@ public interface Engine {
      * Note that if a class with the given class name is available for loading,
      * but was not compiled as part of a set of {@link Source} that included
      * the given source, that class will not count for loading.
-     * 
+     *
+     * @param loader loader
+     * @param source source
+     * @param name class name
+     *
+     * @return loaded class
      * @throws CompileException if compilation was necessary to load the class and failed
      * @throws LoadException if loading failed, including if the class was not found
      * 
@@ -104,7 +119,11 @@ public interface Engine {
      * <p>
      * Note that a top code cache is not searched in this case,
      * because each set of source has its own top loader.
-     * 
+     *
+     * @param loader loader
+     * @param name class name
+     *
+     * @return loaded class
      * @throws LoadException if loading failed, including if the class was not found
      * 
      * @since 1.0
@@ -115,6 +134,8 @@ public interface Engine {
      * sets (replaces) code layers of the engine, based on already compiled code layers.
      * <p>
      * Note that normally it is supported to do this "live", while the engine is used.
+     *
+     * @param codeLayers code layers
      * 
      * @throws ClassNameConflictException optionally if the same class name occurs in
      *     different code layers or would already be available from a parent class loader
@@ -128,7 +149,9 @@ public interface Engine {
      * sets (replaces) code layers of the engine, based on sources to compile to code layers.
      * <p>
      * Note that normally it is supported to do this "live", while the engine is used.
-     * 
+     *
+     * @param sourcesLayers sources layers
+     *
      * @throws CompileException if compilation failed
      * @throws ClassNameConflictException optionally if the same class name resulted from
      *     compiling different sources layers or would already be available

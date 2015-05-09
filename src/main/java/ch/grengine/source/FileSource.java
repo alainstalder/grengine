@@ -33,6 +33,8 @@ public interface FileSource extends Source {
      * gets the canonical file of this source, with fallback to the absolute file.
      * <p>
      * Hence {@code fileSource.getFile().isAbsolute()} always returns true.
+     *
+     * @return canonical file of this source
      * 
      * @since 1.0
      */

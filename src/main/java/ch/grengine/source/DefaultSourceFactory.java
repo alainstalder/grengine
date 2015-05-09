@@ -59,6 +59,8 @@ public class DefaultSourceFactory implements SourceFactory {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -134,6 +136,8 @@ public class DefaultSourceFactory implements SourceFactory {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -320,7 +324,10 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * sets whether to track (cache) text source IDs, default is not to track.
-         * 
+         *
+         * @param trackTextSourceIds whether to track (cache) text source IDs
+         *
+         * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
          * @since 1.0.1
@@ -333,7 +340,10 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * sets whether to track (cache) file source last modified, default is not to track.
-         * 
+         *
+         * @param trackFileSourceLastModified whether to track (cache) file source last modified
+         *
+         * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
          * @since 1.0.1
@@ -349,7 +359,10 @@ public class DefaultSourceFactory implements SourceFactory {
          * defaults is {@link #DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS}.
          * <p>
          * Only has an effect if also set to track file source last modified.
-         * 
+         *
+         * @param fileLastModifiedTrackingLatencyMs latency for tracking file last modified of file sources
+         *
+         * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
          * @since 1.0.1
@@ -363,7 +376,10 @@ public class DefaultSourceFactory implements SourceFactory {
         /**
          * sets whether to track URL content, default is not to track,
          * {@literal i.e.} to consider URL content static.
-         * 
+         *
+         * @param trackUrlContent whether to track URL content
+         *
+         * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
          * @since 1.0
@@ -378,7 +394,10 @@ public class DefaultSourceFactory implements SourceFactory {
          * sets latency for tracking URL content, defaults is {@link #DEFAULT_URL_TRACKING_LATENCY_MS}.
          * <p>
          * Only has an effect if also set to track URL content.
-         * 
+         *
+         * @param urlTrackingLatencyMs latency for tracking URL content
+         *
+         * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to create an instance
          * 
          * @since 1.0
@@ -391,6 +410,8 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * gets whether to track (cache) text source IDs, default is not to track.
+         *
+         * @return whether to track (cache) text source IDs
          * 
          * @since 1.0.1
          */
@@ -400,6 +421,8 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * gets whether to track (cache) file source last modified, default is not to track.
+         *
+         * @return whether to track (cache) file source last modified
          * 
          * @since 1.0.1
          */
@@ -409,6 +432,8 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * gets latency for tracking file last modified of file sources.
+         *
+         * @return latency for tracking file last modified of file sources
          * 
          * @since 1.0.1
          */
@@ -418,6 +443,8 @@ public class DefaultSourceFactory implements SourceFactory {
         
         /**
          * gets whether to track URL content.
+         *
+         * @return whether to track URL content
          * 
          * @since 1.0
          */
@@ -427,6 +454,8 @@ public class DefaultSourceFactory implements SourceFactory {
 
         /**
          * gets latency for tracking URL content.
+         *
+         * @return latency for tracking URL content
          * 
          * @since 1.0
          */
@@ -449,6 +478,8 @@ public class DefaultSourceFactory implements SourceFactory {
         
         /**
          * builds an instance of {@link DefaultSourceFactory}.
+         *
+         * @return instance
          * 
          * @since 1.0
          */

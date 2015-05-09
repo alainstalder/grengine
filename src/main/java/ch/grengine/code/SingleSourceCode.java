@@ -33,20 +33,26 @@ public interface SingleSourceCode extends Code {
     
     /**
      * gets the main class name for the single source.
-     * 
+     *
+     * @return main class name
+     *
      * @since 1.0
      */
     String getMainClassName();
 
     /**
      * gets all class names for the single source.
-     * 
+     *
+     * @return all class names
+     *
      * @since 1.0
      */
     Set<String> getClassNames();
 
     /**
      * gets the last modified at compile time for the single source.
+     *
+     * @return last modified at compile time
      * 
      * @since 1.0
      */
@@ -54,6 +60,8 @@ public interface SingleSourceCode extends Code {
     
     /**
      * gets the source.
+     *
+     * @return source
      * 
      * @since 1.0
      */

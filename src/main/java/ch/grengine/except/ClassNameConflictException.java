@@ -42,7 +42,11 @@ public class ClassNameConflictException extends GrengineException {
      * constructor from exception message and maps with class conflict information.
      * <p>
      * One of the maps may be null if the corresponding check has not been made.
-     * 
+     *
+     * @param message message
+     * @param sameClassNamesInMultipleCodeLayersMap map of class names in multiple code layers
+     * @param sameClassNamesInParentAndCodeLayersMap map of class names in parent and code layers
+     *
      * @since 1.0
      */
     public ClassNameConflictException(final String message,

@@ -33,6 +33,9 @@ public class Bytecode {
     
     /**
      * constructor from class name and bytecode bytes.
+     *
+     * @param className class name
+     * @param bytes bytecode bytes
      * 
      * @since 1.0
      */
@@ -49,6 +52,8 @@ public class Bytecode {
        
     /**
      * gets the class name.
+     *
+     * @return class name
      * 
      * @since 1.0
      */
@@ -58,7 +63,9 @@ public class Bytecode {
     
     /**
      * gets the bytecode bytes.
-     * 
+     *
+     * @return bytecode bytes
+     *
      * @since 1.0
      */
     public byte[] getBytes() {
@@ -67,6 +74,8 @@ public class Bytecode {
 
     /**
      * returns a string suitable for logging.
+     *
+     * @return a string suitable for logging
      * 
      * @since 1.0
      */

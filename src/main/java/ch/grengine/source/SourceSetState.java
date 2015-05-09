@@ -46,7 +46,9 @@ public class SourceSetState {
     
     /**
      * constructor from source set.
-     * 
+     *
+     * @param sourceSet source set
+     *
      * @throws IllegalArgumentException if the source set is null
      * 
      * @since 1.0
@@ -64,6 +66,8 @@ public class SourceSetState {
     
     /**
      * gets the source set.
+     *
+     * @return source set
      * 
      * @since 1.0
      */
@@ -73,6 +77,8 @@ public class SourceSetState {
 
     /**
      * gets last checked.
+     *
+     * @return last checked
      * 
      * @since 1.0
      */
@@ -82,6 +88,8 @@ public class SourceSetState {
 
     /**
      * gets last modified.
+     *
+     * @return last modified
      * 
      * @since 1.0
      */
@@ -91,7 +99,10 @@ public class SourceSetState {
     
     /**
      * returns a new instance with given source set and updated last checked and last modified.
+     *
+     * @param sourceSetNew source set
      * 
+     * @return new instance
      * @throws IllegalArgumentException if the new source set is null
      * 
      * @since 1.0

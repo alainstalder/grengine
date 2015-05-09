@@ -63,7 +63,10 @@ public class Loader {
 
     /**
      * gets the source class loader (if the engine ID matches).
-     * 
+     *
+     * @param engineId engine ID
+     *
+     * @return source class loader
      * @throws IllegalArgumentException if the engine ID does not match
      * 
      * @since 1.0
@@ -77,7 +80,10 @@ public class Loader {
 
     /**
      * sets the source class loader (if the engine ID matches).
-     * 
+     *
+     * @param engineId engine ID
+     * @param sourceClassLoader source class loader
+     *
      * @throws IllegalArgumentException if the engine ID does not match
      * 
      * @since 1.0
@@ -91,6 +97,8 @@ public class Loader {
     
     /**
      * gets the loader number.
+     *
+     * @return loader number
      * 
      * @since 1.0
      */
@@ -100,6 +108,8 @@ public class Loader {
     
     /**
      * gets whether the loader is attached to the engine or not.
+     *
+     * @return whether the loader is attached to the engine or not
      * 
      * @since 1.0
      */
@@ -109,7 +119,7 @@ public class Loader {
    
     /**
      * two loaders are equal if and only if their loader number and their engine ID are equal.
-     * 
+     *
      * @since 1.0
      */
     @Override
@@ -131,6 +141,8 @@ public class Loader {
 
     /**
      * returns a string suitable for logging.
+     *
+     * @return a string suitable for logging
      * 
      * @since 1.0
      */

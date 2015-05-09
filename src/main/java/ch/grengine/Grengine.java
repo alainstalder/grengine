@@ -116,6 +116,8 @@ public class Grengine extends BaseGrengine {
      * Call {@link #getLastUpdateException()} after constructing if you need
      * to make sure all sources could be compiled without errors.
      *
+     * @param builder builder
+     *
      * @since 1.0
      */
     protected Grengine(Builder builder) {
@@ -159,6 +161,7 @@ public class Grengine extends BaseGrengine {
      * Constructed from a builder with default settings.
      *
      * @param config compiler configuration to use for compiling all sources
+     *
      * @throws IllegalArgumentException if the compiler configuration is null
      *
      * @since 1.0
@@ -174,6 +177,7 @@ public class Grengine extends BaseGrengine {
      * Constructed from a builder with default settings.
      *
      * @param parent parent class loader for the engine
+     *
      * @throws IllegalArgumentException if the parent class loader is null
      *
      * @since 1.0.3
@@ -190,6 +194,7 @@ public class Grengine extends BaseGrengine {
      *
      * @param parent parent class loader for the engine
      * @param config compiler configuration to use for compiling all sources
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -211,6 +216,8 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
+     *
+     * @param dir script directory
      *
      * @throws IllegalArgumentException if the directory is null
      *
@@ -235,6 +242,8 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param parent parent class loader for the engine
+     * @param dir script directory
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -259,6 +268,8 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param config compiler configuration to use for compiling all sources
+     * @param dir script directory
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0
@@ -284,6 +295,8 @@ public class Grengine extends BaseGrengine {
      *
      * @param parent parent class loader for the engine
      * @param config compiler configuration to use for compiling all sources
+     * @param dir script directory
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -306,6 +319,9 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
+     *
+     * @param dir script directory
+     * @param dirMode dir mode
      *
      * @throws IllegalArgumentException if any argument is null
      *
@@ -331,6 +347,9 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param parent parent class loader for the engine
+     * @param dir script directory
+     * @param dirMode dir mode
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -356,6 +375,9 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param config compiler configuration to use for compiling all sources
+     * @param dir script directory
+     * @param dirMode dir mode
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0
@@ -382,6 +404,9 @@ public class Grengine extends BaseGrengine {
      *
      * @param parent parent class loader for the engine
      * @param config compiler configuration to use for compiling all sources
+     * @param dir script directory
+     * @param dirMode dir mode
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -402,6 +427,8 @@ public class Grengine extends BaseGrengine {
      * <p>
      * Call {@link #getLastUpdateException()} after constructing if you need to make sure
      * all sources can be compiled without errors.
+     *
+     * @param urls collection of URL-based scripts
      *
      * @throws IllegalArgumentException if the URL collection is null
      *
@@ -425,6 +452,8 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param parent parent class loader for the engine
+     * @param urls collection of URL-based scripts
+     *
      * @throws IllegalArgumentException if the URL collection is null
      *
      * @since 1.0.3
@@ -447,6 +476,8 @@ public class Grengine extends BaseGrengine {
      * all sources can be compiled without errors.
      *
      * @param config compiler configuration to use for compiling all sources
+     * @param urls collection of URL-based scripts
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0
@@ -470,6 +501,8 @@ public class Grengine extends BaseGrengine {
      *
      * @param parent parent class loader for the engine
      * @param config compiler configuration to use for compiling all sources
+     * @param urls collection of URL-based scripts
+     *
      * @throws IllegalArgumentException if any argument is null
      *
      * @since 1.0.3
@@ -565,6 +598,8 @@ public class Grengine extends BaseGrengine {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -703,6 +738,8 @@ public class Grengine extends BaseGrengine {
         /**
          * sets the engine, default is a new instance of {@link LayeredEngine}
          * with default settings.
+         *
+         * @param engine engine
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -718,6 +755,8 @@ public class Grengine extends BaseGrengine {
         /**
          * sets the source factory for creating sources, default is a new instance
          * of {@link DefaultSourceFactory} with default settings.
+         *
+         * @param sourceFactory source factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -732,6 +771,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * sets the sources layers, default is no layers.
+         *
+         * @param sourcesLayers sources layers
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -746,6 +787,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * sets the sources layers, default is no layers.
+         *
+         * @param sourcesLayers sources layers
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -758,6 +801,8 @@ public class Grengine extends BaseGrengine {
 
         /**
          * sets the update notification notifier, default none (null).
+         *
+         * @param updateExceptionNotifier update notification notifier
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -773,6 +818,8 @@ public class Grengine extends BaseGrengine {
         /**
          * sets the latency in milliseconds for checking if need to
          * recompile sources layers, default is {@link #DEFAULT_LATENCY_MS}.
+         *
+         * @param latencyMs latency in milliseconds
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -787,6 +834,8 @@ public class Grengine extends BaseGrengine {
 
         /**
          * gets the engine.
+         *
+         * @return engine
          * 
          * @since 1.0
          */
@@ -796,6 +845,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * gets the source factory for creating sources.
+         *
+         * @return source factory
          * 
          * @since 1.0
          */
@@ -805,6 +856,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * gets the sources layers.
+         *
+         * @return sources layers
          * 
          * @since 1.0
          */
@@ -814,6 +867,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * gets the update notification notifier.
+         *
+         * @return update notification notifier
          * 
          * @since 1.0
          */
@@ -823,6 +878,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * gets the latency in milliseconds.
+         *
+         * @return latency in milliseconds
          * 
          * @since 1.0
          */
@@ -851,6 +908,8 @@ public class Grengine extends BaseGrengine {
         
         /**
          * builds a new instance of {@link Grengine}.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */
@@ -866,6 +925,5 @@ public class Grengine extends BaseGrengine {
         }
 
     }
-
 
 }

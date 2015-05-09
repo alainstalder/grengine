@@ -73,6 +73,8 @@ public class LayeredEngine implements Engine {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -253,6 +255,8 @@ public class LayeredEngine implements Engine {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -292,6 +296,8 @@ public class LayeredEngine implements Engine {
         /**
          * sets the parent class loader, default is the context class loader
          * of the current thread.
+         *
+         * @param parent parent class loader
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -306,7 +312,9 @@ public class LayeredEngine implements Engine {
         
         /**
          * sets the load mode for the (static) code layers, default is "current first".
-         * 
+         *
+         * @param loadMode load mode for the (static) code layers
+         *
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
          * 
@@ -323,6 +331,8 @@ public class LayeredEngine implements Engine {
          * default is true.
          * <p>
          * Note that the default is the opposite in the {@link LayeredClassLoader}.
+         *
+         * @param isWithTopCodeCache whether to use the a top code cache or not
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -338,6 +348,8 @@ public class LayeredEngine implements Engine {
         /**
          * sets the top code cache factory,
          * default is a new instance of {@link DefaultTopCodeCacheFactory} with default settings.
+         *
+         * @param topCodeCacheFactory top code cache factory
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -352,6 +364,8 @@ public class LayeredEngine implements Engine {
 
         /**
          * sets the load mode for the top code cache, default is "parent first".
+         *
+         * @param topLoadMode load mode for the top code cache
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -366,7 +380,9 @@ public class LayeredEngine implements Engine {
         
         /**
          * sets whether to allow the same class names in multiple code layers, default is true.
-         * 
+         *
+         * @param allowSameClassNamesInMultipleCodeLayers
+         *        whether to allow the same class names in multiple code layers
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
          * 
@@ -381,7 +397,9 @@ public class LayeredEngine implements Engine {
         
         /**
          * sets whether to allow the same class names in code layers and parent class loader, default is true.
-         * 
+         *
+         * @param allowSameClassNamesInParentAndCodeLayers
+         *        whether to allow the same class names in code layers and parent class loader
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
          * 
@@ -396,6 +414,8 @@ public class LayeredEngine implements Engine {
 
         /**
          * gets the parent class loader.
+         *
+         * @return parent class loader
          * 
          * @since 1.0
          */
@@ -405,6 +425,8 @@ public class LayeredEngine implements Engine {
         
         /**
          * gets the load mode for the (static) code layers.
+         *
+         * @return load mode for the (static) code layers
          * 
          * @since 1.0
          */
@@ -414,6 +436,8 @@ public class LayeredEngine implements Engine {
         
         /**
          * gets whether to use the a top code cache or not.
+         *
+         * @return whether to use the a top code cache or not
          * 
          * @since 1.0
          */
@@ -423,6 +447,8 @@ public class LayeredEngine implements Engine {
         
         /**
          * gets the load mode for the top code cache.
+         *
+         * @return load mode for the top code cache
          * 
          * @since 1.0
          */
@@ -432,6 +458,8 @@ public class LayeredEngine implements Engine {
         
         /**
          * gets the top code cache factory.
+         *
+         * @return top code cache factory
          * 
          * @since 1.0
          */
@@ -441,14 +469,19 @@ public class LayeredEngine implements Engine {
         
         /**
          * gets whether to allow the same class names in multiple code layers.
+         *
+         * @return whether to allow the same class names in multiple code layers
          * 
          * @since 1.0
          */
         public boolean isAllowSameClassNamesInMultipleCodeLayers() {
             return allowSameClassNamesInMultipleCodeLayers;
         }
+
         /**
          * gets whether to allow the same class names in code layers and parent class loader.
+         *
+         * @return whether to allow the same class names in code layers and parent class loader
          * 
          * @since 1.0
          */
@@ -477,6 +510,8 @@ public class LayeredEngine implements Engine {
         
         /**
          * builds a new instance of {@link LayeredEngine}.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */

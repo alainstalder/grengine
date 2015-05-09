@@ -64,6 +64,8 @@ public abstract class BaseSources implements Sources {
     
     /**
      * gets the updated source set.
+     *
+     * @return updated source set
      * 
      * @since 1.0
      */

@@ -29,6 +29,8 @@ public interface Source {
     
     /**
      * gets the unique ID of this source.
+     *
+     * @return ID
      * 
      * @since 1.0
      */
@@ -41,6 +43,8 @@ public interface Source {
      * You should not rely on this number to increase monotonically or even
      * to represent an actual date and time, but instead consider the source
      * changed each time this method returns a different value.
+     *
+     * @return last modified
      * 
      * @since 1.0
      */
@@ -48,6 +52,8 @@ public interface Source {
     
     /**
      * two sources are equal if and only if their source IDs are equal.
+     *
+     * @return whether the two sources are equal
      * 
      * @since 1.0
      */
@@ -55,6 +61,8 @@ public interface Source {
     
     /**
      * returns the hash code of the source ID.
+     *
+     * @return hash code of the source ID
      * 
      * @since 1.0
      */
@@ -62,7 +70,9 @@ public interface Source {
     
     /**
      * returns a string suitable for logging.
-     * 
+     *
+     * @return a string suitable for logging
+     *
      * @since 1.0
      */
     String toString();

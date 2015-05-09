@@ -64,6 +64,8 @@ public class DefaultGroovyCompiler implements Compiler {
     
     /**
      * constructor from builder.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -86,7 +88,9 @@ public class DefaultGroovyCompiler implements Compiler {
 
     /**
      * constructor from given parent class loader and default compiler configuration.
-     * 
+     *
+     * @param parent parent class loader
+     *
      * @throws IllegalArgumentException if the parent class loader is null
      * 
      * @since 1.0
@@ -100,7 +104,10 @@ public class DefaultGroovyCompiler implements Compiler {
     
     /**
      * constructor from given parent class loader and compiler configuration.
-     * 
+     *
+     * @param parent parent class loader
+     * @param config compiler configuration
+     *
      * @throws IllegalArgumentException if the parent class loader or the compiler configuration is null
      * 
      * @since 1.0
@@ -120,7 +127,10 @@ public class DefaultGroovyCompiler implements Compiler {
      * <p>
      * If {@link CompilerConfiguration#getTargetDirectory()} is not null,
      * class files are also written to the target directory.
-     * 
+     *
+     * @param sources sources
+     *
+     * @return code
      * @throws CompileException if compilation failed
      * @throws IllegalArgumentException if sources are null
      * 
@@ -185,7 +195,13 @@ public class DefaultGroovyCompiler implements Compiler {
     
     /**
      * adds the given source to the given compilation unit and returns the resulting source unit.
-     * 
+     *
+     * @param cu compilation unit
+     * @param source source
+     * @param sources all sources, needed only if the type of source is unsupported,
+     *                for the resulting {@link CompileException}
+     *
+     * @return source unit
      * @throws CompileException if the type of source is unsupported
      * 
      * @since 1.0
@@ -208,7 +224,9 @@ public class DefaultGroovyCompiler implements Compiler {
 
     /**
      * gets the builder.
-     * 
+     *
+     * @return builder
+     *
      * @since 1.0
      */
     public Builder getBuilder() {
@@ -217,6 +235,8 @@ public class DefaultGroovyCompiler implements Compiler {
 
     /**
      * gets the parent class loader.
+     *
+     * @return parent class loader
      * 
      * @since 1.0
      */
@@ -226,6 +246,8 @@ public class DefaultGroovyCompiler implements Compiler {
     
     /**
      * gets the compiler configuration.
+     *
+     * @return compiler configuration
      * 
      * @since 1.0
      */
@@ -261,6 +283,8 @@ public class DefaultGroovyCompiler implements Compiler {
         /**
          * sets the parent class loader, default is the context class loader
          * of the current thread.
+         *
+         * @param parent parent class loader
          * 
          * @return this, for chaining calls
          * 
@@ -275,7 +299,9 @@ public class DefaultGroovyCompiler implements Compiler {
         /**
          * sets the compiler configuration,
          * default is a new instance of {@link CompilerConfiguration} with default settings.
-         * 
+         *
+         * @param compilerConfiguration compiler configuration
+         *
          * @return this, for chaining calls
          * 
          * @since 1.0
@@ -288,6 +314,8 @@ public class DefaultGroovyCompiler implements Compiler {
 
         /**
          * gets the parent class loader.
+         *
+         * @return parent class loader
          * 
          * @since 1.0
          */
@@ -297,6 +325,8 @@ public class DefaultGroovyCompiler implements Compiler {
         
         /**
          * gets the compiler configuration.
+         *
+         * @return compiler configuration
          * 
          * @since 1.0
          */
@@ -319,7 +349,9 @@ public class DefaultGroovyCompiler implements Compiler {
         
         /**
          * builds a new instance of {@link DefaultGroovyCompiler}.
-         * 
+         *
+         * @return new instance
+         *
          * @since 1.0
          */
         public DefaultGroovyCompiler build() {

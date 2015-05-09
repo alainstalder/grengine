@@ -32,7 +32,9 @@ public class LoadException extends GrengineException {
 
     /**
      * constructor from exception message.
-     * 
+     *
+     * @param message message
+     *
      * @since 1.0
      */
     public LoadException(final String message) {
@@ -41,7 +43,10 @@ public class LoadException extends GrengineException {
 
     /**
      * constructor from exception message and causing throwable.
-     * 
+     *
+     * @param message message
+     * @param cause cause
+     *
      * @since 1.0
      */
     public LoadException(final String message, final Throwable cause) {

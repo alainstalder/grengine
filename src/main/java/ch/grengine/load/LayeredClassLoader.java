@@ -60,6 +60,8 @@ public class LayeredClassLoader extends SourceClassLoader {
 
     /**
      * constructor from builder, based on already compiled code layers.
+     *
+     * @param builder builder
      * 
      * @since 1.0
      */
@@ -72,7 +74,11 @@ public class LayeredClassLoader extends SourceClassLoader {
     /**
      * constructor from builder, based on sources to compile to code layers
      * or on already compiled code layers.
-     * 
+     *
+     * @param builder builder
+     * @param fromSourcesLayers if based on sources to compile to code layers
+     *                          or on already compiled code layers
+     *
      * @throws CompileException if based on sources and compiling the sources layers failed
      * 
      * @since 1.0
@@ -229,6 +235,8 @@ public class LayeredClassLoader extends SourceClassLoader {
     /**
      * creates a clone with the same code layers
      * and with shared top code cache.
+     *
+     * @return clone
      * 
      * @since 1.0
      */
@@ -241,6 +249,8 @@ public class LayeredClassLoader extends SourceClassLoader {
      * creates a clone with the same code layers
      * and a separate top code cache
      * (initially with the same cached bytecode).
+     *
+     * @return clone
      * 
      * @since 1.0
      */
@@ -256,6 +266,8 @@ public class LayeredClassLoader extends SourceClassLoader {
     
     /**
      * gets the code layers.
+     *
+     * @return code layers
      * 
      * @since 1.0
      */
@@ -265,6 +277,8 @@ public class LayeredClassLoader extends SourceClassLoader {
     
     /**
      * gets the builder.
+     *
+     * @return builder
      * 
      * @since 1.0
      */
@@ -274,6 +288,8 @@ public class LayeredClassLoader extends SourceClassLoader {
     
     /**
      * gets the top code cache.
+     *
+     * @return top code cache
      * 
      * @since 1.0
      */
@@ -316,6 +332,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         /**
          * sets the parent class loader, default is the context class loader
          * of the current thread.
+         *
+         * @param parent parent class loader
          * 
          * @return this, for chaining calls
          * 
@@ -329,7 +347,9 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * sets the load mode for the (static) code layers, default is "current first".
-         * 
+         *
+         * @param loadMode load mode for the (static) code layers
+         *
          * @return this, for chaining calls
          * 
          * @since 1.0
@@ -342,6 +362,8 @@ public class LayeredClassLoader extends SourceClassLoader {
 
         /**
          * sets the sources layers, default is no layers.
+         *
+         * @param sourcesLayers sources layers
          * 
          * @return this, for chaining calls
          * 
@@ -355,6 +377,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * sets the sources layers, default is no layers.
+         *
+         * @param sourcesLayers sources layers
          * 
          * @return this, for chaining calls
          * 
@@ -366,6 +390,8 @@ public class LayeredClassLoader extends SourceClassLoader {
 
         /**
          * sets the code layers, default is no layers.
+         *
+         * @param codeLayers code layers
          * 
          * @return this, for chaining calls
          * 
@@ -383,7 +409,9 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * sets the code layers, default is no layers.
-         * 
+         *
+         * @param codeLayers code layers
+         *
          * @return this, for chaining calls
          * 
          * @since 1.0
@@ -398,7 +426,10 @@ public class LayeredClassLoader extends SourceClassLoader {
          * default is not to use a top code cache.
          * <p>
          * Note that the default is the opposite in the {@link LayeredEngine}.
-         * 
+         *
+         * @param isWithTopCodeCache whether to use the a top code cache or not
+         * @param topCodeCache top code cache (OK to pass null if setting to false)
+         *
          * @return this, for chaining calls
          * 
          * @since 1.0
@@ -416,6 +447,8 @@ public class LayeredClassLoader extends SourceClassLoader {
 
         /**
          * sets the load mode for the top code cache, default is "parent first".
+         *
+         * @param topLoadMode load mode for the top code cache
          * 
          * @return this, for chaining calls
          * 
@@ -429,6 +462,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the parent class loader.
+         *
+         * @return parent class loader
          * 
          * @since 1.0
          */
@@ -438,6 +473,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the load mode for the (static) code layers.
+         *
+         * @return load mode for the (static) code layers
          * 
          * @since 1.0
          */
@@ -447,6 +484,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the sources layers.
+         *
+         * @return sources layers
          * 
          * @since 1.0
          */
@@ -456,6 +495,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the code layers.
+         *
+         * @return code layers
          * 
          * @since 1.0
          */
@@ -465,6 +506,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets whether to use the a top code cache or not.
+         *
+         * @return whether to use the a top code cache or not
          * 
          * @since 1.0
          */
@@ -474,6 +517,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the top code cache.
+         *
+         * @return top code cache
          * 
          * @since 1.0
          */
@@ -483,6 +528,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         
         /**
          * gets the top load mode.
+         *
+         * @return top load mode
          * 
          * @since 1.0
          */
@@ -515,6 +562,8 @@ public class LayeredClassLoader extends SourceClassLoader {
         /**
          * builds a new instance of {@link LayeredClassLoader}
          * based on already compiled code layers.
+         *
+         * @return new instance
          * 
          * @since 1.0
          */
@@ -526,7 +575,9 @@ public class LayeredClassLoader extends SourceClassLoader {
         /**
          * builds a new instance of {@link LayeredClassLoader}
          * based on sources to compile to code layers.
-         * 
+         *
+         * @return new instance
+         *
          * @throws CompileException if compiling the sources layers failed
          * 
          * @since 1.0

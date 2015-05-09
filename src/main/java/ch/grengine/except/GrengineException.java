@@ -36,6 +36,8 @@ public class GrengineException extends Exception {
     
     /**
      * constructor from exception message.
+     *
+     * @param message message
      * 
      * @since 1.0
      */
@@ -46,7 +48,10 @@ public class GrengineException extends Exception {
 
     /**
      * constructor from exception message and causing throwable.
-     * 
+     *
+     * @param message message
+     * @param cause cause
+     *
      * @since 1.0
      */
     public GrengineException(final String message, final Throwable cause) {
@@ -58,7 +63,9 @@ public class GrengineException extends Exception {
      * gets the exception message given in the constructor,
      * with the exception message of the causing throwable appended,
      * if there was one.
-     * 
+     *
+     * @return message
+     *
      * @since 1.0
      */
     public String getMessage() {
@@ -67,6 +74,8 @@ public class GrengineException extends Exception {
     
     /**
      * gets the date (with time) when the exception was thrown.
+     *
+     * @return date (with time) when the exception was thrown
      * 
      * @since 1.0
      */

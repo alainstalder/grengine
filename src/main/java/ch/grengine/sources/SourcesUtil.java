@@ -40,7 +40,10 @@ public class SourcesUtil {
     /**
      * converts a source to sources with name set to the source ID
      * and with the default Groovy compiler factory.
+     *
+     * @param source source
      * 
+     * @return sources
      * @throws IllegalArgumentException if the source is null
      * 
      * @since 1.0
@@ -52,7 +55,11 @@ public class SourcesUtil {
     /**
      * converts a source to sources with name set to the source ID
      * and with the given compiler factory.
-     * 
+     *
+     * @param source source
+     * @param compilerFactory compiler factory
+     *
+     * @return sources
      * @throws IllegalArgumentException if the source or the compiler factory is null
      * 
      * @since 1.0
@@ -75,7 +82,11 @@ public class SourcesUtil {
     /**
      * converts a set of source to sources with the given name
      * and with the default Groovy compiler factory.
-     * 
+     *
+     * @param sourceSet set of source
+     * @param name sources name
+     *
+     * @return sources
      * @throws IllegalArgumentException if the source set or the name is null
      * 
      * @since 1.0
@@ -87,7 +98,12 @@ public class SourcesUtil {
     /**
      * converts a set of source to sources with the given name
      * and with the given compiler factory.
-     * 
+     *
+     * @param sourceSet set of source
+     * @param name sources name
+     * @param compilerFactory compiler factory
+     *
+     * @return sources
      * @throws IllegalArgumentException if the source set, the name or the compiler factory is null
      * 
      * @since 1.0
@@ -111,7 +127,10 @@ public class SourcesUtil {
 
     /**
      * converts the given sources to a list of sources.
+     *
+     * @param sources sources
      * 
+     * @return list of sources
      * @throws IllegalArgumentException if the sources array is null
      * 
      * @since 1.0

@@ -32,7 +32,10 @@ public interface Compiler {
     
     /**
      * compiles the given sources to an instance of {@link Code} in memory.
-     * 
+     *
+     * @param sources sources
+     *
+     * @return compiled code
      * @throws CompileException if compilation failed
      * 
      * @since 1.0

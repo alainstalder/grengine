@@ -39,6 +39,8 @@ public class DefaultFileSource extends BaseSource implements FileSource {
      * The file is always converted to the canonical file, with fallback to the absolute file.
      * <p>
      * The ID is the canonical file path, with fallback to the absolute file path.
+     *
+     * @param file script file
      * 
      * @throws IllegalArgumentException if file is null
      * 

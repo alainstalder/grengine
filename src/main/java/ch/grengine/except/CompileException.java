@@ -36,7 +36,10 @@ public class CompileException extends GrengineException {
 
     /**
      * constructor from exception message and sources for which compilation failed.
-     * 
+     *
+     * @param message message
+     * @param sources sources for which compilation failed
+     *
      * @since 1.0
      */
     public CompileException(final String message, final Sources sources) {
@@ -46,7 +49,11 @@ public class CompileException extends GrengineException {
 
     /**
      * constructor from exception message, causing throwable and sources for which compilation failed.
-     * 
+     *
+     * @param message message
+     * @param cause cause
+     * @param sources sources for which compilation failed
+     *
      * @since 1.0
      */
     public CompileException(final String message, final Throwable cause, final Sources sources) {
@@ -56,6 +63,8 @@ public class CompileException extends GrengineException {
     
     /**
      * gets sources for which compilation failed.
+     *
+     * @return sources for which compilation failed
      * 
      * @since 1.0
      */

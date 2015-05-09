@@ -45,6 +45,8 @@ public abstract class BaseSource implements Source {
     
     /**
      * gets the protected member variable {@code id}.
+     *
+     * @return id
      * 
      * @since 1.0
      */
@@ -55,6 +57,8 @@ public abstract class BaseSource implements Source {
     
     /**
      * always returns 0.
+     *
+     * @return always 0
      * 
      * @since 1.0
      */
