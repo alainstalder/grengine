@@ -121,9 +121,12 @@ public class DefaultSingleSourceCodeTest {
         assertEquals(name1, code.getMainClassName());
         assertEquals(names1, code.getClassNames());
         assertEquals(11, code.getLastModifiedAtCompileTime());
-        
-        assertEquals("DefaultSingleSourceCode[sourcesName='sourcesname', mainClassName=MainClassName1, " +
-                "classes:[MainClassName1, MainClassName1#Sub]]", code.toString());
+
+        String codeString =  code.toString();
+        assertTrue(codeString.startsWith("DefaultSingleSourceCode[sourcesName='sourcesname', mainClassName=MainClassName1, " +
+                "classes:[MainClassName1"));
+        assertTrue(codeString.endsWith("classes:[MainClassName1, MainClassName1#Sub]]") ||
+                        codeString.endsWith("classes:[MainClassName1#Sub, MainClassName1]]"));
     }
     
     @Test
