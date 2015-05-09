@@ -28,7 +28,7 @@
   }
 
   dependencies {
-    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    compile "org.codehaus.groovy:groovy:$groovyVersion"
     testCompile "junit:junit:$junitVersion"
     testCompile "org.apache.ivy:ivy:$ivyVersion"
   }
