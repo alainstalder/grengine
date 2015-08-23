@@ -658,8 +658,8 @@ public class BytecodeClassLoaderTest {
         public ThrowingBytecodeClassLoader(BytecodeClassLoader loader) {
             super(loader.getParent(), loader.getLoadMode(), loader.getCode());
         }
-        
-        void definePackage(String name) {
+
+        Class<?> defineClass(String name, byte[] bytes) {
             throw new RuntimeException("unit test");
         }
         

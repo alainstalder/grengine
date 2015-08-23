@@ -22,6 +22,9 @@ import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Bytecode-based class loader that also implements the {@link SourceClassLoader}
@@ -40,6 +43,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
     
     private final LoadMode loadMode;
     private final Code code;
+    private final Map<String,Object> locks = new HashMap<String,Object>();
     
     /**
      * constructor.
@@ -81,37 +85,87 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * LoadMode.CURRENT_FIRST: Instead in loadClass(..) tries first to load the class
      *   from bytecode, then tries the other two options.
      */
-    
+
     private Class<?> loadClassFromBytecode(final String name) {
         Bytecode bc = code.getBytecode(name);
         if (bc == null) {
             return null;
         }
-        
+
         byte[] bytes = bc.getBytes();
-        // define class if not already defined by another thread
         Class<?> clazz;
-        synchronized(this) {
-            if ((clazz = findLoadedClass(name)) == null) {
-                definePackage(name);
-                clazz = defineClass(name, bytes, 0, bytes.length);
+
+        String packageName;
+        Object packageNameLock;
+        Object nameLock;
+        synchronized(locks) {
+            if ((clazz = findLoadedClass(name)) != null) {
+                return clazz;
+            }
+            packageName = getPackageName(name);
+            packageNameLock = null;
+            if (packageName != null) {
+                if ((packageNameLock = locks.get(packageName)) == null) {
+                    packageNameLock = new Object();
+                    locks.put(packageName, packageNameLock);
+                }
+            }
+            if ((nameLock = locks.get(name)) == null) {
+                nameLock = new Object();
+                locks.put(name, nameLock);
             }
         }
-        return clazz;        
+
+        // define package if not already defined
+        if (packageName != null) {
+            synchronized (packageNameLock) {
+                if (getPackage(packageName) == null) {
+                    definePackage(packageName);
+                }
+            }
+        }
+
+        // define class if not already defined
+        synchronized (nameLock) {
+            if ((clazz = findLoadedClass(name)) == null) {
+                clazz = defineClass(name, bytes);
+            }
+        }
+
+        // OK to remove locks from map here, because at this point always
+        // both class and package have already been defined, so it does
+        // not matter whether other threads lock on these or other locks
+        // for the same class or package names any more.
+        synchronized(locks) {
+            if (packageNameLock != null) {
+                locks.remove(packageName);
+            }
+            locks.remove(name);
+        }
+
+        return clazz;
     }
-    
-    // package scope for unit tests
-    void definePackage(String className) {
+
+    private String getPackageName(final String className) {
         int i = className.lastIndexOf('.');
         if (i >= 0) {
-            String packageName = className.substring(0, i);
-            // define package if not already defined
-            if (getPackage(packageName) == null) {
-                definePackage(packageName, null, null, null, null, null, null, null);
-            }
+            return className.substring(0, i);
+        } else {
+            return null;
         }
     }
-        
+
+    // package scope for unit tests
+    void definePackage(final String packageName) {
+        definePackage(packageName, null, null, null, null, null, null, null);
+    }
+
+    // package scope for unit tests
+    Class<?> defineClass(final String name, final byte[] bytes) {
+        return defineClass(name, bytes, 0, bytes.length);
+    }
+
+
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         
