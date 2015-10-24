@@ -16,17 +16,18 @@
 
 package ch.grengine.load;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultTopCodeCacheFactoryTest {
@@ -42,28 +43,28 @@ public class DefaultTopCodeCacheFactoryTest {
         DefaultTopCodeCacheFactory.Builder builder = 
                 new DefaultTopCodeCacheFactory.Builder().setCompilerFactory(compilerFactory);
         DefaultTopCodeCacheFactory cf = builder.build();
-        
-        assertEquals(builder, cf.getBuilder());
-        assertEquals(compilerFactory, cf.getCompilerFactory());
+
+        assertThat(cf.getBuilder(), is(builder));
+        assertThat(cf.getCompilerFactory(), is(compilerFactory));
         
         DefaultTopCodeCache c = (DefaultTopCodeCache)cf.newTopCodeCache(parent);
-        
-        assertEquals(parent, c.getParent());
-        assertEquals(compilerFactory, c.getCompilerFactory());
+
+        assertThat(c.getParent(), is(parent));
+        assertThat(c.getCompilerFactory(), is(compilerFactory));
     }
 
     @Test
     public void testConstructDefault() throws Exception {
         DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory();
-        assertNotNull(cf.getCompilerFactory());
-        assertTrue(cf.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
+        assertThat(cf.getCompilerFactory(), is(notNullValue()));
+        assertThat(cf.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
     }
     
     @Test
     public void testConstructFromCompilerFactory() throws Exception {
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory(compilerFactory);
-        assertEquals(compilerFactory, cf.getCompilerFactory());
+        assertThat(cf.getCompilerFactory(), is(compilerFactory));
     }
     
     @Test
@@ -72,7 +73,7 @@ public class DefaultTopCodeCacheFactoryTest {
             new DefaultTopCodeCacheFactory((CompilerFactory)null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiler factory is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }
     
@@ -84,7 +85,7 @@ public class DefaultTopCodeCacheFactoryTest {
             builder.setCompilerFactory(new DefaultGroovyCompilerFactory());
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
 

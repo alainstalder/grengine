@@ -16,16 +16,16 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.Source;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.Source;
 
 
 /**

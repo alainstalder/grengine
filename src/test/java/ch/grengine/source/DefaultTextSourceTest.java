@@ -16,43 +16,43 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultTextSourceTest {
-    
+
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructFromTextPlusGetters() {
         String text = "println 55";
         TextSource s = new DefaultTextSource(text);
-        assertEquals("/groovy/script/Script" + SourceUtil.md5(text), s.getId());
-        assertEquals(0, s.getLastModified());
-        assertEquals(text, s.getText());
+        assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
+        assertThat(s.getLastModified(), is(0L));
+        assertThat(s.getText(), is(text));
         System.out.println(s);
-        assertEquals("DefaultTextSource[ID=" + s.getId() + ", text='" + s.getText() +"']", s.toString());
+        assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + s.getText() + "']"));
     }
-    
+
     @Test
     public void testConstructFromTextAndNamePlusGetters() {
         String text = "println 55";
         String name = "FirstScript";
         TextSource s = new DefaultTextSource(text, name);
-        assertEquals("/groovy/script/Script" + SourceUtil.md5(text) + "/" + name, s.getId());
-        assertEquals(0, s.getLastModified());
-        assertEquals(text, s.getText());
+        assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text) + "/" + name));
+        assertThat(s.getLastModified(), is(0L));
+        assertThat(s.getText(), is(text));
         System.out.println(s);
-        assertEquals("DefaultTextSource[ID=" + s.getId() + ", text='" + s.getText() +"']", s.toString());
+        assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + s.getText() + "']"));
     }
 
     @Test
@@ -61,17 +61,17 @@ public class DefaultTextSourceTest {
             new DefaultTextSource(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Text is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Text is null."));
         }
     }
-    
+
     @Test
     public void testConstructFromTextAndNameWithTextNull() {
         try {
             new DefaultTextSource(null, "name");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Text is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Text is null."));
         }
     }
 
@@ -81,41 +81,41 @@ public class DefaultTextSourceTest {
             new DefaultTextSource("println 33", null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Desired class name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Desired class name is null."));
         }
     }
-    
+
     @Test
     public void testLongText() {
         String text = "println " + TestUtil.multiply("1", 300);
         TextSource s = new DefaultTextSource(text);
-        assertEquals("/groovy/script/Script" + SourceUtil.md5(text), s.getId());
-        assertEquals(0, s.getLastModified());
-        assertEquals(text, s.getText());
+        assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
+        assertThat(s.getLastModified(), is(0L));
+        assertThat(s.getText(), is(text));
         String expectedText = "println " + TestUtil.multiply("1", 188) + "[..]";
-        assertEquals("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText +"']", s.toString());
+        assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
-    
+
     @Test
     public void testTextWithLinebreaks() {
         String text = "class Class1 {\nstatic class Sub {} }\r\nclass Side {}";
         TextSource s = new DefaultTextSource(text);
-        assertEquals("/groovy/script/Script" + SourceUtil.md5(text), s.getId());
-        assertEquals(0, s.getLastModified());
-        assertEquals(text, s.getText());
+        assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
+        assertThat(s.getLastModified(), is(0L));
+        assertThat(s.getText(), is(text));
         String expectedText = "class Class1 {%nstatic class Sub {} }%nclass Side {}";
-        assertEquals("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText +"']", s.toString());
+        assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
-    
+
     @Test
     public void testEquals() {
         String text = "println 11";
         String text2 = "println 22";
-        assertEquals(new DefaultTextSource(text), new DefaultTextSource(text));
-        assertFalse(new DefaultTextSource(text).equals(new DefaultTextSource(text2)));
-        assertFalse(new DefaultTextSource(text).equals(new DefaultTextSource(text2)));
-        assertFalse(new DefaultTextSource(text).equals("different class"));
-        assertFalse(new DefaultTextSource(text).equals(null));
+        assertThat(new DefaultTextSource(text), is(new DefaultTextSource(text)));
+        assertThat(new DefaultTextSource(text).equals(new DefaultTextSource(text2)), is(false));
+        assertThat(new DefaultTextSource(text).equals(new DefaultTextSource(text2)), is(false));
+        assertThat(new DefaultTextSource(text).equals("different class"), is(false));
+        assertThat(new DefaultTextSource(text).equals(null), is(false));
     }
 
 }

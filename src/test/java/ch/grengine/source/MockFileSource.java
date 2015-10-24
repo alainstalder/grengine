@@ -16,10 +16,10 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.Assert.fail;
 
 
 // so far, mocks only last modified

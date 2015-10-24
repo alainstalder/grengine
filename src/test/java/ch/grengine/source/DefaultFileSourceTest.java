@@ -16,10 +16,7 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +25,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultFileSourceTest {
@@ -41,11 +40,11 @@ public class DefaultFileSourceTest {
         File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 22");
         FileSource s = new DefaultFileSource(file);
-        assertEquals(file.getCanonicalPath(), s.getId());
-        assertEquals(file.getCanonicalPath(), s.getFile().getPath());
-        assertEquals(file.lastModified(),  s.getLastModified());
+        assertThat(s.getId(), is(file.getCanonicalPath()));
+        assertThat(s.getFile().getPath(), is(file.getCanonicalPath()));
+        assertThat(s.getLastModified(), is(file.lastModified()));
         System.out.println(s);
-        assertEquals("DefaultFileSource[ID=" + s.getId() + "]", s.toString());
+        assertThat(s.toString(), is("DefaultFileSource[ID=" + s.getId() + "]"));
     }
     
     @Test
@@ -54,7 +53,7 @@ public class DefaultFileSourceTest {
             new DefaultFileSource(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("File is null.", e.getMessage());
+            assertThat(e.getMessage(), is("File is null."));
         }
     }
 
@@ -62,19 +61,19 @@ public class DefaultFileSourceTest {
     public void testConstructorFromFileExceptionGetCanonicalFile() {
         FileSource s = new DefaultFileSource(new TestUtil.FileThatThrowsInGetCanonicalFile());
         File file = new File(TestUtil.FileThatThrowsInGetCanonicalFile.ABSOLUTE_PATH);
-        assertEquals(file.getPath(), s.getFile().getPath());
-        assertTrue(s.getFile().getPath().contains(".."));
+        assertThat(s.getFile().getPath(), is(file.getPath()));
+        assertThat(s.getFile().getPath().contains(".."), is(true));
     }
 
     @Test
     public void testEquals() {
         File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         File file2 = new File(tempFolder.getRoot(), "MyScript2.groovy");
-        assertEquals(new DefaultFileSource(file), new DefaultFileSource(file));
-        assertEquals(new DefaultFileSource(file.getAbsoluteFile()), new DefaultFileSource(file));
-        assertFalse(new DefaultFileSource(file).equals(new DefaultFileSource(file2)));
-        assertFalse(new DefaultFileSource(file).equals("different class"));
-        assertFalse(new DefaultFileSource(file).equals(null));
+        assertThat(new DefaultFileSource(file), is(new DefaultFileSource(file)));
+        assertThat(new DefaultFileSource(file), is(new DefaultFileSource(file.getAbsoluteFile())));
+        assertThat(new DefaultFileSource(file).equals(new DefaultFileSource(file2)), is(false));
+        assertThat(new DefaultFileSource(file).equals("different class"), is(false));
+        assertThat(new DefaultFileSource(file).equals(null), is(false));
     }
 
 }

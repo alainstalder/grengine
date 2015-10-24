@@ -16,12 +16,6 @@
 
 package ch.grengine.load;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import ch.grengine.code.Code;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.SingleSourceCode;
@@ -30,6 +24,12 @@ import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 /**

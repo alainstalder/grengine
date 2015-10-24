@@ -16,15 +16,15 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.Source;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.Source;
 
 
 /**

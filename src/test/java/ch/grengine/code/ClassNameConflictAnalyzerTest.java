@@ -16,8 +16,13 @@
 
 package ch.grengine.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import ch.grengine.code.groovy.DefaultGroovyCompiler;
+import ch.grengine.source.DefaultSourceFactory;
+import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
+import ch.grengine.sources.Sources;
+import ch.grengine.sources.SourcesUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,13 +33,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.groovy.DefaultGroovyCompiler;
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceFactory;
-import ch.grengine.source.SourceUtil;
-import ch.grengine.sources.Sources;
-import ch.grengine.sources.SourcesUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class ClassNameConflictAnalyzerTest {
@@ -51,25 +52,25 @@ public class ClassNameConflictAnalyzerTest {
     public void testGetAllClassOrigins() throws Exception {
         List<Code> codeLayers = getTestCodeLayers();
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getAllClassNamesMap(codeLayers);
-        
-        assertEquals(4, origins.size());
+
+        assertThat(origins.size(), is(4));
         
         List<Code> twiceList = origins.get("Twice");
-        assertEquals(2, twiceList.size());
-        assertEquals(twiceList.get(0), codeLayers.get(0));
-        assertEquals(twiceList.get(1), codeLayers.get(1));
+        assertThat(twiceList.size(), is(2));
+        assertThat(codeLayers.get(0), is(twiceList.get(0)));
+        assertThat(codeLayers.get(1), is(twiceList.get(1)));
         
         List<Code> twiceInner1List = origins.get("Twice$Inner1");
-        assertEquals(1, twiceInner1List.size());
-        assertEquals(twiceInner1List.get(0), codeLayers.get(0));
+        assertThat(twiceInner1List.size(), is(1));
+        assertThat(codeLayers.get(0), is(twiceInner1List.get(0)));
         
         List<Code> twiceInner2List = origins.get("Twice$Inner2");
-        assertEquals(1, twiceInner2List.size());
-        assertEquals(twiceInner2List.get(0), codeLayers.get(1));
+        assertThat(twiceInner2List.size(), is(1));
+        assertThat(codeLayers.get(1), is(twiceInner2List.get(0)));
         
         List<Code> fileList = origins.get("java.io.File");
-        assertEquals(1, fileList.size());
-        assertEquals(fileList.get(0), codeLayers.get(2));
+        assertThat(fileList.size(), is(1));
+        assertThat(codeLayers.get(2), is(fileList.get(0)));
     }
     
     @Test
@@ -78,7 +79,7 @@ public class ClassNameConflictAnalyzerTest {
             ClassNameConflictAnalyzer.getAllClassNamesMap(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Code layers are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
     
@@ -87,13 +88,13 @@ public class ClassNameConflictAnalyzerTest {
     public void testClassOriginsWithDuplicates() throws Exception {
         List<Code> codeLayers = getTestCodeLayers();
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
-        
-        assertEquals(1, origins.size());
+
+        assertThat(origins.size(), is(1));
         
         List<Code> twiceList = origins.get("Twice");
-        assertEquals(2, twiceList.size());
-        assertEquals(twiceList.get(0), codeLayers.get(0));
-        assertEquals(twiceList.get(1), codeLayers.get(1));
+        assertThat(twiceList.size(), is(2));
+        assertThat(codeLayers.get(0), is(twiceList.get(0)));
+        assertThat(codeLayers.get(1), is(twiceList.get(1)));
     }
     
     @Test
@@ -102,7 +103,7 @@ public class ClassNameConflictAnalyzerTest {
             ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Code layers are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
     
@@ -113,12 +114,12 @@ public class ClassNameConflictAnalyzerTest {
         List<Code> codeLayers = getTestCodeLayers();
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.
                 getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
-        
-        assertEquals(1, origins.size());
+
+        assertThat(origins.size(), is(1));
 
         List<Code> fileList = origins.get("java.io.File");
-        assertEquals(1, fileList.size());
-        assertEquals(fileList.get(0), codeLayers.get(2));
+        assertThat(fileList.size(), is(1));
+        assertThat(codeLayers.get(2), is(fileList.get(0)));
     }
     
     @Test
@@ -127,7 +128,7 @@ public class ClassNameConflictAnalyzerTest {
             ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(null, new LinkedList<Code>());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Parent class loader is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
     
@@ -138,7 +139,7 @@ public class ClassNameConflictAnalyzerTest {
             ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Code layers are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
 
@@ -162,9 +163,8 @@ public class ClassNameConflictAnalyzerTest {
         Code code1 = c.compile(sources1);
         Code code2 = c.compile(sources2);
         Code code3 = c.compile(sources3);
-        
-        List<Code> codeLayers = CodeUtil.codeArrayToList(code1, code2, code3);
-        return codeLayers;
+
+        return CodeUtil.codeArrayToList(code1, code2, code3);
     }
 
 }

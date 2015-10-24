@@ -16,11 +16,6 @@
 
 package ch.grengine.sources;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.DefaultSourceFactory;
@@ -28,12 +23,23 @@ import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Sources based on a directory with script files.
  * <p>
  * Script file extensions and whether to also scan subdirectories
  * is configurable.
+ * <p>
+ * The implementation is basic, but may still be good enough for many
+ * use cases in practice: Invisible files, as well as invisible or
+ * unlistable directories, are ignored; no attempts are made to detect
+ * symlinks. Note e.g. that detecting symlinks for sure is not possible
+ * before Java 7, unless the native system is queried in some way.
  * 
  * @since 1.0
  * 
@@ -72,14 +78,12 @@ public class DirBasedSources extends BaseSources {
      *
      * @return updated source set
      *
-     * @throws NullPointerException if the script file directory or a subdirectory cannot be listed
-     *
      * @since 1.0
      */
     @Override
     protected Set<Source> getSourceSetNew() {
         Set<Source> sourceSet = new HashSet<Source>();
-        fromDirectoryAddRecursively(sourceFactory, sourceSet, dir, true);
+        fromDirectoryAddRecursively(sourceSet, dir, true);
         return sourceSet;
     }
 
@@ -128,15 +132,17 @@ public class DirBasedSources extends BaseSources {
     }
 
     
-    private void fromDirectoryAddRecursively(final SourceFactory sourceFactory, final Set<Source> sources,
-            final File file, final boolean firstDir) {
+    private void fromDirectoryAddRecursively(final Set<Source> sources, final File file, final boolean firstDir) {
         if (!firstDir && file.isHidden()) {
             return;
         }
         if (file.isDirectory()) {
             if (firstDir || dirMode==DirMode.WITH_SUBDIRS_RECURSIVE) {
-                for (File listedFile : file.listFiles()) {
-                    fromDirectoryAddRecursively(sourceFactory, sources, listedFile, false);
+                File[] listedFiles = file.listFiles();
+                if (listedFiles != null) {
+                    for (File listedFile : listedFiles) {
+                        fromDirectoryAddRecursively(sources, listedFile, false);
+                    }
                 }
             }
         } else if (file.isFile()) {

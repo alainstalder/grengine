@@ -16,9 +16,8 @@
 
 package ch.grengine.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +26,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.source.MockSource;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class CompiledSourceInfoTest {
@@ -37,18 +38,18 @@ public class CompiledSourceInfoTest {
     
     @Test
     public void testConstructPlusGetters() {
-        MockSource m1 = new MockSource("id1");
+        Source m1 = new MockSource("id1");
         String name = "MainClassName";
         Set<String> names = new HashSet<String>();
         names.add("Side");
         names.add("MainClassName");
         CompiledSourceInfo info = new CompiledSourceInfo(m1, name, names, 55);
-        assertEquals(m1, info.getSource());
-        assertEquals(name, info.getMainClassName());
-        assertEquals(names, info.getClassNames());
-        assertEquals(55, info.getLastModifiedAtCompileTime());
-        assertTrue(info.toString().startsWith("CompiledSourceInfo[source=MockSource[ID='id1', lastModified=0], " +
-                "mainClassName=MainClassName, classNames=" + names + ", lastModifiedAtCompileTime="));
+        assertThat(info.getSource(), is(m1));
+        assertThat(info.getMainClassName(), is(name));
+        assertThat(info.getClassNames(), is(names));
+        assertThat(info.getLastModifiedAtCompileTime(), is(55L));
+        assertThat(info.toString().startsWith("CompiledSourceInfo[source=MockSource[ID='id1', lastModified=0], " +
+                "mainClassName=MainClassName, classNames=" + names + ", lastModifiedAtCompileTime="), is(true));
     }
     
     @Test
@@ -57,7 +58,7 @@ public class CompiledSourceInfoTest {
             new CompiledSourceInfo(null, "", new HashSet<String>(), 0);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source is null."));
         }
     }
     
@@ -67,7 +68,7 @@ public class CompiledSourceInfoTest {
             new CompiledSourceInfo(new MockSource("id1"), null, new HashSet<String>(), 0);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Main class name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Main class name is null."));
         }
     }
     
@@ -77,7 +78,7 @@ public class CompiledSourceInfoTest {
             new CompiledSourceInfo(new MockSource("id1"), "", null, 0);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Class names are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Class names are null."));
         }
     }
 

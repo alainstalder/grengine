@@ -16,10 +16,10 @@
 
 package ch.grengine.except;
 
+import ch.grengine.code.Code;
+
 import java.util.List;
 import java.util.Map;
-
-import ch.grengine.code.Code;
 
 
 /**

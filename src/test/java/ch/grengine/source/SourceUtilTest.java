@@ -16,10 +16,7 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +29,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class SourceUtilTest {
@@ -51,9 +51,9 @@ public class SourceUtilTest {
         String text2 = "println 2";
         List<String> texts = TestUtil.argsToList(text1, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
     
     @Test
@@ -61,9 +61,9 @@ public class SourceUtilTest {
         String text1 = "println 1";
         String text2 = "println 2";
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), text1, text2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
 
     @Test
@@ -72,9 +72,9 @@ public class SourceUtilTest {
         String text2 = "println 2";
         List<String> texts = TestUtil.argsToList(text1, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
     
     @Test
@@ -82,9 +82,9 @@ public class SourceUtilTest {
         String text1 = "println 1";
         String text2 = "println 2";
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(text1, text2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
     
     @Test
@@ -95,9 +95,9 @@ public class SourceUtilTest {
         String name2 = "Script2";
         Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1, name1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2, name2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1, name1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2, name2)), is(true));
     }
 
     @Test
@@ -108,9 +108,9 @@ public class SourceUtilTest {
         String name2 = "Script2";
         Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultTextSource(text1, name1)));
-        assertTrue(sourceSet.contains(new DefaultTextSource(text2, name2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultTextSource(text1, name1)), is(true));
+        assertThat(sourceSet.contains(new DefaultTextSource(text2, name2)), is(true));
     }
     
     
@@ -120,9 +120,9 @@ public class SourceUtilTest {
         File file2 = new File("Script2.groovy");
         List<File> files = TestUtil.argsToList(file1, file2);
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), files);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultFileSource(file1)));
-        assertTrue(sourceSet.contains(new DefaultFileSource(file2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
+        assertThat(sourceSet.contains(new DefaultFileSource(file2)), is(true));
     }
 
     @Test
@@ -130,9 +130,9 @@ public class SourceUtilTest {
         File file1 = new File("Script1.groovy");
         File file2 = new File("Script2.groovy");
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), file1, file2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultFileSource(file1)));
-        assertTrue(sourceSet.contains(new DefaultFileSource(file2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
+        assertThat(sourceSet.contains(new DefaultFileSource(file2)), is(true));
     }
 
     @Test
@@ -141,9 +141,9 @@ public class SourceUtilTest {
         File file2 = new File("Script2.groovy");
         List<File> files = TestUtil.argsToList(file1, file2);
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(files);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultFileSource(file1)));
-        assertTrue(sourceSet.contains(new DefaultFileSource(file2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
+        assertThat(sourceSet.contains(new DefaultFileSource(file2)), is(true));
     }
 
     @Test
@@ -151,9 +151,9 @@ public class SourceUtilTest {
         File file1 = new File("Script1.groovy");
         File file2 = new File("Script2.groovy");
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(file1, file2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultFileSource(file1)));
-        assertTrue(sourceSet.contains(new DefaultFileSource(file2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
+        assertThat(sourceSet.contains(new DefaultFileSource(file2)), is(true));
     }
 
     
@@ -163,9 +163,9 @@ public class SourceUtilTest {
         URL url2 = new URL("http://foo.bar/Script2.groovy");
         List<URL> urls = TestUtil.argsToList(url1, url2);
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), urls);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url1)));
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url2)), is(true));
     }
 
     @Test
@@ -173,9 +173,9 @@ public class SourceUtilTest {
         URL url1 = new URL("http://foo.bar/Script1.groovy");
         URL url2 = new URL("http://foo.bar/Script2.groovy");
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), url1, url2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url1)));
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url2)), is(true));
     }
 
     @Test
@@ -184,9 +184,9 @@ public class SourceUtilTest {
         URL url2 = new URL("http://foo.bar/Script2.groovy");
         List<URL> urls = TestUtil.argsToList(url1, url2);
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(urls);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url1)));
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url2)), is(true));
     }
 
     @Test
@@ -194,9 +194,9 @@ public class SourceUtilTest {
         URL url1 = new URL("http://foo.bar/Script1.groovy");
         URL url2 = new URL("http://foo.bar/Script2.groovy");
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(url1, url2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url1)));
-        assertTrue(sourceSet.contains(new DefaultUrlSource(url2)));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
+        assertThat(sourceSet.contains(new DefaultUrlSource(url2)), is(true));
     }
 
     
@@ -204,8 +204,8 @@ public class SourceUtilTest {
     public void testSourceToSourceSet() {
         Source source = new DefaultTextSource("println 1");
         Set<Source> sourceSet = SourceUtil.sourceToSourceSet(source);
-        assertEquals(1, sourceSet.size());
-        assertTrue(sourceSet.contains(source));
+        assertThat(sourceSet.size(), is(1));
+        assertThat(sourceSet.contains(source), is(true));
     }
     
     @Test
@@ -214,9 +214,9 @@ public class SourceUtilTest {
         Source source2 = new DefaultTextSource("println 2");
         List<Source> sourceList = TestUtil.argsToList(source1, source2);
         Set<Source> sourceSet = SourceUtil.sourceCollectionToSourceSet(sourceList);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(source1));
-        assertTrue(sourceSet.contains(source2));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(source1), is(true));
+        assertThat(sourceSet.contains(source2), is(true));
     }
     
     @Test
@@ -224,29 +224,27 @@ public class SourceUtilTest {
         Source source1 = new DefaultTextSource("println 1");
         Source source2 = new DefaultTextSource("println 2");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(source1, source2);
-        assertEquals(2, sourceSet.size());
-        assertTrue(sourceSet.contains(source1));
-        assertTrue(sourceSet.contains(source2));
+        assertThat(sourceSet.size(), is(2));
+        assertThat(sourceSet.contains(source1), is(true));
+        assertThat(sourceSet.contains(source2), is(true));
     }
     
 
     @Test
     public void testMd5() {
         // RFC 1321 test vectors
-        assertEquals("D41D8CD98F00B204E9800998ECF8427E", SourceUtil.md5(""));
-        assertEquals("0CC175B9C0F1B6A831C399E269772661", SourceUtil.md5("a"));
-        assertEquals("900150983CD24FB0D6963F7D28E17F72", SourceUtil.md5("abc"));
-        assertEquals("F96B697D7CB7938D525A2F31AAF161D0", SourceUtil.md5("message digest"));
-        assertEquals("C3FCD3D76192E4007DFB496CCA67E13B", SourceUtil.md5("abcdefghijklmnopqrstuvwxyz"));
-        assertEquals("D174AB98D277D9F5A5611C2C9F419D9F",
-                SourceUtil.md5("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"));
-        assertEquals("57EDF4A22BE3C955AC49DA2E2107B67A",
-                SourceUtil.md5("12345678901234567890123456789012345678901234567890123456789012345678901234567890"));
+        assertThat(SourceUtil.md5(""), is("D41D8CD98F00B204E9800998ECF8427E"));
+        assertThat(SourceUtil.md5("a"), is("0CC175B9C0F1B6A831C399E269772661"));
+        assertThat(SourceUtil.md5("abc"), is("900150983CD24FB0D6963F7D28E17F72"));
+        assertThat(SourceUtil.md5("message digest"), is("F96B697D7CB7938D525A2F31AAF161D0"));
+        assertThat(SourceUtil.md5("abcdefghijklmnopqrstuvwxyz"), is("C3FCD3D76192E4007DFB496CCA67E13B"));
+        assertThat(SourceUtil.md5("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), is("D174AB98D277D9F5A5611C2C9F419D9F"));
+        assertThat(SourceUtil.md5("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), is("57EDF4A22BE3C955AC49DA2E2107B67A"));
     }
     
     @Test
     public void testHash() {
-        assertEquals("900150983CD24FB0D6963F7D28E17F72", SourceUtil.hash("abc", "MD5"));
+        assertThat(SourceUtil.hash("abc", "MD5"), is("900150983CD24FB0D6963F7D28E17F72"));
     }
     
     @Test
@@ -255,13 +253,13 @@ public class SourceUtilTest {
             SourceUtil.hash("abc", "BatHash");
             fail();
         } catch (UnsupportedOperationException e) {
-            assertEquals("No message digest BatHash.", e.getMessage());
+            assertThat(e.getMessage(), is("No message digest BatHash."));
         }
     }
     
     @Test
     public void testGetTextStartNoLineBreaksNullText() {
-        assertNull(SourceUtil.getTextStartNoLinebreaks(null, 0));
+        assertThat(SourceUtil.getTextStartNoLinebreaks(null, 0), is(nullValue()));
     }
     
     @Test
@@ -270,7 +268,7 @@ public class SourceUtilTest {
             SourceUtil.getTextStartNoLinebreaks("hello", -1);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Max len (-1) is negative.", e.getMessage());
+            assertThat(e.getMessage(), is("Max len (-1) is negative."));
         }
     }
     
@@ -280,29 +278,29 @@ public class SourceUtilTest {
             SourceUtil.getTextStartNoLinebreaks("hello", 9);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Max len (9) must be at least 10.", e.getMessage());
+            assertThat(e.getMessage(), is("Max len (9) must be at least 10."));
         }
     }
 
     @Test
     public void testGetTextStartNoLineBreaks() {
-        assertEquals("hello", SourceUtil.getTextStartNoLinebreaks("hello", 10));
-        assertEquals("hello1", SourceUtil.getTextStartNoLinebreaks("hello1", 10));
-        assertEquals("hello12", SourceUtil.getTextStartNoLinebreaks("hello12", 10));
-        assertEquals("hello123", SourceUtil.getTextStartNoLinebreaks("hello123", 10));
-        assertEquals("hello1234", SourceUtil.getTextStartNoLinebreaks("hello1234", 10));
-        assertEquals("hello12345", SourceUtil.getTextStartNoLinebreaks("hello12345", 10));
-        assertEquals("hello1[..]", SourceUtil.getTextStartNoLinebreaks("hello123456", 10));
-        assertEquals("hello1[..]", SourceUtil.getTextStartNoLinebreaks("hello1234567", 10));
-        
-        assertEquals("hello%n", SourceUtil.getTextStartNoLinebreaks("hello\n", 10));
-        assertEquals("hello%n", SourceUtil.getTextStartNoLinebreaks("hello\r", 10));
-        assertEquals("hello%n", SourceUtil.getTextStartNoLinebreaks("hello\r\n", 10));
-        assertEquals("hello%n%n", SourceUtil.getTextStartNoLinebreaks("hello\n\r", 10));
-        assertEquals("hello%n1", SourceUtil.getTextStartNoLinebreaks("hello\n1", 10));
-        assertEquals("hello%n12", SourceUtil.getTextStartNoLinebreaks("hello\n12", 10));
-        assertEquals("hello%n123", SourceUtil.getTextStartNoLinebreaks("hello\n123", 10));
-        assertEquals("hello%[..]", SourceUtil.getTextStartNoLinebreaks("hello\n1234", 10));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello", 10), is("hello"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1", 10), is("hello1"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello12", 10), is("hello12"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello123", 10), is("hello123"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1234", 10), is("hello1234"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello12345", 10), is("hello12345"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello123456", 10), is("hello1[..]"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1234567", 10), is("hello1[..]"));
+
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\r", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\r\n", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n\r", 10), is("hello%n%n"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1", 10), is("hello%n1"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n12", 10), is("hello%n12"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n123", 10), is("hello%n123"));
+        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1234", 10), is("hello%[..]"));
     }
     
     @Test
@@ -312,7 +310,7 @@ public class SourceUtilTest {
         TestUtil.setFileText(file, text);
         URL url = file.toURI().toURL();
         String textRead = SourceUtil.readUrlText(url, "UTF-8");
-        assertEquals(text, textRead);
+        assertThat(textRead, is(text));
     }
     
     @Test
@@ -322,7 +320,7 @@ public class SourceUtilTest {
         TestUtil.setFileText(file, text);
         URL url = file.toURI().toURL();
         String textRead = SourceUtil.readUrlText(url, "UTF-8");
-        assertEquals(text, textRead);
+        assertThat(textRead, is(text));
     }
     
     @Test
@@ -333,7 +331,7 @@ public class SourceUtilTest {
            SourceUtil.readUrlText(url, "UTF-8");
            fail();
         } catch(IOException e) {
-            assertTrue(e.getMessage().startsWith("Could not open stream for URL '" + url + "':"));
+            assertThat(e.getMessage().startsWith("Could not open stream for URL '" + url + "':"), is(true));
         }
     }
 

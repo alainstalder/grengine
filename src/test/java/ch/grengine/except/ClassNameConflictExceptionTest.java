@@ -16,9 +16,9 @@
 
 package ch.grengine.except;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import ch.grengine.code.ClassNameConflictAnalyzer;
+import ch.grengine.code.ClassNameConflictAnalyzerTest;
+import ch.grengine.code.Code;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +27,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.ClassNameConflictAnalyzer;
-import ch.grengine.code.ClassNameConflictAnalyzerTest;
-import ch.grengine.code.Code;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class ClassNameConflictExceptionTest {
@@ -47,16 +48,15 @@ public class ClassNameConflictExceptionTest {
                 ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
         String msg = "Got " + (map1.size() + map2.size()) + " conflict(s).";
         ClassNameConflictException e = new ClassNameConflictException(msg, map1, map2);
-        
-        assertTrue(e instanceof GrengineException);
-        assertEquals("Got 2 conflict(s). " +
-                "Duplicate classes in code layers: [Twice], classes in code layers and parent: [java.io.File]",
-                e.getMessage());
-        assertEquals(map1, e.getSameClassNamesInMultipleCodeLayersMap());
-        assertEquals(map2, e.getSameClassNamesInParentAndCodeLayersMap());
-        assertNull(e.getCause());
-        assertTrue(e.getDateThrown().getTime() <= System.currentTimeMillis());
-        assertTrue(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis());
+
+        assertThat(e, instanceOf(GrengineException.class));
+        assertThat(e.getMessage(), is("Got 2 conflict(s). " +
+                "Duplicate classes in code layers: [Twice], classes in code layers and parent: [java.io.File]"));
+        assertThat(e.getSameClassNamesInMultipleCodeLayersMap(), is(map1));
+        assertThat(e.getSameClassNamesInParentAndCodeLayersMap(), is(map2));
+        assertThat(e.getCause(), is(nullValue()));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
 
 }

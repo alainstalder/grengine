@@ -16,14 +16,6 @@
 
 package ch.grengine.load;
 
-import static org.junit.Assert.assertFalse;
-
-import java.util.Set;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.source.DefaultSourceFactory;
@@ -32,6 +24,15 @@ import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
+
+import java.util.Set;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class BytecodeClassLoaderConcurrencyTest {
@@ -95,7 +96,7 @@ public class BytecodeClassLoaderConcurrencyTest {
     }
     
     private volatile boolean failed;
-    public void setFailed(boolean failed) {
+    private void setFailed(boolean failed) {
         this.failed = failed;
     }
 
@@ -146,7 +147,7 @@ public class BytecodeClassLoaderConcurrencyTest {
             t.join();
         }
 
-        assertFalse(failed);
+        assertThat(failed, is(false));
     }
 
     @Test
@@ -196,7 +197,7 @@ public class BytecodeClassLoaderConcurrencyTest {
             t.join();
         }
 
-        assertFalse(failed);
+        assertThat(failed, is(false));
     }
 
     @Test
@@ -247,7 +248,7 @@ public class BytecodeClassLoaderConcurrencyTest {
             t.join();
         }
 
-        assertFalse(failed);
+        assertThat(failed, is(false));
     }
 
     @Test
@@ -298,7 +299,7 @@ public class BytecodeClassLoaderConcurrencyTest {
             t.join();
         }
 
-        assertFalse(failed);
+        assertThat(failed, is(false));
     }
 
 }

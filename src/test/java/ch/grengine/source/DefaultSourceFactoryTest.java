@@ -16,10 +16,10 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
+import ch.grengine.source.DefaultSourceFactory.ContentTrackingUrlSource;
+import ch.grengine.source.DefaultSourceFactory.LastModifiedTrackingFileSource;
+import ch.grengine.source.DefaultSourceFactory.SourceIdTrackingTextSource;
 
 import java.io.File;
 import java.net.URL;
@@ -28,10 +28,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
-import ch.grengine.source.DefaultSourceFactory.ContentTrackingUrlSource;
-import ch.grengine.source.DefaultSourceFactory.LastModifiedTrackingFileSource;
-import ch.grengine.source.DefaultSourceFactory.SourceIdTrackingTextSource;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultSourceFactoryTest {
@@ -44,13 +46,13 @@ public class DefaultSourceFactoryTest {
         SourceFactory sf = new DefaultSourceFactory();
         String text = "println 'hello'";
         Source s = sf.fromText(text);
-        assertTrue(s instanceof DefaultTextSource);
-        assertFalse(s instanceof SourceIdTrackingTextSource);
-        assertEquals(new DefaultTextSource(text), s);
+        assertThat(s, instanceOf(DefaultTextSource.class));
+        assertThat(s, not(instanceOf(SourceIdTrackingTextSource.class)));
+        assertThat(s, is((Source)new DefaultTextSource(text)));
         Source s2 = sf.fromText(text);
-        assertEquals(s2, s);
-        assertFalse(s.getId() == s2.getId());
-        assertEquals(((TextSource)s).getText(), text);
+        assertThat(s, is(s2));
+        assertThat(s.getId(), not(sameInstance(s2.getId())));
+        assertThat(text, is(((TextSource) s).getText()));
     }
 
     @Test
@@ -60,14 +62,14 @@ public class DefaultSourceFactoryTest {
                 .build();
         String text = "println 'hello'";
         Source s = sf.fromText(text);
-        assertFalse(s instanceof DefaultTextSource);
-        assertTrue(s instanceof SourceIdTrackingTextSource);
-        assertEquals(new DefaultTextSource(text), s);
+        assertThat(s, not(instanceOf(DefaultTextSource.class)));
+        assertThat(s, instanceOf(SourceIdTrackingTextSource.class));
+        assertThat(s, is((Source)new DefaultTextSource(text)));
         Source s2 = sf.fromText(text);
-        assertEquals(s2, s);
-        assertTrue(s.getId() == s2.getId());
-        assertEquals(((TextSource)s).getText(), text);
-        assertEquals("SourceIdTrackingTextSource[ID=" + s.getId() + ", text='" + text +"']", s.toString());
+        assertThat(s, is(s2));
+        assertThat(s.getId(), sameInstance(s2.getId()));
+        assertThat(text, is(((TextSource) s).getText()));
+        assertThat(s.toString(), is("SourceIdTrackingTextSource[ID=" + s.getId() + ", text='" + text + "']"));
     }
 
     @Test
@@ -76,14 +78,14 @@ public class DefaultSourceFactoryTest {
         String text = "println 'hello'";
         String name = "MyScript";
         Source s = sf.fromText(text, name);
-        assertTrue(s instanceof DefaultTextSource);
-        assertFalse(s instanceof SourceIdTrackingTextSource);
-        assertEquals(new DefaultTextSource(text, name), s);
-        assertFalse(s.equals(new DefaultTextSource(text)));
+        assertThat(s, instanceOf(DefaultTextSource.class));
+        assertThat(s, not(instanceOf(SourceIdTrackingTextSource.class)));
+        assertThat(s, is((Source)new DefaultTextSource(text, name)));
+        assertThat(s.equals(new DefaultTextSource(text)), is(false));
         Source s2 = sf.fromText(text, name);
-        assertEquals(s2, s);
-        assertFalse(s.getId() == s2.getId());
-        assertEquals(((TextSource)s).getText(), text);
+        assertThat(s, is(s2));
+        assertThat(s.getId(), not(sameInstance(s2.getId())));
+        assertThat(text, is(((TextSource) s).getText()));
     }
 
     @Test
@@ -94,15 +96,15 @@ public class DefaultSourceFactoryTest {
         String text = "println 'hello'";
         String name = "MyScript";
         Source s = sf.fromText(text, name);
-        assertFalse(s instanceof DefaultTextSource);
-        assertTrue(s instanceof SourceIdTrackingTextSource);
-        assertEquals(new DefaultTextSource(text, name), s);
-        assertFalse(s.equals(new DefaultTextSource(text)));
+        assertThat(s, not(instanceOf(DefaultTextSource.class)));
+        assertThat(s, instanceOf(SourceIdTrackingTextSource.class));
+        assertThat(s, is((Source)new DefaultTextSource(text, name)));
+        assertThat(s.equals(new DefaultTextSource(text)), is(false));
         Source s2 = sf.fromText(text, name);
-        assertEquals(s2, s);
+        assertThat(s, is(s2));
         // not the same, cached is only the part of the ID without the desired name
-        assertFalse(s.getId() == s2.getId());
-        assertEquals(((TextSource)s).getText(), text);
+        assertThat(s.getId(), not(sameInstance(s2.getId())));
+        assertThat(text, is(((TextSource) s).getText()));
     }
     
     @Test
@@ -112,11 +114,11 @@ public class DefaultSourceFactoryTest {
         TestUtil.setFileText(file, "println 1");
         long lastMod = file.lastModified();
         Source s = sf.fromFile(file);
-        assertTrue(s instanceof DefaultFileSource);
-        assertFalse(s instanceof LastModifiedTrackingFileSource);
-        assertEquals(new DefaultFileSource(file), s);
-        assertEquals(lastMod, s.getLastModified());
-        assertEquals(lastMod, s.getLastModified());
+        assertThat(s, instanceOf(DefaultFileSource.class));
+        assertThat(s, not(instanceOf(LastModifiedTrackingFileSource.class)));
+        assertThat(s, is((Source)new DefaultFileSource(file)));
+        assertThat(s.getLastModified(), is(lastMod));
+        assertThat(s.getLastModified(), is(lastMod));
     }
         
     @Test
@@ -129,11 +131,11 @@ public class DefaultSourceFactoryTest {
         TestUtil.setFileText(file, "println 1");
         long lastMod = file.lastModified();
         Source s = sf.fromFile(file);
-        assertTrue(s instanceof DefaultFileSource);
-        assertTrue(s instanceof LastModifiedTrackingFileSource);
-        assertEquals(new DefaultFileSource(file), s);
-        assertEquals(lastMod, s.getLastModified());
-        assertEquals(lastMod, s.getLastModified());
+        assertThat(s, instanceOf(DefaultFileSource.class));
+        assertThat(s, instanceOf(LastModifiedTrackingFileSource.class));
+        assertThat(s, is((Source)new DefaultFileSource(file)));
+        assertThat(s.getLastModified(), is(lastMod));
+        assertThat(s.getLastModified(), is(lastMod));
        
         while (s.getLastModified() == lastMod) {
             TestUtil.setFileText(file, "println 2");
@@ -148,10 +150,10 @@ public class DefaultSourceFactoryTest {
         TestUtil.setFileText(file, "println 1");
         URL url = file.toURI().toURL();
         Source s = sf.fromUrl(url);
-        assertTrue(s instanceof DefaultUrlSource);
-        assertFalse(s instanceof ContentTrackingUrlSource);
-        assertEquals(new DefaultUrlSource(url), s);
-        assertEquals(0, s.getLastModified());
+        assertThat(s, instanceOf(DefaultUrlSource.class));
+        assertThat(s, not(instanceOf(ContentTrackingUrlSource.class)));
+        assertThat(s, is((Source)new DefaultUrlSource(url)));
+        assertThat(s.getLastModified(), is(0L));
     }
     
     @Test
@@ -164,50 +166,50 @@ public class DefaultSourceFactoryTest {
         TestUtil.setFileText(file, "println 1");
         URL url = file.toURI().toURL();
         Source s = sf.fromUrl(url);
-        assertTrue(s instanceof DefaultUrlSource);
-        assertTrue(s instanceof ContentTrackingUrlSource);
-        assertEquals(new DefaultUrlSource(url), s);
-        assertFalse(s.getLastModified() == 0);
+        assertThat(s, instanceOf(DefaultUrlSource.class));
+        assertThat(s, instanceOf(ContentTrackingUrlSource.class));
+        assertThat(s, is((Source)new DefaultUrlSource(url)));
+        assertThat(s.getLastModified(), is(not(0L)));
         
         // wait a bit, last modified must remain unchanged
         long lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // set same script text, last modified must remain unchanged
         TestUtil.setFileText(file, "println 1");
         Thread.sleep(30);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // set different script text, last modified must change
         TestUtil.setFileText(file, "println 2");
         Thread.sleep(30);
-        assertTrue(lastModifiedOld != s.getLastModified());
+        assertThat(lastModifiedOld, is(not(s.getLastModified())));
 
         // wait a bit, last modified must remain unchanged
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // clear chache, last modified must change (url must be loaded)
         sf.clearCache();
         Thread.sleep(30);
-        assertTrue(lastModifiedOld != s.getLastModified());
+        assertThat(lastModifiedOld, is(not(s.getLastModified())));
         
         // wait a bit, last modified must remain unchanged
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // delete file, last modified must change
-        assertTrue(file.delete());
+        assertThat(file.delete(), is(true));
         Thread.sleep(30);
-        assertTrue(lastModifiedOld != s.getLastModified());
+        assertThat(lastModifiedOld, is(not(s.getLastModified())));
         
         // wait a bit, last modified must remain unchanged
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // set script text back to original, last modified must change
         TestUtil.setFileText(file, "println 1");
         Thread.sleep(30);
-        assertTrue(lastModifiedOld != s.getLastModified());
+        assertThat(lastModifiedOld, is(not(s.getLastModified())));
     }
     
     @Test
@@ -220,23 +222,23 @@ public class DefaultSourceFactoryTest {
         TestUtil.setFileText(file, "println 1");
         URL url = file.toURI().toURL();
         Source s = sf.fromUrl(url);
-        assertTrue(s instanceof DefaultUrlSource);
-        assertTrue(s instanceof ContentTrackingUrlSource);
-        assertEquals(new DefaultUrlSource(url), s);
-        assertFalse(s.getLastModified() == 0);
+        assertThat(s, instanceOf(DefaultUrlSource.class));
+        assertThat(s, instanceOf(ContentTrackingUrlSource.class));
+        assertThat(s, is((Source)new DefaultUrlSource(url)));
+        assertThat(s.getLastModified(), is(not(0L)));
         
         // wait a bit, last modified must remain unchanged
         long lastModifiedOld = s.getLastModified();
         Thread.sleep(80);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // set same script text, last modified must remain unchanged
         TestUtil.setFileText(file, "println 1");
         Thread.sleep(80);
-        assertEquals(lastModifiedOld, s.getLastModified());
+        assertThat(s.getLastModified(), is(lastModifiedOld));
         // set different script text, last modified must change
         TestUtil.setFileText(file, "println 2");
         Thread.sleep(80);
-        assertTrue(lastModifiedOld != s.getLastModified());
+        assertThat(lastModifiedOld, is(not(s.getLastModified())));
     }
     
     @Test
@@ -248,7 +250,7 @@ public class DefaultSourceFactoryTest {
             sf.fromText((String)null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Text is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Text is null."));
         }
     }
     
@@ -261,7 +263,7 @@ public class DefaultSourceFactoryTest {
             sf.fromText((String)null, "name");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Text is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Text is null."));
         }
     }
 
@@ -274,7 +276,7 @@ public class DefaultSourceFactoryTest {
             sf.fromText("println 33", (String)null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Desired class name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Desired class name is null."));
         }
     }
 
@@ -287,10 +289,10 @@ public class DefaultSourceFactoryTest {
             builder.setTrackUrlContent(false);
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
         // extra test, get builder
-        assertEquals(builder, sf.getBuilder());
+        assertThat(sf.getBuilder(), is(builder));
     }
 
 }

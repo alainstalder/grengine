@@ -16,28 +16,27 @@
   
   ext {
     // 1.7.5 or any later version works
-    groovyVersion='2.4.4'
+    groovyVersion='2.4.5'
     junitVersion='4.11'
-    ivyVersion="2.4.0"
+    hamcrestVersion='1.3'
+    ivyVersion='2.4.0'
+
   }
 
   jar {
     manifest {
-      attributes 'Implementation-Title': 'grengine', 'Implementation-Version': version
+      attributes 'Implementation-Title': 'grengine', 'Implementation-Version': version, 'provider': 'gradle'
     }
   }
 
   dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.hamcrest:hamcrest-all:$hamcrestVersion"
     testCompile "org.apache.ivy:ivy:$ivyVersion"
   }
 
   project.group = 'ch.grengine'
-
-  jar {
-    manifest.attributes provider: 'gradle'
-  }
 
   repositories {
     mavenCentral()

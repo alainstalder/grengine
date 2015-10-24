@@ -16,9 +16,6 @@
 
 package ch.grengine.load;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import ch.grengine.code.Compiler;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.SingleSourceCode;
@@ -28,6 +25,9 @@ import ch.grengine.except.CompileException;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 import ch.grengine.sources.SourcesUtil;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**

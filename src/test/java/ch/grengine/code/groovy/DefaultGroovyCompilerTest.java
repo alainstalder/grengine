@@ -16,21 +16,6 @@
 
 package ch.grengine.code.groovy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.Set;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompilerFactory;
@@ -47,6 +32,21 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.Set;
+
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+
 
 public class DefaultGroovyCompilerTest {
     
@@ -57,12 +57,12 @@ public class DefaultGroovyCompilerTest {
     public void testConstructDefaults() throws Exception {
         DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
         DefaultGroovyCompiler c = builder.build();
-        
-        assertEquals(builder, c.getBuilder());
-        assertEquals(Thread.currentThread().getContextClassLoader(), c.getParent());
-        assertEquals(c.getBuilder().getParent(), c.getParent());
-        assertNotNull(c.getCompilerConfiguration());
-        assertEquals(c.getBuilder().getCompilerConfiguration(), c.getCompilerConfiguration());
+
+        assertThat(c.getBuilder(), is(builder));
+        assertThat(c.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(c.getParent(), is(c.getBuilder().getParent()));
+        assertThat(c.getCompilerConfiguration(), is(notNullValue()));
+        assertThat(c.getCompilerConfiguration(), is(c.getBuilder().getCompilerConfiguration()));
     }
     
     @Test
@@ -73,12 +73,12 @@ public class DefaultGroovyCompilerTest {
         builder.setParent(parent);
         builder.setCompilerConfiguration(config);
         DefaultGroovyCompiler c = builder.build();
-        
-        assertEquals(builder, c.getBuilder());
-        assertEquals(parent, c.getParent());
-        assertEquals(c.getBuilder().getParent(), c.getParent());
-        assertEquals(config, c.getCompilerConfiguration());
-        assertEquals(c.getBuilder().getCompilerConfiguration(), c.getCompilerConfiguration());
+
+        assertThat(c.getBuilder(), is(builder));
+        assertThat(c.getParent(), is(parent));
+        assertThat(c.getParent(), is(c.getBuilder().getParent()));
+        assertThat(c.getCompilerConfiguration(), is(config));
+        assertThat(c.getCompilerConfiguration(), is(c.getBuilder().getCompilerConfiguration()));
     }
     
     @Test
@@ -89,23 +89,23 @@ public class DefaultGroovyCompilerTest {
             builder.setParent(Thread.currentThread().getContextClassLoader());
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
 
     @Test
     public void testConstructorNoArgs() {
         DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        assertEquals(Thread.currentThread().getContextClassLoader(), c.getParent());
-        assertNotNull(c.getCompilerConfiguration());
+        assertThat(c.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(c.getCompilerConfiguration(), is(notNullValue()));
     }
     
     @Test
     public void testConstructorFromParent() {
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
-        assertEquals(parent, c.getParent());
-        assertNotNull(c.getCompilerConfiguration());
+        assertThat(c.getParent(), is(parent));
+        assertThat(c.getCompilerConfiguration(), is(notNullValue()));
     }
     
     @Test
@@ -113,8 +113,8 @@ public class DefaultGroovyCompilerTest {
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         CompilerConfiguration config = new CompilerConfiguration();
         DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent, config);
-        assertEquals(parent, c.getParent());
-        assertEquals(config, c.getCompilerConfiguration());
+        assertThat(c.getParent(), is(parent));
+        assertThat(c.getCompilerConfiguration(), is(config));
     }
     
     @Test
@@ -123,7 +123,7 @@ public class DefaultGroovyCompilerTest {
             new DefaultGroovyCompiler((ClassLoader)null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Parent class loader is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
     
@@ -133,7 +133,7 @@ public class DefaultGroovyCompilerTest {
             new DefaultGroovyCompiler(null, new CompilerConfiguration());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Parent class loader is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
     
@@ -143,7 +143,7 @@ public class DefaultGroovyCompilerTest {
             new DefaultGroovyCompiler(Thread.currentThread().getContextClassLoader(), null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiler configuration is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
     
@@ -167,29 +167,29 @@ public class DefaultGroovyCompilerTest {
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic");
         
         DefaultCode code = (DefaultCode)c.compile(sources);
-        
-        assertEquals("DefaultCode[sourcesName='basic', sources:4, classes:4]", code.toString());
-        
-        assertEquals("basic", code.getSourcesName());
-        
-        assertEquals(4, code.getSourceSet().size());
-        assertTrue(code.isForSource(textSource));
-        assertTrue(code.isForSource(textSourceWithName));
-        assertTrue(code.isForSource(fileSource));
-        assertTrue(code.isForSource(urlSource));
-        
-        assertEquals(expectedTextSourceMainClassName, code.getMainClassName(textSource));
-        assertEquals("MyTextScript", code.getMainClassName(textSourceWithName));
-        assertEquals("MyFileScript", code.getMainClassName(fileSource));
-        assertEquals("MyUrlScript", code.getMainClassName(urlSource));
-        
-        assertEquals(scriptFile.lastModified(), code.getLastModifiedAtCompileTime(fileSource));
-        
-        assertEquals(4, code.getClassNameSet().size());
-        assertNotNull(code.getBytecode(expectedTextSourceMainClassName));
-        assertNotNull(code.getBytecode("MyTextScript"));
-        assertNotNull(code.getBytecode("MyFileScript"));
-        assertNotNull(code.getBytecode("MyUrlScript"));
+
+        assertThat(code.toString(), is("DefaultCode[sourcesName='basic', sources:4, classes:4]"));
+
+        assertThat(code.getSourcesName(), is("basic"));
+
+        assertThat(code.getSourceSet().size(), is(4));
+        assertThat(code.isForSource(textSource), is(true));
+        assertThat(code.isForSource(textSourceWithName), is(true));
+        assertThat(code.isForSource(fileSource), is(true));
+        assertThat(code.isForSource(urlSource), is(true));
+
+        assertThat(code.getMainClassName(textSource), is(expectedTextSourceMainClassName));
+        assertThat(code.getMainClassName(textSourceWithName), is("MyTextScript"));
+        assertThat(code.getMainClassName(fileSource), is("MyFileScript"));
+        assertThat(code.getMainClassName(urlSource), is("MyUrlScript"));
+
+        assertThat(code.getLastModifiedAtCompileTime(fileSource), is(scriptFile.lastModified()));
+
+        assertThat(code.getClassNameSet().size(), is(4));
+        assertThat(code.getBytecode(expectedTextSourceMainClassName), is(notNullValue()));
+        assertThat(code.getBytecode("MyTextScript"), is(notNullValue()));
+        assertThat(code.getBytecode("MyFileScript"), is(notNullValue()));
+        assertThat(code.getBytecode("MyUrlScript"), is(notNullValue()));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class DefaultGroovyCompilerTest {
         
         File targetDir = new File(tempFolder.getRoot(), "target");
         targetDir.mkdir();
-        assertTrue(targetDir.exists());
+        assertThat(targetDir.exists(), is(true));
         CompilerConfiguration config = new CompilerConfiguration();
         config.setTargetDirectory(targetDir);
 
@@ -222,34 +222,34 @@ public class DefaultGroovyCompilerTest {
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic", compilerFactory);
         
         DefaultCode code = (DefaultCode)c.compile(sources);
-        
-        assertEquals("DefaultCode[sourcesName='basic', sources:4, classes:4]", code.toString());
-        
-        assertEquals("basic", code.getSourcesName());
-        
-        assertEquals(4, code.getSourceSet().size());
-        assertTrue(code.isForSource(textSource));
-        assertTrue(code.isForSource(textSourceWithName));
-        assertTrue(code.isForSource(fileSource));
-        assertTrue(code.isForSource(urlSource));
-        
-        assertEquals(expectedTextSourceMainClassName, code.getMainClassName(textSource));
-        assertEquals("MyTextScript", code.getMainClassName(textSourceWithName));
-        assertEquals("MyFileScript", code.getMainClassName(fileSource));
-        assertEquals("MyUrlScript", code.getMainClassName(urlSource));
-        
-        assertEquals(scriptFile.lastModified(), code.getLastModifiedAtCompileTime(fileSource));
-        
-        assertEquals(4, code.getClassNameSet().size());
-        assertNotNull(code.getBytecode(expectedTextSourceMainClassName));
-        assertNotNull(code.getBytecode("MyTextScript"));
-        assertNotNull(code.getBytecode("MyFileScript"));
-        assertNotNull(code.getBytecode("MyUrlScript"));
-        
-        assertTrue(new File(targetDir, expectedTextSourceMainClassName + ".class").exists());
-        assertTrue(new File(targetDir, "MyTextScript.class").exists());
-        assertTrue(new File(targetDir, "MyFileScript.class").exists());
-        assertTrue(new File(targetDir, "MyUrlScript.class").exists());
+
+        assertThat(code.toString(), is("DefaultCode[sourcesName='basic', sources:4, classes:4]"));
+
+        assertThat(code.getSourcesName(), is("basic"));
+
+        assertThat(code.getSourceSet().size(), is(4));
+        assertThat(code.isForSource(textSource), is(true));
+        assertThat(code.isForSource(textSourceWithName), is(true));
+        assertThat(code.isForSource(fileSource), is(true));
+        assertThat(code.isForSource(urlSource), is(true));
+
+        assertThat(code.getMainClassName(textSource), is(expectedTextSourceMainClassName));
+        assertThat(code.getMainClassName(textSourceWithName), is("MyTextScript"));
+        assertThat(code.getMainClassName(fileSource), is("MyFileScript"));
+        assertThat(code.getMainClassName(urlSource), is("MyUrlScript"));
+
+        assertThat(code.getLastModifiedAtCompileTime(fileSource), is(scriptFile.lastModified()));
+
+        assertThat(code.getClassNameSet().size(), is(4));
+        assertThat(code.getBytecode(expectedTextSourceMainClassName), is(notNullValue()));
+        assertThat(code.getBytecode("MyTextScript"), is(notNullValue()));
+        assertThat(code.getBytecode("MyFileScript"), is(notNullValue()));
+        assertThat(code.getBytecode("MyUrlScript"), is(notNullValue()));
+
+        assertThat(new File(targetDir, expectedTextSourceMainClassName + ".class").exists(), is(true));
+        assertThat(new File(targetDir, "MyTextScript.class").exists(), is(true));
+        assertThat(new File(targetDir, "MyFileScript.class").exists(), is(true));
+        assertThat(new File(targetDir, "MyUrlScript.class").exists(), is(true));
     }
 
     @Test
@@ -263,23 +263,23 @@ public class DefaultGroovyCompilerTest {
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basicsingle");
         
         DefaultSingleSourceCode code = (DefaultSingleSourceCode)c.compile(sources);
-        
-        assertEquals("DefaultSingleSourceCode[sourcesName='basicsingle', " +
+
+        assertThat(code.toString(), is("DefaultSingleSourceCode[sourcesName='basicsingle', " +
                 "mainClassName=" + expectedTextSourceMainClassName + ", classes:[" + expectedTextSourceMainClassName +
-                "]]", code.toString());
-        
-        assertEquals("basicsingle", code.getSourcesName());
-        
-        assertEquals(1, code.getSourceSet().size());
-        assertTrue(code.isForSource(textSource));
-        
-        assertEquals(expectedTextSourceMainClassName, code.getMainClassName(textSource));
-        
-        assertEquals(1, code.getClassNameSet().size());
-        assertNotNull(code.getBytecode(expectedTextSourceMainClassName));
-        
-        assertEquals(textSource, code.getSource());
-        assertEquals(expectedTextSourceMainClassName, code.getMainClassName());
+                "]]"));
+
+        assertThat(code.getSourcesName(), is("basicsingle"));
+
+        assertThat(code.getSourceSet().size(), is(1));
+        assertThat(code.isForSource(textSource), is(true));
+
+        assertThat(code.getMainClassName(textSource), is(expectedTextSourceMainClassName));
+
+        assertThat(code.getClassNameSet().size(), is(1));
+        assertThat(code.getBytecode(expectedTextSourceMainClassName), is(notNullValue()));
+
+        assertThat(code.getSource(), is(textSource));
+        assertThat(code.getMainClassName(), is(expectedTextSourceMainClassName));
     }
     
     @Test
@@ -288,7 +288,7 @@ public class DefaultGroovyCompilerTest {
             new DefaultGroovyCompiler().compile(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Sources are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Sources are null."));
         }
     }
     
@@ -306,15 +306,15 @@ public class DefaultGroovyCompilerTest {
             fail();
         } catch (CompileException e) {
             //System.out.println(e);
-            assertTrue(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='syntaxwrong']. " +
-                    "Cause: org.codehaus.groovy.control.MultipleCompilationErrorsException:"));
-            assertEquals(sources, e.getSources());
+            assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='syntaxwrong']. " +
+                    "Cause: org.codehaus.groovy.control.MultipleCompilationErrorsException:"), is(true));
+            assertThat(e.getSources(), is(sources));
             Thread.sleep(30);
-            assertTrue(e.getDateThrown().getTime() < System.currentTimeMillis());
-            assertTrue(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000);
+            assertThat(e.getDateThrown().getTime() < System.currentTimeMillis(), is(true));
+            assertThat(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000, is(true));
             //System.out.println(e.getCause());
-            assertTrue(e.getCause().toString().startsWith(
-                    "org.codehaus.groovy.control.MultipleCompilationErrorsException:"));
+            assertThat(e.getCause().toString().startsWith(
+                    "org.codehaus.groovy.control.MultipleCompilationErrorsException:"), is(true));
             
         }
     }
@@ -332,12 +332,12 @@ public class DefaultGroovyCompilerTest {
             fail();
         } catch (CompileException e) {
             //System.out.println(e);
-            assertEquals("Don't know how to compile source MockSource[ID='id1', lastModified=0].", e.getMessage());
-            assertEquals(sources, e.getSources());
+            assertThat(e.getMessage(), is("Don't know how to compile source MockSource[ID='id1', lastModified=0]."));
+            assertThat(e.getSources(), is(sources));
             Thread.sleep(30);
-            assertTrue(e.getDateThrown().getTime() < System.currentTimeMillis());
-            assertTrue(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000);
-            assertNull(e.getCause());
+            assertThat(e.getDateThrown().getTime() < System.currentTimeMillis(), is(true));
+            assertThat(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000, is(true));
+            assertThat(e.getCause(), is(nullValue()));
         }
     }
     
@@ -356,14 +356,14 @@ public class DefaultGroovyCompilerTest {
             fail();
         } catch (CompileException e) {
             //System.out.println(e);
-            assertTrue(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='twice']. Cause: "));
-            assertTrue(e.getMessage().contains("Invalid duplicate class definition of class Twice"));
-            assertEquals(sources, e.getSources());
+            assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='twice']. Cause: "), is(true));
+            assertThat(e.getMessage().contains("Invalid duplicate class definition of class Twice"), is(true));
+            assertThat(e.getSources(), is(sources));
             Thread.sleep(30);
-            assertTrue(e.getDateThrown().getTime() < System.currentTimeMillis());
-            assertTrue(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000);
+            assertThat(e.getDateThrown().getTime() < System.currentTimeMillis(), is(true));
+            assertThat(e.getDateThrown().getTime() > System.currentTimeMillis() - 5000, is(true));
             //System.out.println(e.getCause());
-            assertTrue(e.getCause().getMessage().contains("Invalid duplicate class definition of class Twice"));
+            assertThat(e.getCause().getMessage().contains("Invalid duplicate class definition of class Twice"), is(true));
         }
     }
     
@@ -387,10 +387,8 @@ public class DefaultGroovyCompilerTest {
         ClassLoader loader1 = new BytecodeClassLoader(parent, LoadMode.PARENT_FIRST, code1);
         Class<?> clazz1 = loader1.loadClass("Twice");
         Object obj1 = clazz1.newInstance();
-        Method method1 = clazz1.getDeclaredMethod("get", new Class<?>[0]);
-        Object out1 = method1.invoke(obj1);
-        assertTrue(out1 instanceof Integer);
-        assertTrue(1 == (Integer)out1);
+        Method method1 = clazz1.getDeclaredMethod("get");
+        assertThat((Integer)method1.invoke(obj1), is(1));
         loader1.loadClass("Twice$Inner1");
         try {
             loader1.loadClass("Twice$Inner2");
@@ -405,10 +403,8 @@ public class DefaultGroovyCompilerTest {
         ClassLoader loader2 = new BytecodeClassLoader(loader1, LoadMode.CURRENT_FIRST, code2);
         Class<?> clazz2 = loader2.loadClass("Twice");
         Object obj2 = clazz2.newInstance();
-        Method method2 = clazz2.getDeclaredMethod("get", new Class<?>[0]);
-        Object out2 = method2.invoke(obj2);
-        assertTrue(out2 instanceof Integer);
-        assertTrue(2 == (Integer)out2);
+        Method method2 = clazz2.getDeclaredMethod("get");
+        assertThat((Integer)method2.invoke(obj2), is(2));
         loader2.loadClass("Twice$Inner1");
         loader2.loadClass("Twice$Inner2");
         
@@ -416,10 +412,8 @@ public class DefaultGroovyCompilerTest {
         ClassLoader loader22 = new BytecodeClassLoader(loader1, LoadMode.PARENT_FIRST, code2);
         Class<?> clazz22 = loader22.loadClass("Twice");
         Object obj22 = clazz22.newInstance();
-        Method method22 = clazz22.getDeclaredMethod("get", new Class<?>[0]);
-        Object out22 = method22.invoke(obj22);
-        assertTrue(out22 instanceof Integer);
-        assertTrue(1 == (Integer)out22);
+        Method method22 = clazz22.getDeclaredMethod("get");
+        assertThat((Integer)method22.invoke(obj22), is(1));
         loader22.loadClass("Twice$Inner1");
         loader22.loadClass("Twice$Inner2");
     }

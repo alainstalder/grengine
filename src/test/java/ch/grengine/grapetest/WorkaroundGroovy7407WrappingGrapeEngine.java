@@ -14,12 +14,12 @@
 
 package ch.grengine.grapetest;
 
-import groovy.grape.Grape;
-import groovy.grape.GrapeEngine;
-
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+
+import groovy.grape.Grape;
+import groovy.grape.GrapeEngine;
 
 /**
  * A GrapeEngine that wraps the current GrapeEngine with a wrapper where all calls

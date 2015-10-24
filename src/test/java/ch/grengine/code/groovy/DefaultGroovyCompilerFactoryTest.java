@@ -16,17 +16,15 @@
 
 package ch.grengine.code.groovy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.Compiler;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultGroovyCompilerFactoryTest {
@@ -38,10 +36,10 @@ public class DefaultGroovyCompilerFactoryTest {
     public void testConstructDefaults() throws Exception {
         DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
         DefaultGroovyCompilerFactory cf = builder.build();
-        
-        assertEquals(builder, cf.getBuilder());
-        assertNotNull(cf.getCompilerConfiguration());
-        assertEquals(cf.getBuilder().getCompilerConfiguration(), cf.getCompilerConfiguration());
+
+        assertThat(cf.getBuilder(), is(builder));
+        assertThat(cf.getCompilerConfiguration(), is(notNullValue()));
+        assertThat(cf.getCompilerConfiguration(), is(cf.getBuilder().getCompilerConfiguration()));
     }
     
     @Test
@@ -50,10 +48,10 @@ public class DefaultGroovyCompilerFactoryTest {
         CompilerConfiguration config = new CompilerConfiguration();
         builder.setCompilerConfiguration(config);
         DefaultGroovyCompilerFactory cf = builder.build();
-        
-        assertEquals(builder, cf.getBuilder());
-        assertEquals(config, cf.getCompilerConfiguration());
-        assertEquals(cf.getBuilder().getCompilerConfiguration(), cf.getCompilerConfiguration());
+
+        assertThat(cf.getBuilder(), is(builder));
+        assertThat(cf.getCompilerConfiguration(), is(config));
+        assertThat(cf.getCompilerConfiguration(), is(cf.getBuilder().getCompilerConfiguration()));
     }
     
     @Test
@@ -64,7 +62,7 @@ public class DefaultGroovyCompilerFactoryTest {
             builder.setCompilerConfiguration(new CompilerConfiguration());
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
     
@@ -72,11 +70,9 @@ public class DefaultGroovyCompilerFactoryTest {
     public void testConstructorDefaultCompilerConfiguration() {
         DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory();
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Compiler c = cf.newCompiler(parent);
-        assertTrue(c instanceof DefaultGroovyCompiler);
-        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)c;
-        assertEquals(cf.getCompilerConfiguration(), dc.getCompilerConfiguration());
-        assertEquals(parent, dc.getParent());
+        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
+        assertThat(dc.getCompilerConfiguration(), is(cf.getCompilerConfiguration()));
+        assertThat(dc.getParent(), is(parent));
     }
     
     @Test
@@ -84,12 +80,10 @@ public class DefaultGroovyCompilerFactoryTest {
         CompilerConfiguration config = new CompilerConfiguration();
         DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory(config);
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        Compiler c = cf.newCompiler(parent);
-        assertTrue(c instanceof DefaultGroovyCompiler);
-        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)c;
-        assertEquals(config, cf.getCompilerConfiguration());
-        assertEquals(cf.getCompilerConfiguration(), dc.getCompilerConfiguration());
-        assertEquals(parent, dc.getParent());
+        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
+        assertThat(cf.getCompilerConfiguration(), is(config));
+        assertThat(dc.getCompilerConfiguration(), is(cf.getCompilerConfiguration()));
+        assertThat(dc.getParent(), is(parent));
     }
 
     @Test
@@ -98,7 +92,7 @@ public class DefaultGroovyCompilerFactoryTest {
             new DefaultGroovyCompilerFactory((CompilerConfiguration)null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiler configuration is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
 

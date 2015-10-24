@@ -16,14 +16,6 @@
 
 package ch.grengine;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import ch.grengine.engine.Engine;
 import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
@@ -31,6 +23,14 @@ import ch.grengine.except.CreateException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
+
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import groovy.lang.Binding;
+import groovy.lang.Script;
 
 
 /**

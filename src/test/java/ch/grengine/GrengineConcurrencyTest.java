@@ -16,8 +16,15 @@
 
 package ch.grengine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import ch.grengine.engine.LayeredEngine;
+import ch.grengine.engine.Loader;
+import ch.grengine.load.LoadMode;
+import ch.grengine.source.MockTextSource;
+import ch.grengine.source.Source;
+import ch.grengine.source.SourceUtil;
+import ch.grengine.sources.FixedSetSources;
+import ch.grengine.sources.Sources;
+import ch.grengine.sources.SourcesUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,15 +37,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.engine.LayeredEngine;
-import ch.grengine.engine.Loader;
-import ch.grengine.load.LoadMode;
-import ch.grengine.source.MockTextSource;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
-import ch.grengine.sources.FixedSetSources;
-import ch.grengine.sources.Sources;
-import ch.grengine.sources.SourcesUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests the respective class.
@@ -67,7 +67,9 @@ public class GrengineConcurrencyTest {
         return out.toString();
     }
 
-    public void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+    private void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+
+        setFailed(false);
 
         final MockTextSource s1 = new MockTextSource("return 0");
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
@@ -92,7 +94,7 @@ public class GrengineConcurrencyTest {
         System.out.println(info);
         
         long t0 = System.currentTimeMillis();
-        
+
         Thread[] threads = new Thread[nThreads+1];
         for (int i=0; i<nThreads+1; i++) {
             final int x = i;
@@ -167,9 +169,9 @@ public class GrengineConcurrencyTest {
         long t1 = System.currentTimeMillis();
         System.out.println("Duration: " + (t1 - t0) + " ms");
         System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
-        assertEquals(n, nCodeChanges);
-        
-        assertFalse(failed);
+        assertThat(nCodeChanges, is(n));
+
+        assertThat(failed, is(false));
     }
 
     @Test

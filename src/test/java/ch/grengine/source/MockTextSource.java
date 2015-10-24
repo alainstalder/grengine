@@ -16,7 +16,6 @@
 
 package ch.grengine.source;
 
-
 // allows to set script text and last modified (thus only effective for same source instance)
 public class MockTextSource extends DefaultTextSource {
     

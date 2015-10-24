@@ -16,20 +16,6 @@
 
 package ch.grengine.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import groovy.lang.Script;
-
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CodeUtil;
@@ -47,6 +33,21 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.List;
+import java.util.Set;
+
+import groovy.lang.Script;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+
 
 public class LayeredEngineTest {
     
@@ -58,15 +59,15 @@ public class LayeredEngineTest {
         
         LayeredEngine.Builder builder = new LayeredEngine.Builder();
         LayeredEngine engine = builder.build();
-        
-        assertEquals(builder, engine.getBuilder());
-        assertEquals(Thread.currentThread().getContextClassLoader(), engine.getBuilder().getParent());
-        assertEquals(LoadMode.CURRENT_FIRST, engine.getBuilder().getLoadMode());
-        assertTrue(engine.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.PARENT_FIRST, engine.getBuilder().getTopLoadMode());
-        assertNotNull(engine.getBuilder().getTopCodeCacheFactory());
-        assertTrue(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers());
-        assertTrue(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers());
+
+        assertThat(engine.getBuilder(), is(builder));
+        assertThat(engine.getBuilder().getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(engine.getBuilder().getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(engine.getBuilder().isWithTopCodeCache(), is(true));
+        assertThat(engine.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(engine.getBuilder().getTopCodeCacheFactory(), is(notNullValue()));
+        assertThat(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers(), is(true));
+        assertThat(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers(), is(true));
     }
 
     @Test
@@ -84,15 +85,15 @@ public class LayeredEngineTest {
         builder.setAllowSameClassNamesInParentAndCodeLayers(false);
         
         LayeredEngine engine = builder.build();
-        
-        assertEquals(builder, engine.getBuilder());
-        assertEquals(parent, engine.getBuilder().getParent());
-        assertEquals(LoadMode.PARENT_FIRST, engine.getBuilder().getLoadMode());
-        assertFalse(engine.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.CURRENT_FIRST, engine.getBuilder().getTopLoadMode());
-        assertEquals(topCodeCacheFactory, engine.getBuilder().getTopCodeCacheFactory());
-        assertFalse(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers());
-        assertFalse(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers());
+
+        assertThat(engine.getBuilder(), is(builder));
+        assertThat(engine.getBuilder().getParent(), is(parent));
+        assertThat(engine.getBuilder().getLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(engine.getBuilder().isWithTopCodeCache(), is(false));
+        assertThat(engine.getBuilder().getTopLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(engine.getBuilder().getTopCodeCacheFactory(), is(topCodeCacheFactory));
+        assertThat(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers(), is(false));
+        assertThat(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers(), is(false));
     }
 
     @Test
@@ -103,26 +104,23 @@ public class LayeredEngineTest {
             builder.setLoadMode(LoadMode.CURRENT_FIRST);
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
-    
-    private MockFile f1;
+
     private Source s1;
-    private MockFile f2;
     private Source s2;
-    private MockFile f3;
     private Source s3;
     private Source s4;
     private List<Sources> sourcesLayers;
     private List<Code> codeLayers;
     
     private void prepareCode(int offs) throws Exception {
-        f1 = new MockFile(tempFolder.getRoot(), "Script1.groovy");
+        MockFile f1 = new MockFile(tempFolder.getRoot(), "Script1.groovy");
         s1 = new MockFileSource(f1);
-        f2 = new MockFile(tempFolder.getRoot(), "Script2.groovy");
+        MockFile f2 = new MockFile(tempFolder.getRoot(), "Script2.groovy");
         s2 = new MockFileSource(f2);
-        f3 = new MockFile(tempFolder.getRoot(), "Script3.groovy");
+        MockFile f3 = new MockFile(tempFolder.getRoot(), "Script3.groovy");
         s3 = new MockFileSource(f3);
         s4 = new DefaultTextSource(
                 "package org.junit\npublic class Assume extends Script { public def run() { return 400 } }");
@@ -169,52 +167,52 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.newInstance();
         Script script12 = (Script)clazz12.newInstance();
         Script script1D = (Script)clazz1D.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.newInstance();
         Script script22 = (Script)clazz22.newInstance();
-        assertEquals(1200, script21.run());
-        assertEquals(1201, script21.run());
-        assertEquals(1202, script21.run());
-        assertEquals(1200, script22.run());
-        assertEquals(1201, script22.run());
-        assertEquals(1202, script22.run());
+        assertThat((Integer)script21.run(), is(1200));
+        assertThat((Integer)script21.run(), is(1201));
+        assertThat((Integer)script21.run(), is(1202));
+        assertThat((Integer)script22.run(), is(1200));
+        assertThat((Integer)script22.run(), is(1201));
+        assertThat((Integer)script22.run(), is(1202));
         
         // layers current first, so top version counts
         Class<?> clazz31 = engine.loadMainClass(loader, s3);
         Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
         Script script31 = (Script)clazz31.newInstance();
         Script script32 = (Script)clazz32.newInstance();
-        assertEquals(333, script31.run());
-        assertEquals(333, script31.run());
-        assertEquals(333, script32.run());
-        assertEquals(333, script32.run());
+        assertThat((Integer)script31.run(), is(333));
+        assertThat((Integer)script31.run(), is(333));
+        assertThat((Integer)script32.run(), is(333));
+        assertThat((Integer)script32.run(), is(333));
         
         Class<?> clazz4 = engine.loadMainClass(loader, s4);
         Script script4 = (Script)clazz4.newInstance();
-        assertEquals(400, script4.run());
+        assertThat((Integer)script4.run(), is(400));
         
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
         
-        Class<?> classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
-        Class<?> classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
-        assertTrue(classSub21 != classSub22);
+        Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
+        assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();
         clazz32.newInstance();
         
         // current layer first, so layer version counts
         Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
         Script script4direct = (Script)clazz4direct.newInstance();
-        assertEquals(400, script4direct.run());
+        assertThat((Integer)script4direct.run(), is(400));
 
         prepareCode(2000);
         
@@ -224,10 +222,10 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -238,31 +236,31 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
         script1D = (Script)clazz1D.newInstance();
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.newInstance();
         script22 = (Script)clazz22.newInstance();
-        assertEquals(2200, script21.run());
-        assertEquals(2201, script21.run());
-        assertEquals(2202, script21.run());
-        assertEquals(2200, script22.run());
-        assertEquals(2201, script22.run());
-        assertEquals(2202, script22.run());
+        assertThat((Integer)script21.run(), is(2200));
+        assertThat((Integer)script21.run(), is(2201));
+        assertThat((Integer)script21.run(), is(2202));
+        assertThat((Integer)script22.run(), is(2200));
+        assertThat((Integer)script22.run(), is(2201));
+        assertThat((Integer)script22.run(), is(2202));
         
         // extra: try to load class that does not exist
         try {
             engine.loadClass(loader, "DoesNotExist235134");
             fail();
         } catch (LoadException e) {
-            assertEquals("Could not load class 'DoesNotExist235134'. " +
-                    "Cause: java.lang.ClassNotFoundException: DoesNotExist235134", e.getMessage());
+            assertThat(e.getMessage(), is("Could not load class 'DoesNotExist235134'. " +
+                    "Cause: java.lang.ClassNotFoundException: DoesNotExist235134"));
         }
     }
     
@@ -286,24 +284,24 @@ public class LayeredEngineTest {
         Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
         Script script31 = (Script)clazz31.newInstance();
         Script script32 = (Script)clazz32.newInstance();
-        assertEquals(300, script31.run());
-        assertEquals(300, script31.run());
-        assertEquals(300, script32.run());
-        assertEquals(300, script32.run());
+        assertThat((Integer)script31.run(), is(300));
+        assertThat((Integer)script31.run(), is(300));
+        assertThat((Integer)script32.run(), is(300));
+        assertThat((Integer)script32.run(), is(300));
         
         // class exists in parent, but not source based, so uses one in layer
         Class<?> clazz4 = engine.loadMainClass(loader, s4);
         Script script4 = (Script)clazz4.newInstance();
-        assertEquals(400, script4.run());
+        assertThat((Integer)script4.run(), is(400));
        
         
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
         
-        Class<?> classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
-        Class<?> classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
-        assertTrue(classSub21 != classSub22);
+        Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
+        assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();
         clazz32.newInstance();
         
@@ -334,8 +332,8 @@ public class LayeredEngineTest {
             engine.setCodeLayers(codeLayers);
             fail();
         } catch (ClassNameConflictException e) {
-            assertEquals("Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
-                    "classes in code layers and parent: (not checked)", e.getMessage());
+            assertThat(e.getMessage(), is("Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
+                    "classes in code layers and parent: (not checked)"));
         }
         
         builder = new LayeredEngine.Builder();
@@ -349,8 +347,8 @@ public class LayeredEngineTest {
             engine.setCodeLayers(codeLayers);
             fail();
         } catch (ClassNameConflictException e) {
-            assertEquals("Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
-                    "classes in code layers and parent: [org.junit.Assume]", e.getMessage());
+            assertThat(e.getMessage(), is("Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
+                    "classes in code layers and parent: [org.junit.Assume]"));
         }
         
         builder = new LayeredEngine.Builder();
@@ -364,8 +362,8 @@ public class LayeredEngineTest {
             engine.setCodeLayers(codeLayers);
             fail();
         } catch (ClassNameConflictException e) {
-            assertEquals("Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
-                    "classes in code layers and parent: [org.junit.Assume]", e.getMessage());
+            assertThat(e.getMessage(), is("Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
+                    "classes in code layers and parent: [org.junit.Assume]"));
         }
         
     }
@@ -392,23 +390,23 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.newInstance();
         Script script12 = (Script)clazz12.newInstance();
         Script script1D = (Script)clazz1D.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.newInstance();
         Script script22 = (Script)clazz22.newInstance();
-        assertEquals(1200, script21.run());
-        assertEquals(1201, script21.run());
-        assertEquals(1202, script21.run());
-        assertEquals(1200, script22.run());
-        assertEquals(1201, script22.run());
-        assertEquals(1202, script22.run());
+        assertThat((Integer)script21.run(), is(1200));
+        assertThat((Integer)script21.run(), is(1201));
+        assertThat((Integer)script21.run(), is(1202));
+        assertThat((Integer)script22.run(), is(1200));
+        assertThat((Integer)script22.run(), is(1201));
+        assertThat((Integer)script22.run(), is(1202));
         
         prepareCode(2000);
         
@@ -417,10 +415,10 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayersBySource(sourcesLayers);
@@ -431,23 +429,23 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
         script1D = (Script)clazz1D.newInstance();
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.newInstance();
         script22 = (Script)clazz22.newInstance();
-        assertEquals(2200, script21.run());
-        assertEquals(2201, script21.run());
-        assertEquals(2202, script21.run());
-        assertEquals(2200, script22.run());
-        assertEquals(2201, script22.run());
-        assertEquals(2202, script22.run());
+        assertThat((Integer)script21.run(), is(2200));
+        assertThat((Integer)script21.run(), is(2201));
+        assertThat((Integer)script21.run(), is(2202));
+        assertThat((Integer)script22.run(), is(2200));
+        assertThat((Integer)script22.run(), is(2201));
+        assertThat((Integer)script22.run(), is(2202));
     }
     
     @Test
@@ -471,23 +469,23 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.newInstance();
         Script script12 = (Script)clazz12.newInstance();
         Script script1D = (Script)clazz1D.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.newInstance();
         Script script22 = (Script)clazz22.newInstance();
-        assertEquals(1200, script21.run());
-        assertEquals(1201, script21.run());
-        assertEquals(1202, script21.run());
-        assertEquals(1200, script22.run());
-        assertEquals(1201, script22.run());
-        assertEquals(1202, script22.run());
+        assertThat((Integer)script21.run(), is(1200));
+        assertThat((Integer)script21.run(), is(1201));
+        assertThat((Integer)script21.run(), is(1202));
+        assertThat((Integer)script22.run(), is(1200));
+        assertThat((Integer)script22.run(), is(1201));
+        assertThat((Integer)script22.run(), is(1202));
         
         prepareCode(2000);
         
@@ -496,10 +494,10 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -510,23 +508,23 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
         script1D = (Script)clazz1D.newInstance();
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.newInstance();
         script22 = (Script)clazz22.newInstance();
-        assertEquals(2200, script21.run());
-        assertEquals(2201, script21.run());
-        assertEquals(2202, script21.run());
-        assertEquals(2200, script22.run());
-        assertEquals(2201, script22.run());
-        assertEquals(2202, script22.run());
+        assertThat((Integer)script21.run(), is(2200));
+        assertThat((Integer)script21.run(), is(2201));
+        assertThat((Integer)script21.run(), is(2202));
+        assertThat((Integer)script22.run(), is(2200));
+        assertThat((Integer)script22.run(), is(2201));
+        assertThat((Integer)script22.run(), is(2202));
     }
 
     @Test
@@ -551,23 +549,23 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.newInstance();
         Script script12 = (Script)clazz12.newInstance();
         Script script1D = (Script)clazz1D.newInstance();
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script11.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script12.run());
-        assertEquals(1100, script1D.run());
-        assertEquals(1100, script1D.run());
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script11.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script12.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
+        assertThat((Integer)script1D.run(), is(1100));
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.newInstance();
         Script script22 = (Script)clazz22.newInstance();
-        assertEquals(1200, script21.run());
-        assertEquals(1201, script21.run());
-        assertEquals(1202, script21.run());
-        assertEquals(1200, script22.run());
-        assertEquals(1201, script22.run());
-        assertEquals(1202, script22.run());
+        assertThat((Integer)script21.run(), is(1200));
+        assertThat((Integer)script21.run(), is(1201));
+        assertThat((Integer)script21.run(), is(1202));
+        assertThat((Integer)script22.run(), is(1200));
+        assertThat((Integer)script22.run(), is(1201));
+        assertThat((Integer)script22.run(), is(1202));
         
         prepareCode(2000);
         
@@ -577,21 +575,21 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script12.run());
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.newInstance();
         script22 = (Script)clazz22.newInstance();
-        assertEquals(2200, script21.run());
-        assertEquals(2201, script21.run());
-        assertEquals(2202, script21.run());
-        assertEquals(2200, script22.run());
-        assertEquals(2201, script22.run());
-        assertEquals(2202, script22.run());
+        assertThat((Integer)script21.run(), is(2200));
+        assertThat((Integer)script21.run(), is(2201));
+        assertThat((Integer)script21.run(), is(2202));
+        assertThat((Integer)script22.run(), is(2200));
+        assertThat((Integer)script22.run(), is(2201));
+        assertThat((Integer)script22.run(), is(2202));
 
         // now replace code layers, changes must remain available (even if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -602,23 +600,23 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.newInstance();
         script12 = (Script)clazz12.newInstance();
         script1D = (Script)clazz1D.newInstance();
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script11.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script12.run());
-        assertEquals(2100, script1D.run());
-        assertEquals(2100, script1D.run());
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script11.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script12.run(), is(2100));
+        assertThat((Integer)script1D.run(), is(2100));
+        assertThat((Integer)script1D.run(), is(2100));
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.newInstance();
         script22 = (Script)clazz22.newInstance();
-        assertEquals(2200, script21.run());
-        assertEquals(2201, script21.run());
-        assertEquals(2202, script21.run());
-        assertEquals(2200, script22.run());
-        assertEquals(2201, script22.run());
-        assertEquals(2202, script22.run());
+        assertThat((Integer)script21.run(), is(2200));
+        assertThat((Integer)script21.run(), is(2201));
+        assertThat((Integer)script21.run(), is(2202));
+        assertThat((Integer)script22.run(), is(2200));
+        assertThat((Integer)script22.run(), is(2201));
+        assertThat((Integer)script22.run(), is(2202));
     }
 
     @Test
@@ -627,7 +625,7 @@ public class LayeredEngineTest {
             new LayeredEngine.Builder().build().setCodeLayers(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Code layers are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
 
@@ -637,7 +635,7 @@ public class LayeredEngineTest {
             new LayeredEngine.Builder().build().setCodeLayersBySource(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Sources layers are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Sources layers are null."));
         }
     }
 

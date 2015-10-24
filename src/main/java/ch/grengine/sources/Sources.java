@@ -16,10 +16,10 @@
 
 package ch.grengine.sources;
 
-import java.util.Set;
-
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.source.Source;
+
+import java.util.Set;
 
 
 /**

@@ -16,26 +16,26 @@
 
 package ch.grengine.grapetest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.Grengine;
+import ch.grengine.TestUtil;
+import ch.grengine.except.CreateException;
 
 import java.io.File;
 
-import ch.grengine.Grengine;
-import ch.grengine.TestUtil;
 import groovy.grape.Grape;
 import groovy.grape.GrapeEngine;
 import groovy.lang.GroovyClassLoader;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.engine.LayeredEngine;
-import ch.grengine.except.CreateException;
-import ch.grengine.sources.DirBasedSources;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * Simple tests related to using Groovy Grape with Grengine.
@@ -81,8 +81,8 @@ public class GrengineGrapeTest {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
     
-    public static final Class<?> NO_GRAB_EXCEPTION_CLASS = RuntimeException.class;
-    public static final String NO_GRAB_EXCEPTION_MESSAGE = "No suitable ClassLoader found for grab";
+    private static final Class<?> NO_GRAB_EXCEPTION_CLASS = RuntimeException.class;
+    private static final String NO_GRAB_EXCEPTION_MESSAGE = "No suitable ClassLoader found for grab";
     
     @Test
     public void testNoGrapeByDefault() throws Exception {
@@ -96,12 +96,12 @@ public class GrengineGrapeTest {
             fail("must throw");
         } catch (Throwable t) {
             //t.printStackTrace();
-            assertTrue("must be true", t instanceof CreateException);
+            assertThat(t, instanceOf(CreateException.class));
             t = t.getCause();
-            assertTrue("must be true", t instanceof ExceptionInInitializerError);
+            assertThat(t, instanceOf(ExceptionInInitializerError.class));
             t = t.getCause();
-            assertEquals("must be same", NO_GRAB_EXCEPTION_CLASS, t.getClass());
-            assertEquals("must be same", NO_GRAB_EXCEPTION_MESSAGE, t.getMessage());
+            assertThat(t.getClass().getCanonicalName(), is(NO_GRAB_EXCEPTION_CLASS.getCanonicalName()));
+            assertThat(t.getMessage(), is(NO_GRAB_EXCEPTION_MESSAGE));
         }
     }
 
@@ -139,9 +139,9 @@ public class GrengineGrapeTest {
 
         Grengine gren = new Grengine(groovyClassLoader, dir);
 
-        assertNull(gren.getLastUpdateException());
-        assertEquals(true, gren.run(f1));
-        assertEquals(true, gren.run("return Util.isUpperCase('C' as char)"));
+        assertThat(gren.getLastUpdateException(), is(nullValue()));
+        assertThat((Boolean)gren.run(f1), is(true));
+        assertThat((Boolean)gren.run("return Util.isUpperCase('C' as char)"), is(true));
     }
 
     // This only tests that the workaround does not break anything obvious.
@@ -153,7 +153,7 @@ public class GrengineGrapeTest {
             // once early per ClassLoader that loaded Grape.class.
             WorkaroundGroovy7407WrappingGrapeEngine.createAndSet();
 
-            assertTrue("must be true", originalInstance != Grape.getInstance());
+            assertThat(originalInstance, not(sameInstance(Grape.getInstance())));
 
             File dir = tempFolder.getRoot();
             File f1 = new File(dir, "Script1.groovy");
@@ -172,9 +172,9 @@ public class GrengineGrapeTest {
 
             Grengine gren = new Grengine(groovyClassLoader, dir);
 
-            assertNull(gren.getLastUpdateException());
-            assertEquals(true, gren.run(f1));
-            assertEquals(true, gren.run("return Util.isUpperCase('C' as char)"));
+            assertThat(gren.getLastUpdateException(), is(nullValue()));
+            assertThat((Boolean)gren.run(f1), is(true));
+            assertThat((Boolean)gren.run("return Util.isUpperCase('C' as char)"), is(true));
         } finally {
             // Resetting so that other unit tests don't use this workaround
             WorkaroundGroovy7407WrappingGrapeEngine.setEngine(originalInstance);

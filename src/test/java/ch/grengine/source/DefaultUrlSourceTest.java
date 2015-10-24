@@ -16,9 +16,7 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.net.URL;
@@ -27,7 +25,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultUrlSourceTest {
@@ -41,11 +41,11 @@ public class DefaultUrlSourceTest {
         TestUtil.setFileText(file, "println 22");
         URL url = file.toURI().toURL();
         UrlSource s = new DefaultUrlSource(url);
-        assertEquals(url.toString(), s.getId());
-        assertEquals(url, s.getUrl());
-        assertEquals(0,  s.getLastModified());
+        assertThat(s.getId(), is(url.toString()));
+        assertThat(s.getUrl(), is(url));
+        assertThat(s.getLastModified(), is(0L));
         System.out.println(s);
-        assertEquals("DefaultUrlSource[ID=" + s.getId() + "]", s.toString());
+        assertThat(s.toString(), is("DefaultUrlSource[ID=" + s.getId() + "]"));
     }
     
     @Test
@@ -54,7 +54,7 @@ public class DefaultUrlSourceTest {
             new DefaultUrlSource(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("URL is null.", e.getMessage());
+            assertThat(e.getMessage(), is("URL is null."));
         }
     }
         
@@ -62,10 +62,10 @@ public class DefaultUrlSourceTest {
     public void testEquals() throws Exception {
         URL url = new File(tempFolder.getRoot(), "MyScript.groovy").toURI().toURL();
         URL url2 = new File(tempFolder.getRoot(), "MyScript2.groovy").toURI().toURL();
-        assertEquals(new DefaultUrlSource(url), new DefaultUrlSource(url));
-        assertFalse(new DefaultUrlSource(url).equals(new DefaultUrlSource(url2)));
-        assertFalse(new DefaultUrlSource(url).equals("different class"));
-        assertFalse(new DefaultUrlSource(url).equals(null));
+        assertThat(new DefaultUrlSource(url), is(new DefaultUrlSource(url)));
+        assertThat(new DefaultUrlSource(url).equals(new DefaultUrlSource(url2)), is(false));
+        assertThat(new DefaultUrlSource(url).equals("different class"), is(false));
+        assertThat(new DefaultUrlSource(url).equals(null), is(false));
     }
 
 }
