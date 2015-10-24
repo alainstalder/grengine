@@ -6,7 +6,7 @@
   sourceCompatibility = 1.6
   targetCompatibility = 1.6
 
-  version = '1.0.4'
+  version = '1.0.5'
   
   description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
