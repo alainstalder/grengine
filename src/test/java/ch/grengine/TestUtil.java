@@ -16,13 +16,12 @@
 
 package ch.grengine;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -31,6 +30,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class TestUtil {
         
@@ -38,29 +40,25 @@ public class TestUtil {
         private static final long serialVersionUID = -3224104992041563195L;
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }
-        public File getCanonicalFile() throws IOException { throw new IOException(); }
-        public File getAbsoluteFile() { return this; }
+        @Override public File getCanonicalFile() throws IOException { throw new IOException(); }
+        @Override public File getAbsoluteFile() { return this; }
     }
     
     public static <T> Set<T> argsToSet(T... args) {
         Set<T> set = new HashSet<T>();
-        for (T t : args) {
-            set.add(t);
-        }
+        Collections.addAll(set, args);
         return set;
     }
     
     public static <T> List<T> argsToList(T... args) {
         List<T> list = new LinkedList<T>();
-        for (T t : args) {
-            list.add(t);
-        }
+        Collections.addAll(list, args);
         return list;
     }
     
     @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> argsToMap(Object... args) {
-        assertTrue("must have even number of args", args.length % 2 == 0);
+        assertThat(args.length % 2 == 0, is(true));
         Map<K,V> map = new HashMap<K,V>();
         boolean isKey = true;
         K key = null;

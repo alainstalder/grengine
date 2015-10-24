@@ -16,13 +16,12 @@
 
 package ch.grengine.sources;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.sources.DirMode;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class DirModeTest {
@@ -32,13 +31,13 @@ public class DirModeTest {
     
     @Test
     public void testValueOf() {
-        assertEquals(DirMode.NO_SUBDIRS, DirMode.valueOf(DirMode.NO_SUBDIRS.toString()));
-        assertEquals(DirMode.WITH_SUBDIRS_RECURSIVE, DirMode.valueOf(DirMode.WITH_SUBDIRS_RECURSIVE.toString()));
+        assertThat(DirMode.valueOf(DirMode.NO_SUBDIRS.toString()), is(DirMode.NO_SUBDIRS));
+        assertThat(DirMode.valueOf(DirMode.WITH_SUBDIRS_RECURSIVE.toString()), is(DirMode.WITH_SUBDIRS_RECURSIVE));
     }
     
     @Test
     public void testValues() {
-        assertEquals(2, DirMode.values().length);
+        assertThat(DirMode.values().length, is(2));
     }
 
 }

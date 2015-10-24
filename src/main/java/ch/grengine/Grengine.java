@@ -16,20 +16,6 @@
 
 package ch.grengine;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.engine.Engine;
@@ -48,6 +34,19 @@ import ch.grengine.sources.DirBasedSources;
 import ch.grengine.sources.DirMode;
 import ch.grengine.sources.FixedSetSources;
 import ch.grengine.sources.Sources;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import groovy.lang.Binding;
+import groovy.lang.Script;
+import org.codehaus.groovy.control.CompilerConfiguration;
 
 
 /**

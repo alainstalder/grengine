@@ -16,11 +16,8 @@
 
 package ch.grengine.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,8 +28,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.source.MockSource;
-import ch.grengine.source.Source;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DefaultCodeTest {
@@ -69,67 +68,67 @@ public class DefaultCodeTest {
         bytecodes.put(name2, new Bytecode(name2, new byte[] { 7, 8, 9 }));
 
         Code code = new DefaultCode(sourcesName, infos, bytecodes);
-        
-        assertEquals(sourcesName, code.getSourcesName());
-        assertEquals(infos.keySet(), code.getSourceSet());
-        assertEquals(bytecodes.keySet(), code.getClassNameSet());
-        
-        assertEquals(1, code.getBytecode(name1).getBytes()[0]);
-        assertNull(code.getBytecode("SomeOtherClassName"));
-        assertNull(code.getBytecode(null));
+
+        assertThat(code.getSourcesName(), is(sourcesName));
+        assertThat(code.getSourceSet(), is(infos.keySet()));
+        assertThat(code.getClassNameSet(), is(bytecodes.keySet()));
+
+        assertThat(code.getBytecode(name1).getBytes()[0], is((byte)1));
+        assertThat(code.getBytecode("SomeOtherClassName"), is(nullValue()));
+        assertThat(code.getBytecode(null), is(nullValue()));
         
         MockSource m3 = new MockSource("id3");
-        assertTrue(code.isForSource(m1));
-        assertTrue(code.isForSource(m2));
-        assertFalse(code.isForSource(m3));
-        assertFalse(code.isForSource(null));
-        
-        assertEquals(name1, code.getMainClassName(m1));
-        assertEquals(name2, code.getMainClassName(m2));
+        assertThat(code.isForSource(m1), is(true));
+        assertThat(code.isForSource(m2), is(true));
+        assertThat(code.isForSource(m3), is(false));
+        assertThat(code.isForSource(null), is(false));
+
+        assertThat(code.getMainClassName(m1), is(name1));
+        assertThat(code.getMainClassName(m2), is(name2));
         try {
             code.getMainClassName(m3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: " + m3, e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
         }
         try {
             code.getMainClassName(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: null", e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
         }
 
-        assertEquals(names1, code.getClassNames(m1));
-        assertEquals(names2, code.getClassNames(m2));
+        assertThat(code.getClassNames(m1), is(names1));
+        assertThat(code.getClassNames(m2), is(names2));
         try {
             code.getClassNames(m3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: " + m3, e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
         }
         try {
             code.getClassNames(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: null", e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
         }
 
-        assertEquals(11, code.getLastModifiedAtCompileTime(m1));
-        assertEquals(22, code.getLastModifiedAtCompileTime(m2));
+        assertThat(code.getLastModifiedAtCompileTime(m1), is(11L));
+        assertThat(code.getLastModifiedAtCompileTime(m2), is(22L));
         try {
             code.getLastModifiedAtCompileTime(m3);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: " + m3, e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
         }
         try {
             code.getLastModifiedAtCompileTime(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is not for this code. Source: null", e.getMessage());
+            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
         }
-        
-        assertEquals("DefaultCode[sourcesName='sourcesname', sources:2, classes:3]", code.toString());
+
+        assertThat(code.toString(), is("DefaultCode[sourcesName='sourcesname', sources:2, classes:3]"));
     }
     
     @Test
@@ -138,7 +137,7 @@ public class DefaultCodeTest {
             new DefaultCode(null, new HashMap<Source,CompiledSourceInfo>(), new HashMap<String,Bytecode>());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Sources name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Sources name is null."));
         }
     }
     
@@ -148,7 +147,7 @@ public class DefaultCodeTest {
             new DefaultCode("name", null, new HashMap<String,Bytecode>());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiled source infos is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiled source infos is null."));
         }
     }
     
@@ -158,7 +157,7 @@ public class DefaultCodeTest {
             new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Bytecodes is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Bytecodes is null."));
         }
     }
 

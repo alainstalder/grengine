@@ -16,13 +16,13 @@
 
 package ch.grengine.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class BytecodeTest {
     
@@ -34,8 +34,8 @@ public class BytecodeTest {
         String className = "MyScript";
         byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
         Bytecode bytecode = new Bytecode(className, bytes);
-        assertEquals(className, bytecode.getClassName());
-        assertEquals(bytes, bytecode.getBytes());
+        assertThat(bytecode.getClassName(), is(className));
+        assertThat(bytecode.getBytes(), is(bytes));
     }
 
     @Test
@@ -44,8 +44,8 @@ public class BytecodeTest {
         byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
         Bytecode bytecode = new Bytecode(className, bytes);
         //System.out.println(bytecode);
-        assertTrue(bytecode.toString().startsWith("Bytecode[className=MyScript, bytes=["));
-        assertTrue(bytecode.toString().endsWith("]"));
+        assertThat(bytecode.toString().startsWith("Bytecode[className=MyScript, bytes=["), is(true));
+        assertThat(bytecode.toString().endsWith("]"), is(true));
     }
     
     @Test
@@ -55,7 +55,7 @@ public class BytecodeTest {
             new Bytecode(null, bytes);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Class name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Class name is null."));
         }
     }
     
@@ -66,7 +66,7 @@ public class BytecodeTest {
             new Bytecode(className, null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Bytes are null.", e.getMessage());
+            assertThat(e.getMessage(), is("Bytes are null."));
         }
     }
 

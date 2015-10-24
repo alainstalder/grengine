@@ -16,10 +16,11 @@
 
 package ch.grengine.sources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
+import ch.grengine.source.SourceUtil;
 
 import java.util.HashSet;
 
@@ -27,11 +28,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.MockSource;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class SourcesUtilTest {
@@ -48,11 +49,11 @@ public class SourcesUtilTest {
     public void testSourceToSourcesDefaultCompilerFactory() {
         MockSource m = new MockSource("id1");
         Sources s = SourcesUtil.sourceToSources(m);
-        assertEquals("id1", s.getName());
-        assertNotNull(s.getCompilerFactory());
-        assertTrue(s.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
-        assertEquals(1, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m));
+        assertThat(s.getName(), is("id1"));
+        assertThat(s.getCompilerFactory(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+        assertThat(s.getSourceSet().size(), is(1));
+        assertThat(s.getSourceSet().contains(m), is(true));
     }
 
     @Test
@@ -61,7 +62,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceToSources(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source is null."));
         }
     }
 
@@ -70,10 +71,10 @@ public class SourcesUtilTest {
         MockSource m = new MockSource("id1");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         Sources s = SourcesUtil.sourceToSources(m, compilerFactory);
-        assertEquals("id1", s.getName());
-        assertEquals(compilerFactory, s.getCompilerFactory());
-        assertEquals(1, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m));
+        assertThat(s.getName(), is("id1"));
+        assertThat(s.getCompilerFactory(), is(compilerFactory));
+        assertThat(s.getSourceSet().size(), is(1));
+        assertThat(s.getSourceSet().contains(m), is(true));
     }
     
     @Test
@@ -82,7 +83,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source is null."));
         }
     }
     
@@ -92,7 +93,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceToSources(new MockSource("id1"), null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiler factory is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }
 
@@ -102,12 +103,12 @@ public class SourcesUtilTest {
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myname");
-        assertEquals("myname", s.getName());
-        assertNotNull(s.getCompilerFactory());
-        assertTrue(s.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
-        assertEquals(2, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m1));
-        assertTrue(s.getSourceSet().contains(m2));
+        assertThat(s.getName(), is("myname"));
+        assertThat(s.getCompilerFactory(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+        assertThat(s.getSourceSet().size(), is(2));
+        assertThat(s.getSourceSet().contains(m1), is(true));
+        assertThat(s.getSourceSet().contains(m2), is(true));
     }
 
     @Test
@@ -116,7 +117,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceSetToSources(null, "myname");
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source set is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source set is null."));
         }
     }
 
@@ -126,7 +127,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceSetToSources(new HashSet<Source>(), null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Name is null."));
         }
     }
     
@@ -137,11 +138,11 @@ public class SourcesUtilTest {
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myname",
                 compilerFactory);
-        assertEquals("myname", s.getName());
-        assertEquals(compilerFactory, s.getCompilerFactory());
-        assertEquals(2, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m1));
-        assertTrue(s.getSourceSet().contains(m2));
+        assertThat(s.getName(), is("myname"));
+        assertThat(s.getCompilerFactory(), is(compilerFactory));
+        assertThat(s.getSourceSet().size(), is(2));
+        assertThat(s.getSourceSet().contains(m1), is(true));
+        assertThat(s.getSourceSet().contains(m2), is(true));
     }
 
     @Test
@@ -150,7 +151,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceSetToSources(null, "myname", new DefaultGroovyCompilerFactory());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source set is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source set is null."));
         }
     }
 
@@ -160,7 +161,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceSetToSources(new HashSet<Source>(), null, new DefaultGroovyCompilerFactory());
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Name is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Name is null."));
         }
     }
 
@@ -170,7 +171,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourceSetToSources(new HashSet<Source>(), "myname", null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Compiler factory is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }
     
@@ -181,16 +182,16 @@ public class SourcesUtilTest {
         Sources s2 = SourcesUtil.sourceToSources(new MockSource("id2"));
         Sources[] sArrayEmpty = new Sources[0];
         Sources[] sArrayAll = new Sources[] { s1, s2 };
-        
-        assertEquals(0, SourcesUtil.sourcesArrayToList(sArrayEmpty).size());
-        assertEquals(2, SourcesUtil.sourcesArrayToList(sArrayAll).size());
-        assertEquals(s1, SourcesUtil.sourcesArrayToList(sArrayAll).get(0));
-        assertEquals(s2, SourcesUtil.sourcesArrayToList(sArrayAll).get(1));
-        assertEquals(1, SourcesUtil.sourcesArrayToList(s1).size());
-        assertEquals(s1, SourcesUtil.sourcesArrayToList(s1).get(0));
-        assertEquals(2, SourcesUtil.sourcesArrayToList(s2, s1).size());
-        assertEquals(s2, SourcesUtil.sourcesArrayToList(s2, s1).get(0));
-        assertEquals(s1, SourcesUtil.sourcesArrayToList(s2, s1).get(1));
+
+        assertThat(SourcesUtil.sourcesArrayToList(sArrayEmpty).size(), is(0));
+        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).size(), is(2));
+        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).get(0), is(s1));
+        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).get(1), is(s2));
+        assertThat(SourcesUtil.sourcesArrayToList(s1).size(), is(1));
+        assertThat(SourcesUtil.sourcesArrayToList(s1).get(0), is(s1));
+        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).size(), is(2));
+        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).get(0), is(s2));
+        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).get(1), is(s1));
     }
 
     @Test
@@ -199,7 +200,7 @@ public class SourcesUtilTest {
             SourcesUtil.sourcesArrayToList((Sources[])null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Sources array is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Sources array is null."));
         }
     }
 

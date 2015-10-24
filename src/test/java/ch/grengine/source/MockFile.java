@@ -16,11 +16,11 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
 
 import java.io.File;
 
-import ch.grengine.TestUtil;
+import static org.junit.Assert.fail;
 
 
 // so far, mocks only last modified
@@ -28,7 +28,7 @@ public class MockFile extends File {
     
     private static final long serialVersionUID = -1009288987865961842L;
     
-    private File lastModifiedFile;
+    private final File lastModifiedFile;
     
     public MockFile(String pathname) {
         super(pathname);

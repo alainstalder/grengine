@@ -16,22 +16,6 @@
 
 package ch.grengine.code.groovy;
 
-import groovy.lang.GroovyClassLoader;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.codehaus.groovy.ast.ClassNode;
-import org.codehaus.groovy.control.CompilationUnit;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.Phases;
-import org.codehaus.groovy.control.SourceUnit;
-import org.codehaus.groovy.tools.GroovyClass;
-
 import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompiledSourceInfo;
@@ -44,6 +28,21 @@ import ch.grengine.source.Source;
 import ch.grengine.source.TextSource;
 import ch.grengine.source.UrlSource;
 import ch.grengine.sources.Sources;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import groovy.lang.GroovyClassLoader;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.control.CompilationUnit;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.Phases;
+import org.codehaus.groovy.control.SourceUnit;
+import org.codehaus.groovy.tools.GroovyClass;
 
 
 /**

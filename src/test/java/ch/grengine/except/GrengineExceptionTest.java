@@ -16,13 +16,13 @@
 
 package ch.grengine.except;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class GrengineExceptionTest {
@@ -34,31 +34,31 @@ public class GrengineExceptionTest {
     public void testConstructFromMessage() {
         String msg = "Something.";
         GrengineException e = new GrengineException(msg);
-        assertEquals(msg, e.getMessage());
-        assertNull(e.getCause());
-        assertTrue(e.getDateThrown().getTime() <= System.currentTimeMillis());
-        assertTrue(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis());
+        assertThat(e.getMessage(), is(msg));
+        assertThat(e.getCause(), is(nullValue()));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
     
     @Test
     public void testConstructFromMessageAndThrowable() {
         String msg = "Something.";
-        RuntimeException cause = new RuntimeException();
+        Throwable cause = new RuntimeException();
         GrengineException e = new GrengineException(msg, cause);
-        assertEquals(msg + " Cause: " + cause, e.getMessage());
-        assertEquals(cause, e.getCause());
-        assertTrue(e.getDateThrown().getTime() <= System.currentTimeMillis());
-        assertTrue(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis());
+        assertThat(e.getMessage(), is(msg + " Cause: " + cause));
+        assertThat(e.getCause(), is(cause));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
 
     @Test
     public void testConstructFromMessageAndThrowableNull() {
         String msg = "Something.";
         GrengineException e = new GrengineException(msg, null);
-        assertEquals(msg, e.getMessage());
-        assertNull(e.getCause());
-        assertTrue(e.getDateThrown().getTime() <= System.currentTimeMillis());
-        assertTrue(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis());
+        assertThat(e.getMessage(), is(msg));
+        assertThat(e.getCause(), is(nullValue()));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
 
 }

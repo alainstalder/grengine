@@ -16,8 +16,7 @@
 
 package ch.grengine.code;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import ch.grengine.source.Source;
 
 import java.util.HashMap;
 
@@ -25,7 +24,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.source.Source;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class CodeUtilTest {
@@ -46,16 +47,16 @@ public class CodeUtilTest {
                 new HashMap<String,Bytecode>());
         Code[] sArrayEmpty = new Code[0];
         Code[] sArrayAll = new Code[] { c1, c2 };
-        
-        assertEquals(0, CodeUtil.codeArrayToList(sArrayEmpty).size());
-        assertEquals(2, CodeUtil.codeArrayToList(sArrayAll).size());
-        assertEquals(c1, CodeUtil.codeArrayToList(sArrayAll).get(0));
-        assertEquals(c2, CodeUtil.codeArrayToList(sArrayAll).get(1));
-        assertEquals(1, CodeUtil.codeArrayToList(c1).size());
-        assertEquals(c1, CodeUtil.codeArrayToList(c1).get(0));
-        assertEquals(2, CodeUtil.codeArrayToList(c2, c1).size());
-        assertEquals(c2, CodeUtil.codeArrayToList(c2, c1).get(0));
-        assertEquals(c1, CodeUtil.codeArrayToList(c2, c1).get(1));
+
+        assertThat(CodeUtil.codeArrayToList(sArrayEmpty).size(), is(0));
+        assertThat(CodeUtil.codeArrayToList(sArrayAll).size(), is(2));
+        assertThat(CodeUtil.codeArrayToList(sArrayAll).get(0), is(c1));
+        assertThat(CodeUtil.codeArrayToList(sArrayAll).get(1), is(c2));
+        assertThat(CodeUtil.codeArrayToList(c1).size(), is(1));
+        assertThat(CodeUtil.codeArrayToList(c1).get(0), is(c1));
+        assertThat(CodeUtil.codeArrayToList(c2, c1).size(), is(2));
+        assertThat(CodeUtil.codeArrayToList(c2, c1).get(0), is(c2));
+        assertThat(CodeUtil.codeArrayToList(c2, c1).get(1), is(c1));
     }
 
     @Test
@@ -64,7 +65,7 @@ public class CodeUtilTest {
            CodeUtil.codeArrayToList((Code[])null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Code array is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Code array is null."));
         }
     }
 

@@ -16,25 +16,11 @@
 
 package ch.grengine.load;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CodeUtil;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
+import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;
@@ -45,6 +31,23 @@ import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class LayeredClassLoaderTest {
@@ -57,29 +60,29 @@ public class LayeredClassLoaderTest {
         
         LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
         LayeredClassLoader loader = builder.buildFromCodeLayers();
-        
-        assertEquals(builder, loader.getBuilder());
-        assertEquals(Thread.currentThread().getContextClassLoader(), loader.getParent());
-        assertEquals(LoadMode.CURRENT_FIRST, loader.getLoadMode());
-        assertTrue(loader.getCodeLayers().isEmpty());
-        assertNull(loader.getTopCodeCache());
-        
-        assertEquals(loader.getParent(), loader.getBuilder().getParent());
-        assertEquals(loader.getLoadMode(), loader.getBuilder().getLoadMode());
-        assertTrue(loader.getBuilder().getSourcesLayers().isEmpty());
-        assertEquals(loader.getCodeLayers(), loader.getBuilder().getCodeLayers());
-        assertFalse(loader.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.PARENT_FIRST, loader.getBuilder().getTopLoadMode());
-        assertNull(loader.getBuilder().getTopCodeCache());
+
+        assertThat(loader.getBuilder(), is(builder));
+        assertThat(loader.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(loader.getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader.getCodeLayers().isEmpty(), is(true));
+        assertThat(loader.getTopCodeCache(), is(nullValue()));
+
+        assertThat(loader.getBuilder().getParent(), is(loader.getParent()));
+        assertThat(loader.getBuilder().getLoadMode(), is(loader.getLoadMode()));
+        assertThat(loader.getBuilder().getSourcesLayers().isEmpty(), is(true));
+        assertThat(loader.getBuilder().getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(loader.getBuilder().isWithTopCodeCache(), is(false));
+        assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(loader.getBuilder().getTopCodeCache(), is(nullValue()));
         
         // extra: constructor with explicitly from code layers
         loader = new LayeredClassLoader(builder, false);
-        
-        assertEquals(builder, loader.getBuilder());
-        assertEquals(Thread.currentThread().getContextClassLoader(), loader.getParent());
-        assertEquals(LoadMode.CURRENT_FIRST, loader.getLoadMode());
-        assertTrue(loader.getCodeLayers().isEmpty());
-        assertNull(loader.getTopCodeCache());
+
+        assertThat(loader.getBuilder(), is(builder));
+        assertThat(loader.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(loader.getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader.getCodeLayers().isEmpty(), is(true));
+        assertThat(loader.getTopCodeCache(), is(nullValue()));
     }
 
     @Test
@@ -96,20 +99,20 @@ public class LayeredClassLoaderTest {
         builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
         
         LayeredClassLoader loader = builder.buildFromCodeLayers();
-        
-        assertEquals(builder, loader.getBuilder());
-        assertEquals(parent, loader.getParent());
-        assertEquals(LoadMode.PARENT_FIRST, loader.getLoadMode());
-        assertEquals(codeLayers, loader.getCodeLayers());
-        assertEquals(topCodeCache, loader.getTopCodeCache());
-        
-        assertEquals(loader.getParent(), loader.getBuilder().getParent());
-        assertEquals(loader.getLoadMode(), loader.getBuilder().getLoadMode());
-        assertTrue(loader.getBuilder().getSourcesLayers().isEmpty());
-        assertEquals(loader.getCodeLayers(), loader.getBuilder().getCodeLayers());
-        assertTrue(loader.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.CURRENT_FIRST, loader.getBuilder().getTopLoadMode());
-        assertEquals(loader.getTopCodeCache(), loader.getBuilder().getTopCodeCache());
+
+        assertThat(loader.getBuilder(), is(builder));
+        assertThat(loader.getParent(), is(parent));
+        assertThat(loader.getLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(loader.getCodeLayers(), is(codeLayers));
+        assertThat(loader.getTopCodeCache(), is(topCodeCache));
+
+        assertThat(loader.getBuilder().getParent(), is(loader.getParent()));
+        assertThat(loader.getBuilder().getLoadMode(), is(loader.getLoadMode()));
+        assertThat(loader.getBuilder().getSourcesLayers().isEmpty(), is(true));
+        assertThat(loader.getBuilder().getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(loader.getBuilder().isWithTopCodeCache(), is(true));
+        assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader.getBuilder().getTopCodeCache(), is(loader.getTopCodeCache()));
     }
 
     @Test
@@ -117,20 +120,20 @@ public class LayeredClassLoaderTest {
         
         LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
         LayeredClassLoader loader = builder.buildFromSourcesLayers();
-        
-        assertEquals(builder, loader.getBuilder());
-        assertEquals(Thread.currentThread().getContextClassLoader(), loader.getParent());
-        assertEquals(LoadMode.CURRENT_FIRST, loader.getLoadMode());
-        assertTrue(loader.getCodeLayers().isEmpty());
-        assertNull(loader.getTopCodeCache());
-        
-        assertEquals(loader.getParent(), loader.getBuilder().getParent());
-        assertEquals(loader.getLoadMode(), loader.getBuilder().getLoadMode());
-        assertTrue(loader.getBuilder().getSourcesLayers().isEmpty());
-        assertEquals(loader.getCodeLayers(), loader.getBuilder().getCodeLayers());
-        assertFalse(loader.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.PARENT_FIRST, loader.getBuilder().getTopLoadMode());
-        assertNull(loader.getBuilder().getTopCodeCache());
+
+        assertThat(loader.getBuilder(), is(builder));
+        assertThat(loader.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(loader.getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader.getCodeLayers().isEmpty(), is(true));
+        assertThat(loader.getTopCodeCache(), is(nullValue()));
+
+        assertThat(loader.getBuilder().getParent(), is(loader.getParent()));
+        assertThat(loader.getBuilder().getLoadMode(), is(loader.getLoadMode()));
+        assertThat(loader.getBuilder().getSourcesLayers().isEmpty(), is(true));
+        assertThat(loader.getBuilder().getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(loader.getBuilder().isWithTopCodeCache(), is(false));
+        assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(loader.getBuilder().getTopCodeCache(), is(nullValue()));
     }
 
     @Test
@@ -147,20 +150,20 @@ public class LayeredClassLoaderTest {
         builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
         
         LayeredClassLoader loader = builder.buildFromSourcesLayers();
-        
-        assertEquals(builder, loader.getBuilder());
-        assertEquals(parent, loader.getParent());
-        assertEquals(LoadMode.PARENT_FIRST, loader.getLoadMode());
-        assertTrue(loader.getCodeLayers().size() == sourcesLayers.size());
-        assertEquals(topCodeCache, loader.getTopCodeCache());
-        
-        assertEquals(loader.getParent(), loader.getBuilder().getParent());
-        assertEquals(loader.getLoadMode(), loader.getBuilder().getLoadMode());
-        assertEquals(sourcesLayers, loader.getBuilder().getSourcesLayers());
-        assertEquals(loader.getCodeLayers(), loader.getBuilder().getCodeLayers());
-        assertTrue(loader.getBuilder().isWithTopCodeCache());
-        assertEquals(LoadMode.CURRENT_FIRST, loader.getBuilder().getTopLoadMode());
-        assertEquals(loader.getTopCodeCache(), loader.getBuilder().getTopCodeCache());
+
+        assertThat(loader.getBuilder(), is(builder));
+        assertThat(loader.getParent(), is(parent));
+        assertThat(loader.getLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(loader.getCodeLayers().size(), is(sourcesLayers.size()));
+        assertThat(loader.getTopCodeCache(), is(topCodeCache));
+
+        assertThat(loader.getBuilder().getParent(), is(loader.getParent()));
+        assertThat(loader.getBuilder().getLoadMode(), is(loader.getLoadMode()));
+        assertThat(loader.getBuilder().getSourcesLayers(), is(sourcesLayers));
+        assertThat(loader.getBuilder().getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(loader.getBuilder().isWithTopCodeCache(), is(true));
+        assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader.getBuilder().getTopCodeCache(), is(loader.getTopCodeCache()));
     }
     
     @Test
@@ -171,9 +174,9 @@ public class LayeredClassLoaderTest {
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         List<Code> codeLayers = getTestCodeLayers(parent);
         List<Sources> sourcesLayers = getTestSourcesLayers();
-        
-        assertEquals(2, codeLayers.size());
-        assertEquals(2, sourcesLayers.size());
+
+        assertThat(codeLayers.size(), is(2));
+        assertThat(sourcesLayers.size(), is(2));
         
         Code code1 = codeLayers.get(0);
         Code code2 = codeLayers.get(1);
@@ -182,15 +185,15 @@ public class LayeredClassLoaderTest {
         
         builder.setCodeLayers(code1, code2);
         List<Code> codeLayersRead = builder.getCodeLayers();
-        assertEquals(2, codeLayersRead.size());
-        assertEquals(code1, codeLayersRead.get(0));
-        assertEquals(code2, codeLayersRead.get(1));
+        assertThat(codeLayersRead.size(), is(2));
+        assertThat(codeLayersRead.get(0), is(code1));
+        assertThat(codeLayersRead.get(1), is(code2));
         
         builder.setSourcesLayers(sources1, sources2);
         List<Sources> sourcesLayersRead = builder.getSourcesLayers();
-        assertEquals(2, sourcesLayersRead.size());
-        assertEquals(sources1, sourcesLayersRead.get(0));
-        assertEquals(sources2, sourcesLayersRead.get(1));
+        assertThat(sourcesLayersRead.size(), is(2));
+        assertThat(sourcesLayersRead.get(0), is(sources1));
+        assertThat(sourcesLayersRead.get(1), is(sources2));
     }
     
     @Test
@@ -201,7 +204,7 @@ public class LayeredClassLoaderTest {
             builder.setLoadMode(LoadMode.CURRENT_FIRST);
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
     
@@ -212,11 +215,11 @@ public class LayeredClassLoaderTest {
         LayeredClassLoader loader = builder.buildFromCodeLayers();
         
         LayeredClassLoader clone = loader.clone();
-        
-        assertEquals(loader.getBuilder(), clone.getBuilder());
-        assertEquals(loader.getCodeLayers(), clone.getCodeLayers());
-        assertEquals(loader.getLoadMode(), clone.getLoadMode());
-        assertNull(clone.getTopCodeCache());
+
+        assertThat(clone.getBuilder(), is(loader.getBuilder()));
+        assertThat(clone.getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
+        assertThat(clone.getTopCodeCache(), is(nullValue()));
     }
     
     @Test
@@ -228,11 +231,11 @@ public class LayeredClassLoaderTest {
         LayeredClassLoader loader = builder.buildFromCodeLayers();
         
         LayeredClassLoader clone = loader.clone();
-        
-        assertEquals(loader.getBuilder(), clone.getBuilder());
-        assertEquals(loader.getCodeLayers(), clone.getCodeLayers());
-        assertEquals(loader.getLoadMode(), clone.getLoadMode());
-        assertEquals(topCodeCache, clone.getTopCodeCache());
+
+        assertThat(clone.getBuilder(), is(loader.getBuilder()));
+        assertThat(clone.getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
+        assertThat(clone.getTopCodeCache(), is(topCodeCache));
     }
     
     @Test
@@ -241,11 +244,11 @@ public class LayeredClassLoaderTest {
         LayeredClassLoader loader = builder.buildFromCodeLayers();
         
         LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
-        
-        assertEquals(loader.getBuilder(), clone.getBuilder());
-        assertEquals(loader.getCodeLayers(), clone.getCodeLayers());
-        assertEquals(loader.getLoadMode(), clone.getLoadMode());
-        assertNull(clone.getTopCodeCache());
+
+        assertThat(clone.getBuilder(), is(loader.getBuilder()));
+        assertThat(clone.getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
+        assertThat(clone.getTopCodeCache(), is(nullValue()));
     }
     
     @Test
@@ -257,17 +260,17 @@ public class LayeredClassLoaderTest {
         LayeredClassLoader loader = builder.buildFromCodeLayers();
         
         LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
-        
-        assertEquals(loader.getBuilder(), clone.getBuilder());
-        assertEquals(loader.getCodeLayers(), clone.getCodeLayers());
-        assertEquals(loader.getLoadMode(), clone.getLoadMode());
-        assertTrue(topCodeCache != clone.getTopCodeCache());
-        assertNotNull(clone.getTopCodeCache());
-        assertTrue(clone.getTopCodeCache() instanceof DefaultTopCodeCache);
+
+        assertThat(clone.getBuilder(), is(loader.getBuilder()));
+        assertThat(clone.getCodeLayers(), is(loader.getCodeLayers()));
+        assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
+        assertThat(topCodeCache, not(sameInstance(clone.getTopCodeCache())));
+        assertThat(clone.getTopCodeCache(), is(notNullValue()));
+        assertThat(clone.getTopCodeCache(), instanceOf(DefaultTopCodeCache.class));
     }
     
     
-    private static List<Sources> getTestSourcesLayers() throws Exception {
+    private static List<Sources> getTestSourcesLayers() {
         SourceFactory f = new DefaultSourceFactory();
         Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
                 "public class Inner1 { static def get() { return 1 } } }");
@@ -280,15 +283,12 @@ public class LayeredClassLoaderTest {
         return SourcesUtil.sourcesArrayToList(sources1, sources2);
     }
     
-    private static List<Code> getTestCodeLayers(ClassLoader parent) throws Exception {
+    private static List<Code> getTestCodeLayers(ClassLoader parent) throws CompileException {
         List<Sources> sourcesLayers = getTestSourcesLayers();
-        
         DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
         Code code1 = c.compile(sourcesLayers.get(0));
         Code code2 = c.compile(sourcesLayers.get(1));
-        
-        List<Code> codeLayers = CodeUtil.codeArrayToList(code1, code2);
-        return codeLayers;
+        return CodeUtil.codeArrayToList(code1, code2);
     }
 
 
@@ -298,8 +298,6 @@ public class LayeredClassLoaderTest {
     private Source sAssume;
     private Source sNotExists;
     private Code codeParent;
-    private Code codeLayer0;
-    private Code codeLayer1;
     private List<Code> codeLayers;
     
     private void prepareCode(boolean setLastModifiedAtEnd) throws Exception {
@@ -319,12 +317,12 @@ public class LayeredClassLoaderTest {
         // code layer 0
         TestUtil.setFileText(fMain, "class Main { def methodLayer0() {} }\nclass Side { def methodLayer0() {} }");
         TestUtil.setFileText(fAssume, "package org.junit\nclass Assume  { def methodLayer0() {} }");
-        codeLayer0 = new DefaultGroovyCompiler().compile(sources);
+        Code codeLayer0 = new DefaultGroovyCompiler().compile(sources);
         
         // code layer 1
         TestUtil.setFileText(fMain, "class Main { def methodLayer1() {} }\nclass Side { def methodLayer1() {} }");
         TestUtil.setFileText(fAssume, "package org.junit\nclass Assume  { def methodLayer1() {} }");
-        codeLayer1 = new DefaultGroovyCompiler().compile(sources);
+        Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
 
         codeLayers = new LinkedList<Code>();
         codeLayers.add(codeLayer0);
@@ -362,27 +360,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -392,26 +390,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -421,15 +419,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
         
@@ -461,27 +459,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -491,26 +489,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -520,15 +518,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -555,27 +553,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -585,26 +583,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -614,15 +612,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -650,27 +648,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -680,26 +678,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -709,15 +707,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -744,32 +742,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -779,26 +777,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -808,15 +806,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -844,32 +842,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -879,26 +877,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -908,15 +906,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -943,32 +941,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -978,26 +976,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1007,15 +1005,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1043,32 +1041,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1078,26 +1076,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1107,15 +1105,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1142,32 +1140,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1177,20 +1175,20 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1202,7 +1200,7 @@ public class LayeredClassLoaderTest {
             loader.loadClass(sMain, "org.junit.Assume");
             fail();
         } catch (LoadException e) {
-            assertTrue(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."));
+            assertThat(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."), is(true));
         }
         
         // -- loadClass(name) --
@@ -1211,15 +1209,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1247,32 +1245,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1282,20 +1280,20 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1307,7 +1305,7 @@ public class LayeredClassLoaderTest {
             loader.loadClass(sMain, "org.junit.Assume");
             fail();
         } catch (LoadException e) {
-            assertTrue(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."));
+            assertThat(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."), is(true));
         }
         
         // -- loadClass(name) --
@@ -1316,15 +1314,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1351,32 +1349,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1386,20 +1384,20 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1411,7 +1409,7 @@ public class LayeredClassLoaderTest {
             loader.loadClass(sMain, "org.junit.Assume");
             fail();
         } catch (LoadException e) {
-            assertTrue(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."));
+            assertThat(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."), is(true));
         }
         
         // -- loadClass(name) --
@@ -1420,15 +1418,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1456,32 +1454,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1491,20 +1489,20 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
         
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodTop");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1516,7 +1514,7 @@ public class LayeredClassLoaderTest {
             loader.loadClass(sMain, "org.junit.Assume");
             fail();
         } catch (LoadException e) {
-            assertTrue(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."));
+            assertThat(e.getMessage().startsWith("Class 'org.junit.Assume' not found for source."), is(true));
         }
         
         // -- loadClass(name) --
@@ -1525,15 +1523,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1560,27 +1558,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1590,26 +1588,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1619,15 +1617,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1655,27 +1653,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1685,26 +1683,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1714,15 +1712,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1749,27 +1747,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1779,26 +1777,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1808,15 +1806,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1844,27 +1842,27 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1874,26 +1872,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -1903,15 +1901,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -1938,32 +1936,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -1973,26 +1971,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2002,15 +2000,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2038,32 +2036,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2073,26 +2071,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2102,15 +2100,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2137,32 +2135,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2172,26 +2170,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2201,15 +2199,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2237,32 +2235,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2272,26 +2270,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2301,15 +2299,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2336,31 +2334,31 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
      clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2370,26 +2368,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2399,15 +2397,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer0");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer0", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer0");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("assumeNoException", new Class<?>[] { Throwable.class });
+        clazz.getDeclaredMethod("assumeNoException", Throwable.class);
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2435,32 +2433,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound == parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, sameInstance(parent));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2470,26 +2468,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2499,15 +2497,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodParent");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodParent");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodParent", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodParent");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2534,32 +2532,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
  
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2569,26 +2567,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2598,15 +2596,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2634,32 +2632,32 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNotNull(loaderFound);
-        assertTrue(loaderFound != parent);
+        assertThat(loaderFound, is(notNullValue()));
+        assertThat(loaderFound, not(sameInstance(parent)));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
 
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         topCodeCache.clear();
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadMainClass(sAssume);
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadMainClass(sNotExists); } catch (LoadException e) {}
 
@@ -2669,26 +2667,26 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass(sMain, "Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         // wrong source, not found
         try {
             loader.loadClass(sMain, "org.junit.Assume");
         } catch (LoadException e) {
-            assertEquals("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString(), e.getMessage());
+            assertThat(e.getMessage(), is("Class 'org.junit.Assume' not found for source. Source: " + sMain.toString()));
         }
         clazz = loader.loadClass(sAssume, "org.junit.Assume");
-        assertEquals("org.junit.Assume", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("org.junit.Assume"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass(sNotExists, "NotExists"); } catch (LoadException e) {}
         
@@ -2698,15 +2696,15 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass("Main");
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodLayer1");
 
         clazz = loader.loadClass("Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodLayer1");
         
         clazz = loader.loadClass("org.junit.Assume");
-        clazz.getDeclaredMethod("methodLayer1", new Class<?>[0]);
+        clazz.getDeclaredMethod("methodLayer1");
         
         try { loader.loadClass("NotExists"); } catch (ClassNotFoundException e) {}
     }
@@ -2734,11 +2732,11 @@ public class LayeredClassLoaderTest {
         // -- findBytecodeClassLoaderBySource(source) --
         
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(sMain);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
         loaderFound = loader.findBytecodeClassLoaderBySource(sAssume);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
         loaderFound = loader.findBytecodeClassLoaderBySource(sNotExists);
-        assertNull(loaderFound);
+        assertThat(loaderFound, is(nullValue()));
     }
     
     @Test
@@ -2764,14 +2762,14 @@ public class LayeredClassLoaderTest {
         // -- loadMainClass(source) --
         
         Class<?> clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
         
         fMain.setLastModified(55555);
         
         clazz = loader.loadMainClass(sMain);
-        assertEquals("Main", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Main"));
+        clazz.getDeclaredMethod("methodTop");
 
         // -- loadClass(source, name) --
         
@@ -2779,14 +2777,14 @@ public class LayeredClassLoaderTest {
         loader = builder.buildFromCodeLayers();
         
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
         
         fMain.setLastModified(77777);
 
         clazz = loader.loadClass(sMain, "Side");
-        assertEquals("Side", clazz.getName());
-        clazz.getDeclaredMethod("methodTop", new Class<?>[0]);
+        assertThat(clazz.getName(), is("Side"));
+        clazz.getDeclaredMethod("methodTop");
     }
 
 

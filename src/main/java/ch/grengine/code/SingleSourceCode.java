@@ -16,9 +16,9 @@
 
 package ch.grengine.code;
 
-import java.util.Set;
-
 import ch.grengine.source.Source;
+
+import java.util.Set;
 
 
 /**

@@ -16,10 +16,12 @@
 
 package ch.grengine.sources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.DefaultFileSource;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.SourceUtil;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -29,12 +31,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.DefaultFileSource;
-import ch.grengine.source.MockSource;
-import ch.grengine.source.SourceUtil;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class CompositeSourcesTest {
@@ -55,20 +56,20 @@ public class CompositeSourcesTest {
         CompositeSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(2, s.getBuilder().getSourcesCollection().size());
-        assertNotNull(s.getName());
-        assertNotNull(s.getCompilerFactory());
-        assertTrue(s.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
-        
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getCompilerFactory(), s.getBuilder().getCompilerFactory());
-        assertEquals(CompositeSources.Builder.DEFAULT_LATENCY_MS, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
-        
-        assertEquals(2, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m1));
-        assertTrue(s.getSourceSet().contains(new DefaultFileSource(file)));
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
+        assertThat(s.getName(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getCompilerFactory(), is(s.getCompilerFactory()));
+        assertThat(s.getBuilder().getLatencyMs(), is(CompositeSources.Builder.DEFAULT_LATENCY_MS));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
+
+        assertThat(s.getSourceSet().size(), is(2));
+        assertThat(s.getSourceSet().contains(m1), is(true));
+        assertThat(s.getSourceSet().contains(new DefaultFileSource(file)), is(true));
     }
     
     @Test
@@ -89,19 +90,19 @@ public class CompositeSourcesTest {
         CompositeSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(2, s.getBuilder().getSourcesCollection().size());
-        assertEquals("composite", s.getName());
-        assertEquals(compilerFactory, s.getCompilerFactory());
-        
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getCompilerFactory(), s.getBuilder().getCompilerFactory());
-        assertEquals(200, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
-        
-        assertEquals(2, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m1));
-        assertTrue(s.getSourceSet().contains(new DefaultFileSource(file)));
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
+        assertThat(s.getName(), is("composite"));
+        assertThat(s.getCompilerFactory(), is(compilerFactory));
+
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getCompilerFactory(), is(s.getCompilerFactory()));
+        assertThat(s.getBuilder().getLatencyMs(), is(200L));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
+
+        assertThat(s.getSourceSet().size(), is(2));
+        assertThat(s.getSourceSet().contains(m1), is(true));
+        assertThat(s.getSourceSet().contains(new DefaultFileSource(file)), is(true));
     }
     
     @Test
@@ -110,7 +111,7 @@ public class CompositeSourcesTest {
             new CompositeSources.Builder(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Sources collection is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Sources collection is null."));
         }
     }
 
@@ -122,7 +123,7 @@ public class CompositeSourcesTest {
             builder.setName("name");
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
     
@@ -137,28 +138,28 @@ public class CompositeSourcesTest {
         List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(s1, s2);
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
         CompositeSources s = builder.setLatencyMs(50).build();
-        
-        assertEquals(2, s.getBuilder().getSourcesCollection().size());
-        assertEquals(2, s.getSourceSet().size());
-        assertTrue(s.getSourceSet().contains(m1));
-        assertTrue(s.getSourceSet().contains(m2));
+
+        assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
+        assertThat(s.getSourceSet().size(), is(2));
+        assertThat(s.getSourceSet().contains(m1), is(true));
+        assertThat(s.getSourceSet().contains(m2), is(true));
 
         m2.setLastModified(1);
         long lastMod = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(s.getLastModified(), lastMod);
+        assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(120);
         long lastMod2 = s.getLastModified();
-        assertTrue(lastMod2 > lastMod);
+        assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(120);
-        assertEquals(s.getLastModified(), lastMod2);
+        assertThat(lastMod2, is(s.getLastModified()));
         
         m1.setLastModified(1);
         Thread.sleep(120);
         long lastMod3 = s.getLastModified();
-        assertTrue(lastMod3 > lastMod2);
+        assertThat(lastMod3 > lastMod2, is(true));
         Thread.sleep(120);
-        assertEquals(s.getLastModified(), lastMod3);
+        assertThat(lastMod3, is(s.getLastModified()));
     }
     
 }

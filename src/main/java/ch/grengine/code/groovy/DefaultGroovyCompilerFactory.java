@@ -16,12 +16,12 @@
 
 package ch.grengine.code.groovy;
 
+import ch.grengine.code.Compiler;
+import ch.grengine.code.CompilerFactory;
+
 import java.util.Set;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
-
-import ch.grengine.code.Compiler;
-import ch.grengine.code.CompilerFactory;
 
 
 /**

@@ -16,10 +16,11 @@
 
 package ch.grengine.sources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
+import ch.grengine.source.SourceUtil;
 
 import java.util.Set;
 
@@ -27,11 +28,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.MockSource;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class FixedSetSourcesTest {
@@ -48,16 +49,16 @@ public class FixedSetSourcesTest {
         FixedSetSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(set, s.getSourceSet());
-        assertNotNull(s.getName());
-        assertNotNull(s.getCompilerFactory());
-        assertTrue(s.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
-        assertEquals(s.getSourceSet(), s.getBuilder().getSourceSet());
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getSourceSet(), s.getBuilder().getSourceSet());
-        assertEquals(FixedSetSources.Builder.DEFAULT_LATENCY_MS, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getSourceSet(), is(set));
+        assertThat(s.getName(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+        assertThat(s.getBuilder().getSourceSet(), is(s.getSourceSet()));
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getSourceSet(), is(s.getSourceSet()));
+        assertThat(s.getBuilder().getLatencyMs(), is(FixedSetSources.Builder.DEFAULT_LATENCY_MS));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
     }
     
     @Test
@@ -71,15 +72,15 @@ public class FixedSetSourcesTest {
         FixedSetSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(set, s.getSourceSet());
-        assertEquals("fixed", s.getName());
-        assertEquals(factory, s.getCompilerFactory());
-        assertEquals(s.getSourceSet(), s.getBuilder().getSourceSet());
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getSourceSet(), s.getBuilder().getSourceSet());
-        assertEquals(200, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getSourceSet(), is(set));
+        assertThat(s.getName(), is("fixed"));
+        assertThat(s.getCompilerFactory(), is(factory));
+        assertThat(s.getBuilder().getSourceSet(), is(s.getSourceSet()));
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getSourceSet(), is(s.getSourceSet()));
+        assertThat(s.getBuilder().getLatencyMs(), is(200L));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
     }
     
     @Test
@@ -88,7 +89,7 @@ public class FixedSetSourcesTest {
             new FixedSetSources.Builder(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Source set is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source set is null."));
         }
     }
     
@@ -103,7 +104,7 @@ public class FixedSetSourcesTest {
             builder.setName("name");
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
     
@@ -118,12 +119,12 @@ public class FixedSetSourcesTest {
         m2.setLastModified(1);
         long lastMod = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(s.getLastModified(), lastMod);
+        assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(30);
         long lastMod2 = s.getLastModified();
-        assertTrue(lastMod2 > lastMod);
+        assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(60);
-        assertEquals(s.getLastModified(), lastMod2);
+        assertThat(lastMod2, is(s.getLastModified()));
     }
 
 }

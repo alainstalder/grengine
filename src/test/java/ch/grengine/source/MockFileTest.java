@@ -16,8 +16,7 @@
 
 package ch.grengine.source;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import ch.grengine.TestUtil;
 
 import java.io.File;
 
@@ -25,7 +24,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class MockFileTest {
@@ -39,16 +40,17 @@ public class MockFileTest {
         TestUtil.setFileText(f, "dummy");
         File fMod = new File(tempFolder.getRoot(), "file.lastModified");
         MockFile mock = new MockFile(f.getAbsolutePath());
-        
-        assertTrue(f.exists());
-        assertTrue(fMod.exists());
-        assertEquals("0", TestUtil.getFileText(fMod));
-        assertEquals(0, mock.lastModified());
-        assertTrue(f.lastModified() != 0);
-        
-        assertTrue(mock.setLastModified(100));
-        assertEquals("100", TestUtil.getFileText(fMod));
-        assertEquals(100, mock.lastModified());
-        assertTrue(f.lastModified() != 100);
+
+        assertThat(f.exists(), is(true));
+        assertThat(fMod.exists(), is(true));
+        assertThat(TestUtil.getFileText(fMod), is("0"));
+        assertThat(mock.lastModified(), is(0L));
+        assertThat(f.lastModified(), is(not(0L)));
+
+        assertThat(mock.setLastModified(100), is(true));
+        assertThat(TestUtil.getFileText(fMod), is("100"));
+        assertThat(mock.lastModified(), is(100L));
+        assertThat(f.lastModified(), is(not(100L)));
     }
+
 }

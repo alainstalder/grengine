@@ -16,20 +16,6 @@
 
 package ch.grengine.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import groovy.lang.Script;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CodeUtil;
@@ -40,6 +26,20 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import groovy.lang.Script;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 public class LayeredEngineConcurrencyTest {
     
@@ -47,7 +47,7 @@ public class LayeredEngineConcurrencyTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private volatile boolean failed;
-    public void setFailed(boolean failed) {
+    private void setFailed(boolean failed) {
         this.failed = failed;
     }
     
@@ -61,8 +61,10 @@ public class LayeredEngineConcurrencyTest {
         }
         return out.toString();
     }
-        
-    public void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+
+    private void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+
+        setFailed(false);
 
         final MockTextSource s1 = new MockTextSource("return 0");
         final Sources sources = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(s1), "concurrent");
@@ -82,7 +84,7 @@ public class LayeredEngineConcurrencyTest {
         System.out.println(info);
         
         long t0 = System.currentTimeMillis();
-        
+
         Thread[] threads = new Thread[nThreads+1];
         for (int i=0; i<nThreads+1; i++) {
             final int x = i;
@@ -161,9 +163,9 @@ public class LayeredEngineConcurrencyTest {
         long t1 = System.currentTimeMillis();
         System.out.println("Duration: " + (t1 - t0) + " ms");
         System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
-        assertEquals(n, nCodeChanges);
+        assertThat(nCodeChanges, is(n));
 
-        assertFalse(failed);
+        assertThat(failed, is(false));
     }
 
     @Test

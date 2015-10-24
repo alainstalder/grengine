@@ -16,10 +16,15 @@
 
 package ch.grengine.sources;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import ch.grengine.TestUtil;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.DefaultFileSource;
+import ch.grengine.source.DefaultSourceFactory;
+import ch.grengine.source.MockFile;
+import ch.grengine.source.MockSourceFactory;
+import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
 
 import java.io.File;
 import java.util.HashMap;
@@ -30,15 +35,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.TestUtil;
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.source.DefaultFileSource;
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.MockFile;
-import ch.grengine.source.MockSourceFactory;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceFactory;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class DirBasedSourcesTest {
@@ -53,26 +54,26 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(dir.getCanonicalPath(), s.getDir().getPath());
-        assertEquals(DirMode.NO_SUBDIRS, s.getDirMode());
-        assertTrue(s.getScriptExtensions().size() == 1);
-        assertTrue(s.getScriptExtensions().contains("groovy"));
-        assertEquals(dir.getCanonicalPath(), s.getName());
-        assertNotNull(s.getCompilerFactory());
-        assertTrue(s.getCompilerFactory() instanceof DefaultGroovyCompilerFactory);
-        
-        assertEquals(s.getDir().getPath(), s.getBuilder().getDir().getPath());
-        assertEquals(s.getDirMode(), s.getBuilder().getDirMode());
-        assertEquals(s.getScriptExtensions(), s.getBuilder().getScriptExtensions());
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getCompilerFactory(), s.getBuilder().getCompilerFactory());
-        assertNotNull(s.getBuilder().getSourceFactory());
-        assertTrue(s.getBuilder().getSourceFactory() instanceof DefaultSourceFactory);
-        assertEquals(DirBasedSources.Builder.DEFAULT_LATENCY_MS, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
-        
-        assertTrue(s.getSourceSet().isEmpty());
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getDir().getPath(), is(dir.getCanonicalPath()));
+        assertThat(s.getDirMode(), is(DirMode.NO_SUBDIRS));
+        assertThat(s.getScriptExtensions().size(), is(1));
+        assertThat(s.getScriptExtensions().contains("groovy"), is(true));
+        assertThat(s.getName(), is(dir.getCanonicalPath()));
+        assertThat(s.getCompilerFactory(), is(notNullValue()));
+        assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+
+        assertThat(s.getBuilder().getDir().getPath(), is(s.getDir().getPath()));
+        assertThat(s.getBuilder().getDirMode(), is(s.getDirMode()));
+        assertThat(s.getBuilder().getScriptExtensions(), is(s.getScriptExtensions()));
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getCompilerFactory(), is(s.getCompilerFactory()));
+        assertThat(s.getBuilder().getSourceFactory(), is(notNullValue()));
+        assertThat(s.getBuilder().getSourceFactory(), instanceOf(DefaultSourceFactory.class));
+        assertThat(s.getBuilder().getLatencyMs(), is(DirBasedSources.Builder.DEFAULT_LATENCY_MS));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
+
+        assertThat(s.getSourceSet().isEmpty(), is(true));
     }
     
     @Test
@@ -91,25 +92,25 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.build();
         
         Thread.sleep(30);
-        assertEquals(builder, s.getBuilder());
-        assertEquals(dir.getCanonicalPath(), s.getDir().getPath());
-        assertEquals(DirMode.WITH_SUBDIRS_RECURSIVE, s.getDirMode());
-        assertTrue(s.getScriptExtensions().size() == 2);
-        assertTrue(s.getScriptExtensions().contains("groovy"));
-        assertTrue(s.getScriptExtensions().contains("gradle"));
-        assertEquals("dirbased", s.getName());
-        assertEquals(compilerFactory, s.getCompilerFactory());
-        
-        assertEquals(s.getDir().getPath(), s.getBuilder().getDir().getPath());
-        assertEquals(s.getDirMode(), s.getBuilder().getDirMode());
-        assertEquals(s.getScriptExtensions(), s.getBuilder().getScriptExtensions());
-        assertEquals(s.getName(), s.getBuilder().getName());
-        assertEquals(s.getCompilerFactory(), s.getBuilder().getCompilerFactory());
-        assertEquals(sourceFactory, s.getBuilder().getSourceFactory());
-        assertEquals(200, s.getBuilder().getLatencyMs());
-        assertTrue(s.getLastModified() < System.currentTimeMillis());
-        
-        assertTrue(s.getSourceSet().isEmpty());
+        assertThat(s.getBuilder(), is(builder));
+        assertThat(s.getDir().getPath(), is(dir.getCanonicalPath()));
+        assertThat(s.getDirMode(), is(DirMode.WITH_SUBDIRS_RECURSIVE));
+        assertThat(s.getScriptExtensions().size(), is(2));
+        assertThat(s.getScriptExtensions().contains("groovy"), is(true));
+        assertThat(s.getScriptExtensions().contains("gradle"), is(true));
+        assertThat(s.getName(), is("dirbased"));
+        assertThat(s.getCompilerFactory(), is(compilerFactory));
+
+        assertThat(s.getBuilder().getDir().getPath(), is(s.getDir().getPath()));
+        assertThat(s.getBuilder().getDirMode(), is(s.getDirMode()));
+        assertThat(s.getBuilder().getScriptExtensions(), is(s.getScriptExtensions()));
+        assertThat(s.getBuilder().getName(), is(s.getName()));
+        assertThat(s.getBuilder().getCompilerFactory(), is(s.getCompilerFactory()));
+        assertThat(s.getBuilder().getSourceFactory(), is(sourceFactory));
+        assertThat(s.getBuilder().getLatencyMs(), is(200L));
+        assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
+
+        assertThat(s.getSourceSet().isEmpty(), is(true));
     }
     
     @Test
@@ -118,7 +119,7 @@ public class DirBasedSourcesTest {
             new DirBasedSources.Builder(null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertEquals("Dir is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Dir is null."));
         }
     }
     
@@ -131,7 +132,7 @@ public class DirBasedSourcesTest {
             builder.setName("name");
             fail();
         } catch (IllegalStateException e) {
-            assertEquals("Builder already used.", e.getMessage());
+            assertThat(e.getMessage(), is("Builder already used."));
         }
     }
     
@@ -143,18 +144,18 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.build();
         
         Set<Source> set = s.getSourceSet();
-        
-        assertTrue(set.contains(new DefaultFileSource(m.get("file"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileNoExt"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))));
+
+        assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
         }
     }
     
@@ -166,18 +167,18 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).build();
         
         Set<Source> set = s.getSourceSet();
-        
-        assertTrue(set.contains(new DefaultFileSource(m.get("file"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileNoExt"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSubSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))));
+
+        assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
         }
     }
     
@@ -189,18 +190,18 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.setScriptExtensions("groovy", "goo").build();
         
         Set<Source> set = s.getSourceSet();
-        
-        assertTrue(set.contains(new DefaultFileSource(m.get("file"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileNoExt"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubSub"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))));
+
+        assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
         }
     }
 
@@ -213,18 +214,18 @@ public class DirBasedSourcesTest {
                 .setScriptExtensions("groovy", "goo").build();
         
         Set<Source> set = s.getSourceSet();
-        
-        assertTrue(set.contains(new DefaultFileSource(m.get("file"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileGoo"))));
-        assertTrue(!set.contains(new DefaultFileSource(m.get("fileNoExt"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSub"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSubGoo"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSubSub"))));
-        assertTrue(set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))));
+
+        assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
+        assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSub"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))));
-            assertTrue(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
         }
     }
 
@@ -235,7 +236,7 @@ public class DirBasedSourcesTest {
         DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setScriptExtensions("groovy", "goo").build();
         Set<Source> set = s.getSourceSet();
-        assertTrue(set.isEmpty());
+        assertThat(set.isEmpty(), is(true));
     }
     
     @Test
@@ -251,46 +252,46 @@ public class DirBasedSourcesTest {
         
         // change file last modified
         File file = m.get("file");
-        assertTrue(file instanceof MockFile);
+        assertThat(file, instanceOf(MockFile.class));
         file.setLastModified(1);
-        assertEquals(1, file.lastModified());
+        assertThat(file.lastModified(), is(1L));
         long lastMod = s.getLastModified();
         Thread.sleep(30);
-        assertEquals(s.getLastModified(), lastMod);
+        assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(30);
         long lastMod2 = s.getLastModified();
-        assertTrue(lastMod2 > lastMod);
+        assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(60);
-        assertEquals(s.getLastModified(), lastMod2);
+        assertThat(lastMod2, is(s.getLastModified()));
         
         // add a file
         File newFile = new MockFile(dir, "MyScript2New.groovy");
         TestUtil.setFileText(newFile, "println 'new'");
         Thread.sleep(60);
         long lastMod3 = s.getLastModified();
-        assertTrue(lastMod3 > lastMod2);
+        assertThat(lastMod3 > lastMod2, is(true));
         
         // remove a file
         newFile.delete();
-        assertTrue(!newFile.exists());
+        assertThat(!newFile.exists(), is(true));
         Thread.sleep(60);
         long lastMod4 = s.getLastModified();
-        assertTrue(lastMod4 > lastMod3);
+        assertThat(lastMod4 > lastMod3, is(true));
 
         // add a file that is not part of the set to watch
         File newFile2 = new MockFile(dir, "MyScript2New.off");
         TestUtil.setFileText(newFile2, "println 'new'");
         Thread.sleep(60);
         long lastMod5 = s.getLastModified();
-        assertEquals(lastMod5, lastMod4);
+        assertThat(lastMod4, is(lastMod5));
     }
 
     
-    public static Map<String,File> createFiles(File dir) throws Exception {
+    private static Map<String,File> createFiles(File dir) throws Exception {
         File subDir = new File(dir, "foo");
         File subSubDir = new File(subDir, "bar");
         subSubDir.mkdirs();
-        assertTrue(subSubDir.exists());
+        assertThat(subSubDir.exists(), is(true));
         
         Map<String,File> m = new HashMap<String,File>();
         m.put("dir", dir);

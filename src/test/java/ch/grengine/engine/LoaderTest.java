@@ -16,9 +16,14 @@
 
 package ch.grengine.engine;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import ch.grengine.code.Bytecode;
+import ch.grengine.code.Code;
+import ch.grengine.code.CompiledSourceInfo;
+import ch.grengine.code.DefaultCode;
+import ch.grengine.load.BytecodeClassLoader;
+import ch.grengine.load.LoadMode;
+import ch.grengine.load.SourceClassLoader;
+import ch.grengine.source.Source;
 
 import java.util.HashMap;
 
@@ -26,13 +31,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import ch.grengine.code.Bytecode;
-import ch.grengine.code.Code;
-import ch.grengine.code.CompiledSourceInfo;
-import ch.grengine.code.DefaultCode;
-import ch.grengine.load.BytecodeClassLoader;
-import ch.grengine.load.LoadMode;
-import ch.grengine.source.Source;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class LoaderTest {
@@ -42,45 +42,45 @@ public class LoaderTest {
 
     @Test
     public void testConstructAndGetSetSourceClassLoader() throws Exception {
-        
-       EngineId engineId1 = new EngineId();
-       EngineId engineId2 = new EngineId();
-       ClassLoader parent = Thread.currentThread().getContextClassLoader();
-       Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-               new HashMap<String,Bytecode>());
-       BytecodeClassLoader classLoader1 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
-       BytecodeClassLoader classLoader2 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
-       
-       Loader loader = new Loader(engineId1, 17, true, classLoader1);
-       
-       assertEquals(17, loader.getNumber());
-       
-       assertEquals(classLoader1, loader.getSourceClassLoader(engineId1));
-       try {
-           loader.getSourceClassLoader(engineId2);
-       } catch (IllegalArgumentException e) {
-           assertEquals("Engine ID does not match (loader created by a different engine).", e.getMessage());
-       }
-       
-       try {
-           loader.setSourceClassLoader(engineId2, classLoader2);
-       } catch (IllegalArgumentException e) {
-           assertEquals("Engine ID does not match (loader created by a different engine).", e.getMessage());
-       }
-       loader.setSourceClassLoader(engineId1, classLoader2);
-       assertEquals(classLoader2, loader.getSourceClassLoader(engineId1));
-       try {
-           loader.getSourceClassLoader(engineId2);
-       } catch (IllegalArgumentException e) {
-           assertEquals("Engine ID does not match (loader created by a different engine).", e.getMessage());
-       }
-       
-       System.out.println(loader);
-       assertTrue(loader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"));
-       assertTrue(loader.toString().endsWith(", number=17, isAttached=true]"));
-       Loader detachedLoader = new Loader(engineId1, 17, false, classLoader1);
-       assertTrue(detachedLoader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"));
-       assertTrue(detachedLoader.toString().endsWith(", number=17, isAttached=false]"));
+
+        EngineId engineId1 = new EngineId();
+        EngineId engineId2 = new EngineId();
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        Code code = new DefaultCode("name", new HashMap<Source, CompiledSourceInfo>(),
+                new HashMap<String, Bytecode>());
+        SourceClassLoader classLoader1 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        SourceClassLoader classLoader2 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+
+        Loader loader = new Loader(engineId1, 17, true, classLoader1);
+
+        assertThat(loader.getNumber(), is(17L));
+
+        assertThat(loader.getSourceClassLoader(engineId1), is(classLoader1));
+        try {
+            loader.getSourceClassLoader(engineId2);
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Engine ID does not match (loader created by a different engine)."));
+        }
+
+        try {
+            loader.setSourceClassLoader(engineId2, classLoader2);
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Engine ID does not match (loader created by a different engine)."));
+        }
+        loader.setSourceClassLoader(engineId1, classLoader2);
+        assertThat(loader.getSourceClassLoader(engineId1), is(classLoader2));
+        try {
+            loader.getSourceClassLoader(engineId2);
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Engine ID does not match (loader created by a different engine)."));
+        }
+
+        System.out.println(loader);
+        assertThat(loader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"), is(true));
+        assertThat(loader.toString().endsWith(", number=17, isAttached=true]"), is(true));
+        Loader detachedLoader = new Loader(engineId1, 17, false, classLoader1);
+        assertThat(detachedLoader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"), is(true));
+        assertThat(detachedLoader.toString().endsWith(", number=17, isAttached=false]"), is(true));
     }
     
     @Test
@@ -92,7 +92,7 @@ public class LoaderTest {
         try {
             new Loader(null, 0, false, classLoader);
         } catch (IllegalArgumentException e) {
-            assertEquals("Engine ID is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Engine ID is null."));
         }
     }
     
@@ -101,7 +101,7 @@ public class LoaderTest {
         try {
             new Loader(new EngineId(), 0, false, null);
         } catch (IllegalArgumentException e) {
-            assertEquals("Source class loader is null.", e.getMessage());
+            assertThat(e.getMessage(), is("Source class loader is null."));
         }
     }
     
@@ -116,13 +116,13 @@ public class LoaderTest {
         BytecodeClassLoader classLoader2 = new BytecodeClassLoader(parent.getParent(), LoadMode.PARENT_FIRST, code);
         
         Loader loader = new Loader(id, number, true, classLoader);
-        assertTrue(loader.equals(new Loader(id, number, true, classLoader)));
-        assertTrue(loader.equals(new Loader(id, number, false, classLoader)));
-        assertTrue(loader.equals(new Loader(id, number, true, classLoader2)));
-        assertFalse(loader.equals(new Loader(id, 33, true, classLoader)));
-        assertFalse(loader.equals(new Loader(new EngineId(), number, true, classLoader)));
-        assertFalse(loader.equals("different class"));
-        assertFalse(loader.equals(null));
+        assertThat(loader.equals(new Loader(id, number, true, classLoader)), is(true));
+        assertThat(loader.equals(new Loader(id, number, false, classLoader)), is(true));
+        assertThat(loader.equals(new Loader(id, number, true, classLoader2)), is(true));
+        assertThat(loader.equals(new Loader(id, 33, true, classLoader)), is(false));
+        assertThat(loader.equals(new Loader(new EngineId(), number, true, classLoader)), is(false));
+        assertThat(loader.equals("different class"), is(false));
+        assertThat(loader.equals(null), is(false));
     }
 
 }

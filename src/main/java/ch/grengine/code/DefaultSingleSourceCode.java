@@ -16,11 +16,11 @@
 
 package ch.grengine.code;
 
-import java.util.Map;
-import java.util.Set;
-
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
+
+import java.util.Map;
+import java.util.Set;
 
 
 /**

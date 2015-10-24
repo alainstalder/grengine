@@ -16,15 +16,6 @@
 
 package ch.grengine.engine;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import ch.grengine.code.ClassNameConflictAnalyzer;
 import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
@@ -38,6 +29,15 @@ import ch.grengine.load.TopCodeCache;
 import ch.grengine.load.TopCodeCacheFactory;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 /**

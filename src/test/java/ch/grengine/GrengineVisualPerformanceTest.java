@@ -16,17 +16,16 @@
 
 package ch.grengine;
 
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
+import ch.grengine.source.DefaultSourceFactory;
 
 import java.io.File;
 import java.net.URL;
 import java.util.UUID;
 
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
-
-import ch.grengine.source.DefaultSourceFactory;
 
 /**
  * Command line visual performance test.
@@ -53,7 +52,7 @@ public class GrengineVisualPerformanceTest {
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File scriptDir = new File(tempDir, UUID.randomUUID().toString());
         scriptDir.mkdirs();
-        Runnable runner = null;
+        Runnable runner;
         
         System.out.printf("Grengine Visual Performance Test%n");
         System.out.printf("================================%n");
@@ -269,8 +268,8 @@ public class GrengineVisualPerformanceTest {
         };
         printRunInfo(runForDuration(runner));
     }
-    
-    public static long[] runForDuration(Runnable runner) {
+
+    private static long[] runForDuration(Runnable runner) {
         long[] timesPerRunNs = new long[N_RUNS];
         for (int j=0; j<N_RUNS; j++) {
             long t0 = System.nanoTime();
@@ -286,8 +285,8 @@ public class GrengineVisualPerformanceTest {
         }
         return timesPerRunNs;
     }
-    
-    public static void printRunInfo(long[] timesPerRunNs) {
+
+    private static void printRunInfo(long[] timesPerRunNs) {
         System.out.println();
         System.out.print("  Run: ");
         for (int i=0; i<N_RUNS; i++) {

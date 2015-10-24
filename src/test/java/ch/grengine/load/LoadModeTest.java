@@ -16,12 +16,12 @@
 
 package ch.grengine.load;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LoadModeTest {
     
@@ -30,13 +30,13 @@ public class LoadModeTest {
     
     @Test
     public void testValueOf() {
-        assertEquals(LoadMode.CURRENT_FIRST, LoadMode.valueOf(LoadMode.CURRENT_FIRST.toString()));
-        assertEquals(LoadMode.PARENT_FIRST, LoadMode.valueOf(LoadMode.PARENT_FIRST.toString()));
+        assertThat(LoadMode.valueOf(LoadMode.CURRENT_FIRST.toString()), is(LoadMode.CURRENT_FIRST));
+        assertThat(LoadMode.valueOf(LoadMode.PARENT_FIRST.toString()), is(LoadMode.PARENT_FIRST));
     }
     
     @Test
     public void testValues() {
-        assertEquals(2, LoadMode.values().length);
+        assertThat(LoadMode.values().length, is(2));
     }
 
 }
