@@ -26,10 +26,10 @@ import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -131,7 +131,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         if (isWithTopCodeCache) {
             topLoadMode = builder.getTopLoadMode();
             topCodeCache = builder.getTopCodeCache();
-            topLoaders = new HashMap<Source,BytecodeClassLoader>();
+            topLoaders = new ConcurrentHashMap<Source,BytecodeClassLoader>();
         } else {
             topLoadMode = null;
             topCodeCache = null;
