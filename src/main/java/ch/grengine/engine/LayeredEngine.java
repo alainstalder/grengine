@@ -70,7 +70,6 @@ public class LayeredEngine implements Engine {
     // (note that the map value is not used at all and does not matter
     // for garbage collection of map entries, only the map key does)
     private final Map<Loader,EngineId> attachedLoaders = new WeakHashMap<Loader,EngineId>();
-
     // map of all detached loaders created by this engine,
     // only needed for closing classes
     private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<Loader,EngineId>();
@@ -264,16 +263,11 @@ public class LayeredEngine implements Engine {
 
     @Override
     public void closeClasses(ClassCloser closer) {
-        write.lock();
-        try {
-            Set<Loader> loaders = new HashSet<Loader>();
-            loaders.addAll(attachedLoaders.keySet());
-            loaders.addAll(detachedLoaders.keySet());
-            for (Loader loader : loaders) {
-                loader.closeClasses(closer);
-            }
-        } finally {
-            write.unlock();
+        Set<Loader> loaders = new HashSet<Loader>();
+        loaders.addAll(attachedLoaders.keySet());
+        loaders.addAll(detachedLoaders.keySet());
+        for (Loader loader : loaders) {
+            loader.closeClasses(closer);
         }
     }
     

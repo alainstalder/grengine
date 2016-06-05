@@ -318,7 +318,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
                 if (clazz != null) {
                     // TODO remove printout
                     System.out.println("- Closing class: " + clazz.getName() + "@" + Integer.toHexString(clazz.hashCode()));
-                    closer.closeClass(clazz);
+                    try {
+                        closer.closeClass(clazz);
+                    } catch (Exception ignore) {
+                        // TODO remove printout
+                        System.out.println("- FAILED to close class: " + clazz.getName() + "@" + Integer.toHexString(clazz.hashCode()));
+                    }
                 }
             }
         } while (ref != null);

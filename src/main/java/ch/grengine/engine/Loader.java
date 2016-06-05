@@ -152,7 +152,18 @@ public class Loader {
         ", number=" + number + ", isAttached=" + isAttached + "]";
     }
 
-    // TODO
+    /**
+     * "Close" all classed ever loaded via this loader for good;
+     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     *
+     * Call only when really done using this loader; subsequently trying
+     * to use this loader or its classes yields undefined behavior.
+     *
+     * @param closer class closer
+     *
+     * @since 1.1
+     */
     public void closeClasses(ClassCloser closer) {
         sourceClassLoader.closeClasses(closer);
     }
