@@ -256,14 +256,17 @@ public class LayeredClassLoader extends SourceClassLoader {
     }
 
     @Override
-    public void closeClasses(ClassCloser closer) {
+    public void releaseClasses(final ClassReleaser releaser) {
         WeakReference<BytecodeClassLoader> ref;
         do {
             ref = classLoaderQueue.poll();
             if (ref != null) {
                 BytecodeClassLoader loader = ref.get();
                 if (loader != null) {
-                    loader.closeClasses(closer);
+                    try {
+                        loader.releaseClasses(releaser);
+                    } catch (Exception ignore) {
+                    }
                 }
             }
         } while (ref != null);

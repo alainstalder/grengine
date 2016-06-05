@@ -21,10 +21,10 @@ import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.CreateException;
 import ch.grengine.except.LoadException;
-import ch.grengine.load.ClassCloser;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 
+import java.io.Closeable;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ import groovy.lang.Script;
  * @author Alain Stalder
  * @author Made in Switzerland.
  */
-public abstract class BaseGrengine {
+public abstract class BaseGrengine implements Closeable {
     
     /**
      * the engine that powers this Grengine.
@@ -194,19 +194,20 @@ public abstract class BaseGrengine {
     public abstract Class<?> loadClass(Loader loader, String name) throws LoadException;
 
     /**
-     * "Close" all classed ever loaded via this engine for good;
-     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * release metadata for all classed ever loaded using this engine.
+     * <p>
+     * Allows to remove metadata associated by Groovy (or Java) with a class,
      * which is often necessary to get on-the-fly garbage collection.
-     *
-     * Call only when really done using this engine; subsequently trying
-     * to use this engine or its classes yields undefined behavior.
-     *
-     * @param closer class closer
+     * <p>
+     * Generally call only when really done using this engine and
+     * all loaded classes; subsequently trying to use this engine
+     * or its classes results generally in undefined behavior.
      *
      * @since 1.1
      */
-    public void closeClasses(ClassCloser closer) {
-        engine.closeClasses(closer);
+    @Override
+    public void close() {
+        engine.close();
     }
     
     // SourceFactory...

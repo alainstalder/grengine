@@ -17,8 +17,9 @@
 package ch.grengine.load;
 
 /**
- * Interface for "closing" a class when done using it for good;
- * allows to remove metadata associated by Groovy (or Java) with a class,
+ * Interface for releasing class metadata when done using it.
+ * <p>
+ * Allows to remove metadata associated by Groovy (or Java) with a class,
  * which is often necessary to get on-the-fly garbage collection.
  * 
  * @since 1.1
@@ -26,17 +27,18 @@ package ch.grengine.load;
  * @author Alain Stalder
  * @author Made in Switzerland.
  */
-public interface ClassCloser {
+public interface ClassReleaser {
 
     /**
-     * "Close" a class when done using it for good;
-     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * release class metadata when done using it.
+     * <p>
+     * Allows to remove metadata associated by Groovy (or Java) with a class,
      * which is often necessary to get on-the-fly garbage collection.
      *
      * @param clazz The class to close.
      *
      * @since 1.1
      */
-    void closeClass(Class clazz);
+    void release(Class<?> clazz);
 
 }

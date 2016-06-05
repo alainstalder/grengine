@@ -202,8 +202,10 @@ public class LayeredEngineTest {
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
-        
+
+        @SuppressWarnings("rawtypes")
         Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();
@@ -298,8 +300,10 @@ public class LayeredEngineTest {
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
-        
+
+        @SuppressWarnings("rawtypes")
         Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();

@@ -21,10 +21,10 @@ import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
-import ch.grengine.load.ClassCloser;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
+import java.io.Closeable;
 import java.util.List;
 
 
@@ -39,7 +39,7 @@ import java.util.List;
  * @author Alain Stalder
  * @author Made in Switzerland.
  */
-public interface Engine {
+public interface Engine extends Closeable {
     
     /**
      * gets the default attached loader.
@@ -164,17 +164,18 @@ public interface Engine {
     void setCodeLayersBySource(List<Sources> sourcesLayers) throws CompileException, ClassNameConflictException;
 
     /**
-     * "Close" all classed ever loaded via this engine for good;
-     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * release metadata for all classed ever loaded using this engine.
+     * <p>
+     * Allows to remove metadata associated by Groovy (or Java) with a class,
      * which is often necessary to get on-the-fly garbage collection.
-     *
-     * Call only when really done using this engine; subsequently trying
-     * to use this engine or its classes yields undefined behavior.
-     *
-     * @param closer class closer
+     * <p>
+     * Generally call only when really done using this engine and
+     * all loaded classes; subsequently trying to use this engine
+     * or its classes results generally in undefined behavior.
      *
      * @since 1.1
      */
-    void closeClasses(ClassCloser closer);
+    @Override
+    void close();
 
 }

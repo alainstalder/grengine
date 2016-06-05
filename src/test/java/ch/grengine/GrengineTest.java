@@ -79,10 +79,17 @@ public class GrengineTest {
     
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testHelloWorld() throws Exception {
         new Grengine().run("println 'hello world'");
+    }
+
+    @Test
+    public void testHelloWorldWithClose() throws Exception {
+        Grengine gren = new Grengine();
+        gren.run("print 'hello world '; [1,2,3].each { print it }; println()");
+        gren.close();
     }
 
     @Test
