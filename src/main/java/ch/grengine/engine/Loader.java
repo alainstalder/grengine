@@ -16,6 +16,7 @@
 
 package ch.grengine.engine;
 
+import ch.grengine.load.ClassCloser;
 import ch.grengine.load.SourceClassLoader;
 
 
@@ -149,6 +150,11 @@ public class Loader {
     public String toString() {
         return this.getClass().getSimpleName() + "[engineId=" + engineId +
         ", number=" + number + ", isAttached=" + isAttached + "]";
+    }
+
+    // TODO
+    public void closeClasses(ClassCloser closer) {
+        sourceClassLoader.closeClasses(closer);
     }
     
 }

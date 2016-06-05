@@ -21,6 +21,7 @@ import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassCloser;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.LayeredClassLoader;
 import ch.grengine.load.LoadMode;
@@ -31,9 +32,11 @@ import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -67,6 +70,10 @@ public class LayeredEngine implements Engine {
     // (note that the map value is not used at all and does not matter
     // for garbage collection of map entries, only the map key does)
     private final Map<Loader,EngineId> attachedLoaders = new WeakHashMap<Loader,EngineId>();
+
+    // map of all detached loaders created by this engine,
+    // only needed for closing classes
+    private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<Loader,EngineId>();
     
     private final Lock read;
     private final Lock write;
@@ -167,8 +174,10 @@ public class LayeredEngine implements Engine {
         write.lock();
         try {
             LayeredClassLoader layeredClassLoader = ((LayeredClassLoader)loader.getSourceClassLoader(engineId));
-            return new Loader(engineId, nextLoaderNumber++, false,
+            Loader newLoader = new Loader(engineId, nextLoaderNumber++, false,
                     layeredClassLoader.cloneWithSeparateTopCodeCache());
+            detachedLoaders.put(newLoader, engineId);
+            return newLoader;
         } finally {
             write.unlock();
         }
@@ -251,6 +260,21 @@ public class LayeredEngine implements Engine {
             throw new IllegalArgumentException("Sources layers are null.");
         }
         setCodeLayers(newLayeredClassLoaderFromSourceSetLayers(sourcesLayers).getCodeLayers());
+    }
+
+    @Override
+    public void closeClasses(ClassCloser closer) {
+        write.lock();
+        try {
+            Set<Loader> loaders = new HashSet<Loader>();
+            loaders.addAll(attachedLoaders.keySet());
+            loaders.addAll(detachedLoaders.keySet());
+            for (Loader loader : loaders) {
+                loader.closeClasses(closer);
+            }
+        } finally {
+            write.unlock();
+        }
     }
     
     /**

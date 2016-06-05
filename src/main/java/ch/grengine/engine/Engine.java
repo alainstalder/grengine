@@ -21,6 +21,7 @@ import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassCloser;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
@@ -161,5 +162,8 @@ public interface Engine {
      * @since 1.0
      */
     void setCodeLayersBySource(List<Sources> sourcesLayers) throws CompileException, ClassNameConflictException;
+
+    // TODO
+    void closeClasses(ClassCloser cleaner);
 
 }

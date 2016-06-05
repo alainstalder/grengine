@@ -106,4 +106,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     @Override
     public abstract SourceClassLoader clone();
 
+    // TODO
+    public abstract void closeClasses(ClassCloser closer);
+
 }

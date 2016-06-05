@@ -22,8 +22,11 @@ import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -44,6 +47,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
     private final LoadMode loadMode;
     private final Code code;
     private final Map<String,Object> locks = new HashMap<String,Object>();
+    private final Queue<WeakReference<Class>> classQueue = new ConcurrentLinkedQueue<WeakReference<Class>>();;
     
     /**
      * constructor.
@@ -129,6 +133,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         synchronized (nameLock) {
             if ((clazz = findLoadedClass(name)) == null) {
                 clazz = defineClass(name, bytes);
+                classQueue.add(new WeakReference<Class>(clazz));
             }
         }
 
@@ -300,7 +305,25 @@ public class BytecodeClassLoader extends SourceClassLoader {
     public BytecodeClassLoader clone() {
         return new BytecodeClassLoader(getParent(), loadMode, code);
     }
-    
+
+    @Override
+    public void closeClasses(ClassCloser closer) {
+        // TODO remove printout
+        System.out.println("Closing BytecodeClassLoader: @" + Integer.toHexString(hashCode()));
+        WeakReference<Class> ref;
+        do {
+            ref = classQueue.poll();
+            if (ref != null) {
+                Class clazz = ref.get();
+                if (clazz != null) {
+                    // TODO remove printout
+                    System.out.println("- Closing class: " + clazz.getName() + "@" + Integer.toHexString(clazz.hashCode()));
+                    closer.closeClass(clazz);
+                }
+            }
+        } while (ref != null);
+    }
+
     /**
      * gets the code.
      *

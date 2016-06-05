@@ -21,6 +21,7 @@ import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.CreateException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassCloser;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 
@@ -191,6 +192,11 @@ public abstract class BaseGrengine {
      * @since 1.0
      */
     public abstract Class<?> loadClass(Loader loader, String name) throws LoadException;
+
+    // TODO
+    public void closeClasses(ClassCloser cleaner) {
+        engine.closeClasses(cleaner);
+    }
     
     // SourceFactory...
     
