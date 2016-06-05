@@ -163,7 +163,18 @@ public interface Engine {
      */
     void setCodeLayersBySource(List<Sources> sourcesLayers) throws CompileException, ClassNameConflictException;
 
-    // TODO
-    void closeClasses(ClassCloser cleaner);
+    /**
+     * "Close" all classed ever loaded via this engine for good;
+     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     *
+     * Call only when really done using this engine; subsequently trying
+     * to use this engine or its classes yields undefined behavior.
+     *
+     * @param closer class closer
+     *
+     * @since 1.1
+     */
+    void closeClasses(ClassCloser closer);
 
 }

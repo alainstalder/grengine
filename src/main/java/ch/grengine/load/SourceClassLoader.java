@@ -106,7 +106,18 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     @Override
     public abstract SourceClassLoader clone();
 
-    // TODO
+    /**
+     * "Close" all classed ever loaded by this class loader for good;
+     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     *
+     * Call only when really done using this class loader; subsequently trying
+     * to use this class loader or its classes yields undefined behavior.
+     *
+     * @param closer class closer
+     *
+     * @since 1.1
+     */
     public abstract void closeClasses(ClassCloser closer);
 
 }

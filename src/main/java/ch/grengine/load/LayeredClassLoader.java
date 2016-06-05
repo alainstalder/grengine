@@ -255,7 +255,6 @@ public class LayeredClassLoader extends SourceClassLoader {
         return builder.buildFromCodeLayers();
     }
 
-    // TODO
     @Override
     public void closeClasses(ClassCloser closer) {
         WeakReference<BytecodeClassLoader> ref;

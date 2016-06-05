@@ -193,9 +193,20 @@ public abstract class BaseGrengine {
      */
     public abstract Class<?> loadClass(Loader loader, String name) throws LoadException;
 
-    // TODO
-    public void closeClasses(ClassCloser cleaner) {
-        engine.closeClasses(cleaner);
+    /**
+     * "Close" all classed ever loaded via this engine for good;
+     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     *
+     * Call only when really done using this engine; subsequently trying
+     * to use this engine or its classes yields undefined behavior.
+     *
+     * @param closer class closer
+     *
+     * @since 1.1
+     */
+    public void closeClasses(ClassCloser closer) {
+        engine.closeClasses(closer);
     }
     
     // SourceFactory...

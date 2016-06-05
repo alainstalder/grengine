@@ -16,15 +16,10 @@
 
 package ch.grengine.load;
 
-import ch.grengine.Grengine;
-import ch.grengine.code.SingleSourceCode;
-import ch.grengine.engine.LayeredEngine;
-import ch.grengine.except.CompileException;
-import ch.grengine.source.Source;
-
-
 /**
- * TODO
+ * Interface for "closing" a class when done using it for good;
+ * allows to remove metadata associated by Groovy (or Java) with a class,
+ * which is often necessary to get on-the-fly garbage collection.
  * 
  * @since 1.1
  * 
@@ -33,7 +28,15 @@ import ch.grengine.source.Source;
  */
 public interface ClassCloser {
 
-    // TODO
+    /**
+     * "Close" a class when done using it for good;
+     * allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     *
+     * @param clazz The class to close.
+     *
+     * @since 1.1
+     */
     void closeClass(Class clazz);
 
 }
