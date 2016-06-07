@@ -47,7 +47,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
     private final LoadMode loadMode;
     private final Code code;
     private final Map<String,Object> locks = new HashMap<String,Object>();
-    private final Queue<WeakReference<Class<?>>> classQueue = new ConcurrentLinkedQueue<WeakReference<Class<?>>>();;
+    private final Queue<WeakReference<Class<?>>> classQueue = new ConcurrentLinkedQueue<WeakReference<Class<?>>>();
     
     /**
      * constructor.

@@ -26,6 +26,7 @@ import ch.grengine.except.GrengineException;
 import ch.grengine.except.LoadException;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.LoadMode;
+import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.source.DefaultFileSource;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;
@@ -1152,6 +1153,51 @@ public class GrengineTest {
         }
     }
 
+    @Test
+    public void testClose() throws Exception {
+        Grengine.Builder builder = new Grengine.Builder();
+
+        LayeredEngine.Builder engineBuilder = new LayeredEngine.Builder();
+
+        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        engineBuilder.setClassReleaser(releaser);
+
+        LayeredEngine engine = engineBuilder.build();
+
+        SourceFactory f = new DefaultSourceFactory();
+        Source s1 = f.fromText("class Class1 {}");
+        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+
+        engine.setCodeLayersBySource(sourcesList);
+
+        builder.setEngine(engine);
+
+        Grengine gren = builder.build();
+
+        Loader loaderAttached = gren.newAttachedLoader();
+        Loader loaderDetached = gren.newDetachedLoader();
+
+        Class<?> clazz1a = gren.loadClass(loaderAttached, "Class1");
+        Class<?> clazz2a = gren.loadClass(loaderAttached, "Class2");
+        clazz2a.newInstance();
+        Class<?> clazz1d = gren.loadClass(loaderDetached, "Class1");
+        Class<?> clazz2d = gren.loadClass(loaderDetached, "Class2");
+        clazz2d.newInstance();
+
+        gren.close();
+
+        assertThat(releaser.classes.contains(clazz1a), is(true));
+        assertThat(releaser.classes.contains(clazz2a), is(true));
+        assertThat(releaser.classes.contains(clazz1d), is(true));
+        assertThat(releaser.classes.contains(clazz2d), is(true));
+        assertThat(releaser.classes.size(), is(6));
+        assertThat(releaser.countClassesWithName("Class1"), is(2));
+        assertThat(releaser.countClassesWithName("Class2"), is(2));
+        assertThat(releaser.countClassesWithName("Class2$Class3"), is(2));
+    }
     
     @Test
     public void testMatrixSource() throws Exception {

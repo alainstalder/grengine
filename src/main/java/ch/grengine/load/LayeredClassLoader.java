@@ -263,10 +263,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             if (ref != null) {
                 BytecodeClassLoader loader = ref.get();
                 if (loader != null) {
-                    try {
-                        loader.releaseClasses(releaser);
-                    } catch (Exception ignore) {
-                    }
+                    loader.releaseClasses(releaser);
                 }
             }
         } while (ref != null);

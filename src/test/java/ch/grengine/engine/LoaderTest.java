@@ -20,12 +20,20 @@ import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompiledSourceInfo;
 import ch.grengine.code.DefaultCode;
+import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.load.BytecodeClassLoader;
 import ch.grengine.load.LoadMode;
+import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.load.SourceClassLoader;
+import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
+import ch.grengine.sources.Sources;
+import ch.grengine.sources.SourcesUtil;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,6 +62,7 @@ public class LoaderTest {
         Loader loader = new Loader(engineId1, 17, true, classLoader1);
 
         assertThat(loader.getNumber(), is(17L));
+        assertThat(loader.isAttached(), is(true));
 
         assertThat(loader.getSourceClassLoader(engineId1), is(classLoader1));
         try {
@@ -79,6 +88,7 @@ public class LoaderTest {
         assertThat(loader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"), is(true));
         assertThat(loader.toString().endsWith(", number=17, isAttached=true]"), is(true));
         Loader detachedLoader = new Loader(engineId1, 17, false, classLoader1);
+        assertThat(detachedLoader.isAttached(), is(false));
         assertThat(detachedLoader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"), is(true));
         assertThat(detachedLoader.toString().endsWith(", number=17, isAttached=false]"), is(true));
     }
@@ -103,6 +113,43 @@ public class LoaderTest {
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Source class loader is null."));
         }
+    }
+
+    @Test
+    public void testConstructWithClassReleaserAndClose() throws Exception {
+
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        SourceFactory f = new DefaultSourceFactory();
+        Source s1 = f.fromText("class Class1 {}");
+        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        Code code = c.compile(sources);
+
+        BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, loadMode, code);
+
+        EngineId engineId = new EngineId();
+
+        RecordingClassReleaser releaser = new RecordingClassReleaser();
+
+        Loader loader = new Loader(engineId, 17, true, releaser, classLoader);
+
+        Class<?> clazz1 = loader.getSourceClassLoader(engineId).loadClass("Class1");
+        Class<?> clazz2 = loader.getSourceClassLoader(engineId).loadClass("Class2");
+        clazz2.newInstance();
+
+        loader.close();
+
+        assertThat(releaser.classes.contains(clazz1), is(true));
+        assertThat(releaser.classes.contains(clazz2), is(true));
+        assertThat(releaser.classes.size(), is(3));
+        assertThat(releaser.countClassesWithName("Class1"), is(1));
+        assertThat(releaser.countClassesWithName("Class2"), is(1));
+        assertThat(releaser.countClassesWithName("Class2$Class3"), is(1));
     }
     
     @Test
