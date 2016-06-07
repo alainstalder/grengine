@@ -35,7 +35,7 @@ public interface ClassReleaser {
      * Allows to remove metadata associated by Groovy (or Java) with a class,
      * which is often necessary to get on-the-fly garbage collection.
      *
-     * @param clazz The class to close.
+     * @param clazz The class to release.
      *
      * @since 1.1
      */
