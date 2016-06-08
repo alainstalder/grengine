@@ -642,7 +642,7 @@ public class Grengine extends BaseGrengine {
         
         boolean hasChanged = false;
         for (int i=0; i<n; i++) {
-            if ((long)lastModifiedList.get(i) != (long)lastModifiedListNew.get(i)) {
+            if (lastModifiedList.get(i) != lastModifiedListNew.get(i)) {
                 hasChanged = true;
                 break;
             }
