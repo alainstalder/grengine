@@ -22,13 +22,18 @@ import ch.grengine.code.CodeUtil;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassReleaser;
+import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.LoadMode;
+import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.load.TopCodeCacheFactory;
+import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;
 import ch.grengine.source.MockFile;
 import ch.grengine.source.MockFileSource;
 import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
@@ -41,6 +46,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -66,6 +72,7 @@ public class LayeredEngineTest {
         assertThat(engine.getBuilder().isWithTopCodeCache(), is(true));
         assertThat(engine.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
         assertThat(engine.getBuilder().getTopCodeCacheFactory(), is(notNullValue()));
+        assertThat(engine.getBuilder().getClassReleaser(), instanceOf(DefaultClassReleaser.class));
         assertThat(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers(), is(true));
         assertThat(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers(), is(true));
     }
@@ -81,6 +88,8 @@ public class LayeredEngineTest {
         builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
         TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory();
         builder.setTopCodeCacheFactory(topCodeCacheFactory);
+        ClassReleaser releaser = new RecordingClassReleaser();
+        builder.setClassReleaser(releaser);
         builder.setAllowSameClassNamesInMultipleCodeLayers(false);
         builder.setAllowSameClassNamesInParentAndCodeLayers(false);
         
@@ -92,6 +101,7 @@ public class LayeredEngineTest {
         assertThat(engine.getBuilder().isWithTopCodeCache(), is(false));
         assertThat(engine.getBuilder().getTopLoadMode(), is(LoadMode.CURRENT_FIRST));
         assertThat(engine.getBuilder().getTopCodeCacheFactory(), is(topCodeCacheFactory));
+        assertThat(engine.getBuilder().getClassReleaser(), is(releaser));
         assertThat(engine.getBuilder().isAllowSameClassNamesInMultipleCodeLayers(), is(false));
         assertThat(engine.getBuilder().isAllowSameClassNamesInParentAndCodeLayers(), is(false));
     }
@@ -106,6 +116,45 @@ public class LayeredEngineTest {
         } catch (IllegalStateException e) {
             assertThat(e.getMessage(), is("Builder already used."));
         }
+    }
+
+    @Test
+    public void testClose() throws Exception {
+        LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        builder.setClassReleaser(releaser);
+
+        LayeredEngine engine = builder.build();
+
+        SourceFactory f = new DefaultSourceFactory();
+        Source s1 = f.fromText("class Class1 {}");
+        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+
+        engine.setCodeLayersBySource(sourcesList);
+
+        Loader loaderAttached = engine.newAttachedLoader();
+        Loader loaderDetached = engine.newDetachedLoader();
+
+        Class<?> clazz1a = engine.loadClass(loaderAttached, "Class1");
+        Class<?> clazz2a = engine.loadClass(loaderAttached, "Class2");
+        clazz2a.newInstance();
+        Class<?> clazz1d = engine.loadClass(loaderDetached, "Class1");
+        Class<?> clazz2d = engine.loadClass(loaderDetached, "Class2");
+        clazz2d.newInstance();
+
+        engine.close();
+
+        assertThat(releaser.classes.contains(clazz1a), is(true));
+        assertThat(releaser.classes.contains(clazz2a), is(true));
+        assertThat(releaser.classes.contains(clazz1d), is(true));
+        assertThat(releaser.classes.contains(clazz2d), is(true));
+        assertThat(releaser.classes.size(), is(6));
+        assertThat(releaser.countClassesWithName("Class1"), is(2));
+        assertThat(releaser.countClassesWithName("Class2"), is(2));
+        assertThat(releaser.countClassesWithName("Class2$Class3"), is(2));
     }
 
     private Source s1;
@@ -202,8 +251,10 @@ public class LayeredEngineTest {
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
-        
+
+        @SuppressWarnings("rawtypes")
         Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();
@@ -298,8 +349,10 @@ public class LayeredEngineTest {
         // new loaders for s3+s4 because classes already loaded
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
-        
+
+        @SuppressWarnings("rawtypes")
         Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.newInstance();

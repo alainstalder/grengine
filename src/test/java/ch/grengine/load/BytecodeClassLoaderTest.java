@@ -653,8 +653,48 @@ public class BytecodeClassLoaderTest {
         assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
         assertThat(clone.getCode(), is(loader.getCode()));
     }
-    
-    
+
+    @Test
+    public void testReleaseClasses() throws Exception {
+        testReleaseClasses(false);
+    }
+
+    @Test
+    public void testReleaseClassesThrows() throws Exception {
+        testReleaseClasses(true);
+    }
+
+    private void testReleaseClasses(boolean throwAfterReleasing) throws Exception {
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        SourceFactory f = new DefaultSourceFactory();
+        Source s1 = f.fromText("class Class1 {}");
+        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        Code code = c.compile(sources);
+
+        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+
+        Class<?> clazz1 = loader.loadClass("Class1");
+        Class<?> clazz2 = loader.loadClass("Class2");
+        clazz2.newInstance();
+
+        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        releaser.throwAfterReleasing = throwAfterReleasing;
+        loader.releaseClasses(releaser);
+
+        assertThat(releaser.classes.contains(clazz1), is(true));
+        assertThat(releaser.classes.contains(clazz2), is(true));
+        assertThat(releaser.classes.size(), is(3));
+        assertThat(releaser.countClassesWithName("Class1"), is(1));
+        assertThat(releaser.countClassesWithName("Class2"), is(1));
+        assertThat(releaser.countClassesWithName("Class2$Class3"), is(1));
+    }
+
     private class ThrowingBytecodeClassLoader extends BytecodeClassLoader {
         
         public ThrowingBytecodeClassLoader(BytecodeClassLoader loader) {

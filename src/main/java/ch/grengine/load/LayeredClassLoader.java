@@ -25,11 +25,14 @@ import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -57,6 +60,9 @@ public class LayeredClassLoader extends SourceClassLoader {
     private LoadMode topLoadMode;
     private TopCodeCache topCodeCache;
     private Map<Source,BytecodeClassLoader> topLoaders;
+
+    private final Queue<WeakReference<BytecodeClassLoader>> classLoaderQueue =
+            new ConcurrentLinkedQueue<WeakReference<BytecodeClassLoader>>();
 
     /**
      * constructor from builder, based on already compiled code layers.
@@ -108,6 +114,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         codeLayers = builder.getCodeLayers();
         for (Code code : codeLayers) {
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
+            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>((BytecodeClassLoader)staticTopLoader));
         }
     }
     
@@ -120,6 +127,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             Code code = compilerFactory.newCompiler(staticTopLoader).compile(sources);
             codeLayers.add(code);
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
+            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>((BytecodeClassLoader)staticTopLoader));
         }
         // set code layers in builder so that the builder
         // can be reused without recompiling (e.g. for clone())
@@ -174,6 +182,7 @@ public class LayeredClassLoader extends SourceClassLoader {
                 != code.getLastModifiedAtCompileTime()) {
             topLoader = new BytecodeClassLoader(this, topLoadMode, code);
             topLoaders.put(source, topLoader);
+            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>(topLoader));
         }
         return topLoader.loadMainClass(source);
     }
@@ -202,6 +211,7 @@ public class LayeredClassLoader extends SourceClassLoader {
                 != code.getLastModifiedAtCompileTime()) {
             topLoader = new BytecodeClassLoader(this, topLoadMode, code);
             topLoaders.put(source, topLoader);
+            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>(topLoader));
         }
         return topLoader.loadClass(source, name);
     }
@@ -243,6 +253,20 @@ public class LayeredClassLoader extends SourceClassLoader {
     @Override
     public LayeredClassLoader clone() {
         return builder.buildFromCodeLayers();
+    }
+
+    @Override
+    public void releaseClasses(final ClassReleaser releaser) {
+        WeakReference<BytecodeClassLoader> ref;
+        do {
+            ref = classLoaderQueue.poll();
+            if (ref != null) {
+                BytecodeClassLoader loader = ref.get();
+                if (loader != null) {
+                    loader.releaseClasses(releaser);
+                }
+            }
+        } while (ref != null);
     }
     
     /**

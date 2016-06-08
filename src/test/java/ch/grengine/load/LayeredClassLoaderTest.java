@@ -268,6 +268,47 @@ public class LayeredClassLoaderTest {
         assertThat(clone.getTopCodeCache(), is(notNullValue()));
         assertThat(clone.getTopCodeCache(), instanceOf(DefaultTopCodeCache.class));
     }
+
+    @Test
+    public void testReleaseClasses() throws Exception {
+        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
+        builder.setWithTopCodeCache(true, topCodeCache);
+
+        SourceFactory f = new DefaultSourceFactory();
+        Source s1 = f.fromText("class Class1 {}");
+        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+        builder.setSourcesLayers(sourcesList);
+
+        LayeredClassLoader loader = builder.buildFromSourcesLayers();
+
+        Class<?> clazz1 = loader.loadClass("Class1");
+        Class<?> clazz2 = loader.loadClass("Class2");
+        clazz2.newInstance();
+
+        Source s4 = f.fromText("class Class4 {}");
+        Class<?> clazz4 = loader.loadMainClass(s4);
+
+        Source s5 = f.fromText("class Class4 { int get() { return 1 } }");
+        Class<?> clazz5 = loader.loadMainClass(s5);
+
+        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        loader.releaseClasses(releaser);
+
+        assertThat(releaser.classes.contains(clazz1), is(true));
+        assertThat(releaser.classes.contains(clazz2), is(true));
+        assertThat(releaser.classes.contains(clazz4), is(true));
+        assertThat(releaser.classes.contains(clazz5), is(true));
+        assertThat(releaser.classes.size(), is(5));
+        assertThat(releaser.countClassesWithName("Class1"), is(1));
+        assertThat(releaser.countClassesWithName("Class2"), is(1));
+        assertThat(releaser.countClassesWithName("Class2$Class3"), is(1));
+        assertThat(releaser.countClassesWithName("Class4"), is(2));
+    }
     
     
     private static List<Sources> getTestSourcesLayers() {
@@ -2356,7 +2397,7 @@ public class LayeredClassLoaderTest {
         clazz = loader.loadMainClass(sMain);
         assertThat(clazz.getName(), is("Main"));
         clazz.getDeclaredMethod("methodLayer0");
-     clazz = loader.loadMainClass(sAssume);
+        clazz = loader.loadMainClass(sAssume);
         assertThat(clazz.getName(), is("org.junit.Assume"));
         clazz.getDeclaredMethod("methodLayer0");
         

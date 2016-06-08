@@ -16,8 +16,11 @@
 
 package ch.grengine.engine;
 
+import ch.grengine.load.ClassReleaser;
+import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.SourceClassLoader;
 
+import java.io.Closeable;
 
 /**
  * Wrapper for a {@link SourceClassLoader} that can only be used
@@ -28,15 +31,16 @@ import ch.grengine.load.SourceClassLoader;
  * @author Alain Stalder
  * @author Made in Switzerland.
  */
-public class Loader {
+public class Loader implements Closeable {
 
     private final EngineId engineId;
     private final long number;
     private final boolean isAttached;
+    private final ClassReleaser classReleaser;
     private SourceClassLoader sourceClassLoader;
-    
+
     /**
-     * constructor.
+     * constructor, with default class releaser.
      * 
      * @param engineId the engine ID, used to authenticate the caller in some instance methods
      * @param number the loader number
@@ -49,6 +53,24 @@ public class Loader {
      */
     public Loader(final EngineId engineId, final long number, final boolean isAttached,
             final SourceClassLoader sourceClassLoader) {
+        this(engineId, number, isAttached, DefaultClassReleaser.getInstance(), sourceClassLoader);
+    }
+
+    /**
+     * constructor, with given class releaser.
+     *
+     * @param engineId the engine ID, used to authenticate the caller in some instance methods
+     * @param number the loader number
+     * @param isAttached whether the loader is attached to the engine or not
+     * @param classReleaser the class releaser
+     * @param sourceClassLoader the {@link SourceClassLoader} to use for loading classes
+     *
+     * @throws IllegalArgumentException if any of the arguments is null
+     *
+     * @since 1.1
+     */
+    public Loader(final EngineId engineId, final long number, final boolean isAttached,
+            final ClassReleaser classReleaser, final SourceClassLoader sourceClassLoader) {
         if (engineId == null) {
             throw new IllegalArgumentException("Engine ID is null.");
         }
@@ -58,6 +80,7 @@ public class Loader {
         this.engineId = engineId;
         this.number = number;
         this.isAttached = isAttached;
+        this.classReleaser = classReleaser;
         setSourceClassLoader(engineId, sourceClassLoader);
     }
 
@@ -149,6 +172,23 @@ public class Loader {
     public String toString() {
         return this.getClass().getSimpleName() + "[engineId=" + engineId +
         ", number=" + number + ", isAttached=" + isAttached + "]";
+    }
+
+    /**
+     * release metadata for all classed ever loaded using this loader.
+     * <p>
+     * Allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     * <p>
+     * Generally call only when really done using this loader and
+     * all loaded classes; subsequently trying to use this loader
+     * or its classes results generally in undefined behavior.
+     *
+     * @since 1.1
+     */
+    @Override
+    public void close() {
+        sourceClassLoader.releaseClasses(classReleaser);
     }
     
 }

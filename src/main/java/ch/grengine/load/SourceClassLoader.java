@@ -106,4 +106,20 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
     @Override
     public abstract SourceClassLoader clone();
 
+    /**
+     * release metadata for all classed ever loaded by this class loader.
+     * <p>
+     * Allows to remove metadata associated by Groovy (or Java) with a class,
+     * which is often necessary to get on-the-fly garbage collection.
+     * <p>
+     * Generally call only when really done using this class loader and
+     * all loaded classes; subsequently trying to use this class loader
+     * or its classes results generally in undefined behavior.
+     *
+     * @param releaser class releaser
+     *
+     * @since 1.1
+     */
+    public abstract void releaseClasses(ClassReleaser releaser);
+
 }

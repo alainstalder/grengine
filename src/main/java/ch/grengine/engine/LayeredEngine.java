@@ -21,6 +21,8 @@ import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassReleaser;
+import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.LayeredClassLoader;
 import ch.grengine.load.LoadMode;
@@ -31,9 +33,11 @@ import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -67,6 +71,9 @@ public class LayeredEngine implements Engine {
     // (note that the map value is not used at all and does not matter
     // for garbage collection of map entries, only the map key does)
     private final Map<Loader,EngineId> attachedLoaders = new WeakHashMap<Loader,EngineId>();
+    // map of all detached loaders created by this engine,
+    // only needed for closing classes
+    private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<Loader,EngineId>();
     
     private final Lock read;
     private final Lock write;
@@ -93,7 +100,7 @@ public class LayeredEngine implements Engine {
         }
         
         nextLoaderNumber = 0;
-        loader = new Loader(engineId, nextLoaderNumber++, true, layeredClassLoader);
+        loader = new Loader(engineId, nextLoaderNumber++, true, builder.getClassReleaser(), layeredClassLoader);
         attachedLoaders.put(loader, engineId);
         
         ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -140,7 +147,7 @@ public class LayeredEngine implements Engine {
         write.lock();
         try {
             Loader newLoader = new Loader(engineId, nextLoaderNumber++, true,
-                    loader.getSourceClassLoader(engineId).clone());
+                    builder.getClassReleaser(), loader.getSourceClassLoader(engineId).clone());
             attachedLoaders.put(newLoader, engineId);
             return newLoader;
         } finally {
@@ -167,8 +174,10 @@ public class LayeredEngine implements Engine {
         write.lock();
         try {
             LayeredClassLoader layeredClassLoader = ((LayeredClassLoader)loader.getSourceClassLoader(engineId));
-            return new Loader(engineId, nextLoaderNumber++, false,
-                    layeredClassLoader.cloneWithSeparateTopCodeCache());
+            Loader newLoader = new Loader(engineId, nextLoaderNumber++, false,
+                    builder.getClassReleaser(), layeredClassLoader.cloneWithSeparateTopCodeCache());
+            detachedLoaders.put(newLoader, engineId);
+            return newLoader;
         } finally {
             write.unlock();
         }
@@ -252,6 +261,21 @@ public class LayeredEngine implements Engine {
         }
         setCodeLayers(newLayeredClassLoaderFromSourceSetLayers(sourcesLayers).getCodeLayers());
     }
+
+    @Override
+    public void close() {
+        write.lock();
+        try {
+            Set<Loader> loaders = new HashSet<Loader>();
+            loaders.addAll(attachedLoaders.keySet());
+            loaders.addAll(detachedLoaders.keySet());
+            for (Loader loader : loaders) {
+                loader.close();
+            }
+        } finally {
+            write.unlock();
+        }
+    }
     
     /**
      * gets the builder.
@@ -282,6 +306,8 @@ public class LayeredEngine implements Engine {
         private boolean isWithTopCodeCache = true;
         private TopCodeCacheFactory topCodeCacheFactory;  
         private LoadMode topLoadMode;
+
+        private ClassReleaser classReleaser;
         
         private boolean allowSameClassNamesInMultipleCodeLayers = true;
         private boolean allowSameClassNamesInParentAndCodeLayers = true;
@@ -377,6 +403,21 @@ public class LayeredEngine implements Engine {
             this.topLoadMode = topLoadMode;
             return this;
         }
+
+        /**
+         * sets the class releaser, default is the {@link DefaultClassReleaser} singleton instance.
+         *
+         * @param classReleaser class releaser
+         *
+         * @return this, for chaining calls
+         *
+         * @since 1.1
+         */
+        public Builder setClassReleaser(final ClassReleaser classReleaser) {
+            check();
+            this.classReleaser = classReleaser;
+            return this;
+        }
         
         /**
          * sets whether to allow the same class names in multiple code layers, default is true.
@@ -455,7 +496,18 @@ public class LayeredEngine implements Engine {
         public LoadMode getTopLoadMode() {
             return topLoadMode;
         }
-        
+
+        /**
+         * gets the class releaser.
+         *
+         * @return class releaser
+         *
+         * @since 1.1
+         */
+        public ClassReleaser getClassReleaser() {
+            return classReleaser;
+        }
+
         /**
          * gets the top code cache factory.
          *
@@ -502,6 +554,9 @@ public class LayeredEngine implements Engine {
                 }
                 if (topCodeCacheFactory == null) {
                     topCodeCacheFactory = new DefaultTopCodeCacheFactory.Builder().build();
+                }
+                if (classReleaser == null) {
+                    classReleaser = DefaultClassReleaser.getInstance();
                 }
                 isCommitted = true;
             }
