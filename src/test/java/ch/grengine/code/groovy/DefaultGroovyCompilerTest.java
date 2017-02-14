@@ -260,15 +260,15 @@ public class DefaultGroovyCompilerTest {
         Source textSource = f.fromText("println 'text source'");
         String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basicsingle");
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basicSingle");
         
         DefaultSingleSourceCode code = (DefaultSingleSourceCode)c.compile(sources);
 
-        assertThat(code.toString(), is("DefaultSingleSourceCode[sourcesName='basicsingle', " +
+        assertThat(code.toString(), is("DefaultSingleSourceCode[sourcesName='basicSingle', " +
                 "mainClassName=" + expectedTextSourceMainClassName + ", classes:[" + expectedTextSourceMainClassName +
                 "]]"));
 
-        assertThat(code.getSourcesName(), is("basicsingle"));
+        assertThat(code.getSourcesName(), is("basicSingle"));
 
         assertThat(code.getSourceSet().size(), is(1));
         assertThat(code.isForSource(textSource), is(true));
@@ -299,14 +299,14 @@ public class DefaultGroovyCompilerTest {
         SourceFactory f = new DefaultSourceFactory();
         Source textSource = f.fromText("%%)(");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "syntaxwrong");
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "syntaxWrong");
         
         try {
             c.compile(sources);
             fail();
         } catch (CompileException e) {
             //System.out.println(e);
-            assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='syntaxwrong']. " +
+            assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='syntaxWrong']. " +
                     "Cause: org.codehaus.groovy.control.MultipleCompilationErrorsException:"), is(true));
             assertThat(e.getSources(), is(sources));
             Thread.sleep(30);
@@ -325,7 +325,7 @@ public class DefaultGroovyCompilerTest {
         
         Source mockSource = new MockSource("id1");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(mockSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "unknownsource");
+        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "unknownSource");
         
         try {
             c.compile(sources);

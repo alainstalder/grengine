@@ -120,9 +120,9 @@ public class WorkaroundGroovy7407WrappingGrapeEngine implements GrapeEngine {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public URI[] resolve(Map args, List depsInfo, Map... dependencies) {
+    public URI[] resolve(Map args, List dependenciesInfo, Map... dependencies) {
         synchronized(lock) {
-            return innerEngine.resolve(args, depsInfo, dependencies);
+            return innerEngine.resolve(args, dependenciesInfo, dependencies);
         }
     }
 

@@ -147,7 +147,7 @@ public class Loader implements Closeable {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Loader)) return false;
+        if (!(obj instanceof Loader)) return false;
         Loader loader = (Loader)obj;
         return this.number == loader.number && this.engineId == loader.engineId;
     }

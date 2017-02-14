@@ -153,7 +153,7 @@ public class DefaultGroovyCompiler implements Compiler {
             int phase = (config.getTargetDirectory() == null) ? Phases.CLASS_GENERATION : Phases.OUTPUT;
             cu.compile(phase);
 
-            Map<Source,CompiledSourceInfo> compiledSourceInfos = new HashMap<Source,CompiledSourceInfo>();
+            Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<Source,CompiledSourceInfo>();
             for (Entry<Source, SourceUnit> entry : sourceUnitMap.entrySet()) {
                 Source source = entry.getKey();
                 SourceUnit su = entry.getValue();
@@ -165,22 +165,22 @@ public class DefaultGroovyCompiler implements Compiler {
                 CompiledSourceInfo compiledSourceInfo = new CompiledSourceInfo(source,
                         su.getAST().getMainClassName(), classNames, source.getLastModified());
                 //System.out.println("SU MainClassName: " + su.getAST().getMainClassName());
-                compiledSourceInfos.put(source, compiledSourceInfo);
+                compiledSourceInfoMap.put(source, compiledSourceInfo);
             }
 
             @SuppressWarnings("unchecked")
             List<GroovyClass> groovyClasses = cu.getClasses();
-            Map<String, Bytecode> bytecodes = new HashMap<String,Bytecode>();
+            Map<String, Bytecode> bytecodeMap = new HashMap<String,Bytecode>();
             for (GroovyClass groovyClass : groovyClasses) {
                 String name = groovyClass.getName();
-                bytecodes.put(name, new Bytecode(name, groovyClass.getBytes()));
+                bytecodeMap.put(name, new Bytecode(name, groovyClass.getBytes()));
             }
 
             Code code;
             if (sourceSet.size() == 1) {
-                code = new DefaultSingleSourceCode(sources.getName(), compiledSourceInfos, bytecodes);
+                code = new DefaultSingleSourceCode(sources.getName(), compiledSourceInfoMap, bytecodeMap);
             } else {
-                code = new DefaultCode(sources.getName(), compiledSourceInfos, bytecodes);
+                code = new DefaultCode(sources.getName(), compiledSourceInfoMap, bytecodeMap);
             }
             //System.out.println("--- compile ---");
             return code;

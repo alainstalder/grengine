@@ -83,7 +83,7 @@ public class DirBasedSourcesTest {
         Set<String> scriptExtensions = TestUtil.argsToSet("groovy", "gradle");
         builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions);
         builder.setScriptExtensions("groovy", "gradle");
-        builder.setName("dirbased");
+        builder.setName("dirBased");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         builder.setCompilerFactory(compilerFactory);
         SourceFactory sourceFactory = new DefaultSourceFactory();
@@ -98,7 +98,7 @@ public class DirBasedSourcesTest {
         assertThat(s.getScriptExtensions().size(), is(2));
         assertThat(s.getScriptExtensions().contains("groovy"), is(true));
         assertThat(s.getScriptExtensions().contains("gradle"), is(true));
-        assertThat(s.getName(), is("dirbased"));
+        assertThat(s.getName(), is("dirBased"));
         assertThat(s.getCompilerFactory(), is(compilerFactory));
 
         assertThat(s.getBuilder().getDir().getPath(), is(s.getDir().getPath()));
@@ -137,7 +137,7 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testGetSourcesNoSubdirsDefaultExtensions() throws Exception {
+    public void testGetSourcesNoSubDirsDefaultExtensions() throws Exception {
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -153,14 +153,14 @@ public class DirBasedSourcesTest {
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
         }
     }
     
     @Test
-    public void testGetSourcesWithSubdirsDefaultExtensions() throws Exception {
+    public void testGetSourcesWithSubDirsDefaultExtensions() throws Exception {
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -176,14 +176,14 @@ public class DirBasedSourcesTest {
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
         }
     }
     
     @Test
-    public void testGetSourcesNoSubdirsSpecificExtensions() throws Exception {
+    public void testGetSourcesNoSubDirsSpecificExtensions() throws Exception {
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -199,14 +199,14 @@ public class DirBasedSourcesTest {
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
         }
     }
 
     @Test
-    public void testGetSourcesWithSubdirsSpecificExtensions() throws Exception {
+    public void testGetSourcesWithSubDirsSpecificExtensions() throws Exception {
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -223,9 +223,9 @@ public class DirBasedSourcesTest {
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
         if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvis3"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
+            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
         }
     }
 
@@ -304,9 +304,9 @@ public class DirBasedSourcesTest {
         m.put("fileSubGoo", new MockFile(subDir, "MySubScriptGoo.goo"));
         m.put("fileSubSub", new MockFile(subSubDir, "MySubSubScript.groovy"));
         m.put("fileSubSubGoo", new MockFile(subSubDir, "MySubSubScriptGoo.goo"));
-        m.put("fileUnixInvis1", new MockFile(dir, ".groovy"));
-        m.put("fileUnixInvis2", new MockFile(dir, ".UnixInvis.groovy"));
-        m.put("fileUnixInvis3", new MockFile(subDir, ".groovy"));
+        m.put("fileUnixInvisible1", new MockFile(dir, ".groovy"));
+        m.put("fileUnixInvisible2", new MockFile(dir, ".UnixInvisible.groovy"));
+        m.put("fileUnixInvisible3", new MockFile(subDir, ".groovy"));
         
         TestUtil.setFileText(m.get("file"), "println 'file'");
         TestUtil.setFileText(m.get("fileGoo"), "println 'fileGoo'");
@@ -315,9 +315,9 @@ public class DirBasedSourcesTest {
         TestUtil.setFileText(m.get("fileSubGoo"), "println 'fileSubGoo'");
         TestUtil.setFileText(m.get("fileSubSub"), "println 'fileSubSub'");
         TestUtil.setFileText(m.get("fileSubSubGoo"), "println 'fileSubSubGoo'");
-        TestUtil.setFileText(m.get("fileUnixInvis1"), "println 'fileUnixInvis1'");
-        TestUtil.setFileText(m.get("fileUnixInvis2"), "println 'fileUnixInvis2'");
-        TestUtil.setFileText(m.get("fileUnixInvis3"), "println 'fileUnixInvis3'");
+        TestUtil.setFileText(m.get("fileUnixInvisible1"), "println 'fileUnixInvisible1'");
+        TestUtil.setFileText(m.get("fileUnixInvisible2"), "println 'fileUnixInvisible2'");
+        TestUtil.setFileText(m.get("fileUnixInvisible3"), "println 'fileUnixInvisible3'");
         
         return m;
     }

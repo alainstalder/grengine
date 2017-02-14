@@ -34,34 +34,34 @@ import java.util.Set;
 public class DefaultCode implements Code {
     
     private final String sourcesName;
-    private final Map<Source,CompiledSourceInfo> compiledSourceInfos;
-    private final Map<String,Bytecode> bytecodes;
+    private final Map<Source,CompiledSourceInfo> compiledSourceInfoMap;
+    private final Map<String,Bytecode> bytecodeMap;
     
     /**
      * constructor (typically called by the compiler).
      * 
      * @param sourcesName the name of the originating {@link Sources} instance
-     * @param compiledSourceInfos the map of originating {@link Source} to {@link CompiledSourceInfo}
-     * @param bytecodes the map of class name to {@link Bytecode}
+     * @param compiledSourceInfoMap the map of originating {@link Source} to {@link CompiledSourceInfo}
+     * @param bytecodeMap the map of class name to {@link Bytecode}
      * 
      * @throws IllegalArgumentException if any argument is null
      * 
      * @since 1.0
      */
-    public DefaultCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfos,
-            final Map<String,Bytecode> bytecodes) {
+    public DefaultCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfoMap,
+            final Map<String,Bytecode> bytecodeMap) {
         if (sourcesName == null) {
             throw new IllegalArgumentException("Sources name is null.");
         }
-        if (compiledSourceInfos == null) {
-            throw new IllegalArgumentException("Compiled source infos is null.");
+        if (compiledSourceInfoMap == null) {
+            throw new IllegalArgumentException("Compiled source info map is null.");
         }
-        if (bytecodes == null) {
-            throw new IllegalArgumentException("Bytecodes is null.");
+        if (bytecodeMap == null) {
+            throw new IllegalArgumentException("Bytecode map is null.");
         }
         this.sourcesName = sourcesName;
-        this.compiledSourceInfos = compiledSourceInfos;
-        this.bytecodes = bytecodes;
+        this.compiledSourceInfoMap = compiledSourceInfoMap;
+        this.bytecodeMap = bytecodeMap;
     }
     
     @Override
@@ -71,12 +71,12 @@ public class DefaultCode implements Code {
     
     @Override
     public boolean isForSource(final Source source) {
-        return compiledSourceInfos.containsKey(source);
+        return compiledSourceInfoMap.containsKey(source);
     }
     
     @Override
     public String getMainClassName(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfos.get(source);
+        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }
@@ -85,7 +85,7 @@ public class DefaultCode implements Code {
     
     @Override
     public Set<String> getClassNames(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfos.get(source);
+        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }
@@ -94,7 +94,7 @@ public class DefaultCode implements Code {
 
     @Override
     public long getLastModifiedAtCompileTime(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfos.get(source);
+        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }
@@ -103,23 +103,23 @@ public class DefaultCode implements Code {
 
     @Override
     public Set<Source> getSourceSet() {
-        return compiledSourceInfos.keySet();
+        return compiledSourceInfoMap.keySet();
     }
 
     @Override
     public Bytecode getBytecode(final String className) {
-        return bytecodes.get(className);
+        return bytecodeMap.get(className);
     }
     
     @Override
     public Set<String> getClassNameSet() {
-        return bytecodes.keySet();
+        return bytecodeMap.keySet();
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[sourcesName='" + sourcesName + "', sources:" + compiledSourceInfos.size() +
-                ", classes:" + bytecodes.size() + "]";
+        return this.getClass().getSimpleName() + "[sourcesName='" + sourcesName + "', sources:" + compiledSourceInfoMap.size() +
+                ", classes:" + bytecodeMap.size() + "]";
     }
 
 }

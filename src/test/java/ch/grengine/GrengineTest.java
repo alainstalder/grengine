@@ -212,7 +212,7 @@ public class GrengineTest {
     }
 
     @Test
-    public void testConstructFromDirWithoutSubdirs() throws Exception {
+    public void testConstructFromDirWithoutSubDirs() throws Exception {
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
         TestUtil.setFileText(f1, "return 1");
@@ -267,7 +267,7 @@ public class GrengineTest {
     }
 
     @Test
-    public void testConstructFromDirWithoutSubdirs_WithParent() throws Exception {
+    public void testConstructFromDirWithoutSubDirs_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
 
         File dir = tempFolder.getRoot();
@@ -325,7 +325,7 @@ public class GrengineTest {
 
 
     @Test
-    public void testConstructFromDirWithSubdirs() throws Exception {
+    public void testConstructFromDirWithSubDirs() throws Exception {
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
         TestUtil.setFileText(f1, "return 1");
@@ -361,7 +361,7 @@ public class GrengineTest {
 
 
     @Test
-    public void testConstructFromDirWithoutSubdirsNoTopCodeCache() throws Exception {
+    public void testConstructFromDirWithoutSubDirsNoTopCodeCache() throws Exception {
         File dir = tempFolder.getRoot();
         File f1 = new File(dir, "Script1.groovy");
         TestUtil.setFileText(f1, "return 1");
@@ -463,7 +463,7 @@ public class GrengineTest {
 
 
     @Test
-    public void testConstructFromDirWithoutSubdirs_WithCompilerConfig() throws Exception {
+    public void testConstructFromDirWithoutSubDirs_WithCompilerConfig() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
         Set<String> scriptExtensions = new HashSet<String>();
         scriptExtensions.add("groovy");
@@ -533,7 +533,7 @@ public class GrengineTest {
     }
 
     @Test
-    public void testConstructFromDirWithoutSubdirs_WithCompilerConfig_WithParent() throws Exception {
+    public void testConstructFromDirWithoutSubDirs_WithCompilerConfig_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
         Set<String> scriptExtensions = new HashSet<String>();
@@ -605,7 +605,7 @@ public class GrengineTest {
 
 
     @Test
-    public void testConstructFromDirWithSubdirs_WithCompilerConfiguration() throws Exception {
+    public void testConstructFromDirWithSubDirs_WithCompilerConfiguration() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
         Set<String> scriptExtensions = new HashSet<String>();
         scriptExtensions.add("groovy");
@@ -659,7 +659,7 @@ public class GrengineTest {
     }
 
     @Test
-    public void testConstructFromDirWithSubdirs_WithCompilerConfiguration_WithParent() throws Exception {
+    public void testConstructFromDirWithSubDirs_WithCompilerConfiguration_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
         Set<String> scriptExtensions = new HashSet<String>();
@@ -715,7 +715,7 @@ public class GrengineTest {
     }
 
     @Test
-    public void testConstructFromDirWithSubdirs_WithParent() throws Exception {
+    public void testConstructFromDirWithSubDirs_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
 
         File dir = tempFolder.getRoot();

@@ -238,7 +238,7 @@ public class SourceUtilTest {
         assertThat(SourceUtil.md5("abc"), is("900150983CD24FB0D6963F7D28E17F72"));
         assertThat(SourceUtil.md5("message digest"), is("F96B697D7CB7938D525A2F31AAF161D0"));
         assertThat(SourceUtil.md5("abcdefghijklmnopqrstuvwxyz"), is("C3FCD3D76192E4007DFB496CCA67E13B"));
-        assertThat(SourceUtil.md5("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"), is("D174AB98D277D9F5A5611C2C9F419D9F"));
+        assertThat(SourceUtil.md5("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789"), is("D174AB98D277D9F5A5611C2C9F419D9F"));
         assertThat(SourceUtil.md5("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), is("57EDF4A22BE3C955AC49DA2E2107B67A"));
     }
     
@@ -283,7 +283,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testGetTextStartNoLineBreaks() {
+    public void testGetTextStartNoLinebreaks() {
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello", 10), is("hello"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello1", 10), is("hello1"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello12", 10), is("hello12"));
@@ -302,7 +302,7 @@ public class SourceUtilTest {
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n123", 10), is("hello%n123"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1234", 10), is("hello%[..]"));
     }
-    
+
     @Test
     public void testReadUrlText() throws Exception {
         File file = new File(tempFolder.getRoot(), "MyScript.groovy");

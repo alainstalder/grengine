@@ -97,13 +97,13 @@ public class DefaultTextSourceTest {
     }
 
     @Test
-    public void testTextWithLinebreaks() {
+    public void testTextWithLineBreaks() {
         String text = "class Class1 {\nstatic class Sub {} }\r\nclass Side {}";
         TextSource s = new DefaultTextSource(text);
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
-        String expectedText = "class Class1 {%nstatic class Sub {} }%nclass Side {}";
+        String expectedText = "class Class1 {%n" + "static class Sub {} }%n" + "class Side {}";
         assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
 

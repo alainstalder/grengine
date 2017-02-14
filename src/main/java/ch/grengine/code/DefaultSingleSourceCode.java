@@ -40,43 +40,43 @@ public class DefaultSingleSourceCode implements SingleSourceCode {
     private final Set<String> classNames;
     private final long lastModifiedAtCompileTime;
     private final Set<String> classNameSet;
-    private final Map<String,Bytecode> bytecodes;
+    private final Map<String,Bytecode> bytecodeMap;
     
     /**
      * constructor (typically called by the compiler).
      * 
      * @param sourcesName the name of the originating {@link Sources} instance
-     * @param compiledSourceInfos the map of originating {@link Source} to {@link CompiledSourceInfo}
-     * @param bytecodes the map of class name to {@link Bytecode}
+     * @param compiledSourceInfoMap the map of originating {@link Source} to {@link CompiledSourceInfo}
+     * @param bytecodeMap the map of class name to {@link Bytecode}
      * 
      * @throws IllegalArgumentException if any argument is null or not for a single source
      * 
      * @since 1.0
      */
-    public DefaultSingleSourceCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfos,
-            final Map<String,Bytecode> bytecodes) {
+    public DefaultSingleSourceCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfoMap,
+            final Map<String,Bytecode> bytecodeMap) {
         if (sourcesName == null) {
             throw new IllegalArgumentException("Sources name is null.");
         }
-        if (compiledSourceInfos == null) {
-            throw new IllegalArgumentException("Compiled source infos is null.");
+        if (compiledSourceInfoMap == null) {
+            throw new IllegalArgumentException("Compiled source info map is null.");
         }
-        if (bytecodes == null) {
-            throw new IllegalArgumentException("Bytecodes is null.");
+        if (bytecodeMap == null) {
+            throw new IllegalArgumentException("Bytecode map is null.");
         }
-        if (compiledSourceInfos.size() != 1) {
+        if (compiledSourceInfoMap.size() != 1) {
             throw new IllegalArgumentException("Not a single source.");
         }
 
         this.sourcesName = sourcesName;
-        sourceSet = compiledSourceInfos.keySet();
+        sourceSet = compiledSourceInfoMap.keySet();
         source = sourceSet.iterator().next();
-        CompiledSourceInfo info = compiledSourceInfos.get(source);
+        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         mainClassName = info.getMainClassName();
         classNames =  info.getClassNames();
         lastModifiedAtCompileTime = info.getLastModifiedAtCompileTime();
-        this.bytecodes = bytecodes;
-        classNameSet = bytecodes.keySet();
+        this.bytecodeMap = bytecodeMap;
+        classNameSet = bytecodeMap.keySet();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class DefaultSingleSourceCode implements SingleSourceCode {
 
     @Override
     public Bytecode getBytecode(final String className) {
-        return bytecodes.get(className);
+        return bytecodeMap.get(className);
     }
 
     @Override

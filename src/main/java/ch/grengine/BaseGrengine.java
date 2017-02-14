@@ -1079,7 +1079,7 @@ public abstract class BaseGrengine implements Closeable {
      * @throws CompileException if compiling failed
      * @throws LoadException if loading failed
      * @throws CreateException if could not create the instance or is not a script
-     * @grengine.scriptthrows {@link Throwable} - nything (checked or unchecked) that {@link Script#run()} may throw
+     * @grengine.scriptthrows {@link Throwable} - anything (checked or unchecked) that {@link Script#run()} may throw
      * 
      * @since 1.0
      */

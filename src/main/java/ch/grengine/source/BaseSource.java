@@ -74,7 +74,7 @@ public abstract class BaseSource implements Source {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Source)) return false;
+        if (!(obj instanceof Source)) return false;
         return getId().equals(((Source)obj).getId());
     }
     

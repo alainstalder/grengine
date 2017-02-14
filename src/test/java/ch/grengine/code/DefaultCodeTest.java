@@ -55,23 +55,23 @@ public class DefaultCodeTest {
         CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
         CompiledSourceInfo i2 = new CompiledSourceInfo(m2, name2, names2, 22);
         
-        String sourcesName = "sourcesname";
+        String sourcesName = "sourcesName";
 
-        Map<Source,CompiledSourceInfo> infos = new HashMap<Source,CompiledSourceInfo>();
-        infos.put(m1, i1);
-        infos.put(m2, i2);
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        infoMap.put(m1, i1);
+        infoMap.put(m2, i2);
         
-        Map<String,Bytecode> bytecodes = new HashMap<String,Bytecode>();
+        Map<String,Bytecode> bytecodeMap = new HashMap<String,Bytecode>();
         String name1sub = name1 + "#Sub";
-        bytecodes.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
-        bytecodes.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
-        bytecodes.put(name2, new Bytecode(name2, new byte[] { 7, 8, 9 }));
+        bytecodeMap.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
+        bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
+        bytecodeMap.put(name2, new Bytecode(name2, new byte[] { 7, 8, 9 }));
 
-        Code code = new DefaultCode(sourcesName, infos, bytecodes);
+        Code code = new DefaultCode(sourcesName, infoMap, bytecodeMap);
 
         assertThat(code.getSourcesName(), is(sourcesName));
-        assertThat(code.getSourceSet(), is(infos.keySet()));
-        assertThat(code.getClassNameSet(), is(bytecodes.keySet()));
+        assertThat(code.getSourceSet(), is(infoMap.keySet()));
+        assertThat(code.getClassNameSet(), is(bytecodeMap.keySet()));
 
         assertThat(code.getBytecode(name1).getBytes()[0], is((byte)1));
         assertThat(code.getBytecode("SomeOtherClassName"), is(nullValue()));
@@ -128,7 +128,7 @@ public class DefaultCodeTest {
             assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
         }
 
-        assertThat(code.toString(), is("DefaultCode[sourcesName='sourcesname', sources:2, classes:3]"));
+        assertThat(code.toString(), is("DefaultCode[sourcesName='sourcesName', sources:2, classes:3]"));
     }
     
     @Test
@@ -142,22 +142,22 @@ public class DefaultCodeTest {
     }
     
     @Test
-    public void testConstructCompiledSourceInfosNull() throws Exception {
+    public void testConstructCompiledSourceInfoMapNull() throws Exception {
         try {
             new DefaultCode("name", null, new HashMap<String,Bytecode>());
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Compiled source infos is null."));
+            assertThat(e.getMessage(), is("Compiled source info map is null."));
         }
     }
     
     @Test
-    public void testConstructBytecodesNull() throws Exception {
+    public void testConstructBytecodeMapNull() throws Exception {
         try {
             new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), null);
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Bytecodes is null."));
+            assertThat(e.getMessage(), is("Bytecode map is null."));
         }
     }
 

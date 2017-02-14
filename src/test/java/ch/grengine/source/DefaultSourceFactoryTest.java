@@ -188,7 +188,7 @@ public class DefaultSourceFactoryTest {
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
         assertThat(s.getLastModified(), is(lastModifiedOld));
-        // clear chache, last modified must change (url must be loaded)
+        // clear cache, last modified must change (url must be loaded)
         sf.clearCache();
         Thread.sleep(30);
         assertThat(lastModifiedOld, is(not(s.getLastModified())));

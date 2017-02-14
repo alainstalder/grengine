@@ -566,10 +566,10 @@ public class BytecodeClassLoaderTest {
         Set<String> classNames1 = new HashSet<String>();
         classNames1.add("Class1");
         CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infos = new HashMap<Source,CompiledSourceInfo>();
-        infos.put(s1, info);
-        Map<String,Bytecode> bytecodesEmpty = new HashMap<String,Bytecode>();
-        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infos, bytecodesEmpty);
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        infoMap.put(s1, info);
+        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<String,Bytecode>();
+        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
         
         BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
@@ -612,10 +612,10 @@ public class BytecodeClassLoaderTest {
         Set<String> classNames1 = new HashSet<String>();
         classNames1.add("Class33NoBytecode");
         CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infos = new HashMap<Source,CompiledSourceInfo>();
-        infos.put(s1, info);
-        Map<String,Bytecode> bytecodesEmpty = new HashMap<String,Bytecode>();
-        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infos, bytecodesEmpty);
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        infoMap.put(s1, info);
+        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<String,Bytecode>();
+        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
         
         BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
