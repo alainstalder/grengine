@@ -16,8 +16,8 @@
   
   ext {
     // 1.7.5 or any later version works
-    groovyVersion='2.4.7'
-    junitVersion='4.11'
+    groovyVersion='2.4.8'
+    junitVersion='4.12'
     hamcrestVersion='1.3'
     ivyVersion='2.4.0'
 
@@ -52,7 +52,7 @@
       windowTitle = "Grengine - $project.version"
       header = 'Grengine'
       author = true
-      links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://groovy.codehaus.org/api/' ]
+      links = [ 'https://docs.oracle.com/javase/6/docs/api/', 'http://docs.groovy-lang.org/docs/groovy-' + groovyVersion + '/html/api/' ]
       tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
     }
   }
@@ -76,32 +76,34 @@
     sourceSets sourceSets.main
   }
   
-  task pom << {
-    pom {
-      project {
-        name 'grengine'
-        description project.description
-        url 'http://www.grengine.ch/'
-        packaging project.ext.pkg
-        licenses {
-          license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
+  task pom {
+    doLast {
+      pom {
+        project {
+          name 'grengine'
+          description project.description
+          url 'https://www.grengine.ch/'
+          packaging project.ext.pkg
+          licenses {
+            license {
+              name 'The Apache Software License, Version 2.0'
+              url 'https://www.apache.org/licenses/LICENSE-2.0'
+              distribution 'repo'
+            }
+          }
+          scm {
+            url 'https://github.com/jexler/grengine'
+            connection 'https://github.com/jexler/grengine.git'
+            developerConnection 'https://github.com/jexler/grengine.git'
+          }
+          developers {
+            developer {
+              id 'jexler'
+              name 'Jex Jexler (whois jexler.net)'
+              email 'jex@jexler.net'
+            }
           }
         }
-        scm {
-          url 'https://github.com/jexler/grengine'
-          connection 'https://github.com/jexler/grengine.git'
-          developerConnection 'https://github.com/jexler/grengine.git'
-        }
-        developers {
-          developer {
-            id 'jexler'
-            name 'Jex Jexler (whois jexler.net)'
-            email 'jex@jexler.net'
-          }
-        }
-      }
-    }.writeTo("$buildDir/libs/${project.name}-${project.version}.pom")
+      }.writeTo("$buildDir/libs/${project.name}-${project.version}.pom")
+    }
   }
