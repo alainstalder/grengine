@@ -3,7 +3,7 @@ Grengine
 
 Grengine is an engine for running and embedding Groovy in a Java VM.
 
-See [www.grengine.ch](http://www.grengine.ch/) for user manual, javadoc, downloads and more.
+See [www.grengine.ch](https://www.grengine.ch/) for user manual, javadoc, downloads and more.
 
 Building
 --------
@@ -21,7 +21,7 @@ License
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+       https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
