@@ -205,12 +205,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
     
     @Override
     public Class<?> loadMainClass(final Source source) throws CompileException, LoadException {
-        return BytecodeClassLoader.loadMainClassBySource(this, source);
+        return loadMainClassBySource(this, source);
     }
     
     @Override
     public Class<?> loadClass(final Source source, final String name) throws CompileException, LoadException {
-        return BytecodeClassLoader.loadClassBySourceAndName(this, source, name);
+        return loadClassBySourceAndName(this, source, name);
     }
 
     @Override
