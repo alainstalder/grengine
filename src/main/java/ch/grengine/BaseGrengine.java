@@ -169,7 +169,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @see Engine#loadMainClass(Loader loader, Source source)
      *
-     * @since 1.2
+     * @since 1.1.1
      */
     public abstract Class<?> loadMainClass(Source source) throws CompileException, LoadException;
 
@@ -210,7 +210,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @see Engine#loadClass(Loader loader, Source source, String name)
      *
-     * @since 1.2
+     * @since 1.1.1
      */
     public abstract Class<?> loadClass(Source source, String name) throws CompileException, LoadException;
 
@@ -245,7 +245,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @see Engine#loadClass(Loader loader, String name)
      *
-     * @since 1.0
+     * @since 1.1.1
      */
     public abstract Class<?> loadClass(String name) throws LoadException;
 
