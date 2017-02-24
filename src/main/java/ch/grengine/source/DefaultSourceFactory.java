@@ -181,7 +181,7 @@ public class DefaultSourceFactory implements SourceFactory {
         @Override
         public String toString() {
             return this.getClass().getSimpleName() + "[ID=" + getId() +
-                    ", text='" + SourceUtil.getTextStartNoLinebreaks(getText(), 200) + "']";
+                    ", text='" + SourceUtil.getTextStartNoLineBreaks(getText(), 200) + "']";
         }
         
         @Override

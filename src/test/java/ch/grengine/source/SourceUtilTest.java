@@ -259,13 +259,13 @@ public class SourceUtilTest {
     
     @Test
     public void testGetTextStartNoLineBreaksNullText() {
-        assertThat(SourceUtil.getTextStartNoLinebreaks(null, 0), is(nullValue()));
+        assertThat(SourceUtil.getTextStartNoLineBreaks(null, 0), is(nullValue()));
     }
     
     @Test
     public void testGetTextStartNoLineBreaksNegMaxLen() {
         try {
-            SourceUtil.getTextStartNoLinebreaks("hello", -1);
+            SourceUtil.getTextStartNoLineBreaks("hello", -1);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Max len (-1) is negative."));
@@ -275,7 +275,7 @@ public class SourceUtilTest {
     @Test
     public void testGetTextStartNoLineBreaksMaxLenLessThan10() {
         try {
-            SourceUtil.getTextStartNoLinebreaks("hello", 9);
+            SourceUtil.getTextStartNoLineBreaks("hello", 9);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Max len (9) must be at least 10."));
@@ -283,22 +283,36 @@ public class SourceUtilTest {
     }
 
     @Test
+    public void testGetTextStartNoLineBreaks() {
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello", 10), is("hello"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello1", 10), is("hello1"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello12", 10), is("hello12"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello123", 10), is("hello123"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello1234", 10), is("hello1234"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello12345", 10), is("hello12345"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello123456", 10), is("hello1[..]"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello1234567", 10), is("hello1[..]"));
+
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\r", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\r\n", 10), is("hello%n"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n\r", 10), is("hello%n%n"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n1", 10), is("hello%n1"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n12", 10), is("hello%n12"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n123", 10), is("hello%n123"));
+        assertThat(SourceUtil.getTextStartNoLineBreaks("hello\n1234", 10), is("hello%[..]"));
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
     public void testGetTextStartNoLinebreaks() {
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello", 10), is("hello"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1", 10), is("hello1"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello12", 10), is("hello12"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello123", 10), is("hello123"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1234", 10), is("hello1234"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello12345", 10), is("hello12345"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello123456", 10), is("hello1[..]"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello1234567", 10), is("hello1[..]"));
 
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n", 10), is("hello%n"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\r", 10), is("hello%n"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\r\n", 10), is("hello%n"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n\r", 10), is("hello%n%n"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1", 10), is("hello%n1"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n12", 10), is("hello%n12"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n123", 10), is("hello%n123"));
         assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1234", 10), is("hello%[..]"));
     }

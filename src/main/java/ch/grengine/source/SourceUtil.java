@@ -376,9 +376,9 @@ public class SourceUtil {
      *
      * @throws IllegalArgumentException if maxLen is less than 10
      * 
-     * @since 1.0
+     * @since 1.1.1
      */
-    public static String getTextStartNoLinebreaks(final String text, final int maxLen) {
+    public static String getTextStartNoLineBreaks(final String text, final int maxLen) {
         if (text == null) {
             return null;
         }
@@ -399,16 +399,39 @@ public class SourceUtil {
         }
         return out.substring(0, maxLen - 4) + "[..]";
     }
-    
+
+    /**
+     * gets the start of the given text with line breaks removed -
+     * deprecated due to typo in method name, use
+     * {@link #getTextStartNoLineBreaks(String, int)} instead.
+     * <p>
+     * The returned text is at most maxLen characters long and line breaks
+     * are converted to "%n". If the text had to be cut, this is indicated
+     * by "[..]" at the end of the returned text.
+     *
+     * @param text text
+     * @param maxLen maximal length of the returned text
+     *
+     * @return start of the given text with line breaks removed
+     *
+     * @throws IllegalArgumentException if maxLen is less than 10
+     *
+     * @since 1.0
+     */
+    @Deprecated
+    public static String getTextStartNoLinebreaks(final String text, final int maxLen) {
+        return getTextStartNoLineBreaks(text, maxLen);
+    }
+
     /**
      * reads the content from the given URL using the given character encoding.
-     * 
+     *
      * @param url URL
      * @param encoding encoding, e.g. "UTF-8"
      *
      * @return URL content text
      * @throws IOException if could not read from the URL
-     * 
+     *
      * @since 1.0
      */
     public static String readUrlText(final URL url, final String encoding) throws IOException {
