@@ -153,7 +153,26 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public abstract Class<?> loadMainClass(Loader loader, Source source) throws CompileException, LoadException;
-    
+
+    /**
+     * loads the main class of the given source from the default loader.
+     * <p>
+     * Note that if a class with the main class name is available for loading,
+     * but was not compiled as part of a set of {@link Source} that included
+     * the given source, that class will not count for loading.
+     *
+     * @param source source
+     *
+     * @return main class
+     * @throws CompileException if compilation was necessary to load the class and failed
+     * @throws LoadException if loading failed, including if the class was not found
+     *
+     * @see Engine#loadMainClass(Loader loader, Source source)
+     *
+     * @since 1.2
+     */
+    public abstract Class<?> loadMainClass(Source source) throws CompileException, LoadException;
+
     /**
      * loads a class with the given name and from the given source from the given loader.
      * <p>
@@ -174,7 +193,27 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public abstract Class<?> loadClass(Loader loader, Source source, String name) throws CompileException, LoadException;
-    
+
+    /**
+     * loads a class with the given name and from the given source from the default loader.
+     * <p>
+     * Note that if a class with the given class name is available for loading,
+     * but was not compiled as part of a set of {@link Source} that included
+     * the given source, that class will not count for loading.
+     *
+     * @param source source
+     * @param name class name
+     *
+     * @return class
+     * @throws CompileException if compilation was necessary to load the class and failed
+     * @throws LoadException if loading failed, including if the class was not found
+     *
+     * @see Engine#loadClass(Loader loader, Source source, String name)
+     *
+     * @since 1.2
+     */
+    public abstract Class<?> loadClass(Source source, String name) throws CompileException, LoadException;
+
     /**
      * loads a class by name from the given loader.
      * <p>
@@ -192,6 +231,23 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public abstract Class<?> loadClass(Loader loader, String name) throws LoadException;
+
+    /**
+     * loads a class by name from the default loader.
+     * <p>
+     * Note that a top code cache is not searched in this case,
+     * because each set of source has its own top loader.
+     *
+     * @param name class name
+     *
+     * @return class
+     * @throws LoadException if loading failed, including if the class was not found
+     *
+     * @see Engine#loadClass(Loader loader, String name)
+     *
+     * @since 1.0
+     */
+    public abstract Class<?> loadClass(String name) throws LoadException;
 
     /**
      * release metadata for all classed ever loaded using this engine.
@@ -431,7 +487,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Class<?> load(final Source source) throws CompileException, LoadException {
-        return load(loader, source);
+        return loadMainClass(source);
     }
 
     /**

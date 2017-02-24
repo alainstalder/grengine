@@ -252,18 +252,20 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         gren.loadClass(gren.getLoader(), "Script1");
         gren.loadClass(gren.getLoader(), s1, "Script1");
         // not found because only in top code cache, not in static code layers
         Source sSub1 = new DefaultFileSource(fSub1);
         try {
-            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            gren.loadClass("ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "), is(true));
         }
         // this works, because loading by source from top code cache
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
     @Test
@@ -309,18 +311,18 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         Source sSub1 = new DefaultFileSource(fSub1);
         try {
-            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            gren.loadClass("ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "), is(true));
         }
         // this works, because loading by source from top code cache
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
 
@@ -352,11 +354,11 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         Source sSub1 = new DefaultFileSource(fSub1);
-        gren.loadClass(gren.getLoader(), "ScriptSub1");
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass("ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
 
@@ -407,19 +409,19 @@ public class GrengineTest {
         
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         Source sSub1 = new DefaultFileSource(fSub1);
         try {
-            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            gren.loadClass("ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "), is(true));
         }
         // also not found, because there is no top code cache
         try {
-            gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+            gren.loadClass(sSub1, "ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Source not found: "), is(true));
@@ -518,18 +520,18 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         Source sSub1 = new DefaultFileSource(fSub1);
         try {
-            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            gren.loadClass("ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "), is(true));
         }
         // this works, because loading by source from top code cache
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
     @Test
@@ -589,18 +591,18 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         Source sSub1 = new DefaultFileSource(fSub1);
         try {
-            gren.loadClass(gren.getLoader(), "ScriptSub1");
+            gren.loadClass("ScriptSub1");
             fail();
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Could not load class 'ScriptSub1'. Cause: "), is(true));
         }
         // this works, because loading by source from top code cache
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
 
@@ -651,11 +653,11 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         Source sSub1 = new DefaultFileSource(fSub1);
-        gren.loadClass(gren.getLoader(), "ScriptSub1");
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass("ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
     @Test
@@ -707,11 +709,11 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         Source sSub1 = new DefaultFileSource(fSub1);
-        gren.loadClass(gren.getLoader(), "ScriptSub1");
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass("ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
     @Test
@@ -748,11 +750,11 @@ public class GrengineTest {
 
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
-        gren.loadClass(gren.getLoader(), "Script1");
-        gren.loadClass(gren.getLoader(), s1, "Script1");
+        gren.loadClass("Script1");
+        gren.loadClass(s1, "Script1");
         Source sSub1 = new DefaultFileSource(fSub1);
-        gren.loadClass(gren.getLoader(), "ScriptSub1");
-        gren.loadClass(gren.getLoader(), sSub1, "ScriptSub1");
+        gren.loadClass("ScriptSub1");
+        gren.loadClass(sSub1, "ScriptSub1");
     }
 
 
