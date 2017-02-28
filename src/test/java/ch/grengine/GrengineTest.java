@@ -123,7 +123,7 @@ public class GrengineTest {
 
     @Test
     public void testConstructAllDefined() throws Exception {
-        
+
         Grengine.Builder builder = new Grengine.Builder();
         Engine engine = new LayeredEngine.Builder().build();
         builder.setEngine(engine);
@@ -135,7 +135,7 @@ public class GrengineTest {
         UpdateExceptionNotifier notifier = new MockUpdateExceptionNotifier(null);
         builder.setUpdateExceptionNotifier(notifier);
         builder.setLatencyMs(99);
-        
+
         Grengine gren = builder.build();
 
         assertThat(gren.getBuilder(), is(builder));
@@ -147,7 +147,7 @@ public class GrengineTest {
         assertThat(gren.getBuilder().getUpdateExceptionNotifier(), is(notifier));
         assertThat(gren.getBuilder().getLatencyMs(), is(99L));
     }
-    
+
     @Test
     public void testModifyBuilderAfterUse() throws Exception {
         Grengine.Builder builder = new Grengine.Builder();
@@ -378,7 +378,7 @@ public class GrengineTest {
         TestUtil.setFileText(fSub2, "return 2");
         File fSub3 = new File(subDir, "ScriptSub3.groovy");
         TestUtil.setFileText(fSub3, "return new ScriptSub2().run()");
-        
+
         Grengine gren = new Grengine.Builder()
                 .setSourcesLayers(new DirBasedSources.Builder(dir).setDirMode(DirMode.NO_SUBDIRS).build())
                 .setEngine(new LayeredEngine.Builder().setWithTopCodeCache(false).build())
@@ -406,7 +406,7 @@ public class GrengineTest {
         } catch (LoadException e) {
             assertThat(e.getMessage().startsWith("Source not found: "), is(true));
         }
-        
+
         // extra: load with class name
         Source s1 = new DefaultFileSource(f1);
         gren.loadClass("Script1");
@@ -1200,10 +1200,10 @@ public class GrengineTest {
         assertThat(releaser.countClassesWithName("Class2"), is(2));
         assertThat(releaser.countClassesWithName("Class2$Class3"), is(2));
     }
-    
+
     @Test
     public void testMatrixSource() throws Exception {
-        
+
         Grengine gren = new Grengine();
 
         assertThat(gren.getSourceFactory(), instanceOf(DefaultSourceFactory.class));
@@ -1213,11 +1213,11 @@ public class GrengineTest {
         assertThat(gren.getSourceFactory(), instanceOf(DefaultSourceFactory.class));
         TextSource stn = (TextSource)gren.source("hello", "World");
         assertThat(stn.getText(), is("hello"));
-        
+
         File f = new File(tempFolder.getRoot(), "Script1.groovy");
         FileSource fs = (FileSource)gren.source(f);
         assertThat(fs.getFile().getPath(), is(f.getCanonicalPath()));
-        
+
         URL u = f.toURI().toURL();
         UrlSource us = (UrlSource)gren.source(u);
         assertThat(us.getUrl(), is(u));
@@ -1225,9 +1225,9 @@ public class GrengineTest {
 
     @Test
     public void testMatrixLoad() throws Exception {
-        
+
         Grengine gren = new Grengine();
-        
+
         TextSource st = (TextSource)gren.source("return 'text'");
         File f = new File(tempFolder.getRoot(), "Script1.groovy");
         TestUtil.setFileText(f, "return 'file'");
@@ -1241,7 +1241,7 @@ public class GrengineTest {
         assertThat((String)((Script) gren.load(f).newInstance()).run(), is("file"));
         assertThat((String)((Script) gren.load(u).newInstance()).run(), is("url"));
         assertThat((String)((Script) gren.load(st).newInstance()).run(), is("text"));
-        
+
         Loader loader = gren.newAttachedLoader();
 
         assertThat((String)((Script) gren.load(loader, "return 'text'").newInstance()).run(), is("text"));
@@ -1250,7 +1250,7 @@ public class GrengineTest {
         assertThat((String)((Script) gren.load(loader, f).newInstance()).run(), is("file"));
         assertThat((String)((Script) gren.load(loader, u).newInstance()).run(), is("url"));
         assertThat((String)((Script) gren.load(loader, st).newInstance()).run(), is("text"));
-        
+
         Loader loader2 = gren.newDetachedLoader();
 
         assertThat((String)((Script) gren.load(loader2, "return 'text'").newInstance()).run(), is("text"));
@@ -1263,16 +1263,16 @@ public class GrengineTest {
 
     @Test
     public void testMatrixCreate() throws Exception {
-        
+
         Grengine gren = new Grengine();
-        
+
         TextSource st = (TextSource)gren.source("return 'text'");
         File f = new File(tempFolder.getRoot(), "Script1.groovy");
         TestUtil.setFileText(f, "return 'file'");
         File fu = new File(tempFolder.getRoot(), "Script2.groovy");
         TestUtil.setFileText(fu, "return 'url'");
         URL u = fu.toURI().toURL();
-        
+
         Loader loader = gren.newAttachedLoader();
 
         assertThat((String)(gren.create("return 'text'")).run(), is("text"));
@@ -1286,17 +1286,17 @@ public class GrengineTest {
         assertThat((String)(gren.create(loader, f)).run(), is("file"));
         assertThat((String)(gren.create(loader, u)).run(), is("url"));
         assertThat((String)(gren.create(loader, st)).run(), is("text"));
-        
+
         Class<?> clazz = gren.load(st);
         assertThat((String)(gren.create(clazz)).run(), is("text"));
-        
+
         try {
             gren.create(String.class);
         } catch (CreateException e) {
             assertThat(e.getMessage().startsWith("Could not create script for class java.lang.String. " +
                     "Cause: java.lang.ClassCastException: "), is(true));
         }
-        
+
         try {
             gren.create(loader, "class NotAScript {}");
         } catch (CreateException e) {
@@ -1306,34 +1306,34 @@ public class GrengineTest {
 
     @Test
     public void testMatrixBinding() throws Exception {
-        
+
         Grengine gren = new Grengine();
-        
+
         Binding b = gren.binding();
         assertThat(b.getVariables().size(), is(0));
-        
+
         b = gren.binding("aa", 11);
         assertThat(b.getVariables().size(), is(1));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
-        
+
         b = gren.binding("aa", 11, "bb", 22);
         assertThat(b.getVariables().size(), is(2));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
         assertThat((Integer)b.getVariables().get("bb"), is(22));
-        
+
         b = gren.binding("aa", 11, "bb", 22, "cc", 33);
         assertThat(b.getVariables().size(), is(3));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
         assertThat((Integer)b.getVariables().get("bb"), is(22));
         assertThat((Integer)b.getVariables().get("cc"), is(33));
-        
+
         b = gren.binding("aa", 11, "bb", 22, "cc", 33, "dd", 44);
         assertThat(b.getVariables().size(), is(4));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
         assertThat((Integer)b.getVariables().get("bb"), is(22));
         assertThat((Integer)b.getVariables().get("cc"), is(33));
         assertThat((Integer)b.getVariables().get("dd"), is(44));
-        
+
         b = gren.binding("aa", 11, "bb", 22, "cc", 33, "dd", 44, "ee", 55);
         assertThat(b.getVariables().size(), is(5));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
@@ -1341,7 +1341,7 @@ public class GrengineTest {
         assertThat((Integer)b.getVariables().get("cc"), is(33));
         assertThat((Integer)b.getVariables().get("dd"), is(44));
         assertThat((Integer)b.getVariables().get("ee"), is(55));
-        
+
         b = gren.binding("aa", 11, "bb", 22, "cc", 33, "dd", 44, "ee", 55, "ff", 66);
         assertThat(b.getVariables().size(), is(6));
         assertThat((Integer)b.getVariables().get("aa"), is(11));
@@ -1350,13 +1350,13 @@ public class GrengineTest {
         assertThat((Integer)b.getVariables().get("dd"), is(44));
         assertThat((Integer)b.getVariables().get("ee"), is(55));
         assertThat((Integer)b.getVariables().get("ff"), is(66));
-        
+
         try {
             gren.binding("aa", 11, "bb", 22, "cc", 33, "dd", 44, "ee", 55, "ff");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Odd number of arguments."));
         }
-        
+
         try {
             gren.binding("aa", 11, "bb", 22, "cc", 33, "dd", 44, "ee", 55, 7777, 66);
         } catch (IllegalArgumentException e) {
@@ -1365,19 +1365,19 @@ public class GrengineTest {
 
         assertThat((Integer)gren.run("return x", gren.binding("x", 22)), is(22));
     }
-    
+
     @Test
     public void testMatrixRun() throws Exception {
-        
+
         Grengine gren = new Grengine();
-        
+
         TextSource st = (TextSource)gren.source("return 'text'");
         File f = new File(tempFolder.getRoot(), "Script1.groovy");
         TestUtil.setFileText(f, "return 'file'");
         File fu = new File(tempFolder.getRoot(), "Script2.groovy");
         TestUtil.setFileText(fu, "return 'url'");
         URL u = fu.toURI().toURL();
-        
+
         Loader loader = gren.newAttachedLoader();
 
         assertThat((String)gren.run("return 'text'"), is("text"));
@@ -1391,7 +1391,7 @@ public class GrengineTest {
         assertThat((String)gren.run(loader, f), is("file"));
         assertThat((String)gren.run(loader, u), is("url"));
         assertThat((String)gren.run(loader, st), is("text"));
-        
+
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("x", 99);
         st = (TextSource)gren.source("return x");
@@ -1411,7 +1411,7 @@ public class GrengineTest {
         assertThat((Integer)gren.run(loader, f, map), is(99));
         assertThat((Integer)gren.run(loader, u, map), is(99));
         assertThat((Integer)gren.run(loader, st, map), is(99));
-        
+
         Binding binding = new Binding(map);
 
         assertThat((Integer)gren.run("return x", binding), is(99));
@@ -1425,14 +1425,14 @@ public class GrengineTest {
         assertThat((Integer)gren.run(loader, f, binding), is(99));
         assertThat((Integer)gren.run(loader, u, binding), is(99));
         assertThat((Integer)gren.run(loader, st, binding), is(99));
-        
+
         Script script = gren.create(st);
         assertThat((Integer)gren.run(gren.create("return 99")), is(99));
         assertThat((Integer)gren.run(script, map), is(99));
         assertThat((Integer)gren.run(script, binding), is(99));
     }
-    
-    
+
+
     @Test
     public void testUpdateExceptionsCompileException() throws Exception {
 
@@ -1443,9 +1443,9 @@ public class GrengineTest {
                 .setName("except")
                 .build();
         List<Sources> sourcesLayers = SourcesUtil.sourcesArrayToList(sources);
-        
+
         MockUpdateExceptionNotifier notifier = new MockUpdateExceptionNotifier(null);
-        
+
         Grengine gren = new Grengine.Builder()
                 .setEngine(new LayeredEngine.Builder().setWithTopCodeCache(false).build())
                 .setSourcesLayers(sourcesLayers)
@@ -1456,12 +1456,12 @@ public class GrengineTest {
         assertThat((Integer)gren.run(s1), is(0));
         assertThat(gren.getLastUpdateException(), is(nullValue()));
         assertThat(notifier.getLastUpdateException(), is(nullValue()));
-        
+
         s1.setText("&%&%");
         s1.setLastModified(99);
-        
+
         Thread.sleep(30);
-        
+
         gren.run(s1);
         GrengineException e = gren.getLastUpdateException();
         assertThat(e, is(notNullValue()));
@@ -1469,13 +1469,13 @@ public class GrengineTest {
         assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='except']. " +
                 "Cause: org.codehaus.groovy.control.MultipleCompilationErrorsException: "), is(true));
         assertThat(e, is(notifier.getLastUpdateException()));
-        
+
         s1.setThrowAtGetText(new RuntimeException("unit test"));
         s1.setText("return 22");
         s1.setLastModified(222);
-        
+
         Thread.sleep(30);
-        
+
         gren.run(s1);
         e = gren.getLastUpdateException();
         assertThat(e, is(notNullValue()));
@@ -1483,11 +1483,11 @@ public class GrengineTest {
         assertThat(e.getMessage(), is("Compile failed for sources FixedSetSources[name='except']. " +
                 "Cause: java.lang.RuntimeException: unit test"));
         assertThat(e, is(notifier.getLastUpdateException()));
-        
+
         s1.setThrowAtGetText(null);
         s1.setText("return 33");
         s1.setLastModified(333);
-        
+
         Thread.sleep(30);
 
         assertThat((Integer)gren.run(s1), is(33));
@@ -1505,7 +1505,7 @@ public class GrengineTest {
                 .setName("except")
                 .build();
         List<Sources> sourcesLayers = SourcesUtil.sourcesArrayToList(sources);
-        
+
         final Grengine gren = new Grengine.Builder()
                 .setEngine(new LayeredEngine.Builder()
                         .setWithTopCodeCache(false)

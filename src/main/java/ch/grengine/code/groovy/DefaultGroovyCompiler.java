@@ -29,6 +29,8 @@ import ch.grengine.source.TextSource;
 import ch.grengine.source.UrlSource;
 import ch.grengine.sources.Sources;
 
+import java.lang.reflect.Field;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,12 +38,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import groovy.grape.Grape;
+import groovy.grape.GrapeEngine;
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.classgen.GeneratorContext;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilationUnit;
+import org.codehaus.groovy.control.CompilePhase;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.SourceUnit;
+import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.tools.GroovyClass;
 
 
@@ -59,8 +67,7 @@ public class DefaultGroovyCompiler implements Compiler {
     private final ClassLoader parent;
     private final CompilerConfiguration config;
     private final GroovyClassLoader groovyClassLoader;
-    
-    
+
     /**
      * constructor from builder.
      *
@@ -72,7 +79,8 @@ public class DefaultGroovyCompiler implements Compiler {
         this.builder = builder.commit();
         parent = builder.getParent();
         config = builder.getCompilerConfiguration();
-        groovyClassLoader = new GroovyClassLoader(parent, config);
+        GroovyClassLoader loader = GrapeCompilationCustomizer.getLoaderIfConfigured(parent, config);
+        groovyClassLoader = (loader == null) ? new GroovyClassLoader(parent, config) : loader;
     }
     
     /**
@@ -120,7 +128,86 @@ public class DefaultGroovyCompiler implements Compiler {
             throw new IllegalArgumentException("Compiler configuration is null.");
         }
     }
-        
+
+    /**
+     * modifies the given compiler configuration for Grape support in this compiler.
+     * <p>
+     * Only has an effect during compilation if Grape support had been enabled
+     * and only with this compiler class.
+     *
+     * @param config compiler configuration to enable for Grape
+     * @param runtimeLoader the GroovyClassLoader that is intended to be used later
+     *                      as a parent loader when loading classes compiled with
+     *                      the given compiler configuration
+     *
+     * @return modified compiler configuration, same instance as argument
+     * @throws IllegalArgumentException if the compiler configuration is null
+     *
+     * @since 1.2
+     */
+    public static CompilerConfiguration withGrape(final CompilerConfiguration config,
+            final GroovyClassLoader runtimeLoader) {
+        if (config == null) {
+            throw new IllegalArgumentException("Compiler configuration is null.");
+        }
+        GrapeCompilationCustomizer.enableGrape(config, runtimeLoader);
+        return config;
+    }
+
+    /**
+     * enable Grape support with the {@link Grape} class as lock.
+     * <p>
+     * Currently wraps the {@link GrapeEngine} in the {@link Grape} class with
+     * a wrapper that fixes an open Groovy issue (GROOVY-7407) using the lock
+     * and provides a mechanism needed for Grape with Grengine. See user manual
+     * under "Grengine and Grape" for more information.
+     * <p>
+     * Call once before using this compiler class in combination with Grengine
+     * (equivalent to calling <code>Grengine.Grape.activate()</code>).
+     *
+     * @since 1.2
+     */
+    public static void enableGrapeSupport() {
+        GrengineGrapeEngine.wrap(Grape.class);
+    }
+
+    /**
+     * enable Grape support with the given class as lock.
+     * <p>
+     * Currently wraps the {@link GrapeEngine} in the {@link Grape} class with
+     * a wrapper that fixes an open Groovy issue (GROOVY-7407) using the lock
+     * and provides a mechanism needed for Grape with Grengine. See user manual
+     * under "Grengine and Grape" for more information.
+     * <p>
+     * Call once before using this compiler class in combination with Grengine
+     * (equivalent to calling <code>Grengine.Grape.activate(lock)</code>).
+     *
+     * @param lock the lock to use
+     *
+     * @since 1.2
+     */
+    public static void enableGrapeSupport(Object lock) {
+        if (lock == null) {
+            throw new IllegalArgumentException("Lock is null.");
+        }
+        GrengineGrapeEngine.wrap(lock);
+    }
+
+    /**
+     * disable Grape support.
+     * <p>
+     * Currently unwraps the {@link GrapeEngine} in the {@link Grape}.
+     * See user manual under "Grengine and Grape" for more information.
+     * <p>
+     * Call once when done using this compiler class in combination with Grengine
+     * (equivalent to calling <code>Grengine.Grape.deactivate()</code>).
+     *
+     * @since 1.2
+     */
+    public static void disableGrapeSupport() {
+        GrengineGrapeEngine.unwrap();
+    }
+
     /**
      * compiles the given Groovy script sources to an instance of {@link Code} in memory.
      * <p>
@@ -269,7 +356,7 @@ public class DefaultGroovyCompiler implements Compiler {
         
         private ClassLoader parent;
         private CompilerConfiguration compilerConfiguration;
-        
+
         /**
          * constructor.
          * 
@@ -332,7 +419,7 @@ public class DefaultGroovyCompiler implements Compiler {
         public CompilerConfiguration getCompilerConfiguration() {
             return compilerConfiguration;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (parent == null) {
@@ -356,11 +443,250 @@ public class DefaultGroovyCompiler implements Compiler {
         public DefaultGroovyCompiler build() {
             commit();
             return new DefaultGroovyCompiler(this);
-       }
+        }
         
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");
+            }
+        }
+
+    }
+
+
+    // dummy compilation customizer as holder for GroovyClassloader,
+    // wraps GrapeEngine the first time an instance is created
+    static class GrapeCompilationCustomizer extends CompilationCustomizer {
+
+        final GroovyClassLoader runtimeLoader;
+
+        GrapeCompilationCustomizer(final GroovyClassLoader runtimeLoader) {
+            super(CompilePhase.INITIALIZATION);
+            this.runtimeLoader = runtimeLoader;
+            //GrengineGrapeEngine.wrap();
+        }
+
+        static void enableGrape(final CompilerConfiguration config,
+                final GroovyClassLoader runtimeLoader) {
+            config.addCompilationCustomizers(new GrapeCompilationCustomizer(runtimeLoader));
+        }
+
+        @Override
+        public void call(SourceUnit source, GeneratorContext context, ClassNode classNode)
+                throws CompilationFailedException {
+        }
+
+        // looks for a GrapeCompilationCustomizer in the given compiler config and,
+        // if found, returns a new instance of CompileTimeGroovyClassLoader
+        static GroovyClassLoader getLoaderIfConfigured(ClassLoader parent, CompilerConfiguration config) {
+            List<CompilationCustomizer> customizers = config.getCompilationCustomizers();
+            for (CompilationCustomizer customizer : customizers) {
+                if (customizer instanceof GrapeCompilationCustomizer) {
+                    GroovyClassLoader runtimeLoader =
+                            ((GrapeCompilationCustomizer)customizer).runtimeLoader;
+                    return new CompileTimeGroovyClassLoader(runtimeLoader, parent, config);
+                }
+            }
+            return null;
+        }
+
+    }
+
+    // wraps the runtime GroovyClassLoader
+    static class CompileTimeGroovyClassLoader extends GroovyClassLoader {
+
+        final GroovyClassLoader runtimeLoader;
+
+        CompileTimeGroovyClassLoader(GroovyClassLoader runtimeLoader, ClassLoader parent,
+                                     CompilerConfiguration config) {
+            super(parent, config);
+            this.runtimeLoader = runtimeLoader;
+        }
+
+    }
+
+    // wrapper for GrapeEngine, based on inner details of Groovy sources
+    static class GrengineGrapeEngine implements GrapeEngine {
+
+        // arg keys
+        private static final String CALLEE_DEPTH_KEY = "calleeDepth";
+        private static final String CLASS_LOADER_KEY = "classLoader";
+
+        // the lock for calls to GrapeEngine methods
+        static volatile Object lock;
+
+        // default depth of wrapped GrapeEngine plus one
+        static volatile int defaultDepth;
+
+        // the wrapped engine
+        final GrapeEngine innerEngine;
+
+        // constructor from engine to wrap
+        GrengineGrapeEngine(GrapeEngine innerEngine) {
+            this.innerEngine = innerEngine;
+        }
+
+        // sets the engine instance in the Grape class (only once, idempotent)
+        static void wrap(Object newLock) {
+            synchronized (GrengineGrapeEngine.class) {
+
+                // already wrapped?
+                if (lock != null) {
+                    if (lock == newLock) {
+                        // allow same lock (idempotent)
+                        return;
+                    } else {
+                        // disallow different lock
+                        throw new IllegalStateException(
+                                "Attempt to change lock for wrapped Grape class (unwrap first).");
+                    }
+                }
+
+                // verify preconditions and get GrapeIvy DEFAULT_DEPTH via reflection
+                Class<?> grapeEngineClass = Grape.getInstance().getClass();
+                if (!grapeEngineClass.getName().equals("groovy.grape.GrapeIvy")) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
+                            "(current GrapeEngine is " + grapeEngineClass.getName() +
+                            ", supported is groovy.grape.GrapeIvy).");
+                }
+                Field defaultDepthField;
+                try {
+                    defaultDepthField = grapeEngineClass.getDeclaredField("DEFAULT_DEPTH");
+                } catch (NoSuchFieldException e) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
+                            "(no static field GrapeIvy.DEFAULT_DEPTH)");
+                }
+                defaultDepthField.setAccessible(true);
+                try {
+                    defaultDepth = defaultDepthField.getInt(grapeEngineClass) + 1;
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
+                            "(could not read static int field GrapeIvy.DEFAULT_DEPTH: " + e + ")");
+                }
+
+                // wrap
+                lock = newLock;
+                synchronized (newLock) {
+                    // set GrapeEngine instance in Grape class
+                    new Grape() {
+                        void wrap() {
+                            Grape.instance = new GrengineGrapeEngine(Grape.getInstance());
+                        }
+                    }.wrap();
+                }
+            }
+        }
+
+        // sets the engine instance in the Grape class back to the GrapeIvy instance
+        static void unwrap() {
+            synchronized (GrengineGrapeEngine.class) {
+                // not wrapped?
+                if (lock == null) {
+                    return;
+                }
+                // unwrap
+                synchronized (lock) {
+                    // set GrapeEngine instance in Grape class
+                    new Grape() {
+                        void unwrap() {
+                            Grape.instance = ((GrengineGrapeEngine)Grape.getInstance()).innerEngine;
+                        }
+                    }.unwrap();
+                }
+                lock = null;
+                defaultDepth = 0;
+            }
+        }
+
+        @Override
+        public Object grab(final String endorsedModule) {
+            synchronized(lock) {
+                return innerEngine.grab(endorsedModule);
+            }
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public Object grab(final Map args) {
+            synchronized(lock) {
+                if (args.get(CALLEE_DEPTH_KEY) == null) {
+                    args.put(CALLEE_DEPTH_KEY, defaultDepth + 1);
+                }
+                // apply grab also to runtime loader, if present
+                final Object obj = args.get(CLASS_LOADER_KEY);
+                if (obj instanceof CompileTimeGroovyClassLoader) {
+                    final GroovyClassLoader runtimeLoader = ((CompileTimeGroovyClassLoader)obj).runtimeLoader;
+                    if (runtimeLoader != null) {
+                        final Map args2 = new HashMap();
+                        args2.putAll(args);
+                        args2.put(CLASS_LOADER_KEY, runtimeLoader);
+                        innerEngine.grab(args2);
+                    }
+                }
+                return innerEngine.grab(args);
+            }
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public Object grab(final Map args, final Map... dependencies) {
+            synchronized(lock) {
+                if (args.get(CALLEE_DEPTH_KEY) == null) {
+                    args.put(CALLEE_DEPTH_KEY, defaultDepth);
+                }
+                // apply grab also to runtime loader, if present
+                final Object obj = args.get(CLASS_LOADER_KEY);
+                if (obj instanceof CompileTimeGroovyClassLoader) {
+                    final GroovyClassLoader runtimeLoader = ((CompileTimeGroovyClassLoader)obj).runtimeLoader;
+                    if (runtimeLoader != null) {
+                        final Map args2 = new HashMap();
+                        args2.putAll(args);
+                        args2.put(CLASS_LOADER_KEY, runtimeLoader);
+                        innerEngine.grab(args2, dependencies);
+                    }
+                }
+                return innerEngine.grab(args, dependencies);
+            }
+        }
+
+        @Override
+        public Map<String, Map<String, List<String>>> enumerateGrapes() {
+            synchronized(lock) {
+                return innerEngine.enumerateGrapes();
+            }
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        public URI[] resolve(final Map args, final Map... dependencies) {
+            synchronized(lock) {
+                if (args.get(CALLEE_DEPTH_KEY) == null) {
+                    args.put(CALLEE_DEPTH_KEY, defaultDepth);
+                }
+                return innerEngine.resolve(args, dependencies);
+            }
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        public URI[] resolve(final Map args, final List dependenciesInfo, final Map... dependencies) {
+            synchronized(lock) {
+                return innerEngine.resolve(args, dependenciesInfo, dependencies);
+            }
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        public Map[] listDependencies(final ClassLoader classLoader) {
+            synchronized(lock) {
+                return innerEngine.listDependencies(classLoader);
+            }
+        }
+
+        @Override
+        public void addResolver(final Map<String, Object> args) {
+            synchronized(lock) {
+                innerEngine.addResolver(args);
             }
         }
 

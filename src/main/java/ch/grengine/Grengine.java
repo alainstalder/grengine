@@ -17,6 +17,7 @@
 package ch.grengine;
 
 import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.engine.Engine;
 import ch.grengine.engine.LayeredEngine;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
@@ -97,8 +99,12 @@ import org.codehaus.groovy.control.CompilerConfiguration;
  */
 public class Grengine extends BaseGrengine {
 
-    /** constant for an infinite latency (static). */
-    public static long LATENCY_MS_INFINITE_STATIC = Long.MAX_VALUE;
+    /**
+     * constant for an infinite latency (static).
+     *
+     * @since 1.0
+     */
+    public static final long LATENCY_MS_INFINITE_STATIC = Long.MAX_VALUE;
 
     private final Builder builder;
     private final List<Sources> sourcesLayers;
@@ -941,6 +947,411 @@ public class Grengine extends BaseGrengine {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");
             }
+        }
+
+    }
+
+    /**
+     * Convenience class for easily getting a Grengine that works with Grape,
+     * eliminating also a Groovy issue related to Grape (GROOVY-7407).
+     * <p>
+     * Call {@link #activate()} once before using the <code>newGrengine()</code>
+     * methods to create a Grengine instance that works with Grape.
+     * <p>
+     * See the user manual at "Grengine and Grape" and the {@link DefaultGroovyCompiler}
+     * class for more information.
+     *
+     * @since 1.2
+     *
+     * @author Alain Stalder
+     * @author Made in Switzerland.
+     */
+    public static class Grape {
+
+        /**
+         * activate Grape.
+         * <p>
+         * See {@link DefaultGroovyCompiler#enableGrapeSupport()} and
+         * the user manual for more information.
+         *
+         * @since 1.2
+         */
+        public static void activate() {
+            DefaultGroovyCompiler.enableGrapeSupport();
+        }
+
+        /**
+         * activate Grape.
+         * <p>
+         * See {@link DefaultGroovyCompiler#enableGrapeSupport(Object)} and
+         * the user manual for more information.
+         *
+         * @param lock lock to use
+         *
+         * @since 1.2
+         */
+        public static void activate(final Object lock) {
+            DefaultGroovyCompiler.enableGrapeSupport(lock);
+        }
+
+        /**
+         * deactivate Grape.
+         * <p>
+         * See {@link DefaultGroovyCompiler#disableGrapeSupport()} and the user
+         * manual for more information.
+         *
+         * @since 1.2
+         */
+        public static void deactivate() {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+
+
+        /**
+         * equivalent to {@link Grengine#Grengine()},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @return new instance
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine() {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderEmpty(parent, false, config, false));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(CompilerConfiguration)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         *
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if the compiler configuration is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final CompilerConfiguration config) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderEmpty(parent, false, config, false));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader)},
+         * with the following differences.
+         * <p>
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param parent parent class loader for the engine
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if the parent class loader is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent) {
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderEmpty(parent, false, config, false));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, CompilerConfiguration)}.
+         *
+         * @param parent parent class loader for the engine
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final CompilerConfiguration config) {
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderEmpty(parent, false, config, false));
+        }
+
+
+        /**
+         * equivalent to {@link Grengine#Grengine(File)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param dir script directory
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if the directory is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final File dir) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, DirMode.NO_SUBDIRS));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(CompilerConfiguration, File)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         *
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param dir script directory
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final CompilerConfiguration config, final File dir) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, DirMode.NO_SUBDIRS));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, File)},
+         * with the following differences.
+         * <p>
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param parent parent class loader for the engine
+         * @param dir script directory
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final File dir) {
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, DirMode.NO_SUBDIRS));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, CompilerConfiguration, File)}.
+         *
+         * @param parent parent class loader for the engine
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param dir script directory
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final CompilerConfiguration config, final File dir) {
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, DirMode.NO_SUBDIRS));
+        }
+
+
+        /**
+         * equivalent to {@link Grengine#Grengine(File, DirMode)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param dir script directory
+         * @param dirMode dir mode 
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         * 
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final File dir, final DirMode dirMode) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, dirMode));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(CompilerConfiguration, File, DirMode)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         *
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param dir script directory
+         * @param dirMode dir mode 
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final CompilerConfiguration config, final File dir, final DirMode dirMode) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, dirMode));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, File, DirMode)},
+         * with the following differences.
+         * <p>
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param parent parent class loader for the engine
+         * @param dir script directory
+         * @param dirMode dir mode 
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final File dir, final DirMode dirMode) {
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, dirMode));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, CompilerConfiguration, File, DirMode)}.
+         *
+         * @param parent parent class loader for the engine
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param dir script directory
+         * @param dirMode dir mode 
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final CompilerConfiguration config,
+                final File dir, final DirMode dirMode) {
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromDir(parent, false, config, false,
+                    dir, dirMode));
+        }
+
+
+        /**
+         * equivalent to {@link Grengine#Grengine(Collection)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param urls collection of URL-based scripts
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if the URL collection is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final Collection<URL> urls) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromUrls(parent, false, config, false, urls));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(CompilerConfiguration, Collection)},
+         * with the following differences.
+         * <p>
+         * Parent class loader is a GroovyClassLoader with the context
+         * class loader of the current thread as its parent.
+         *
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param urls collection of URL-based scripts
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final CompilerConfiguration config, final Collection<URL> urls) {
+            final GroovyClassLoader parent = new GroovyClassLoader();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromUrls(parent, false, config, false, urls));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, Collection)},
+         * with the following differences.
+         * <p>
+         * Compiler configuration is the default compiler configuration,
+         * with added Grape support.
+         *
+         * @param parent parent class loader for the engine
+         * @param urls collection of URL-based scripts
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final Collection<URL> urls) {
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromUrls(parent, false, config, false, urls));
+        }
+
+        /**
+         * equivalent to {@link Grengine#Grengine(ClassLoader, CompilerConfiguration, Collection)}.
+         *
+         * @param parent parent class loader for the engine
+         * @param config compiler configuration to use for compiling all sources,
+         *               Grape support is added to it
+         * @param urls collection of URL-based scripts
+         *
+         * @return new instance
+         * @throws IllegalArgumentException if any argument is null
+         *
+         * @since 1.2
+         */
+        public static Grengine newGrengine(final GroovyClassLoader parent, final CompilerConfiguration config,
+                final Collection<URL> urls) {
+            DefaultGroovyCompiler.withGrape(config, parent);
+            return new Grengine(builderFromUrls(parent, false, config, false, urls));
         }
 
     }
