@@ -9,8 +9,7 @@ Building
 --------
 
 * Requires Java 6 (or later) and Gradle
-* Quick build: `gradle clean build`
-* Full build: `gradle clean build pom jacoco`
+* Build: `gradle clean build pom jacoco`
 
 License
 -------
