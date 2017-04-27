@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
-import javax.xml.bind.DatatypeConverter;
 
 
 /**
@@ -342,7 +341,7 @@ public class SourceUtil {
             throw new UnsupportedOperationException("No message digest " + algorithm + ".", e);
         }
         byte[] digestBytes = hash.digest(text.getBytes(CHARSET_UTF_8));
-        return DatatypeConverter.printHexBinary(digestBytes);
+        return bytesToHex(digestBytes);
     }
 
     /**
@@ -472,6 +471,19 @@ public class SourceUtil {
         } catch (IOException e) {
             return file.getAbsoluteFile();
         }
+    }
+
+    // converts given bytes to a hex string with upper case letters
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder(32);
+        int digit;
+        for (int i=0; i<bytes.length; i++) {
+            digit = (bytes[i] >> 4) & 0xF;
+            builder.append(digit < 10 ? (char)('0' + digit) : (char)('A' - 10 + digit));
+            digit = (bytes[i] & 0xF);
+            builder.append(digit < 10 ? (char)('0' + digit) : (char)('A' - 10 + digit));
+        }
+        return builder.toString();
     }
 
 }
