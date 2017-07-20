@@ -38,6 +38,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
@@ -711,6 +712,27 @@ public class LayeredEngineTest {
             fail();
         } catch (ClassNotFoundException e) {
             assertThat(e.getMessage(), is("NoSuchClass"));
+        }
+    }
+
+    @Test
+    public void testAsClassLoaderFindClass() throws Exception {
+
+        LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        LayeredEngine engine = builder.build();
+
+        ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
+        Method findClassMethod = classLoader.getClass().getDeclaredMethod("findClass", String.class);
+
+        assertThat(((Class<?>)findClassMethod.invoke(classLoader, "java.util.Calendar")).getName(),
+                is("java.util.Calendar"));
+
+        try {
+            findClassMethod.invoke(classLoader, "NoSuchClass");
+            fail();
+        } catch (Exception e) {
+            assertThat(e.getCause(), instanceOf(ClassNotFoundException.class));
+            assertThat(e.getCause().getMessage(), is("NoSuchClass"));
         }
     }
 
