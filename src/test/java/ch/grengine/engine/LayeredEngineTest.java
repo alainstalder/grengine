@@ -703,8 +703,8 @@ public class LayeredEngineTest {
         assertThat(classLoader.getClass().getName(),
                 is("ch.grengine.engine.LayeredEngine$LoaderBasedClassLoader"));
 
-        assertThat(classLoader.loadClass("java.time.DateTimeException").getName(),
-                is("java.time.DateTimeException"));
+        assertThat(classLoader.loadClass("java.util.Calendar").getName(),
+                is("java.util.Calendar"));
 
         try {
             classLoader.loadClass("NoSuchClass");

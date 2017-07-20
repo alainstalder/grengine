@@ -1218,7 +1218,7 @@ public class GrengineTest {
         assertThat((Integer)shell.evaluate("Test.get55()"), is(55));
 
         // make sure can load from parent loaders
-        shell.evaluate("new DateTimeException()");
+        shell.evaluate("new StringBuffer()");
 
         gren.close();
     }
