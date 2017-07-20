@@ -265,7 +265,38 @@ public abstract class BaseGrengine implements Closeable {
     public void close() {
         engine.close();
     }
-    
+
+    /**
+     * returns a new class loader based on the engine and the given loader.
+     * <p>
+     * Note that the returned class loader typically does not load classes
+     * itself; it just wraps the engine and its loader.
+     *
+     * @param loader
+     *
+     * @return class loader
+     * @throws IllegalArgumentException if the loader is null or does not match the engine
+     *
+     * @since 1.3
+     */
+    public ClassLoader asClassLoader(final Loader loader) {
+        return engine.asClassLoader(loader);
+    }
+
+    /**
+     * returns a new class loader based on the engine and its default attached loader.
+     * <p>
+     * Note that the returned class loader typically does not load classes
+     * itself; it just wraps the engine and its loader.
+     *
+     * @return class loader
+     *
+     * @since 1.3
+     */
+    public ClassLoader asClassLoader() {
+        return engine.asClassLoader(loader);
+    }
+
     // SourceFactory...
     
     /**

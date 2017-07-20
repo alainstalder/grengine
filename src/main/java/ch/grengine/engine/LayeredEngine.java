@@ -276,18 +276,50 @@ public class LayeredEngine implements Engine {
             write.unlock();
         }
     }
+
+    @Override
+    public ClassLoader asClassLoader(final Loader loader) {
+        return new LoaderBasedClassLoader(loader);
+    }
     
+    // class loader based on a loader of this engine
+    private class LoaderBasedClassLoader extends ClassLoader {
+
+        private final Loader loader;
+
+        private LoaderBasedClassLoader(final Loader loader) {
+            super(builder.getParent());
+            if (loader == null) {
+                throw new IllegalArgumentException("Loader is null.");
+            }
+            // verify that engine ID matches
+            loader.getSourceClassLoader(engineId);
+            this.loader = loader;
+        }
+
+        @Override
+        protected Class<?> findClass(final String name) throws ClassNotFoundException {
+            return loader.getSourceClassLoader(engineId).loadClass(name);
+        }
+
+        @Override
+        protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
+            return loader.getSourceClassLoader(engineId).loadClass(name);
+        }
+
+    }
+
     /**
      * gets the builder.
      *
      * @return builder
-     * 
+     *
      * @since 1.0
      */
     public Builder getBuilder() {
         return builder;
     }
-    
+
     /**
      * Builder for instances of {@link LayeredEngine}.
      * 

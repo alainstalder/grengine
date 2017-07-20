@@ -692,4 +692,48 @@ public class LayeredEngineTest {
         }
     }
 
+    @Test
+    public void testAsClassLoader() throws Exception {
+
+        LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        LayeredEngine engine = builder.build();
+
+        ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
+        assertThat(classLoader, notNullValue());
+        assertThat(classLoader.getClass().getName(),
+                is("ch.grengine.engine.LayeredEngine$LoaderBasedClassLoader"));
+
+        assertThat(classLoader.loadClass("java.time.DateTimeException").getName(),
+                is("java.time.DateTimeException"));
+
+        try {
+            classLoader.loadClass("NoSuchClass");
+            fail();
+        } catch (ClassNotFoundException e) {
+            assertThat(e.getMessage(), is("NoSuchClass"));
+        }
+    }
+
+    @Test
+    public void testAsClassLoaderLoaderNull() throws Exception {
+        try {
+            new LayeredEngine.Builder().build().asClassLoader(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Loader is null."));
+        }
+    }
+
+    @Test
+    public void testAsClassLoaderLoaderForOtherEngine() throws Exception {
+        LayeredEngine engine2 = new LayeredEngine.Builder().build();
+        try {
+            new LayeredEngine.Builder().build().asClassLoader(engine2.getLoader());
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is(
+                    "Engine ID does not match (loader created by a different engine)."));
+        }
+    }
+
 }

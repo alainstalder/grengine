@@ -178,4 +178,17 @@ public interface Engine extends Closeable {
     @Override
     void close();
 
+    /**
+     * returns a class loader based on this engine and the given loader.
+     * <p>
+     * Note that the returned class loader typically does not load classes
+     * itself; it just wraps the engine and its loader.
+     *
+     * @return class loader
+     * @throws IllegalArgumentException if the loader is null or does not match the engine
+     *
+     * @since 1.3
+     */
+    ClassLoader asClassLoader(final Loader loader);
+
 }

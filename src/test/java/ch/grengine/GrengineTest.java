@@ -56,6 +56,7 @@ import java.util.Set;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.Rule;
@@ -1199,6 +1200,48 @@ public class GrengineTest {
         assertThat(releaser.countClassesWithName("Class1"), is(2));
         assertThat(releaser.countClassesWithName("Class2"), is(2));
         assertThat(releaser.countClassesWithName("Class2$Class3"), is(2));
+    }
+
+    @Test
+    public void testAsClassLoaderBasic() throws Exception {
+        File dir = tempFolder.getRoot();
+        File testFile = new File(dir, "Test.groovy");
+        TestUtil.setFileText(testFile, "class Test { static int get55() { 55 } }");
+
+        Grengine gren = new Grengine(tempFolder.getRoot());
+        assertThat((Integer)gren.run("Test.get55()"), is(55));
+
+        GroovyShell shell = new GroovyShell(gren.asClassLoader());
+        assertThat((Integer)shell.evaluate("Test.get55()"), is(55));
+
+        shell = new GroovyShell(gren.asClassLoader(gren.getLoader()));
+        assertThat((Integer)shell.evaluate("Test.get55()"), is(55));
+
+        // make sure can load from parent loaders
+        shell.evaluate("new DateTimeException()");
+
+        gren.close();
+    }
+
+    @Test
+    public void testAsClassLoaderLoaderNull() throws Exception {
+        try {
+            new Grengine().asClassLoader(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is("Loader is null."));
+        }
+    }
+
+    @Test
+    public void testAsClassLoaderLoaderForOtherEngine() throws Exception {
+        try {
+            new Grengine().asClassLoader(new Grengine().getLoader());
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is(
+                    "Engine ID does not match (loader created by a different engine)."));
+        }
     }
 
     @Test
