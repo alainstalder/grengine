@@ -272,7 +272,7 @@ public abstract class BaseGrengine implements Closeable {
      * Note that the returned class loader typically does not load classes
      * itself; it just wraps the engine and its loader.
      *
-     * @param loader
+     * @param loader loader
      *
      * @return class loader
      * @throws IllegalArgumentException if the loader is null or does not match the engine
