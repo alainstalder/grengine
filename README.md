@@ -9,7 +9,7 @@ Building
 --------
 
 * Requires Java 6 (or later) and Gradle
-* Build: `gradle clean build pom jacoco`
+* Build: `./gradlew clean build pom jacoco`
 
 License
 -------
