@@ -92,9 +92,9 @@
             }
           }
           scm {
-            url 'https://github.com/jexler/grengine'
-            connection 'https://github.com/jexler/grengine.git'
-            developerConnection 'https://github.com/jexler/grengine.git'
+            url 'https://gitlab.com/jexler/grengine'
+            connection 'https://gitlab.com/jexler/grengine.git'
+            developerConnection 'https://gitlab.com/jexler/grengine.git'
           }
           developers {
             developer {
