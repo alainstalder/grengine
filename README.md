@@ -8,7 +8,7 @@ See [www.grengine.ch](https://www.grengine.ch/) for user manual, javadoc, downlo
 Building
 --------
 
-* Requires Java 6 (or later) and Gradle
+* Requires Java 8 (or later) and Gradle
 * Build: `./gradlew clean build pom jacoco`
 
 License
