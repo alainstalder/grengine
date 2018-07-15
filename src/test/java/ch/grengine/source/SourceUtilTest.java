@@ -305,20 +305,6 @@ public class SourceUtilTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
-    public void testGetTextStartNoLinebreaks() {
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello", 10), is("hello"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello12345", 10), is("hello12345"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello123456", 10), is("hello1[..]"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello1234567", 10), is("hello1[..]"));
-
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n", 10), is("hello%n"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n\r", 10), is("hello%n%n"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n123", 10), is("hello%n123"));
-        assertThat(SourceUtil.getTextStartNoLinebreaks("hello\n1234", 10), is("hello%[..]"));
-    }
-
-    @Test
     public void testReadUrlText() throws Exception {
         File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         String text = "println 55";

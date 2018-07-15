@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -28,9 +28,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,13 +42,6 @@ import java.util.Set;
  * @author Made in Switzerland.
  */
 public class SourceUtil {
-    
-    /**
-     * UTF-8 character set
-     * 
-     * @since 1.0
-     */
-    public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
     /**
      * creates a source set from the given collections of script texts,
@@ -90,11 +83,9 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Collection<String> texts) {
-        Set<Source> sources = new HashSet<>();
-        for (String text : texts) {
-            sources.add(sourceFactory.fromText(text));
-        }
-        return sources;
+        return texts.stream()
+                .map(sourceFactory::fromText)
+                .collect(Collectors.toCollection(HashSet::new));
     }
     
     /**
@@ -138,11 +129,9 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Map<String,String> texts) {
-        Set<Source> sources = new HashSet<>();
-        for (Entry<String,String> entry : texts.entrySet()) {
-            sources.add(sourceFactory.fromText(entry.getValue(), entry.getKey()));
-        }
-        return sources;
+        return texts.entrySet().stream()
+                .map(entry -> sourceFactory.fromText(entry.getValue(), entry.getKey()))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     
@@ -186,11 +175,9 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final Collection<File> files) {
-        Set<Source> sources = new HashSet<>();
-        for (File file : files) {
-            sources.add(sourceFactory.fromFile(file));
-        }
-        return sources;
+        return files.stream()
+                .map(sourceFactory::fromFile)
+                .collect(Collectors.toCollection(HashSet::new));
     }
     
     /**
@@ -249,11 +236,9 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final Collection<URL> urls) {
-        Set<Source> sources = new HashSet<>();
-        for (URL url : urls) {
-            sources.add(sourceFactory.fromUrl(url));
-        }
-        return sources;
+        return urls.stream()
+                .map(sourceFactory::fromUrl)
+                .collect(Collectors.toCollection(HashSet::new));
     }
     
     /**
@@ -282,9 +267,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> sourceToSourceSet(final Source source) {
-        Set<Source> sourceSet = new HashSet<>();
-        sourceSet.add(source);
-        return sourceSet;
+        return new HashSet<>(Collections.singletonList(source));
     }
 
     /**
@@ -309,9 +292,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> sourceArrayToSourceSet(final Source... sourceArray) {
-        Set<Source> sourceSet = new HashSet<>();
-        Collections.addAll(sourceSet, sourceArray);
-        return sourceSet;
+        return new HashSet<>(Arrays.asList(sourceArray));
     }
 
     
@@ -336,7 +317,7 @@ public class SourceUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException("No message digest " + algorithm + ".", e);
         }
-        byte[] digestBytes = hash.digest(text.getBytes(CHARSET_UTF_8));
+        byte[] digestBytes = hash.digest(text.getBytes(StandardCharsets.UTF_8));
         return bytesToHex(digestBytes);
     }
 
@@ -393,29 +374,6 @@ public class SourceUtil {
             return out;
         }
         return out.substring(0, maxLen - 4) + "[..]";
-    }
-
-    /**
-     * gets the start of the given text with line breaks removed -
-     * deprecated due to typo in method name, use
-     * {@link #getTextStartNoLineBreaks(String, int)} instead.
-     * <p>
-     * The returned text is at most maxLen characters long and line breaks
-     * are converted to "%n". If the text had to be cut, this is indicated
-     * by "[..]" at the end of the returned text.
-     *
-     * @param text text
-     * @param maxLen maximal length of the returned text
-     *
-     * @return start of the given text with line breaks removed
-     *
-     * @throws IllegalArgumentException if maxLen is less than 10
-     *
-     * @since 1.0
-     */
-    @Deprecated
-    public static String getTextStartNoLinebreaks(final String text, final int maxLen) {
-        return getTextStartNoLineBreaks(text, maxLen);
     }
 
     /**
