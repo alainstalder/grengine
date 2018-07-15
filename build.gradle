@@ -3,10 +3,10 @@
   apply plugin: 'maven'
   apply plugin: 'jacoco'
 
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
 
-  version = '1.3.0'
+  version = '2.0.0'
   
   description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
@@ -15,8 +15,7 @@
   }
   
   ext {
-    // 1.7.5 or any later version works
-    groovyVersion='2.4.15'
+    groovyVersion='2.5.0'
     junitVersion='4.12'
     hamcrestVersion='1.3'
     ivyVersion='2.4.0'
