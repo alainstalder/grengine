@@ -16,9 +16,9 @@
 
 package ch.grengine.source;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -115,17 +115,9 @@ public class SourceSetState {
         Map<Source,Long> lastModifiedMapNew = getLastModifiedMap(sourceSetNew);
 
         boolean hasChanged = true;
-        if (sourceSetNew.size() == sourceSet.size() && sourceSetNew.containsAll(sourceSet)) {
-            boolean allModsSame = true;
-            for (Source source : sourceSetNew) {
-                long modOld = lastModifiedMap.get(source);
-                long modNew = lastModifiedMapNew.get(source);
-                if (modOld != modNew) {
-                    allModsSame = false;
-                    break;
-                }
-            }
-            hasChanged = !allModsSame;
+        if (sourceSetNew.equals(sourceSet)) {
+            hasChanged = sourceSetNew.stream()
+                    .anyMatch(source -> lastModifiedMap.get(source).longValue() != lastModifiedMapNew.get(source));
         }
         long lastCheckedNew = System.currentTimeMillis();
         long lastModifiedNew = hasChanged ? lastCheckedNew : lastModified;
@@ -133,11 +125,8 @@ public class SourceSetState {
     }
     
     private static Map<Source,Long> getLastModifiedMap(final Set<Source> sourceSet) {
-        Map<Source,Long> map = new HashMap<>();
-        for (Source source : sourceSet) {
-            map.put(source, source.getLastModified());
-        }
-        return map;
+        return sourceSet.stream()
+                .collect(Collectors.toMap(source -> source, Source::getLastModified));
     }
 
 }
