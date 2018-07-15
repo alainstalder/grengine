@@ -51,7 +51,7 @@
       windowTitle = "Grengine - $project.version"
       header = 'Grengine'
       author = true
-      links = [ 'https://docs.oracle.com/javase/6/docs/api/', 'http://docs.groovy-lang.org/docs/groovy-' + groovyVersion + '/html/api/' ]
+      links = [ 'https://docs.oracle.com/javase/8/docs/api/', 'http://docs.groovy-lang.org/docs/groovy-' + groovyVersion + '/html/api/' ]
       tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
     }
   }
