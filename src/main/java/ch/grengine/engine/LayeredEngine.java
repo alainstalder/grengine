@@ -240,8 +240,7 @@ public class LayeredEngine implements Engine {
         
         write.lock();
         try {
-            Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<Loader,EngineId>();
-            attachedLoadersNonWeak.putAll(attachedLoaders);
+            Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<Loader,EngineId>(attachedLoaders);
             for (Loader attachedLoader : attachedLoadersNonWeak.keySet()) {
                 attachedLoader.setSourceClassLoader(engineId, newLayeredClassLoaderFromCodeLayers(codeLayers));
             }

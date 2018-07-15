@@ -617,8 +617,7 @@ public class DefaultGroovyCompiler implements Compiler {
                 if (obj instanceof CompileTimeGroovyClassLoader) {
                     final GroovyClassLoader runtimeLoader = ((CompileTimeGroovyClassLoader)obj).runtimeLoader;
                     if (runtimeLoader != null) {
-                        final Map args2 = new HashMap();
-                        args2.putAll(args);
+                        final Map args2 = new HashMap(args);
                         args2.put(CLASS_LOADER_KEY, runtimeLoader);
                         innerEngine.grab(args2);
                     }
@@ -639,8 +638,7 @@ public class DefaultGroovyCompiler implements Compiler {
                 if (obj instanceof CompileTimeGroovyClassLoader) {
                     final GroovyClassLoader runtimeLoader = ((CompileTimeGroovyClassLoader)obj).runtimeLoader;
                     if (runtimeLoader != null) {
-                        final Map args2 = new HashMap();
-                        args2.putAll(args);
+                        final Map args2 = new HashMap(args);
                         args2.put(CLASS_LOADER_KEY, runtimeLoader);
                         innerEngine.grab(args2, dependencies);
                     }

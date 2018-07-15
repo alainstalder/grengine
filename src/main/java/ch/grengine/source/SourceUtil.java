@@ -298,9 +298,7 @@ public class SourceUtil {
      */
     public static Set<Source> sourceCollectionToSourceSet(final Collection<Source> sourceCollection) {
         Set<Source> sourceSet = new HashSet<Source>();
-        for (Source source : sourceCollection) {
-            sourceSet.add(source);
-        }
+        sourceSet.addAll(sourceCollection);
         return sourceSet;
     }
 

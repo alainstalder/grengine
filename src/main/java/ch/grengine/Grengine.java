@@ -1185,7 +1185,7 @@ public class Grengine extends BaseGrengine {
          * with added Grape support.
          *
          * @param dir script directory
-         * @param dirMode dir mode 
+         * @param dirMode dir mode
          *
          * @return new instance
          * @throws IllegalArgumentException if any argument is null
@@ -1210,7 +1210,7 @@ public class Grengine extends BaseGrengine {
          * @param config compiler configuration to use for compiling all sources,
          *               Grape support is added to it
          * @param dir script directory
-         * @param dirMode dir mode 
+         * @param dirMode dir mode
          *
          * @return new instance
          * @throws IllegalArgumentException if any argument is null
@@ -1233,7 +1233,7 @@ public class Grengine extends BaseGrengine {
          *
          * @param parent parent class loader for the engine
          * @param dir script directory
-         * @param dirMode dir mode 
+         * @param dirMode dir mode
          *
          * @return new instance
          * @throws IllegalArgumentException if any argument is null
@@ -1254,7 +1254,7 @@ public class Grengine extends BaseGrengine {
          * @param config compiler configuration to use for compiling all sources,
          *               Grape support is added to it
          * @param dir script directory
-         * @param dirMode dir mode 
+         * @param dirMode dir mode
          *
          * @return new instance
          * @throws IllegalArgumentException if any argument is null
