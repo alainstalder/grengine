@@ -62,7 +62,7 @@ public class LayeredClassLoader extends SourceClassLoader {
     private Map<Source,BytecodeClassLoader> topLoaders;
 
     private final Queue<WeakReference<BytecodeClassLoader>> classLoaderQueue =
-            new ConcurrentLinkedQueue<WeakReference<BytecodeClassLoader>>();
+            new ConcurrentLinkedQueue<>();
 
     /**
      * constructor from builder, based on already compiled code layers.
@@ -114,20 +114,20 @@ public class LayeredClassLoader extends SourceClassLoader {
         codeLayers = builder.getCodeLayers();
         for (Code code : codeLayers) {
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
-            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>((BytecodeClassLoader)staticTopLoader));
+            classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
         }
     }
     
     private void createLoadersFromSourcesLayers() throws CompileException {
         staticTopLoader = builder.getParent();
         List<Sources> sourcesLayers = builder.getSourcesLayers();
-        codeLayers = new LinkedList<Code>();
+        codeLayers = new LinkedList<>();
         for (Sources sources : sourcesLayers) {
             CompilerFactory compilerFactory = sources.getCompilerFactory();
             Code code = compilerFactory.newCompiler(staticTopLoader).compile(sources);
             codeLayers.add(code);
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
-            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>((BytecodeClassLoader)staticTopLoader));
+            classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
         }
         // set code layers in builder so that the builder
         // can be reused without recompiling (e.g. for clone())
@@ -139,7 +139,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         if (isWithTopCodeCache) {
             topLoadMode = builder.getTopLoadMode();
             topCodeCache = builder.getTopCodeCache();
-            topLoaders = new ConcurrentHashMap<Source,BytecodeClassLoader>();
+            topLoaders = new ConcurrentHashMap<>();
         } else {
             topLoadMode = null;
             topCodeCache = null;
@@ -182,7 +182,7 @@ public class LayeredClassLoader extends SourceClassLoader {
                 != code.getLastModifiedAtCompileTime()) {
             topLoader = new BytecodeClassLoader(this, topLoadMode, code);
             topLoaders.put(source, topLoader);
-            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>(topLoader));
+            classLoaderQueue.add(new WeakReference<>(topLoader));
         }
         return topLoader.loadMainClass(source);
     }
@@ -211,7 +211,7 @@ public class LayeredClassLoader extends SourceClassLoader {
                 != code.getLastModifiedAtCompileTime()) {
             topLoader = new BytecodeClassLoader(this, topLoadMode, code);
             topLoaders.put(source, topLoader);
-            classLoaderQueue.add(new WeakReference<BytecodeClassLoader>(topLoader));
+            classLoaderQueue.add(new WeakReference<>(topLoader));
         }
         return topLoader.loadClass(source, name);
     }
@@ -570,10 +570,10 @@ public class LayeredClassLoader extends SourceClassLoader {
                     loadMode = LoadMode.CURRENT_FIRST;
                 }
                 if (sourcesLayers == null) {
-                    sourcesLayers = new LinkedList<Sources>();
+                    sourcesLayers = new LinkedList<>();
                 }
                 if (codeLayers == null) {
-                    codeLayers = new LinkedList<Code>();
+                    codeLayers = new LinkedList<>();
                 }
                 if (topLoadMode == null) {
                     topLoadMode = LoadMode.PARENT_FIRST;

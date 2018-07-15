@@ -41,7 +41,7 @@ import static org.junit.Assert.fail;
 public class CompositeSourcesTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testConstructDefaults() throws Exception {
@@ -117,7 +117,7 @@ public class CompositeSourcesTest {
 
     @Test
     public void testModifyBuilderAfterUse() throws Exception {
-        CompositeSources.Builder builder = new CompositeSources.Builder(new LinkedList<Sources>());
+        CompositeSources.Builder builder = new CompositeSources.Builder(new LinkedList<>());
         builder.build();
         try {
             builder.setName("name");

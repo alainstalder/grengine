@@ -54,14 +54,14 @@ public class CompositeSources extends BaseSources {
      */
     protected CompositeSources(final Builder builder) {
         this.builder = builder.commit();
-        sourcesList = new ArrayList<Sources>();
+        sourcesList = new ArrayList<>();
         sourcesList.addAll(builder.getSourcesCollection());
         super.init(builder.getName(), builder.getCompilerFactory(), builder.getLatencyMs());
     }
     
     @Override
     protected Set<Source> getSourceSetNew() {
-        Set<Source> sourceSet = new HashSet<Source>();
+        Set<Source> sourceSet = new HashSet<>();
         for (Sources sources : sourcesList) {
             sourceSet.addAll(sources.getSourceSet());
         }

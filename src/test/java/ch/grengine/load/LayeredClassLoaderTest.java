@@ -53,7 +53,7 @@ import static org.junit.Assert.fail;
 public class LayeredClassLoaderTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Test
     public void testConstructFromCodeLayersDefaults() throws Exception {
@@ -365,7 +365,7 @@ public class LayeredClassLoaderTest {
         TestUtil.setFileText(fAssume, "package org.junit\nclass Assume  { def methodLayer1() {} }");
         Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
 
-        codeLayers = new LinkedList<Code>();
+        codeLayers = new LinkedList<>();
         codeLayers.add(codeLayer0);
         codeLayers.add(codeLayer1);
         
@@ -2753,7 +2753,7 @@ public class LayeredClassLoaderTest {
     @Test
     public void testExtraNoCodeLayers_ParentNotSourceClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
         prepareCode(true);
-        codeLayers = new LinkedList<Code>();
+        codeLayers = new LinkedList<>();
         
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
         LoadMode layerLoadMode = LoadMode.PARENT_FIRST;

@@ -47,7 +47,7 @@ import static org.junit.Assert.fail;
 public class DirBasedSourcesTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testConstructDefaults() throws Exception {
@@ -82,7 +82,7 @@ public class DirBasedSourcesTest {
     public void testConstructAllDefined() throws Exception {
         File dir = tempFolder.getRoot();
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        Set<String> scriptExtensions = new HashSet<String>(Arrays.asList("groovy", "gradle"));
+        Set<String> scriptExtensions = new HashSet<>(Arrays.asList("groovy", "gradle"));
         builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions);
         builder.setScriptExtensions("groovy", "gradle");
         builder.setName("dirBased");
@@ -295,7 +295,7 @@ public class DirBasedSourcesTest {
         subSubDir.mkdirs();
         assertThat(subSubDir.exists(), is(true));
         
-        Map<String,File> m = new HashMap<String,File>();
+        Map<String,File> m = new HashMap<>();
         m.put("dir", dir);
         m.put("subDir", subDir);
         m.put("subSubDir", subSubDir);

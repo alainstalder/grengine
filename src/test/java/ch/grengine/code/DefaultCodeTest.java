@@ -46,10 +46,10 @@ public class DefaultCodeTest {
         MockSource m2 = new MockSource("id2");
         String name1 = "MainClassName1";
         String name2 = "MainClassName2";
-        Set<String> names1 = new HashSet<String>();
+        Set<String> names1 = new HashSet<>();
         names1.add("Side1");
         names1.add("MainClassName1");
-        Set<String> names2 = new HashSet<String>();
+        Set<String> names2 = new HashSet<>();
         names2.add("Side2");
         names2.add("MainClassName2");
         CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
@@ -57,11 +57,11 @@ public class DefaultCodeTest {
         
         String sourcesName = "sourcesName";
 
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(m1, i1);
         infoMap.put(m2, i2);
         
-        Map<String,Bytecode> bytecodeMap = new HashMap<String,Bytecode>();
+        Map<String,Bytecode> bytecodeMap = new HashMap<>();
         String name1sub = name1 + "#Sub";
         bytecodeMap.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
         bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
@@ -134,7 +134,7 @@ public class DefaultCodeTest {
     @Test
     public void testConstructSourcesNameNull() throws Exception {
         try {
-            new DefaultCode(null, new HashMap<Source,CompiledSourceInfo>(), new HashMap<String,Bytecode>());
+            new DefaultCode(null, new HashMap<>(), new HashMap<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Sources name is null."));
@@ -144,7 +144,7 @@ public class DefaultCodeTest {
     @Test
     public void testConstructCompiledSourceInfoMapNull() throws Exception {
         try {
-            new DefaultCode("name", null, new HashMap<String,Bytecode>());
+            new DefaultCode("name", null, new HashMap<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Compiled source info map is null."));
@@ -154,7 +154,7 @@ public class DefaultCodeTest {
     @Test
     public void testConstructBytecodeMapNull() throws Exception {
         try {
-            new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), null);
+            new DefaultCode("name", new HashMap<>(), null);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Bytecode map is null."));

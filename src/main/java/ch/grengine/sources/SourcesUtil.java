@@ -71,7 +71,7 @@ public class SourcesUtil {
         if (compilerFactory == null) {
             throw new IllegalArgumentException("Compiler factory is null.");
         }
-        Set<Source> sourceSet = new HashSet<Source>();
+        Set<Source> sourceSet = new HashSet<>();
         sourceSet.add(source);
         return new FixedSetSources.Builder(sourceSet)
                 .setName(source.getId())
@@ -139,7 +139,7 @@ public class SourcesUtil {
         if (sources == null) {
             throw new IllegalArgumentException("Sources array is null.");
         }
-        return new LinkedList<Sources>(Arrays.asList(sources));
+        return new LinkedList<>(Arrays.asList(sources));
     }
 
 }

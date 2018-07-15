@@ -32,7 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class MockFileTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testMockFile() throws Exception {

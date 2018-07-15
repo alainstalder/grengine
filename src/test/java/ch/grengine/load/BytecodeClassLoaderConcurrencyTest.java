@@ -124,19 +124,17 @@ public class BytecodeClassLoaderConcurrencyTest {
         Thread[] threads = new Thread[nThreads];
         for (int i = 0; i < nThreads; i++) {
             final int x = i;
-            threads[i] = new Thread() {
-                public void run() {
-                    try {
-                        String threadName = "Thread-" + x;
-                        Thread.currentThread().setName(threadName);
-                        System.out.println(threadName + " about to load...");
-                        slowLoader.loadClass("Class1");
-                        System.out.println(threadName + " loaded.");
-                    } catch (Throwable t) {
-                        setFailed(true);
-                    }
+            threads[i] = new Thread(() -> {
+                try {
+                    String threadName = "Thread-" + x;
+                    Thread.currentThread().setName(threadName);
+                    System.out.println(threadName + " about to load...");
+                    slowLoader.loadClass("Class1");
+                    System.out.println(threadName + " loaded.");
+                } catch (Throwable t) {
+                    setFailed(true);
                 }
-            };
+            });
         }
 
         for (Thread t : threads) {
@@ -174,19 +172,17 @@ public class BytecodeClassLoaderConcurrencyTest {
         Thread[] threads = new Thread[nThreads];
         for (int i = 0; i < nThreads; i++) {
             final int x = i;
-            threads[i] = new Thread() {
-                public void run() {
-                    try {
-                        String threadName = "Thread-" + x;
-                        Thread.currentThread().setName(threadName);
-                        System.out.println(threadName + " about to load...");
-                        slowLoader.loadClass("a.b.c.Class1");
-                        System.out.println(threadName + " loaded.");
-                    } catch (Throwable t) {
-                        setFailed(true);
-                    }
+            threads[i] = new Thread(() -> {
+                try {
+                    String threadName = "Thread-" + x;
+                    Thread.currentThread().setName(threadName);
+                    System.out.println(threadName + " about to load...");
+                    slowLoader.loadClass("a.b.c.Class1");
+                    System.out.println(threadName + " loaded.");
+                } catch (Throwable t) {
+                    setFailed(true);
                 }
-            };
+            });
         }
 
         for (Thread t : threads) {
@@ -225,19 +221,17 @@ public class BytecodeClassLoaderConcurrencyTest {
         Thread[] threads = new Thread[nThreads];
         for (int i = 0; i < nThreads; i++) {
             final int x = i;
-            threads[i] = new Thread() {
-                public void run() {
-                    try {
-                        String threadName = "Thread-" + x;
-                        Thread.currentThread().setName(threadName);
-                        System.out.println(threadName + " about to load...");
-                        slowLoader.loadClass((x % 2 == 0) ? "Class1" : "Class2");
-                        System.out.println(threadName + " loaded.");
-                    } catch (Throwable t) {
-                        setFailed(true);
-                    }
+            threads[i] = new Thread(() -> {
+                try {
+                    String threadName = "Thread-" + x;
+                    Thread.currentThread().setName(threadName);
+                    System.out.println(threadName + " about to load...");
+                    slowLoader.loadClass((x % 2 == 0) ? "Class1" : "Class2");
+                    System.out.println(threadName + " loaded.");
+                } catch (Throwable t) {
+                    setFailed(true);
                 }
-            };
+            });
         }
 
         for (Thread t : threads) {
@@ -276,19 +270,17 @@ public class BytecodeClassLoaderConcurrencyTest {
         Thread[] threads = new Thread[nThreads];
         for (int i = 0; i < nThreads; i++) {
             final int x = i;
-            threads[i] = new Thread() {
-                public void run() {
-                    try {
-                        String threadName = "Thread-" + x;
-                        Thread.currentThread().setName(threadName);
-                        System.out.println(threadName + " about to load...");
-                        slowLoader.loadClass((x % 2 == 0) ? "a.b.c.Class1" : "a.b.c.Class2");
-                        System.out.println(threadName + " loaded.");
-                    } catch (Throwable t) {
-                        setFailed(true);
-                    }
+            threads[i] = new Thread(() -> {
+                try {
+                    String threadName = "Thread-" + x;
+                    Thread.currentThread().setName(threadName);
+                    System.out.println(threadName + " about to load...");
+                    slowLoader.loadClass((x % 2 == 0) ? "a.b.c.Class1" : "a.b.c.Class2");
+                    System.out.println(threadName + " loaded.");
+                } catch (Throwable t) {
+                    setFailed(true);
                 }
-            };
+            });
         }
 
         for (Thread t : threads) {

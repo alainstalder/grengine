@@ -59,7 +59,7 @@ import static org.junit.Assert.fail;
 public class LayeredEngineTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testConstructDefaults() throws Exception {

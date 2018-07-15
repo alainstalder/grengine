@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -42,7 +43,7 @@ public class TestUtil {
     @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> argsToMap(Object... args) {
         assertThat(args.length % 2 == 0, is(true));
-        Map<K,V> map = new HashMap<K,V>();
+        Map<K,V> map = new HashMap<>();
         boolean isKey = true;
         K key = null;
         for (Object arg : args) {
@@ -72,12 +73,9 @@ public class TestUtil {
     }
     
     public static String getFileText(File file) throws FileNotFoundException {
-        Scanner scan = new Scanner(file);
-        try {
+        try (Scanner scan = new Scanner(file, StandardCharsets.UTF_8.name())) {
             scan.useDelimiter("\\A");
             return scan.hasNext() ? scan.next() : "";
-        } finally {
-            scan.close();
         }
     }
     

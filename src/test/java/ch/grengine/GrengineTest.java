@@ -80,7 +80,7 @@ import static org.junit.Assert.fail;
 public class GrengineTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testHelloWorld() throws Exception {
@@ -130,7 +130,7 @@ public class GrengineTest {
         builder.setEngine(engine);
         SourceFactory sourceFactory = new DefaultSourceFactory();
         builder.setSourceFactory(sourceFactory);
-        List<Sources> sourcesLayers = new LinkedList<Sources>();
+        List<Sources> sourcesLayers = new LinkedList<>();
         builder.setSourcesLayers();
         builder.setSourcesLayers(sourcesLayers);
         UpdateExceptionNotifier notifier = new MockUpdateExceptionNotifier(null);
@@ -468,7 +468,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromDirWithoutSubDirs_WithCompilerConfig() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
-        Set<String> scriptExtensions = new HashSet<String>();
+        Set<String> scriptExtensions = new HashSet<>();
         scriptExtensions.add("groovy");
         scriptExtensions.add("funky");
         config.setScriptExtensions(scriptExtensions);
@@ -539,7 +539,7 @@ public class GrengineTest {
     public void testConstructFromDirWithoutSubDirs_WithCompilerConfig_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
-        Set<String> scriptExtensions = new HashSet<String>();
+        Set<String> scriptExtensions = new HashSet<>();
         scriptExtensions.add("groovy");
         scriptExtensions.add("funky");
         config.setScriptExtensions(scriptExtensions);
@@ -610,7 +610,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromDirWithSubDirs_WithCompilerConfiguration() throws Exception {
         CompilerConfiguration config = new CompilerConfiguration();
-        Set<String> scriptExtensions = new HashSet<String>();
+        Set<String> scriptExtensions = new HashSet<>();
         scriptExtensions.add("groovy");
         scriptExtensions.add("funky");
         config.setScriptExtensions(scriptExtensions);
@@ -665,7 +665,7 @@ public class GrengineTest {
     public void testConstructFromDirWithSubDirs_WithCompilerConfiguration_WithParent() throws Exception {
         ClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
-        Set<String> scriptExtensions = new HashSet<String>();
+        Set<String> scriptExtensions = new HashSet<>();
         scriptExtensions.add("groovy");
         scriptExtensions.add("funky");
         config.setScriptExtensions(scriptExtensions);
@@ -1089,7 +1089,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromUrlsAndCompilerConfiguration_CompilerConfigurationNull() throws Exception {
         try {
-            new Grengine((CompilerConfiguration)null, new LinkedList<URL>());
+            new Grengine((CompilerConfiguration)null, new LinkedList<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
@@ -1109,7 +1109,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromUrlsAndParent_ParentNull() throws Exception {
         try {
-            new Grengine((ClassLoader)null, new LinkedList<URL>());
+            new Grengine((ClassLoader)null, new LinkedList<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
@@ -1129,7 +1129,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromUrlsAndParentAndCompilerConfiguration_ParentNull() throws Exception {
         try {
-            new Grengine((ClassLoader)null, new CompilerConfiguration(), new LinkedList<URL>());
+            new Grengine((ClassLoader)null, new CompilerConfiguration(), new LinkedList<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
@@ -1139,7 +1139,7 @@ public class GrengineTest {
     @Test
     public void testConstructFromUrlsAndParentAndCompilerConfiguration_CompilerConfigurationNull() throws Exception {
         try {
-            new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new LinkedList<URL>());
+            new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new LinkedList<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
@@ -1435,7 +1435,7 @@ public class GrengineTest {
         assertThat((String)gren.run(loader, u), is("url"));
         assertThat((String)gren.run(loader, st), is("text"));
 
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put("x", 99);
         st = (TextSource)gren.source("return x");
         // replace file and url so that immediately up to date

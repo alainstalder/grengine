@@ -16,9 +16,7 @@
 
 package ch.grengine.engine;
 
-import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
-import ch.grengine.code.CompiledSourceInfo;
 import ch.grengine.code.DefaultCode;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.load.BytecodeClassLoader;
@@ -54,8 +52,8 @@ public class LoaderTest {
         EngineId engineId1 = new EngineId();
         EngineId engineId2 = new EngineId();
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<Source, CompiledSourceInfo>(),
-                new HashMap<String, Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         SourceClassLoader classLoader1 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
         SourceClassLoader classLoader2 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
 
@@ -96,8 +94,8 @@ public class LoaderTest {
     @Test
     public void testConstructEngineIdNull() throws Exception {
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
         try {
             new Loader(null, 0, false, classLoader);
@@ -157,8 +155,8 @@ public class LoaderTest {
         long number = 15;
         EngineId id = new EngineId();
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
         BytecodeClassLoader classLoader2 = new BytecodeClassLoader(parent.getParent(), LoadMode.PARENT_FIRST, code);
         

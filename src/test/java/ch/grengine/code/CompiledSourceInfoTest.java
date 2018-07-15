@@ -40,7 +40,7 @@ public class CompiledSourceInfoTest {
     public void testConstructPlusGetters() {
         Source m1 = new MockSource("id1");
         String name = "MainClassName";
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         names.add("Side");
         names.add("MainClassName");
         CompiledSourceInfo info = new CompiledSourceInfo(m1, name, names, 55);
@@ -55,7 +55,7 @@ public class CompiledSourceInfoTest {
     @Test
     public void testConstructSourceNull() {
         try {
-            new CompiledSourceInfo(null, "", new HashSet<String>(), 0);
+            new CompiledSourceInfo(null, "", new HashSet<>(), 0);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Source is null."));
@@ -65,7 +65,7 @@ public class CompiledSourceInfoTest {
     @Test
     public void testConstructMainClassNameNull() {
         try {
-            new CompiledSourceInfo(new MockSource("id1"), null, new HashSet<String>(), 0);
+            new CompiledSourceInfo(new MockSource("id1"), null, new HashSet<>(), 0);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Main class name is null."));

@@ -68,16 +68,16 @@ public class DefaultSourceFactory implements SourceFactory {
         this.builder = builder.commit();
 
         trackTextSourceId = builder.isTrackTextSourceIds();
-        textSourceIdTrackingMap = new ConcurrentHashMap<String,String>();
+        textSourceIdTrackingMap = new ConcurrentHashMap<>();
         
         trackFileSourceLastModified = builder.isTrackFileSourceLastModified();
-        fileLastModifiedTrackingMap = new ConcurrentHashMap<String,Long>();
+        fileLastModifiedTrackingMap = new ConcurrentHashMap<>();
         fileLastModifiedLatencyMs = builder.getFileLastModifiedTrackingLatencyMs();
         fileLastModifiedLastChecked = 0;
         
         trackUrlContent = builder.isTrackUrlContent();
         urlTrackingLatencyMs = builder.getUrlTrackingLatencyMs();
-        urlContentTrackingMap = new ConcurrentHashMap<Source,TrackingInfo>();
+        urlContentTrackingMap = new ConcurrentHashMap<>();
     }
 
     /**

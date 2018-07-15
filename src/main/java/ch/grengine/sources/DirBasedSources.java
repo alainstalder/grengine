@@ -82,7 +82,7 @@ public class DirBasedSources extends BaseSources {
      */
     @Override
     protected Set<Source> getSourceSetNew() {
-        Set<Source> sourceSet = new HashSet<Source>();
+        Set<Source> sourceSet = new HashSet<>();
         fromDirectoryAddRecursively(sourceSet, dir, true);
         return sourceSet;
     }
@@ -248,7 +248,7 @@ public class DirBasedSources extends BaseSources {
          * @since 1.0
          */
         public Builder setScriptExtensions(final String... scriptExtensions) {
-            Set<String> set = new HashSet<String>();
+            Set<String> set = new HashSet<>();
             Collections.addAll(set, scriptExtensions);
             return setScriptExtensions(set);
         }

@@ -77,16 +77,13 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles at each evaluation.");
 
         final GroovyShell shell = new GroovyShell();
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        shell.evaluate("return 2");
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    shell.evaluate("return 2");
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -121,16 +118,13 @@ public class GrengineVisualPerformanceTest {
                 .build())    
             .build();
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        gren.run("return 2");
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    gren.run("return 2");
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -141,16 +135,13 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calculates MD5 hash only once during the first run.");
 
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        grenOptimized.run("return 2");
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    grenOptimized.run("return 2");
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -165,16 +156,13 @@ public class GrengineVisualPerformanceTest {
         final File scriptFile = new File(scriptDir, "Return.groovy");
         TestUtil.setFileText(scriptFile, "return 2");
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        gren.run(scriptFile);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    gren.run(scriptFile);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -185,16 +173,13 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calls scriptFile.lastModified() only during the first run.");
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        grenOptimized.run(scriptFile);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    grenOptimized.run(scriptFile);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -208,16 +193,13 @@ public class GrengineVisualPerformanceTest {
         
         final URL scriptUrl = scriptFile.toURI().toURL();
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        gren.run(scriptUrl);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    gren.run(scriptUrl);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -231,16 +213,13 @@ public class GrengineVisualPerformanceTest {
 
         final Class<?> scriptClass = gren.load("return 2");
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        gren.run(gren.create(scriptClass));
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    gren.run(gren.create(scriptClass));
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));
@@ -254,16 +233,13 @@ public class GrengineVisualPerformanceTest {
 
         final Script script = gren.create(scriptClass);
         
-        runner = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i=0; i<N_INNER; i++) {
-                        gren.run(script);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        runner = () -> {
+            try {
+                for (int i=0; i<N_INNER; i++) {
+                    gren.run(script);
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         };
         printRunInfo(runForDuration(runner));

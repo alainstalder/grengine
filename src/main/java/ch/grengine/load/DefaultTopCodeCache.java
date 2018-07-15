@@ -137,7 +137,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         private final Map<Source,SingleSourceCode> cache;
         private State(ClassLoader parent) {
             this.parent = parent;
-            cache = new ConcurrentHashMap<Source,SingleSourceCode>();
+            cache = new ConcurrentHashMap<>();
         }
     }
     

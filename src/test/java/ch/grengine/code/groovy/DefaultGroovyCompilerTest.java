@@ -63,7 +63,7 @@ import static org.junit.Assert.fail;
 public class DefaultGroovyCompilerTest {
 
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testConstructDefaults() throws Exception {
@@ -637,14 +637,14 @@ public class DefaultGroovyCompilerTest {
     public volatile boolean failed;
 
     private static Map<String, Object> getDefaultArgs() {
-        Map<String, Object> args = new HashMap<String, Object>();
+        Map<String, Object> args = new HashMap<>();
         args.put("disableChecksums", false);
         args.put("autoDownload", true);
         return args;
     }
 
     private static Map<String, Object> getGuavaDependency() {
-        Map<String, Object> dependency = new HashMap<String, Object>();
+        Map<String, Object> dependency = new HashMap<>();
         dependency.put("module", "guava");
         dependency.put("version", "18.0");
         dependency.put("group", "com.google.guava");
@@ -652,7 +652,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     private static Map<String, Object> getDefaultMerged() {
-        Map<String, Object> merged = new HashMap<String, Object>();
+        Map<String, Object> merged = new HashMap<>();
         merged.putAll(getDefaultArgs());
         merged.putAll(getGuavaDependency());
         return merged;
@@ -806,21 +806,19 @@ public class DefaultGroovyCompilerTest {
 
             final int n = 50;
             failed = false;
-            List<Thread> threads = new LinkedList<Thread>();
+            List<Thread> threads = new LinkedList<>();
             for (int i = 0; i < n; i++) {
-                Thread thread = new Thread() {
-                    public void run() {
-                        try {
-                            final Map<String, Object> args = getDefaultArgs();
-                            final Map<String, Object> dependency = getGuavaDependency();
-                            args.put("classLoader", compileTimeLoader);
-                            engine.grab(args, dependency);
-                        } catch (Throwable t) {
-                            System.out.println("Thread failed: " + t);
-                            failed = true;
-                        }
+                Thread thread = new Thread(() -> {
+                    try {
+                        final Map<String, Object> args = getDefaultArgs();
+                        final Map<String, Object> dependency = getGuavaDependency();
+                        args.put("classLoader", compileTimeLoader);
+                        engine.grab(args, dependency);
+                    } catch (Throwable t) {
+                        System.out.println("Thread failed: " + t);
+                        failed = true;
                     }
-                };
+                });
                 threads.add(thread);
             }
 

@@ -133,7 +133,7 @@ public class SourceSetState {
     }
     
     private static Map<Source,Long> getLastModifiedMap(final Set<Source> sourceSet) {
-        Map<Source,Long> map = new HashMap<Source,Long>();
+        Map<Source,Long> map = new HashMap<>();
         for (Source source : sourceSet) {
             map.put(source, source.getLastModified());
         }

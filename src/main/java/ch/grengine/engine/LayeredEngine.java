@@ -70,10 +70,10 @@ public class LayeredEngine implements Engine {
     // can be garbage collected by the VM, since this is a WeakHashMap
     // (note that the map value is not used at all and does not matter
     // for garbage collection of map entries, only the map key does)
-    private final Map<Loader,EngineId> attachedLoaders = new WeakHashMap<Loader,EngineId>();
+    private final Map<Loader,EngineId> attachedLoaders = new WeakHashMap<>();
     // map of all detached loaders created by this engine,
     // only needed for closing classes
-    private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<Loader,EngineId>();
+    private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<>();
     
     private final Lock read;
     private final Lock write;
@@ -94,7 +94,7 @@ public class LayeredEngine implements Engine {
         } else {
             topCodeCache = null;
         }
-        LayeredClassLoader layeredClassLoader = newLayeredClassLoaderFromCodeLayers(new LinkedList<Code>());
+        LayeredClassLoader layeredClassLoader = newLayeredClassLoaderFromCodeLayers(new LinkedList<>());
         if (isWithTopCodeCache) {
             topCodeCache.setParent(layeredClassLoader);
         }
@@ -240,7 +240,7 @@ public class LayeredEngine implements Engine {
         
         write.lock();
         try {
-            Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<Loader,EngineId>(attachedLoaders);
+            Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<>(attachedLoaders);
             for (Loader attachedLoader : attachedLoadersNonWeak.keySet()) {
                 attachedLoader.setSourceClassLoader(engineId, newLayeredClassLoaderFromCodeLayers(codeLayers));
             }
@@ -265,7 +265,7 @@ public class LayeredEngine implements Engine {
     public void close() {
         write.lock();
         try {
-            Set<Loader> loaders = new HashSet<Loader>();
+            Set<Loader> loaders = new HashSet<>();
             loaders.addAll(attachedLoaders.keySet());
             loaders.addAll(detachedLoaders.keySet());
             for (Loader loader : loaders) {

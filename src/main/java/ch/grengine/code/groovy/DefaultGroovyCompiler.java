@@ -229,7 +229,7 @@ public class DefaultGroovyCompiler implements Compiler {
         }
         try {
             CompilationUnit cu = new CompilationUnit(config, null, groovyClassLoader);
-            Map<Source,SourceUnit> sourceUnitMap = new HashMap<Source,SourceUnit>();
+            Map<Source,SourceUnit> sourceUnitMap = new HashMap<>();
             Set<Source> sourceSet = sources.getSourceSet();
             for (Source source : sourceSet) {
                 SourceUnit su = addToCompilationUnit(cu, source, sources);
@@ -240,11 +240,11 @@ public class DefaultGroovyCompiler implements Compiler {
             int phase = (config.getTargetDirectory() == null) ? Phases.CLASS_GENERATION : Phases.OUTPUT;
             cu.compile(phase);
 
-            Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<Source,CompiledSourceInfo>();
+            Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<>();
             for (Entry<Source, SourceUnit> entry : sourceUnitMap.entrySet()) {
                 Source source = entry.getKey();
                 SourceUnit su = entry.getValue();
-                Set<String> classNames = new HashSet<String>();
+                Set<String> classNames = new HashSet<>();
                 List<ClassNode> nodes = su.getAST().getClasses();
                 for (ClassNode node : nodes) {
                     classNames.add(node.getName());
@@ -257,7 +257,7 @@ public class DefaultGroovyCompiler implements Compiler {
 
             @SuppressWarnings("unchecked")
             List<GroovyClass> groovyClasses = cu.getClasses();
-            Map<String, Bytecode> bytecodeMap = new HashMap<String,Bytecode>();
+            Map<String, Bytecode> bytecodeMap = new HashMap<>();
             for (GroovyClass groovyClass : groovyClasses) {
                 String name = groovyClass.getName();
                 bytecodeMap.put(name, new Bytecode(name, groovyClass.getBytes()));
@@ -609,9 +609,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public Object grab(final Map args) {
             synchronized(lock) {
-                if (args.get(CALLEE_DEPTH_KEY) == null) {
-                    args.put(CALLEE_DEPTH_KEY, defaultDepth + 1);
-                }
+                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth + 1);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -630,9 +628,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public Object grab(final Map args, final Map... dependencies) {
             synchronized(lock) {
-                if (args.get(CALLEE_DEPTH_KEY) == null) {
-                    args.put(CALLEE_DEPTH_KEY, defaultDepth);
-                }
+                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -658,9 +654,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public URI[] resolve(final Map args, final Map... dependencies) {
             synchronized(lock) {
-                if (args.get(CALLEE_DEPTH_KEY) == null) {
-                    args.put(CALLEE_DEPTH_KEY, defaultDepth);
-                }
+                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth);
                 return innerEngine.resolve(args, dependencies);
             }
         }

@@ -33,7 +33,7 @@ import static org.junit.Assert.fail;
 public class DefaultUrlSourceTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Test
     public void testConstructFromUrlPlusGetters() throws Exception {

@@ -44,17 +44,17 @@ public class DefaultSingleSourceCodeTest {
         
         Source m1 = new MockSource("id1");
         String name1 = "MainClassName1";
-        Set<String> names1 = new HashSet<String>();
+        Set<String> names1 = new HashSet<>();
         names1.add("Side1");
         names1.add("MainClassName1");
         CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
         
         String sourcesName = "sourcesName";
 
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(m1, i1);
         
-        Map<String,Bytecode> bytecodeMap = new HashMap<String,Bytecode>();
+        Map<String,Bytecode> bytecodeMap = new HashMap<>();
         String name1sub = name1 + "#Sub";
         bytecodeMap.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
         bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
@@ -131,7 +131,7 @@ public class DefaultSingleSourceCodeTest {
     @Test
     public void testConstructSourcesNameNull() throws Exception {
         try {
-            new DefaultSingleSourceCode(null, new HashMap<Source,CompiledSourceInfo>(), new HashMap<String,Bytecode>());
+            new DefaultSingleSourceCode(null, new HashMap<>(), new HashMap<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Sources name is null."));
@@ -141,7 +141,7 @@ public class DefaultSingleSourceCodeTest {
     @Test
     public void testConstructCompiledSourceInfoMapNull() throws Exception {
         try {
-            new DefaultSingleSourceCode("name", null, new HashMap<String,Bytecode>());
+            new DefaultSingleSourceCode("name", null, new HashMap<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Compiled source info map is null."));
@@ -151,7 +151,7 @@ public class DefaultSingleSourceCodeTest {
     @Test
     public void testConstructBytecodeMapNull() throws Exception {
         try {
-            new DefaultSingleSourceCode("name", new HashMap<Source,CompiledSourceInfo>(), null);
+            new DefaultSingleSourceCode("name", new HashMap<>(), null);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Bytecode map is null."));
@@ -161,8 +161,8 @@ public class DefaultSingleSourceCodeTest {
     @Test
     public void testConstructNotSingleSource() throws Exception {
         try {
-            new DefaultSingleSourceCode("name", new HashMap<Source,CompiledSourceInfo>(),
-                    new HashMap<String,Bytecode>());
+            new DefaultSingleSourceCode("name", new HashMap<>(),
+                    new HashMap<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Not a single source."));

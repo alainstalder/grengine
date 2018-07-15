@@ -90,7 +90,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Collection<String> texts) {
-        Set<Source> sources = new HashSet<Source>();
+        Set<Source> sources = new HashSet<>();
         for (String text : texts) {
             sources.add(sourceFactory.fromText(text));
         }
@@ -138,7 +138,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Map<String,String> texts) {
-        Set<Source> sources = new HashSet<Source>();
+        Set<Source> sources = new HashSet<>();
         for (Entry<String,String> entry : texts.entrySet()) {
             sources.add(sourceFactory.fromText(entry.getValue(), entry.getKey()));
         }
@@ -186,7 +186,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final Collection<File> files) {
-        Set<Source> sources = new HashSet<Source>();
+        Set<Source> sources = new HashSet<>();
         for (File file : files) {
             sources.add(sourceFactory.fromFile(file));
         }
@@ -249,7 +249,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final Collection<URL> urls) {
-        Set<Source> sources = new HashSet<Source>();
+        Set<Source> sources = new HashSet<>();
         for (URL url : urls) {
             sources.add(sourceFactory.fromUrl(url));
         }
@@ -282,7 +282,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> sourceToSourceSet(final Source source) {
-        Set<Source> sourceSet = new HashSet<Source>();
+        Set<Source> sourceSet = new HashSet<>();
         sourceSet.add(source);
         return sourceSet;
     }
@@ -297,9 +297,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> sourceCollectionToSourceSet(final Collection<Source> sourceCollection) {
-        Set<Source> sourceSet = new HashSet<Source>();
-        sourceSet.addAll(sourceCollection);
-        return sourceSet;
+        return new HashSet<>(sourceCollection);
     }
 
     /**
@@ -311,7 +309,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static Set<Source> sourceArrayToSourceSet(final Source... sourceArray) {
-        Set<Source> sourceSet = new HashSet<Source>();
+        Set<Source> sourceSet = new HashSet<>();
         Collections.addAll(sourceSet, sourceArray);
         return sourceSet;
     }

@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class RecordingClassReleaser implements ClassReleaser {
 
-    public Set<Class<?>> classes = new HashSet<Class<?>>();
+    public final Set<Class<?>> classes = new HashSet<>();
 
     public boolean throwAfterReleasing;
 

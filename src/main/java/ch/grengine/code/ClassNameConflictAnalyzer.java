@@ -52,15 +52,11 @@ public class ClassNameConflictAnalyzer {
         if (codeLayers == null) {
             throw new IllegalArgumentException("Code layers are null.");
         }
-        Map<String,List<Code>> origins = new HashMap<String,List<Code>>();
+        Map<String,List<Code>> origins = new HashMap<>();
         for (Code code : codeLayers) {
             Set<String> classNameSet = code.getClassNameSet();
             for (String className : classNameSet) {
-                List<Code> codeList = origins.get(className);
-                if (codeList == null) {
-                    codeList = new LinkedList<Code>();
-                    origins.put(className, codeList);
-                }
+                List<Code> codeList = origins.computeIfAbsent(className, k -> new LinkedList<>());
                 codeList.add(code);
             }
         }
@@ -84,7 +80,7 @@ public class ClassNameConflictAnalyzer {
             throw new IllegalArgumentException("Code layers are null.");
         }
         Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
-        Map<String,List<Code>> originsWithDuplicates = new HashMap<String,List<Code>>();
+        Map<String,List<Code>> originsWithDuplicates = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {
             String name = entry.getKey();
             List<Code> codeList = entry.getValue();
@@ -120,7 +116,7 @@ public class ClassNameConflictAnalyzer {
             throw new IllegalArgumentException("Code layers are null.");
         }
         Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
-        Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<String,List<Code>>();
+        Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {
             String name = entry.getKey();
             List<Code> codeList = entry.getValue();

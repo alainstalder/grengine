@@ -78,7 +78,7 @@ public class LayeredEngineConcurrencyTest {
         final int nCodeChanges = 5;
         final long delayBetweenCodeChangesMs = 500;
         final long miniDelayMs = 5;
-        final Map<Integer,Integer> totalMap = new HashMap<Integer,Integer>();
+        final Map<Integer,Integer> totalMap = new HashMap<>();
         
         
         System.out.println(info);
@@ -88,60 +88,58 @@ public class LayeredEngineConcurrencyTest {
         Thread[] threads = new Thread[nThreads+1];
         for (int i=0; i<nThreads+1; i++) {
             final int x = i;
-            threads[i] = new Thread() {
-                public void run() {
-                    try {
-                        for (int j = 1; j <= nCodeChanges; j++) {
-                            if (x == 0) {
-                                Thread.sleep(delayBetweenCodeChangesMs);
-                                s1.setText("return " + j);
-                                s1.setLastModified(j);
-                                Code code = new DefaultGroovyCompiler().compile(sources);
-                                List<Code> codeLayers = CodeUtil.codeArrayToList(code);
-                                engine.setCodeLayers(codeLayers);
-                                //System.out.println(j);
-                            } else {
-                                Loader attachedLoader = engine.newAttachedLoader();
-                                Map<Integer, Integer> rcMap = new TreeMap<Integer, Integer>();
-                                int rc = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
+            threads[i] = new Thread(() -> {
+                try {
+                    for (int j = 1; j <= nCodeChanges; j++) {
+                        if (x == 0) {
+                            Thread.sleep(delayBetweenCodeChangesMs);
+                            s1.setText("return " + j);
+                            s1.setLastModified(j);
+                            Code code1 = new DefaultGroovyCompiler().compile(sources);
+                            List<Code> codeLayers1 = CodeUtil.codeArrayToList(code1);
+                            engine.setCodeLayers(codeLayers1);
+                            //System.out.println(j);
+                        } else {
+                            Loader attachedLoader = engine.newAttachedLoader();
+                            Map<Integer, Integer> rcMap = new TreeMap<>();
+                            int rc = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
+                                    .newInstance()).run();
+                            int count = 1;
+                            do {
+                                int rc2 = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
                                         .newInstance()).run();
-                                int count = 1;
-                                do {
-                                    int rc2 = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
-                                            .newInstance()).run();
-                                    if (rc2 == rc) {
-                                        count++;
-                                    } else {
-                                        rc = rc2;
-                                        rcMap.put(rc - 1, count);
-                                        count = 1;
-                                        Thread.sleep(x * miniDelayMs);
-                                        if (rc == nCodeChanges) {
-                                            System.out.printf("Thread %2d %2d: %s%n", x, rcMap.size(),
-                                                    mapToString(nCodeChanges, rcMap, 8));
-                                            synchronized (totalMap) {
-                                                for (Entry<Integer, Integer> entry : rcMap.entrySet()) {
-                                                    int i = entry.getKey();
-                                                    int val = entry.getValue();
-                                                    Integer valOldInteger = totalMap.get(i);
-                                                    int valOld = (valOldInteger == null) ? 0 : valOldInteger;
-                                                    totalMap.put(i, valOld + val);
-                                                }
+                                if (rc2 == rc) {
+                                    count++;
+                                } else {
+                                    rc = rc2;
+                                    rcMap.put(rc - 1, count);
+                                    count = 1;
+                                    Thread.sleep(x * miniDelayMs);
+                                    if (rc == nCodeChanges) {
+                                        System.out.printf("Thread %2d %2d: %s%n", x, rcMap.size(),
+                                                mapToString(nCodeChanges, rcMap, 8));
+                                        synchronized (totalMap) {
+                                            for (Entry<Integer, Integer> entry : rcMap.entrySet()) {
+                                                int i1 = entry.getKey();
+                                                int val = entry.getValue();
+                                                Integer valOldInteger = totalMap.get(i1);
+                                                int valOld = (valOldInteger == null) ? 0 : valOldInteger;
+                                                totalMap.put(i1, valOld + val);
                                             }
-                                            return;
                                         }
-                                        Thread.sleep(x * miniDelayMs);
+                                        return;
                                     }
-                                } while (true);
-                            }
+                                    Thread.sleep(x * miniDelayMs);
+                                }
+                            } while (true);
                         }
-                    } catch (Exception e) {
-                        System.out.println("x=" + x + ": " + e);
-                        e.printStackTrace();
-                        setFailed(true);
                     }
+                } catch (Exception e) {
+                    System.out.println("x=" + x + ": " + e);
+                    e.printStackTrace();
+                    setFailed(true);
                 }
-            };
+            });
         }
         
         for (Thread t : threads) {

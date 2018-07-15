@@ -135,7 +135,7 @@ public class Grengine extends BaseGrengine {
         // initialize such that sources layers will be loaded at first update
         // further below, even if sources are immutable or latency is infinite
         int n = sourcesLayers.size();
-        lastModifiedList = new ArrayList<Long>(n);
+        lastModifiedList = new ArrayList<>(n);
         for (int i=0; i<n; i++) {
             lastModifiedList.add(-1L);
         }
@@ -641,7 +641,7 @@ public class Grengine extends BaseGrengine {
         // check layers for changes
         
         int n = sourcesLayers.size();
-        List<Long> lastModifiedListNew = new ArrayList<Long>(n);
+        List<Long> lastModifiedListNew = new ArrayList<>(n);
         for (Sources sources : sourcesLayers) {
             lastModifiedListNew.add(sources.getLastModified());
         }
@@ -921,7 +921,7 @@ public class Grengine extends BaseGrengine {
                     sourceFactory = new DefaultSourceFactory();
                 }
                 if (sourcesLayers == null) {
-                    sourcesLayers = new LinkedList<Sources>();
+                    sourcesLayers = new LinkedList<>();
                 }
                 if (latencyMs < 0) {
                     latencyMs = DEFAULT_LATENCY_MS;

@@ -19,7 +19,6 @@ package ch.grengine.sources;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.MockSource;
-import ch.grengine.source.Source;
 import ch.grengine.source.SourceUtil;
 
 import java.util.HashSet;
@@ -124,7 +123,7 @@ public class SourcesUtilTest {
     @Test
     public void testSourceSetToSourcesDefaultCompilerFactorySourceNameNull() {
         try {
-            SourcesUtil.sourceSetToSources(new HashSet<Source>(), null);
+            SourcesUtil.sourceSetToSources(new HashSet<>(), null);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Name is null."));
@@ -158,7 +157,7 @@ public class SourcesUtilTest {
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactorySourceNameNull() {
         try {
-            SourcesUtil.sourceSetToSources(new HashSet<Source>(), null, new DefaultGroovyCompilerFactory());
+            SourcesUtil.sourceSetToSources(new HashSet<>(), null, new DefaultGroovyCompilerFactory());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Name is null."));
@@ -168,7 +167,7 @@ public class SourcesUtilTest {
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactoryNull() {
         try {
-            SourcesUtil.sourceSetToSources(new HashSet<Source>(), "myName", null);
+            SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Compiler factory is null."));

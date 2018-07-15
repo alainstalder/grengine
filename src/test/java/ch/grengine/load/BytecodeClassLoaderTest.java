@@ -50,13 +50,13 @@ import static org.junit.Assert.fail;
 public class BytecodeClassLoaderTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Test
     public void testConstructAndGetters() throws Exception {
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         BytecodeClassLoader loader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
 
         assertThat(loader.getParent(), is(parent));
@@ -66,8 +66,8 @@ public class BytecodeClassLoaderTest {
     
     @Test
     public void testConstructParentNull() throws Exception {
-        Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         try {
             new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code);
             fail();
@@ -79,8 +79,8 @@ public class BytecodeClassLoaderTest {
     @Test
     public void testConstructLoadModeNull() throws Exception {
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code code = new DefaultCode("name", new HashMap<>(),
+                new HashMap<>());
         try {
             new BytecodeClassLoader(parent, null, code);
             fail();
@@ -563,12 +563,12 @@ public class BytecodeClassLoaderTest {
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         Code code = c.compile(sources);
         
-        Set<String> classNames1 = new HashSet<String>();
+        Set<String> classNames1 = new HashSet<>();
         classNames1.add("Class1");
         CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(s1, info);
-        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<String,Bytecode>();
+        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
         Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
         
         BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
@@ -609,12 +609,12 @@ public class BytecodeClassLoaderTest {
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         Code code = c.compile(sources);
         
-        Set<String> classNames1 = new HashSet<String>();
+        Set<String> classNames1 = new HashSet<>();
         classNames1.add("Class33NoBytecode");
         CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<Source,CompiledSourceInfo>();
+        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(s1, info);
-        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<String,Bytecode>();
+        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
         Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
         
         BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);

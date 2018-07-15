@@ -125,7 +125,7 @@ public class ClassNameConflictAnalyzerTest {
     @Test
     public void testDetermineClassOriginsWithDuplicateInParentParentNull() throws Exception {
         try {
-            ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(null, new LinkedList<Code>());
+            ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(null, new LinkedList<>());
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));

@@ -72,7 +72,7 @@ public class SourceSetStateTest {
         assertThat(s4.getLastModified() < System.currentTimeMillis(), is(true));
 
         // empty source set
-        Set<Source> setEmpty = new HashSet<Source>();
+        Set<Source> setEmpty = new HashSet<>();
         SourceSetState s5 = s4.update(setEmpty);
         Thread.sleep(30);
         assertThat(s5.getSourceSet(), is(setEmpty));
@@ -103,7 +103,7 @@ public class SourceSetStateTest {
     @Test
     public void testUpdateWithSourceSetNull() {
         try {
-            new SourceSetState(new HashSet<Source>()).update(null);
+            new SourceSetState(new HashSet<>()).update(null);
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("New source set is null."));

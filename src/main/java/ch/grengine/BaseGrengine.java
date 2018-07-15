@@ -776,7 +776,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Binding binding(final String key, final Object value) {
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put(key, value);
         return new Binding(map);
     }
@@ -794,7 +794,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2) {
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         return new Binding(map);
@@ -816,7 +816,7 @@ public abstract class BaseGrengine implements Closeable {
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
             final String key3, final Object value3) {
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);
@@ -841,7 +841,7 @@ public abstract class BaseGrengine implements Closeable {
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
             final String key3, final Object value3, final String key4, final Object value4) {
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);
@@ -879,7 +879,7 @@ public abstract class BaseGrengine implements Closeable {
         if (n % 2 != 0) {
             throw new IllegalArgumentException("Odd number of arguments.");
         }
-        Map<String,Object> map = new HashMap<String,Object>();
+        Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);

@@ -45,7 +45,7 @@ public class CodeUtil {
         if (codes == null) {
             throw new IllegalArgumentException("Code array is null.");
         }
-        return new LinkedList<Code>(Arrays.asList(codes));
+        return new LinkedList<>(Arrays.asList(codes));
     }
 
 }

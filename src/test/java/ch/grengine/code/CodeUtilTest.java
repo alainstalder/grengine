@@ -16,8 +16,6 @@
 
 package ch.grengine.code;
 
-import ch.grengine.source.Source;
-
 import java.util.HashMap;
 
 import org.junit.Rule;
@@ -41,10 +39,10 @@ public class CodeUtilTest {
 
     @Test
     public void testCodeArrayToList() {
-        Code c1 = new DefaultCode("code1", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
-        Code c2 = new DefaultCode("code2", new HashMap<Source,CompiledSourceInfo>(), 
-                new HashMap<String,Bytecode>());
+        Code c1 = new DefaultCode("code1", new HashMap<>(),
+                new HashMap<>());
+        Code c2 = new DefaultCode("code2", new HashMap<>(),
+                new HashMap<>());
         Code[] sArrayEmpty = new Code[0];
         Code[] sArrayAll = new Code[] { c1, c2 };
 

@@ -39,7 +39,7 @@ import static org.junit.Assert.fail;
 public class SourceUtilTest {
     
     @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
     
     @Test
     public void testConstructor() {
