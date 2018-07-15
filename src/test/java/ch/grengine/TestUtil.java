@@ -21,14 +21,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,19 +38,7 @@ public class TestUtil {
         @Override public File getCanonicalFile() throws IOException { throw new IOException(); }
         @Override public File getAbsoluteFile() { return this; }
     }
-    
-    public static <T> Set<T> argsToSet(T... args) {
-        Set<T> set = new HashSet<T>();
-        Collections.addAll(set, args);
-        return set;
-    }
-    
-    public static <T> List<T> argsToList(T... args) {
-        List<T> list = new LinkedList<T>();
-        Collections.addAll(list, args);
-        return list;
-    }
-    
+
     @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> argsToMap(Object... args) {
         assertThat(args.length % 2 == 0, is(true));

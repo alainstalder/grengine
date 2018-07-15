@@ -27,7 +27,9 @@ import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,7 +82,7 @@ public class DirBasedSourcesTest {
     public void testConstructAllDefined() throws Exception {
         File dir = tempFolder.getRoot();
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        Set<String> scriptExtensions = TestUtil.argsToSet("groovy", "gradle");
+        Set<String> scriptExtensions = new HashSet<String>(Arrays.asList("groovy", "gradle"));
         builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions);
         builder.setScriptExtensions("groovy", "gradle");
         builder.setName("dirBased");

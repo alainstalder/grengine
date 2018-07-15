@@ -21,6 +21,7 @@ import ch.grengine.TestUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,7 @@ public class SourceUtilTest {
     public void testTextsToSourceSetNoNamesWithFactoryWithCollection() {
         String text1 = "println 1";
         String text2 = "println 2";
-        List<String> texts = TestUtil.argsToList(text1, text2);
+        List<String> texts = Arrays.asList(text1, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
@@ -70,7 +71,7 @@ public class SourceUtilTest {
     public void testTextsToSourceSetNoNamesNoFactoryWithCollection() {
         String text1 = "println 1";
         String text2 = "println 2";
-        List<String> texts = TestUtil.argsToList(text1, text2);
+        List<String> texts = Arrays.asList(text1, text2);
         Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
@@ -118,7 +119,7 @@ public class SourceUtilTest {
     public void testFilesToSourceSetWithFactoryWithCollection() {
         File file1 = new File("Script1.groovy");
         File file2 = new File("Script2.groovy");
-        List<File> files = TestUtil.argsToList(file1, file2);
+        List<File> files = Arrays.asList(file1, file2);
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), files);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
@@ -139,7 +140,7 @@ public class SourceUtilTest {
     public void testFilesToSourceSetNoFactoryWithCollection() {
         File file1 = new File("Script1.groovy");
         File file2 = new File("Script2.groovy");
-        List<File> files = TestUtil.argsToList(file1, file2);
+        List<File> files = Arrays.asList(file1, file2);
         Set<Source> sourceSet = SourceUtil.filesToSourceSet(files);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultFileSource(file1)), is(true));
@@ -161,7 +162,7 @@ public class SourceUtilTest {
     public void testUrlsToSourceSetWithFactoryWithCollection() throws Exception {
         URL url1 = new URL("http://foo.bar/Script1.groovy");
         URL url2 = new URL("http://foo.bar/Script2.groovy");
-        List<URL> urls = TestUtil.argsToList(url1, url2);
+        List<URL> urls = Arrays.asList(url1, url2);
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), urls);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
@@ -182,7 +183,7 @@ public class SourceUtilTest {
     public void testUrlsToSourceSetNoFactoryWithCollection() throws Exception {
         URL url1 = new URL("http://foo.bar/Script1.groovy");
         URL url2 = new URL("http://foo.bar/Script2.groovy");
-        List<URL> urls = TestUtil.argsToList(url1, url2);
+        List<URL> urls = Arrays.asList(url1, url2);
         Set<Source> sourceSet = SourceUtil.urlsToSourceSet(urls);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(new DefaultUrlSource(url1)), is(true));
@@ -212,7 +213,7 @@ public class SourceUtilTest {
     public void testSourceCollectionToSourceSet() {
         Source source1 = new DefaultTextSource("println 1");
         Source source2 = new DefaultTextSource("println 2");
-        List<Source> sourceList = TestUtil.argsToList(source1, source2);
+        List<Source> sourceList = Arrays.asList(source1, source2);
         Set<Source> sourceSet = SourceUtil.sourceCollectionToSourceSet(sourceList);
         assertThat(sourceSet.size(), is(2));
         assertThat(sourceSet.contains(source1), is(true));

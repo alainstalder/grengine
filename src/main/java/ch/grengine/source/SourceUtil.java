@@ -477,11 +477,11 @@ public class SourceUtil {
     private static String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder(32);
         int digit;
-        for (int i=0; i<bytes.length; i++) {
-            digit = (bytes[i] >> 4) & 0xF;
-            builder.append(digit < 10 ? (char)('0' + digit) : (char)('A' - 10 + digit));
-            digit = (bytes[i] & 0xF);
-            builder.append(digit < 10 ? (char)('0' + digit) : (char)('A' - 10 + digit));
+        for (byte b : bytes) {
+            digit = (b >> 4) & 0xF;
+            builder.append(digit < 10 ? (char) ('0' + digit) : (char) ('A' - 10 + digit));
+            digit = (b & 0xF);
+            builder.append(digit < 10 ? (char) ('0' + digit) : (char) ('A' - 10 + digit));
         }
         return builder.toString();
     }
