@@ -17,6 +17,7 @@
 package ch.grengine.code;
 
 
+import static java.util.Objects.requireNonNull;
 
 /**
  * Bytecode with class name.
@@ -36,16 +37,14 @@ public class Bytecode {
      *
      * @param className class name
      * @param bytes bytecode bytes
-     * 
+     *
+     * @throws NullPointerException if any argument is null
+     *
      * @since 1.0
      */
     public Bytecode(final String className, final byte[] bytes) {
-        if (className == null) {
-            throw new IllegalArgumentException("Class name is null.");
-        }
-        if (bytes == null) {
-            throw new IllegalArgumentException("Bytes are null.");
-        }
+        requireNonNull(className, "Class name is null.");
+        requireNonNull(bytes, "Bytes are null.");
         this.className = className;
         this.bytes = bytes;
     }

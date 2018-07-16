@@ -53,7 +53,7 @@ public class DefaultUrlSourceTest {
         try {
             new DefaultUrlSource(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("URL is null."));
         }
     }

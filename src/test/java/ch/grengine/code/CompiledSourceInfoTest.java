@@ -57,7 +57,7 @@ public class CompiledSourceInfoTest {
         try {
             new CompiledSourceInfo(null, "", new HashSet<>(), 0);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source is null."));
         }
     }
@@ -67,7 +67,7 @@ public class CompiledSourceInfoTest {
         try {
             new CompiledSourceInfo(new MockSource("id1"), null, new HashSet<>(), 0);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Main class name is null."));
         }
     }
@@ -77,7 +77,7 @@ public class CompiledSourceInfoTest {
         try {
             new CompiledSourceInfo(new MockSource("id1"), "", null, 0);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Class names are null."));
         }
     }

@@ -111,7 +111,7 @@ public class CompositeSourcesTest {
         try {
             new CompositeSources.Builder(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Sources collection is null."));
         }
     }

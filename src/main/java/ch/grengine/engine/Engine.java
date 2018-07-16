@@ -140,7 +140,7 @@ public interface Engine extends Closeable {
      * 
      * @throws ClassNameConflictException optionally if the same class name occurs in
      *     different code layers or would already be available from a parent class loader
-     * @throws IllegalArgumentException if code layers are null
+     * @throws NullPointerException if code layers are null
      * 
      * @since 1.0
      */
@@ -157,7 +157,7 @@ public interface Engine extends Closeable {
      * @throws ClassNameConflictException optionally if the same class name resulted from
      *     compiling different sources layers or would already be available
      *     from a parent class loader
-     * @throws IllegalArgumentException if sources layers are null
+     * @throws NullPointerException if sources layers are null
      * 
      * @since 1.0
      */
@@ -187,7 +187,8 @@ public interface Engine extends Closeable {
      * @param loader loader
      *
      * @return class loader
-     * @throws IllegalArgumentException if the loader is null or does not match the engine
+     * @throws NullPointerException if the loader is null
+     * @throws IllegalArgumentException if the loader does not match the engine
      *
      * @since 1.3
      */

@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Sources based on a directory with script files.
@@ -193,14 +195,12 @@ public class DirBasedSources extends BaseSources {
          *
          * @param dir script file directory
          *
-         * @throws IllegalArgumentException if the directory is null
+         * @throws NullPointerException if the directory is null
          * 
          * @since 1.0
          */
         public Builder(final File dir) {
-            if (dir == null) {
-                throw new IllegalArgumentException("Dir is null.");
-            }
+            requireNonNull(dir, "Dir is null.");
             this.dir = SourceUtil.toCanonicalOrAbsoluteFile(dir);
             isCommitted = false;
         }

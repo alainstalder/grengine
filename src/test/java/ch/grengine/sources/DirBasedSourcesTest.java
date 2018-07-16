@@ -120,7 +120,7 @@ public class DirBasedSourcesTest {
         try {
             new DirBasedSources.Builder(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Dir is null."));
         }
     }

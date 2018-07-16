@@ -18,6 +18,8 @@ package ch.grengine.source;
 
 import java.io.File;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * File-based script source, default implementation of the {@link FileSource} interface.
@@ -42,14 +44,12 @@ public class DefaultFileSource extends BaseSource implements FileSource {
      *
      * @param file script file
      * 
-     * @throws IllegalArgumentException if file is null
+     * @throws NullPointerException if file is null
      * 
      * @since 1.0
      */
     public DefaultFileSource(final File file) {
-        if (file == null) {
-            throw new IllegalArgumentException("File is null.");
-        }
+        requireNonNull(file, "File is null.");
         this.file = SourceUtil.toCanonicalOrAbsoluteFile(file);
         id = this.file.getPath();
     }

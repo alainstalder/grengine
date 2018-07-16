@@ -60,7 +60,7 @@ public class DefaultTextSourceTest {
         try {
             new DefaultTextSource(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Text is null."));
         }
     }
@@ -70,7 +70,7 @@ public class DefaultTextSourceTest {
         try {
             new DefaultTextSource(null, "name");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Text is null."));
         }
     }
@@ -80,7 +80,7 @@ public class DefaultTextSourceTest {
         try {
             new DefaultTextSource("println 33", null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Desired class name is null."));
         }
     }

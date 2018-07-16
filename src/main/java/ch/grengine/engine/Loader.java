@@ -22,6 +22,8 @@ import ch.grengine.load.SourceClassLoader;
 
 import java.io.Closeable;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Wrapper for a {@link SourceClassLoader} that can only be used
  * by the {@link Engine} that created it.
@@ -47,7 +49,7 @@ public class Loader implements Closeable {
      * @param isAttached whether the loader is attached to the engine or not
      * @param sourceClassLoader the {@link SourceClassLoader} to use for loading classes
      * 
-     * @throws IllegalArgumentException if any of the arguments is null
+     * @throws NullPointerException if any of the arguments is null
      * 
      * @since 1.0
      */
@@ -65,18 +67,14 @@ public class Loader implements Closeable {
      * @param classReleaser the class releaser
      * @param sourceClassLoader the {@link SourceClassLoader} to use for loading classes
      *
-     * @throws IllegalArgumentException if any of the arguments is null
+     * @throws NullPointerException if any of the arguments is null
      *
      * @since 1.1
      */
     public Loader(final EngineId engineId, final long number, final boolean isAttached,
             final ClassReleaser classReleaser, final SourceClassLoader sourceClassLoader) {
-        if (engineId == null) {
-            throw new IllegalArgumentException("Engine ID is null.");
-        }
-        if (sourceClassLoader == null) {
-            throw new IllegalArgumentException("Source class loader is null.");
-        }
+        requireNonNull(engineId, "Engine ID is null.");
+        requireNonNull(sourceClassLoader, "Source class loader is null.");
         this.engineId = engineId;
         this.number = number;
         this.isAttached = isAttached;

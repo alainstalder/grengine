@@ -99,7 +99,7 @@ public class LoaderTest {
         BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
         try {
             new Loader(null, 0, false, classLoader);
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Engine ID is null."));
         }
     }
@@ -108,7 +108,7 @@ public class LoaderTest {
     public void testConstructSourceClassLoaderNull() throws Exception {
         try {
             new Loader(new EngineId(), 0, false, null);
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source class loader is null."));
         }
     }

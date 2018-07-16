@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Sources based on a collection of {@link Sources}.
@@ -109,14 +111,12 @@ public class CompositeSources extends BaseSources {
          *
          * @param sourcesCollection collection of sources
          * 
-         * @throws IllegalArgumentException if the sources collection is null
+         * @throws NullPointerException if the sources collection is null
          * 
          * @since 1.0
          */
         public Builder(final Collection<Sources> sourcesCollection) {
-            if (sourcesCollection == null) {
-                throw new IllegalArgumentException("Sources collection is null.");
-            }
+            requireNonNull(sourcesCollection, "Sources collection is null.");
             this.sourcesCollection = sourcesCollection;
             isCommitted = false;
         }

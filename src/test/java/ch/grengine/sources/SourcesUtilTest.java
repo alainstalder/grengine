@@ -60,7 +60,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceToSources(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source is null."));
         }
     }
@@ -81,7 +81,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source is null."));
         }
     }
@@ -91,7 +91,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceToSources(new MockSource("id1"), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }
@@ -115,7 +115,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceSetToSources(null, "myName");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source set is null."));
         }
     }
@@ -125,7 +125,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceSetToSources(new HashSet<>(), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Name is null."));
         }
     }
@@ -149,7 +149,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceSetToSources(null, "myName", new DefaultGroovyCompilerFactory());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source set is null."));
         }
     }
@@ -159,7 +159,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceSetToSources(new HashSet<>(), null, new DefaultGroovyCompilerFactory());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Name is null."));
         }
     }
@@ -169,7 +169,7 @@ public class SourcesUtilTest {
         try {
             SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }

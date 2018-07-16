@@ -23,6 +23,8 @@ import ch.grengine.source.Source;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Sources based on a fixed set of {@link Source}.
@@ -97,14 +99,12 @@ public class FixedSetSources extends BaseSources {
          *
          * @param sourceSet fixed source set
          * 
-         * @throws IllegalArgumentException if the source set is null
+         * @throws NullPointerException if the source set is null
          * 
          * @since 1.0
          */
         public Builder(final Set<Source> sourceSet) {
-            if (sourceSet == null) {
-                throw new IllegalArgumentException("Source set is null.");
-            }            
+            requireNonNull(sourceSet, "Source set is null.");
             this.sourceSet = sourceSet;
             isCommitted = false;
         }

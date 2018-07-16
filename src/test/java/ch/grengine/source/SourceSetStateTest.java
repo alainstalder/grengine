@@ -95,7 +95,7 @@ public class SourceSetStateTest {
         try {
             new SourceSetState(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source set is null."));
         }
     }
@@ -105,7 +105,7 @@ public class SourceSetStateTest {
         try {
             new SourceSetState(new HashSet<>()).update(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("New source set is null."));
         }
     }

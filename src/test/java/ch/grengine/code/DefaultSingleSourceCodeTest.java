@@ -133,7 +133,7 @@ public class DefaultSingleSourceCodeTest {
         try {
             new DefaultSingleSourceCode(null, new HashMap<>(), new HashMap<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Sources name is null."));
         }
     }
@@ -143,7 +143,7 @@ public class DefaultSingleSourceCodeTest {
         try {
             new DefaultSingleSourceCode("name", null, new HashMap<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiled source info map is null."));
         }
     }
@@ -153,7 +153,7 @@ public class DefaultSingleSourceCodeTest {
         try {
             new DefaultSingleSourceCode("name", new HashMap<>(), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Bytecode map is null."));
         }
     }

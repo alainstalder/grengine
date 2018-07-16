@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Default implementation of the {@link SourceFactory} interface.
@@ -151,9 +153,7 @@ public class DefaultSourceFactory implements SourceFactory {
         private final String text;
         
         public SourceIdTrackingTextSource(final String text) {
-            if (text == null) {
-                throw new IllegalArgumentException("Text is null.");
-            }
+            requireNonNull(text, "Text is null.");
             id = textSourceIdTrackingMap.get(text);
             if (id == null) {
                 id = "/groovy/script/Script" + SourceUtil.md5(text);
@@ -163,12 +163,8 @@ public class DefaultSourceFactory implements SourceFactory {
         }
 
         public SourceIdTrackingTextSource(final String text, final String desiredClassName) {
-            if (text == null) {
-                throw new IllegalArgumentException("Text is null.");
-            }
-            if (desiredClassName == null) {
-                throw new IllegalArgumentException("Desired class name is null.");
-            }
+            requireNonNull(text, "Text is null.");
+            requireNonNull(desiredClassName, "Desired class name is null.");
             id = textSourceIdTrackingMap.get(text);
             if (id == null) {
                 id = "/groovy/script/Script" + SourceUtil.md5(text);

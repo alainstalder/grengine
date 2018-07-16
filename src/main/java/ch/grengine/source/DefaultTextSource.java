@@ -17,6 +17,8 @@
 package ch.grengine.source;
 
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Text-based script source, default implementation of the {@link TextSource} interface.
  * <p>
@@ -49,14 +51,12 @@ public class DefaultTextSource extends BaseSource implements TextSource {
      *
      * @param text script text
      *
-     * @throws IllegalArgumentException if text is null
+     * @throws NullPointerException if text is null
      * 
      * @since 1.0
      */
     public DefaultTextSource(final String text) {
-        if (text == null) {
-            throw new IllegalArgumentException("Text is null.");
-        }
+        requireNonNull(text, "Text is null.");
         id = "/groovy/script/Script" + SourceUtil.md5(text);
         this.text = text;
     }
@@ -70,17 +70,13 @@ public class DefaultTextSource extends BaseSource implements TextSource {
      * @param text script text
      * @param desiredClassName desired class name
      *
-     * @throws IllegalArgumentException if text or desired class name is null
+     * @throws NullPointerException if text or desired class name is null
      * 
      * @since 1.0
      */
     public DefaultTextSource(final String text, final String desiredClassName) {
-        if (text == null) {
-            throw new IllegalArgumentException("Text is null.");
-        }
-        if (desiredClassName == null) {
-            throw new IllegalArgumentException("Desired class name is null.");
-        }
+        requireNonNull(text, "Text is null.");
+        requireNonNull(desiredClassName, "Desired class name is null.");
         id = "/groovy/script/Script" + SourceUtil.md5(text) + "/" + desiredClassName;
         this.text = text;
     }

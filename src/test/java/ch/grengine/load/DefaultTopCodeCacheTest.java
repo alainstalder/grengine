@@ -85,7 +85,7 @@ public class DefaultTopCodeCacheTest {
         try {
             c.setParent(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }

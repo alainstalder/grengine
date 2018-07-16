@@ -900,7 +900,7 @@ public class GrengineTest {
         try {
             new Grengine((CompilerConfiguration)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -910,7 +910,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -920,7 +920,7 @@ public class GrengineTest {
         try {
             new Grengine((File)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Directory is null."));
         }
     }
@@ -930,7 +930,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new File("."));
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -940,7 +940,7 @@ public class GrengineTest {
         try {
             new Grengine((CompilerConfiguration)null, new File("."));
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -950,7 +950,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new CompilerConfiguration(), new File("."));
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -960,7 +960,7 @@ public class GrengineTest {
         try {
             new Grengine((File)null, DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Directory is null."));
         }
     }
@@ -970,7 +970,7 @@ public class GrengineTest {
         try {
             new Grengine(new File("."), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Dir mode is null."));
         }
     }
@@ -980,7 +980,7 @@ public class GrengineTest {
         try {
             new Grengine((CompilerConfiguration)null, new File("."), DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -990,7 +990,7 @@ public class GrengineTest {
         try {
             new Grengine(new CompilerConfiguration(), (File)null, DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Directory is null."));
         }
     }
@@ -1000,7 +1000,7 @@ public class GrengineTest {
         try {
             new Grengine(new CompilerConfiguration(), new File("."), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Dir mode is null."));
         }
     }
@@ -1010,7 +1010,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new File("."), DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -1020,7 +1020,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), (File)null, DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Directory is null."));
         }
     }
@@ -1030,7 +1030,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), new File("."), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Dir mode is null."));
         }
     }
@@ -1040,7 +1040,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new CompilerConfiguration(), new File("."), DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -1051,7 +1051,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new File("."), DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -1061,7 +1061,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), (File)null, DirMode.NO_SUBDIRS);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Directory is null."));
         }
     }
@@ -1071,7 +1071,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), new File("."), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Dir mode is null."));
         }
     }
@@ -1081,7 +1081,7 @@ public class GrengineTest {
         try {
             new Grengine((Collection<URL>)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("URL collection is null."));
         }
     }
@@ -1091,7 +1091,7 @@ public class GrengineTest {
         try {
             new Grengine((CompilerConfiguration)null, new LinkedList<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -1101,7 +1101,7 @@ public class GrengineTest {
         try {
             new Grengine(new CompilerConfiguration(), (Collection<URL>)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("URL collection is null."));
         }
     }
@@ -1111,7 +1111,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new LinkedList<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -1121,7 +1121,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), (Collection<URL>)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("URL collection is null."));
         }
     }
@@ -1131,7 +1131,7 @@ public class GrengineTest {
         try {
             new Grengine((ClassLoader)null, new CompilerConfiguration(), new LinkedList<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -1141,7 +1141,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), (CompilerConfiguration)null, new LinkedList<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -1151,7 +1151,7 @@ public class GrengineTest {
         try {
             new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), (Collection<URL>)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("URL collection is null."));
         }
     }
@@ -1228,7 +1228,7 @@ public class GrengineTest {
         try {
             new Grengine().asClassLoader(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Loader is null."));
         }
     }

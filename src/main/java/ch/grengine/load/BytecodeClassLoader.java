@@ -18,7 +18,6 @@ package ch.grengine.load;
 
 import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
-import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 
@@ -27,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -56,21 +57,14 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * @param loadMode load mode
      * @param code code with bytecode for one or more classes
      * 
-     * @throws IllegalArgumentException if any of the arguments is null
+     * @throws NullPointerException if any of the arguments is null
      * 
      * @since 1.0
      */
     public BytecodeClassLoader(final ClassLoader parent, final LoadMode loadMode, final Code code) {
-        super(parent);
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent class loader is null.");
-        }
-        if (loadMode == null) {
-            throw new IllegalArgumentException("Load mode is null.");
-        }
-        if (code == null) {
-            throw new IllegalArgumentException("Code is null.");
-        }
+        super(requireNonNull(parent, "Parent class loader is null."));
+        requireNonNull(loadMode, "Load mode is null.");
+        requireNonNull(code, "Code is null.");
         this.loadMode = loadMode;
         this.code = code;
     }

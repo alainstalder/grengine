@@ -22,6 +22,8 @@ import ch.grengine.sources.Sources;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Default implementation of {@link SingleSourceCode} with all bytecode in memory.
@@ -48,26 +50,20 @@ public class DefaultSingleSourceCode implements SingleSourceCode {
      * @param sourcesName the name of the originating {@link Sources} instance
      * @param compiledSourceInfoMap the map of originating {@link Source} to {@link CompiledSourceInfo}
      * @param bytecodeMap the map of class name to {@link Bytecode}
-     * 
-     * @throws IllegalArgumentException if any argument is null or not for a single source
-     * 
+     *
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if not for a single source
+     *
      * @since 1.0
      */
     public DefaultSingleSourceCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfoMap,
             final Map<String,Bytecode> bytecodeMap) {
-        if (sourcesName == null) {
-            throw new IllegalArgumentException("Sources name is null.");
-        }
-        if (compiledSourceInfoMap == null) {
-            throw new IllegalArgumentException("Compiled source info map is null.");
-        }
-        if (bytecodeMap == null) {
-            throw new IllegalArgumentException("Bytecode map is null.");
-        }
+        requireNonNull(sourcesName, "Sources name is null.");
+        requireNonNull(compiledSourceInfoMap, "Compiled source info map is null.");
+        requireNonNull(bytecodeMap, "Bytecode map is null.");
         if (compiledSourceInfoMap.size() != 1) {
             throw new IllegalArgumentException("Not a single source.");
         }
-
         this.sourcesName = sourcesName;
         sourceSet = compiledSourceInfoMap.keySet();
         source = sourceSet.iterator().next();

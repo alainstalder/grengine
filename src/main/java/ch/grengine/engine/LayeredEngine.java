@@ -19,7 +19,6 @@ package ch.grengine.engine;
 import ch.grengine.code.ClassNameConflictAnalyzer;
 import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
-import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.load.ClassReleaser;
 import ch.grengine.load.DefaultClassReleaser;
@@ -42,6 +41,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -284,9 +285,7 @@ public class LayeredEngine implements Engine {
 
         private LoaderBasedClassLoader(final Loader loader) {
             super(builder.getParent());
-            if (loader == null) {
-                throw new IllegalArgumentException("Loader is null.");
-            }
+            requireNonNull(loader, "Loader is null.");
             // verify that engine ID matches
             loader.getSourceClassLoader(engineId);
             this.loader = loader;

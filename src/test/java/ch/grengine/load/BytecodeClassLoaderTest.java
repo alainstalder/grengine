@@ -71,7 +71,7 @@ public class BytecodeClassLoaderTest {
         try {
             new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -84,7 +84,7 @@ public class BytecodeClassLoaderTest {
         try {
             new BytecodeClassLoader(parent, null, code);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Load mode is null."));
         }
     }
@@ -95,7 +95,7 @@ public class BytecodeClassLoaderTest {
         try {
             new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Code is null."));
         }
     }

@@ -21,6 +21,8 @@ import ch.grengine.source.Source;
 import java.util.Date;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Information about compiled source.
@@ -47,21 +49,16 @@ public class CompiledSourceInfo {
      * @param mainClassName the main class name
      * @param classNames all class names
      * @param lastModifiedAtCompileTime the last modified at compile time
-     * @throws IllegalArgumentException if source or main class name are null
+     *
+     * @throws NullPointerException if source or main class name are null
      * 
      * @since 1.0
      */
     public CompiledSourceInfo(final Source source, final String mainClassName, 
             final Set<String> classNames, final long lastModifiedAtCompileTime) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source is null.");
-        }
-        if (mainClassName == null) {
-            throw new IllegalArgumentException("Main class name is null.");
-        }
-        if (classNames == null) {
-            throw new IllegalArgumentException("Class names are null.");
-        }
+        requireNonNull(source, "Source is null.");
+        requireNonNull(mainClassName, "Main class name is null.");
+        requireNonNull(classNames, "Class names are null.");
         this.source = source;
         this.mainClassName = mainClassName;
         this.classNames = classNames;

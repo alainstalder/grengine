@@ -32,7 +32,6 @@ import ch.grengine.sources.Sources;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,6 +51,8 @@ import org.codehaus.groovy.control.Phases;
 import org.codehaus.groovy.control.SourceUnit;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.tools.GroovyClass;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -99,15 +100,14 @@ public class DefaultGroovyCompiler implements Compiler {
      *
      * @param parent parent class loader
      *
-     * @throws IllegalArgumentException if the parent class loader is null
+     * @throws NullPointerException if the parent class loader is null
      * 
      * @since 1.0
      */
     public DefaultGroovyCompiler(final ClassLoader parent) {
-        this(new Builder().setParent(parent));
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent class loader is null.");
-        }
+        this(new Builder()
+                .setParent(requireNonNull(parent, "Parent class loader is null."))
+        );
     }
     
     /**
@@ -116,18 +116,15 @@ public class DefaultGroovyCompiler implements Compiler {
      * @param parent parent class loader
      * @param config compiler configuration
      *
-     * @throws IllegalArgumentException if the parent class loader or the compiler configuration is null
+     * @throws NullPointerException if the parent class loader or the compiler configuration is null
      * 
      * @since 1.0
      */
     public DefaultGroovyCompiler(final ClassLoader parent, final CompilerConfiguration config) {
-        this(new Builder().setParent(parent).setCompilerConfiguration(config));
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent class loader is null.");
-        }
-        if (config == null) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
-        }
+        this(new Builder()
+                .setParent(requireNonNull(parent, "Parent class loader is null."))
+                .setCompilerConfiguration(requireNonNull(config, "Compiler configuration is null."))
+        );
     }
 
     /**
@@ -142,15 +139,13 @@ public class DefaultGroovyCompiler implements Compiler {
      *                      the given compiler configuration
      *
      * @return modified compiler configuration, same instance as argument
-     * @throws IllegalArgumentException if the compiler configuration is null
+     * @throws NullPointerException if the compiler configuration is null
      *
      * @since 1.2
      */
     public static CompilerConfiguration withGrape(final CompilerConfiguration config,
             final GroovyClassLoader runtimeLoader) {
-        if (config == null) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
-        }
+        requireNonNull(config, "Compiler configuration is null.");
         GrapeCompilationCustomizer.enableGrape(config, runtimeLoader);
         return config;
     }
@@ -185,12 +180,12 @@ public class DefaultGroovyCompiler implements Compiler {
      *
      * @param lock the lock to use
      *
+     * @throws NullPointerException if the lock is null
+     *
      * @since 1.2
      */
     public static void enableGrapeSupport(Object lock) {
-        if (lock == null) {
-            throw new IllegalArgumentException("Lock is null.");
-        }
+        requireNonNull(lock, "Lock is null.");
         GrengineGrapeEngine.wrap(lock);
     }
 
@@ -219,15 +214,13 @@ public class DefaultGroovyCompiler implements Compiler {
      *
      * @return code
      * @throws CompileException if compilation failed
-     * @throws IllegalArgumentException if sources are null
+     * @throws NullPointerException if sources are null
      * 
      * @since 1.0
      */
     @Override
     public Code compile(final Sources sources) {
-        if (sources == null) {
-            throw new IllegalArgumentException("Sources are null.");
-        }
+        requireNonNull(sources, "Sources are null.");
         try {
             CompilationUnit cu = new CompilationUnit(config, null, groovyClassLoader);
             Map<Source,SourceUnit> sourceUnitMap = sources.getSourceSet().stream()

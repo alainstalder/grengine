@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Helper class for tracking updates of a set of {@link Source}.
@@ -49,14 +51,12 @@ public class SourceSetState {
      *
      * @param sourceSet source set
      *
-     * @throws IllegalArgumentException if the source set is null
+     * @throws NullPointerException if the source set is null
      * 
      * @since 1.0
      */
     public SourceSetState(final Set<Source> sourceSet) {
-        if (sourceSet == null) {
-            throw new IllegalArgumentException("Source set is null.");
-        }
+        requireNonNull(sourceSet, "Source set is null.");
         this.sourceSet = sourceSet;
         this.lastModifiedMap = getLastModifiedMap(sourceSet);
         long now = System.currentTimeMillis();
@@ -103,17 +103,13 @@ public class SourceSetState {
      * @param sourceSetNew source set
      * 
      * @return new instance
-     * @throws IllegalArgumentException if the new source set is null
+     * @throws NullPointerException if the new source set is null
      * 
      * @since 1.0
      */
     public SourceSetState update(final Set<Source> sourceSetNew) {
-        if (sourceSetNew == null) {
-            throw new IllegalArgumentException("New source set is null.");
-        }
-        
+        requireNonNull(sourceSetNew, "New source set is null.");
         Map<Source,Long> lastModifiedMapNew = getLastModifiedMap(sourceSetNew);
-
         boolean hasChanged = true;
         if (sourceSetNew.equals(sourceSet)) {
             hasChanged = sourceSetNew.stream()

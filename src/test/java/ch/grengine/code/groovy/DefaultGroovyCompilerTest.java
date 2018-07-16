@@ -134,7 +134,7 @@ public class DefaultGroovyCompilerTest {
         try {
             new DefaultGroovyCompiler((ClassLoader) null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -144,7 +144,7 @@ public class DefaultGroovyCompilerTest {
         try {
             new DefaultGroovyCompiler(null, new CompilerConfiguration());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -154,7 +154,7 @@ public class DefaultGroovyCompilerTest {
         try {
             new DefaultGroovyCompiler(Thread.currentThread().getContextClassLoader(), null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -299,7 +299,7 @@ public class DefaultGroovyCompilerTest {
         try {
             new DefaultGroovyCompiler().compile(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Sources are null."));
         }
     }
@@ -455,7 +455,7 @@ public class DefaultGroovyCompilerTest {
         try {
             DefaultGroovyCompiler.withGrape((CompilerConfiguration) null, loader);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }
@@ -604,7 +604,7 @@ public class DefaultGroovyCompilerTest {
             try {
                 DefaultGroovyCompiler.enableGrapeSupport(null);
                 fail();
-            } catch (IllegalArgumentException e) {
+            } catch (NullPointerException e) {
                 assertThat(e.getMessage(),
                         is("Lock is null."));
             }

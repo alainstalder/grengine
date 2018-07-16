@@ -52,7 +52,7 @@ public class DefaultFileSourceTest {
         try {
             new DefaultFileSource(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("File is null."));
         }
     }

@@ -49,7 +49,7 @@ public interface TopCodeCache {
      * @return code
      *
      * @throws CompileException if compilation failed
-     * @throws IllegalArgumentException if source is null
+     * @throws NullPointerException if source is null
      * 
      * @since 1.0
      */
@@ -60,7 +60,7 @@ public interface TopCodeCache {
      * 
      * @param parent parent class loader
      *
-     * @throws IllegalArgumentException if parent is null
+     * @throws NullPointerException if parent is null
      * 
      * @since 1.0
      */

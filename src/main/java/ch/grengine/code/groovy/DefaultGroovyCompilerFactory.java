@@ -23,6 +23,8 @@ import java.util.Set;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Factory for instances of {@link DefaultGroovyCompiler}
@@ -71,15 +73,14 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
      *
      * @param compilerConfiguration compiler configuration
      * 
-     * @throws IllegalArgumentException if the compiler configuration is null
+     * @throws NullPointerException if the compiler configuration is null
      * 
      * @since 1.0
      */
     public DefaultGroovyCompilerFactory(final CompilerConfiguration compilerConfiguration) {
-        this(new Builder().setCompilerConfiguration(compilerConfiguration));
-        if (compilerConfiguration == null) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
-        }
+        this(new Builder()
+                .setCompilerConfiguration(requireNonNull(compilerConfiguration, "Compiler configuration is null."))
+        );
     }
     
     @Override

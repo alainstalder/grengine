@@ -21,13 +21,14 @@ import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.SingleSourceCode;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
-import ch.grengine.except.CompileException;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 import ch.grengine.sources.SourcesUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -84,9 +85,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
     
     @Override
     public void setParent(final ClassLoader parent) {
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent class loader is null.");
-        }
+        requireNonNull(parent, "Parent class loader is null.");
         state = new State(parent);
     }
     

@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Helper class for analyzing class name conflicts.
@@ -44,14 +46,12 @@ public class ClassNameConflictAnalyzer {
      * @param codeLayers code layers
      *
      * @return map of class name to list of code layers
-     * @throws IllegalArgumentException if code layers are null
+     * @throws NullPointerException if code layers are null
      * 
      * @since 1.0
      */
     public static Map<String,List<Code>> getAllClassNamesMap(final List<Code> codeLayers) {
-        if (codeLayers == null) {
-            throw new IllegalArgumentException("Code layers are null.");
-        }
+        requireNonNull(codeLayers, "Code layers are null.");
         Map<String,List<Code>> origins = new HashMap<>();
         for (Code code : codeLayers) {
             Set<String> classNameSet = code.getClassNameSet();
@@ -71,14 +71,12 @@ public class ClassNameConflictAnalyzer {
      * @param codeLayers code layers
      *
      * @return map of class name to list of code layers
-     * @throws IllegalArgumentException if code layers are null
+     * @throws NullPointerException if code layers are null
      * 
      * @since 1.0
      */
     public static Map<String,List<Code>> getSameClassNamesInMultipleCodeLayersMap(final List<Code> codeLayers) {
-        if (codeLayers == null) {
-            throw new IllegalArgumentException("Code layers are null.");
-        }
+        requireNonNull(codeLayers, "Code layers are null.");
         Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
         Map<String,List<Code>> originsWithDuplicates = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {
@@ -103,18 +101,14 @@ public class ClassNameConflictAnalyzer {
      * @param codeLayers code layers
      *
      * @return map of class name to list of code layers
-     * @throws IllegalArgumentException if the parent class loader or code layers are null
+     * @throws NullPointerException if the parent class loader or code layers are null
      * 
      * @since 1.0
      */
     public static Map<String,List<Code>> getSameClassNamesInParentAndCodeLayersMap(
             final ClassLoader parent, final List<Code> codeLayers) {
-        if (parent == null) {
-            throw new IllegalArgumentException("Parent class loader is null.");
-        }
-        if (codeLayers == null) {
-            throw new IllegalArgumentException("Code layers are null.");
-        }
+        requireNonNull(parent, "Parent class loader is null.");
+        requireNonNull(codeLayers, "Code layers are null.");
         Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
         Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {

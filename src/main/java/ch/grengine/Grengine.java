@@ -24,7 +24,6 @@ import ch.grengine.engine.LayeredEngine;
 import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.GrengineException;
-import ch.grengine.except.LoadException;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.TopCodeCacheFactory;
 import ch.grengine.source.DefaultSourceFactory;
@@ -49,6 +48,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -167,7 +168,7 @@ public class Grengine extends BaseGrengine {
      *
      * @param config compiler configuration to use for compiling all sources
      *
-     * @throws IllegalArgumentException if the compiler configuration is null
+     * @throws NullPointerException if the compiler configuration is null
      *
      * @since 1.0
      */
@@ -183,7 +184,7 @@ public class Grengine extends BaseGrengine {
      *
      * @param parent parent class loader for the engine
      *
-     * @throws IllegalArgumentException if the parent class loader is null
+     * @throws NullPointerException if the parent class loader is null
      *
      * @since 1.0.3
      */
@@ -200,7 +201,7 @@ public class Grengine extends BaseGrengine {
      * @param parent parent class loader for the engine
      * @param config compiler configuration to use for compiling all sources
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -224,7 +225,7 @@ public class Grengine extends BaseGrengine {
      *
      * @param dir script directory
      *
-     * @throws IllegalArgumentException if the directory is null
+     * @throws NullPointerException if the directory is null
      *
      * @since 1.0
      */
@@ -249,7 +250,7 @@ public class Grengine extends BaseGrengine {
      * @param parent parent class loader for the engine
      * @param dir script directory
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -275,7 +276,7 @@ public class Grengine extends BaseGrengine {
      * @param config compiler configuration to use for compiling all sources
      * @param dir script directory
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0
      */
@@ -302,7 +303,7 @@ public class Grengine extends BaseGrengine {
      * @param config compiler configuration to use for compiling all sources
      * @param dir script directory
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -328,7 +329,7 @@ public class Grengine extends BaseGrengine {
      * @param dir script directory
      * @param dirMode dir mode
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0
      */
@@ -355,7 +356,7 @@ public class Grengine extends BaseGrengine {
      * @param dir script directory
      * @param dirMode dir mode
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -383,7 +384,7 @@ public class Grengine extends BaseGrengine {
      * @param dir script directory
      * @param dirMode dir mode
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0
      */
@@ -412,7 +413,7 @@ public class Grengine extends BaseGrengine {
      * @param dir script directory
      * @param dirMode dir mode
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -435,7 +436,7 @@ public class Grengine extends BaseGrengine {
      *
      * @param urls collection of URL-based scripts
      *
-     * @throws IllegalArgumentException if the URL collection is null
+     * @throws NullPointerException if the URL collection is null
      *
      * @since 1.0
      */
@@ -459,7 +460,7 @@ public class Grengine extends BaseGrengine {
      * @param parent parent class loader for the engine
      * @param urls collection of URL-based scripts
      *
-     * @throws IllegalArgumentException if the URL collection is null
+     * @throws NullPointerException if the URL collection is null
      *
      * @since 1.0.3
      */
@@ -483,7 +484,7 @@ public class Grengine extends BaseGrengine {
      * @param config compiler configuration to use for compiling all sources
      * @param urls collection of URL-based scripts
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0
      */
@@ -508,7 +509,7 @@ public class Grengine extends BaseGrengine {
      * @param config compiler configuration to use for compiling all sources
      * @param urls collection of URL-based scripts
      *
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      *
      * @since 1.0.3
      */
@@ -518,11 +519,11 @@ public class Grengine extends BaseGrengine {
 
     private static Builder builderEmpty(final ClassLoader parent, final boolean allowParentNull,
                                         final CompilerConfiguration config, final boolean allowConfigNull) {
-        if (parent == null && !allowParentNull) {
-            throw new IllegalArgumentException("Parent class loader is null.");
+        if (!allowParentNull) {
+            requireNonNull(parent, "Parent class loader is null.");
         }
-        if (config == null && !allowConfigNull) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
+        if (!allowConfigNull) {
+            requireNonNull(config, "Compiler configuration is null.");
         }
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
@@ -538,18 +539,14 @@ public class Grengine extends BaseGrengine {
     private static Builder builderFromDir(final ClassLoader parent, final boolean allowParentNull,
                                           final CompilerConfiguration config, final boolean allowConfigNull,
                                           final File dir, final DirMode dirMode) {
-        if (parent == null && !allowParentNull) {
-            throw new IllegalArgumentException("Parent class loader is null.");
+        if (!allowParentNull) {
+            requireNonNull(parent, "Parent class loader is null.");
         }
-        if (config == null && !allowConfigNull) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
+        if (!allowConfigNull) {
+            requireNonNull(config, "Compiler configuration is null.");
         }
-        if (dir == null) {
-            throw new IllegalArgumentException("Directory is null.");
-        }
-        if (dirMode == null) {
-            throw new IllegalArgumentException("Dir mode is null.");
-        }
+        requireNonNull(dir, "Directory is null.");
+        requireNonNull(dirMode, "Dir mode is null.");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
                 .build();
@@ -571,15 +568,13 @@ public class Grengine extends BaseGrengine {
     private static Builder builderFromUrls(final ClassLoader parent, final boolean allowParentNull,
                                            final CompilerConfiguration config, final boolean allowConfigNull,
                                            final Collection<URL> urls) {
-        if (parent == null && !allowParentNull) {
-            throw new IllegalArgumentException("Parent class loader is null.");
+        if (!allowParentNull) {
+            requireNonNull(parent, "Parent class loader is null.");
         }
-        if (config == null && !allowConfigNull) {
-            throw new IllegalArgumentException("Compiler configuration is null.");
+        if (!allowConfigNull) {
+            requireNonNull(config, "Compiler configuration is null.");
         }
-        if (urls == null) {
-            throw new IllegalArgumentException("URL collection is null.");
-        }
+        requireNonNull(urls, "URL collection is null.");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
                 .build();
@@ -1034,7 +1029,7 @@ public class Grengine extends BaseGrengine {
          *               Grape support is added to it
          *
          * @return new instance
-         * @throws IllegalArgumentException if the compiler configuration is null
+         * @throws NullPointerException if the compiler configuration is null
          *
          * @since 1.2
          */
@@ -1054,7 +1049,7 @@ public class Grengine extends BaseGrengine {
          * @param parent parent class loader for the engine
          *
          * @return new instance
-         * @throws IllegalArgumentException if the parent class loader is null
+         * @throws NullPointerException if the parent class loader is null
          *
          * @since 1.2
          */
@@ -1072,7 +1067,7 @@ public class Grengine extends BaseGrengine {
          *               Grape support is added to it
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1094,7 +1089,7 @@ public class Grengine extends BaseGrengine {
          * @param dir script directory
          *
          * @return new instance
-         * @throws IllegalArgumentException if the directory is null
+         * @throws NullPointerException if the directory is null
          *
          * @since 1.2
          */
@@ -1118,7 +1113,7 @@ public class Grengine extends BaseGrengine {
          * @param dir script directory
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1140,7 +1135,7 @@ public class Grengine extends BaseGrengine {
          * @param dir script directory
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1160,7 +1155,7 @@ public class Grengine extends BaseGrengine {
          * @param dir script directory
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1184,7 +1179,7 @@ public class Grengine extends BaseGrengine {
          * @param dirMode dir mode
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          * 
          * @since 1.2
          */
@@ -1209,7 +1204,7 @@ public class Grengine extends BaseGrengine {
          * @param dirMode dir mode
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1232,7 +1227,7 @@ public class Grengine extends BaseGrengine {
          * @param dirMode dir mode
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1253,7 +1248,7 @@ public class Grengine extends BaseGrengine {
          * @param dirMode dir mode
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1277,7 +1272,7 @@ public class Grengine extends BaseGrengine {
          * @param urls collection of URL-based scripts
          *
          * @return new instance
-         * @throws IllegalArgumentException if the URL collection is null
+         * @throws NullPointerException if the URL collection is null
          *
          * @since 1.2
          */
@@ -1300,7 +1295,7 @@ public class Grengine extends BaseGrengine {
          * @param urls collection of URL-based scripts
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1321,7 +1316,7 @@ public class Grengine extends BaseGrengine {
          * @param urls collection of URL-based scripts
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */
@@ -1340,7 +1335,7 @@ public class Grengine extends BaseGrengine {
          * @param urls collection of URL-based scripts
          *
          * @return new instance
-         * @throws IllegalArgumentException if any argument is null
+         * @throws NullPointerException if any argument is null
          *
          * @since 1.2
          */

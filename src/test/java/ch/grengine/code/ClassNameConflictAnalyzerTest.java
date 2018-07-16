@@ -79,7 +79,7 @@ public class ClassNameConflictAnalyzerTest {
         try {
             ClassNameConflictAnalyzer.getAllClassNamesMap(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
@@ -103,7 +103,7 @@ public class ClassNameConflictAnalyzerTest {
         try {
             ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Code layers are null."));
         }
     }
@@ -128,7 +128,7 @@ public class ClassNameConflictAnalyzerTest {
         try {
             ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(null, new LinkedList<>());
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Parent class loader is null."));
         }
     }
@@ -139,7 +139,7 @@ public class ClassNameConflictAnalyzerTest {
         try {
             ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Code layers are null."));
         }
     }

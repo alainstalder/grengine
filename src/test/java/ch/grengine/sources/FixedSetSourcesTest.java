@@ -88,7 +88,7 @@ public class FixedSetSourcesTest {
         try {
             new FixedSetSources.Builder(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Source set is null."));
         }
     }

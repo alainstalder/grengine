@@ -91,7 +91,7 @@ public class DefaultGroovyCompilerFactoryTest {
         try {
             new DefaultGroovyCompilerFactory((CompilerConfiguration)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Compiler configuration is null."));
         }
     }

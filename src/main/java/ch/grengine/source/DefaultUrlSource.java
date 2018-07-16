@@ -18,6 +18,8 @@ package ch.grengine.source;
 
 import java.net.URL;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * URL-based script source with content considered static,
@@ -41,14 +43,12 @@ public class DefaultUrlSource extends BaseSource implements UrlSource {
      *
      * @param url URL
      *
-     * @throws IllegalArgumentException if URL is null
+     * @throws NullPointerException if URL is null
      * 
      * @since 1.0
      */
     public DefaultUrlSource(final URL url) {
-        if (url == null) {
-            throw new IllegalArgumentException("URL is null.");
-        }
+        requireNonNull(url, "URL is null.");
         id = url.toString();
         this.url = url;
     }

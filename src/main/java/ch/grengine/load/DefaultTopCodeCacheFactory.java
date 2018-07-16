@@ -19,6 +19,8 @@ package ch.grengine.load;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Factory for instances of {@link DefaultTopCodeCache}
@@ -59,15 +61,13 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
      *
      * @param compilerFactory compiler factory
      *
-     * @throws IllegalArgumentException if the compiler factory is null
+     * @throws NullPointerException if the compiler factory is null
      * 
      * @since 1.0
      */
     public DefaultTopCodeCacheFactory(CompilerFactory compilerFactory) {
         this(new Builder().setCompilerFactory(compilerFactory));
-        if (compilerFactory == null) {
-            throw new IllegalArgumentException("Compiler factory is null.");
-        }
+        requireNonNull(compilerFactory, "Compiler factory is null.");
     }
     
     @Override

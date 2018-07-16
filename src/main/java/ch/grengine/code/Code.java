@@ -53,7 +53,7 @@ public interface Code {
      * @param source source
      *
      * @return true if given source is for this code
-     * @throws IllegalArgumentException if the given source is null
+     * @throws NullPointerException if the given source is null
      * 
      * @since 1.0
      */
@@ -65,8 +65,9 @@ public interface Code {
      * @param source source
      *
      * @return main class name
-     * @throws IllegalArgumentException if the given source is null or not for this code
-     * 
+     * @throws NullPointerException if the given source is null
+     * @throws IllegalArgumentException if the given source is not for this code
+     *
      * @since 1.0
      */
     String getMainClassName(Source source);
@@ -77,7 +78,8 @@ public interface Code {
      * @param source source
      *
      * @return set of all class names
-     * @throws IllegalArgumentException if the given source is null or not for this code
+     * @throws NullPointerException if the given source is null
+     * @throws IllegalArgumentException if the given source is not for this code
      * 
      * @since 1.0
      */
@@ -89,7 +91,8 @@ public interface Code {
      * @param source source
      *
      * @return last modified at compile time
-     * @throws IllegalArgumentException if the given source is null or is not for this code
+     * @throws NullPointerException if the given source is null
+     * @throws IllegalArgumentException if the given source is not for this code
      * 
      * @since 1.0
      */
@@ -113,7 +116,7 @@ public interface Code {
      * @param className class name
      *
      * @return bytecode or null if not found
-     * @throws IllegalArgumentException if the given class name is null
+     * @throws NullPointerException if the given class name is null
      *
      * @since 1.0
      */

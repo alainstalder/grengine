@@ -22,6 +22,8 @@ import ch.grengine.sources.Sources;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Default implementation of {@link Code} with all bytecode in memory.
@@ -44,21 +46,15 @@ public class DefaultCode implements Code {
      * @param compiledSourceInfoMap the map of originating {@link Source} to {@link CompiledSourceInfo}
      * @param bytecodeMap the map of class name to {@link Bytecode}
      * 
-     * @throws IllegalArgumentException if any argument is null
+     * @throws NullPointerException if any argument is null
      * 
      * @since 1.0
      */
     public DefaultCode(final String sourcesName, final Map<Source,CompiledSourceInfo> compiledSourceInfoMap,
             final Map<String,Bytecode> bytecodeMap) {
-        if (sourcesName == null) {
-            throw new IllegalArgumentException("Sources name is null.");
-        }
-        if (compiledSourceInfoMap == null) {
-            throw new IllegalArgumentException("Compiled source info map is null.");
-        }
-        if (bytecodeMap == null) {
-            throw new IllegalArgumentException("Bytecode map is null.");
-        }
+        requireNonNull(sourcesName, "Sources name is null.");
+        requireNonNull(compiledSourceInfoMap, "Compiled source info map is null.");
+        requireNonNull(bytecodeMap, "Bytecode map is null.");
         this.sourcesName = sourcesName;
         this.compiledSourceInfoMap = compiledSourceInfoMap;
         this.bytecodeMap = bytecodeMap;

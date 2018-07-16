@@ -19,7 +19,6 @@ package ch.grengine.load;
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
-import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;

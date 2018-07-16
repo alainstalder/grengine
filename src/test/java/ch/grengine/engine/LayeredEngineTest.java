@@ -741,7 +741,7 @@ public class LayeredEngineTest {
         try {
             new LayeredEngine.Builder().build().asClassLoader(null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Loader is null."));
         }
     }

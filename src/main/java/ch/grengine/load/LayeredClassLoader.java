@@ -21,7 +21,6 @@ import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.SingleSourceCode;
 import ch.grengine.engine.LayeredEngine;
 import ch.grengine.except.CompileException;
-import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 

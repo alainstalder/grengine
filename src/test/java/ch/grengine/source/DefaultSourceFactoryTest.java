@@ -249,7 +249,7 @@ public class DefaultSourceFactoryTest {
         try {
             sf.fromText((String)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Text is null."));
         }
     }
@@ -262,7 +262,7 @@ public class DefaultSourceFactoryTest {
         try {
             sf.fromText((String)null, "name");
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Text is null."));
         }
     }
@@ -275,7 +275,7 @@ public class DefaultSourceFactoryTest {
         try {
             sf.fromText("println 33", (String)null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Desired class name is null."));
         }
     }

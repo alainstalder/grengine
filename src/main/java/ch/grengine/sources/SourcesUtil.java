@@ -23,6 +23,8 @@ import ch.grengine.source.SourceUtil;
 
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 
 /**
  * Static utility methods around {@link Sources}.
@@ -41,7 +43,7 @@ public class SourcesUtil {
      * @param source source
      * 
      * @return sources
-     * @throws IllegalArgumentException if the source is null
+     * @throws NullPointerException if the source is null
      * 
      * @since 1.0
      */
@@ -57,14 +59,12 @@ public class SourcesUtil {
      * @param compilerFactory compiler factory
      *
      * @return sources
-     * @throws IllegalArgumentException if the source or the compiler factory is null
+     * @throws NullPointerException if the source or the compiler factory is null
      * 
      * @since 1.0
      */
     public static Sources sourceToSources(final Source source, final CompilerFactory compilerFactory) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source is null.");
-        }
+        requireNonNull(source, "Source is null.");
         return sourceSetToSources(SourceUtil.sourceToSourceSet(source), source.getId(), compilerFactory);
     }
     
@@ -76,7 +76,7 @@ public class SourcesUtil {
      * @param name sources name
      *
      * @return sources
-     * @throws IllegalArgumentException if the source set or the name is null
+     * @throws NullPointerException if the source set or the name is null
      * 
      * @since 1.0
      */
@@ -93,21 +93,15 @@ public class SourcesUtil {
      * @param compilerFactory compiler factory
      *
      * @return sources
-     * @throws IllegalArgumentException if the source set, the name or the compiler factory is null
+     * @throws NullPointerException if the source set, the name or the compiler factory is null
      * 
      * @since 1.0
      */
     public static Sources sourceSetToSources(final Set<Source> sourceSet, final String name,
             final CompilerFactory compilerFactory) {
-        if (sourceSet == null) {
-            throw new IllegalArgumentException("Source set is null.");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("Name is null.");
-        }
-        if (compilerFactory == null) {
-            throw new IllegalArgumentException("Compiler factory is null.");
-        }
+        requireNonNull(sourceSet, "Source set is null.");
+        requireNonNull(name, "Name is null.");
+        requireNonNull(compilerFactory, "Compiler factory is null.");
         return new FixedSetSources.Builder(sourceSet)
                 .setName(name)
                 .setCompilerFactory(compilerFactory)

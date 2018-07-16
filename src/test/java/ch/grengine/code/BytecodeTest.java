@@ -54,7 +54,7 @@ public class BytecodeTest {
         try {
             new Bytecode(null, bytes);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Class name is null."));
         }
     }
@@ -65,7 +65,7 @@ public class BytecodeTest {
         try {
             new Bytecode(className, null);
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             assertThat(e.getMessage(), is("Bytes are null."));
         }
     }
