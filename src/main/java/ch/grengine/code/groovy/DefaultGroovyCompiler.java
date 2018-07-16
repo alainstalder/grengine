@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import groovy.grape.Grape;
 import groovy.grape.GrapeEngine;
@@ -229,13 +230,8 @@ public class DefaultGroovyCompiler implements Compiler {
         }
         try {
             CompilationUnit cu = new CompilationUnit(config, null, groovyClassLoader);
-            Map<Source,SourceUnit> sourceUnitMap = new HashMap<>();
-            Set<Source> sourceSet = sources.getSourceSet();
-            for (Source source : sourceSet) {
-                SourceUnit su = addToCompilationUnit(cu, source, sources);
-                //System.out.println("SU Name: " + su.getName());
-                sourceUnitMap.put(source, su);
-            }
+            Map<Source,SourceUnit> sourceUnitMap = sources.getSourceSet().stream()
+                    .collect(Collectors.toMap(source -> source, source -> addToCompilationUnit(cu, source, sources)));
 
             int phase = (config.getTargetDirectory() == null) ? Phases.CLASS_GENERATION : Phases.OUTPUT;
             cu.compile(phase);
@@ -244,11 +240,9 @@ public class DefaultGroovyCompiler implements Compiler {
             for (Entry<Source, SourceUnit> entry : sourceUnitMap.entrySet()) {
                 Source source = entry.getKey();
                 SourceUnit su = entry.getValue();
-                Set<String> classNames = new HashSet<>();
-                List<ClassNode> nodes = su.getAST().getClasses();
-                for (ClassNode node : nodes) {
-                    classNames.add(node.getName());
-                }
+                Set<String> classNames = su.getAST().getClasses().stream()
+                        .map(ClassNode::getName)
+                        .collect(Collectors.toSet());
                 CompiledSourceInfo compiledSourceInfo = new CompiledSourceInfo(source,
                         su.getAST().getMainClassName(), classNames, source.getLastModified());
                 //System.out.println("SU MainClassName: " + su.getAST().getMainClassName());
@@ -256,15 +250,11 @@ public class DefaultGroovyCompiler implements Compiler {
             }
 
             @SuppressWarnings("unchecked")
-            List<GroovyClass> groovyClasses = cu.getClasses();
-            Map<String, Bytecode> bytecodeMap = new HashMap<>();
-            for (GroovyClass groovyClass : groovyClasses) {
-                String name = groovyClass.getName();
-                bytecodeMap.put(name, new Bytecode(name, groovyClass.getBytes()));
-            }
+            Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cu.getClasses()).stream()
+                    .collect(Collectors.toMap(GroovyClass::getName, c -> new Bytecode(c.getName(), c.getBytes())));
 
             Code code;
-            if (sourceSet.size() == 1) {
+            if (sources.getSourceSet().size() == 1) {
                 code = new DefaultSingleSourceCode(sources.getName(), compiledSourceInfoMap, bytecodeMap);
             } else {
                 code = new DefaultCode(sources.getName(), compiledSourceInfoMap, bytecodeMap);
@@ -478,15 +468,12 @@ public class DefaultGroovyCompiler implements Compiler {
         // looks for a GrapeCompilationCustomizer in the given compiler config and,
         // if found, returns a new instance of CompileTimeGroovyClassLoader
         static GroovyClassLoader getLoaderIfConfigured(ClassLoader parent, CompilerConfiguration config) {
-            List<CompilationCustomizer> customizers = config.getCompilationCustomizers();
-            for (CompilationCustomizer customizer : customizers) {
-                if (customizer instanceof GrapeCompilationCustomizer) {
-                    GroovyClassLoader runtimeLoader =
-                            ((GrapeCompilationCustomizer)customizer).runtimeLoader;
-                    return new CompileTimeGroovyClassLoader(runtimeLoader, parent, config);
-                }
-            }
-            return null;
+            return config.getCompilationCustomizers().stream()
+                    .filter(c -> c instanceof GrapeCompilationCustomizer)
+                    .findFirst()
+                    .map(c -> new CompileTimeGroovyClassLoader(
+                            ((GrapeCompilationCustomizer)c).runtimeLoader, parent, config))
+                    .orElse(null);
         }
 
     }
