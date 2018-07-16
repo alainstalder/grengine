@@ -39,6 +39,7 @@ import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -132,7 +133,7 @@ public class LayeredEngineTest {
         Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesList = Arrays.asList(sources);
 
         engine.setCodeLayersBySource(sourcesList);
 
@@ -179,7 +180,7 @@ public class LayeredEngineTest {
         Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "test");
         Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s1, s2, s3);
         Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "test");
-        sourcesLayers = SourcesUtil.sourcesArrayToList(sources1, sources2);
+        sourcesLayers = Arrays.asList(sources1, sources2);
         
         TestUtil.setFileText(f3, "public class Script3 extends Script { public def run() { return 300 } }");
         Code code1 = new DefaultGroovyCompiler().compile(sources1);

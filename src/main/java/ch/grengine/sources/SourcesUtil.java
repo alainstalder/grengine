@@ -19,11 +19,8 @@ package ch.grengine.sources;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.Source;
+import ch.grengine.source.SourceUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 
@@ -68,15 +65,7 @@ public class SourcesUtil {
         if (source == null) {
             throw new IllegalArgumentException("Source is null.");
         }
-        if (compilerFactory == null) {
-            throw new IllegalArgumentException("Compiler factory is null.");
-        }
-        Set<Source> sourceSet = new HashSet<>();
-        sourceSet.add(source);
-        return new FixedSetSources.Builder(sourceSet)
-                .setName(source.getId())
-                .setCompilerFactory(compilerFactory)
-                .build();
+        return sourceSetToSources(SourceUtil.sourceToSourceSet(source), source.getId(), compilerFactory);
     }
     
     /**
@@ -123,23 +112,6 @@ public class SourcesUtil {
                 .setName(name)
                 .setCompilerFactory(compilerFactory)
                 .build();
-    }
-
-    /**
-     * converts the given sources to a list of sources.
-     *
-     * @param sources sources
-     * 
-     * @return list of sources
-     * @throws IllegalArgumentException if the sources array is null
-     * 
-     * @since 1.0
-     */
-    public static List<Sources> sourcesArrayToList(final Sources... sources) {
-        if (sources == null) {
-            throw new IllegalArgumentException("Sources array is null.");
-        }
-        return new LinkedList<>(Arrays.asList(sources));
     }
 
 }

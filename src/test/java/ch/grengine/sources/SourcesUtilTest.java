@@ -173,34 +173,5 @@ public class SourcesUtilTest {
             assertThat(e.getMessage(), is("Compiler factory is null."));
         }
     }
-    
-    
-    @Test
-    public void testSourcesArrayToList() {
-        Sources s1 = SourcesUtil.sourceToSources(new MockSource("id1"));
-        Sources s2 = SourcesUtil.sourceToSources(new MockSource("id2"));
-        Sources[] sArrayEmpty = new Sources[0];
-        Sources[] sArrayAll = new Sources[] { s1, s2 };
-
-        assertThat(SourcesUtil.sourcesArrayToList(sArrayEmpty).size(), is(0));
-        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).size(), is(2));
-        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).get(0), is(s1));
-        assertThat(SourcesUtil.sourcesArrayToList(sArrayAll).get(1), is(s2));
-        assertThat(SourcesUtil.sourcesArrayToList(s1).size(), is(1));
-        assertThat(SourcesUtil.sourcesArrayToList(s1).get(0), is(s1));
-        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).size(), is(2));
-        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).get(0), is(s2));
-        assertThat(SourcesUtil.sourcesArrayToList(s2, s1).get(1), is(s1));
-    }
-
-    @Test
-    public void testSourcesArrayToListSourcesNull() {
-        try {
-            SourcesUtil.sourcesArrayToList((Sources[])null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Sources array is null."));
-        }
-    }
 
 }

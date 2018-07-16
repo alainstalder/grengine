@@ -1172,7 +1172,7 @@ public class GrengineTest {
         Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesList = Arrays.asList(sources);
 
         engine.setCodeLayersBySource(sourcesList);
 
@@ -1485,7 +1485,7 @@ public class GrengineTest {
                 .setLatencyMs(0)
                 .setName("except")
                 .build();
-        List<Sources> sourcesLayers = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesLayers = Arrays.asList(sources);
 
         MockUpdateExceptionNotifier notifier = new MockUpdateExceptionNotifier(null);
 
@@ -1547,7 +1547,7 @@ public class GrengineTest {
                 .setLatencyMs(0)
                 .setName("except")
                 .build();
-        List<Sources> sourcesLayers = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesLayers = Arrays.asList(sources);
 
         final Grengine gren = new Grengine.Builder()
                 .setEngine(new LayeredEngine.Builder()

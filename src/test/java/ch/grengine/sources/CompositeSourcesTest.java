@@ -24,6 +24,7 @@ import ch.grengine.source.MockSource;
 import ch.grengine.source.SourceUtil;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class CompositeSourcesTest {
         File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
         DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(s1, s2);
+        List<Sources> sourcesList = Arrays.asList(s1, s2);
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
         CompositeSources s = builder.build();
         
@@ -81,7 +82,7 @@ public class CompositeSourcesTest {
         File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
         DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(s1, s2);
+        List<Sources> sourcesList = Arrays.asList(s1, s2);
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
         builder.setName("composite");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
@@ -135,7 +136,7 @@ public class CompositeSourcesTest {
         MockSource m2 = new MockSource("id2");
         FixedSetSources s2 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m2))
             .setLatencyMs(50).build();
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(s1, s2);
+        List<Sources> sourcesList = Arrays.asList(s1, s2);
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
         CompositeSources s = builder.setLatencyMs(50).build();
 

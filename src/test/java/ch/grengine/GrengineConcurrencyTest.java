@@ -24,8 +24,8 @@ import ch.grengine.source.Source;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.FixedSetSources;
 import ch.grengine.sources.Sources;
-import ch.grengine.sources.SourcesUtil;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +77,7 @@ public class GrengineConcurrencyTest {
                 .setLatencyMs(10)
                 .setName("concurrent")
                 .build();
-        List<Sources> sourcesLayers = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesLayers = Arrays.asList(sources);
         
         final Grengine gren = new Grengine.Builder()
                 .setEngine(engine)

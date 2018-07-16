@@ -32,6 +32,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -281,7 +282,7 @@ public class LayeredClassLoaderTest {
         Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
         Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
         Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        List<Sources> sourcesList = SourcesUtil.sourcesArrayToList(sources);
+        List<Sources> sourcesList = Arrays.asList(sources);
         builder.setSourcesLayers(sourcesList);
 
         LayeredClassLoader loader = builder.buildFromSourcesLayers();
@@ -321,7 +322,7 @@ public class LayeredClassLoaderTest {
         Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
         Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
         Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
-        return SourcesUtil.sourcesArrayToList(sources1, sources2);
+        return Arrays.asList(sources1, sources2);
     }
     
     private static List<Code> getTestCodeLayers(ClassLoader parent) throws CompileException {
