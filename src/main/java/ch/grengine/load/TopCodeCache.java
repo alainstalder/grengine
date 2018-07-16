@@ -53,7 +53,7 @@ public interface TopCodeCache {
      * 
      * @since 1.0
      */
-    SingleSourceCode getUpToDateCode(Source source) throws CompileException;
+    SingleSourceCode getUpToDateCode(Source source);
     
     /**
      * sets the parent class loader and clears the cache.

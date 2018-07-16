@@ -56,7 +56,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * 
      * @since 1.0
      */
-    public abstract Class<?> loadMainClass(Source source) throws CompileException, LoadException;
+    public abstract Class<?> loadMainClass(Source source);
     
     /**
      * loads a class with the given name and from the given source.
@@ -73,7 +73,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * 
      * @since 1.0
      */
-    public abstract Class<?> loadClass(Source source, String name) throws CompileException, LoadException;
+    public abstract Class<?> loadClass(Source source, String name);
     
     /**
      * tries to find the bytecode class loader that can load classes that were created

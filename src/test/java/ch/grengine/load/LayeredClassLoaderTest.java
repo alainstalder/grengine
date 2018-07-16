@@ -324,7 +324,7 @@ public class LayeredClassLoaderTest {
         return Arrays.asList(sources1, sources2);
     }
     
-    private static List<Code> getTestCodeLayers(ClassLoader parent) throws CompileException {
+    private static List<Code> getTestCodeLayers(ClassLoader parent) {
         List<Sources> sourcesLayers = getTestSourcesLayers();
         DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
         Code code1 = c.compile(sourcesLayers.get(0));

@@ -27,7 +27,7 @@ import java.util.Date;
  * @author Alain Stalder
  * @author Made in Switzerland.
  */
-public class GrengineException extends Exception {
+public class GrengineException extends RuntimeException {
 
     private static final long serialVersionUID = 393479472945664906L;
     

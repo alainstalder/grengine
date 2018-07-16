@@ -60,7 +60,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
     }
     
     @Override
-    public SingleSourceCode getUpToDateCode(final Source source) throws CompileException {
+    public SingleSourceCode getUpToDateCode(final Source source) {
 
         State stateNow = state;
         

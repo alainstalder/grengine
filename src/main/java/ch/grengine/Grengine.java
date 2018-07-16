@@ -686,41 +686,37 @@ public class Grengine extends BaseGrengine {
     }
 
     @Override
-    public Class<?> loadMainClass(final Loader loader, final Source source)
-            throws CompileException, LoadException {
+    public Class<?> loadMainClass(final Loader loader, final Source source) {
         updateEngineIfSourcesLayersModified();
         return engine.loadMainClass(loader, source);
     }
 
     @Override
-    public Class<?> loadMainClass(final Source source)
-            throws CompileException, LoadException {
+    public Class<?> loadMainClass(final Source source) {
         updateEngineIfSourcesLayersModified();
         return engine.loadMainClass(loader, source);
     }
 
     @Override
-    public Class<?> loadClass(final Loader loader, final Source source, final String name)
-            throws CompileException, LoadException {
+    public Class<?> loadClass(final Loader loader, final Source source, final String name) {
         updateEngineIfSourcesLayersModified();
         return engine.loadClass(loader, source, name);
     }
 
     @Override
-    public Class<?> loadClass(final Source source, final String name)
-            throws CompileException, LoadException {
+    public Class<?> loadClass(final Source source, final String name) {
         updateEngineIfSourcesLayersModified();
         return engine.loadClass(loader, source, name);
     }
 
     @Override
-    public Class<?> loadClass(final Loader loader, final String name) throws LoadException {
+    public Class<?> loadClass(final Loader loader, final String name) {
         updateEngineIfSourcesLayersModified();
         return engine.loadClass(loader, name);
     }
 
     @Override
-    public Class<?> loadClass(final String name) throws LoadException {
+    public Class<?> loadClass(final String name) {
         updateEngineIfSourcesLayersModified();
         return engine.loadClass(loader, name);
     }

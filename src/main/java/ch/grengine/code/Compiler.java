@@ -40,6 +40,6 @@ public interface Compiler {
      * 
      * @since 1.0
      */
-    Code compile(Sources sources) throws CompileException;
+    Code compile(Sources sources);
 
 }

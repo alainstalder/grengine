@@ -223,7 +223,7 @@ public class DefaultGroovyCompiler implements Compiler {
      * @since 1.0
      */
     @Override
-    public Code compile(final Sources sources) throws CompileException {
+    public Code compile(final Sources sources) {
         if (sources == null) {
             throw new IllegalArgumentException("Sources are null.");
         }
@@ -292,8 +292,7 @@ public class DefaultGroovyCompiler implements Compiler {
      * 
      * @since 1.0
      */
-    protected SourceUnit addToCompilationUnit(final CompilationUnit cu, final Source source, final Sources sources)
-            throws CompileException {
+    protected SourceUnit addToCompilationUnit(final CompilationUnit cu, final Source source, final Sources sources) {
         if (source instanceof TextSource) {
             TextSource textSource = (TextSource)source;
             return cu.addSource(textSource.getId(), textSource.getText());

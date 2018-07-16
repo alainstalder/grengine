@@ -118,8 +118,7 @@ public class LayeredEngine implements Engine {
                 .buildFromCodeLayers();
     }
     
-    private LayeredClassLoader newLayeredClassLoaderFromSourceSetLayers(final List<Sources> sourcesLayers) 
-            throws CompileException {
+    private LayeredClassLoader newLayeredClassLoaderFromSourceSetLayers(final List<Sources> sourcesLayers) {
         return new LayeredClassLoader.Builder()
                 .setParent(builder.getParent())
                 .setLoadMode(builder.getLoadMode())
@@ -194,19 +193,17 @@ public class LayeredEngine implements Engine {
     }
     
     @Override
-    public Class<?> loadMainClass(final Loader loader, final Source source)
-            throws CompileException, LoadException {
+    public Class<?> loadMainClass(final Loader loader, final Source source) {
         return getSourceClassLoader(loader).loadMainClass(source);
     }
     
     @Override
-    public Class<?> loadClass(final Loader loader, final Source source, final String name)
-            throws CompileException, LoadException {
+    public Class<?> loadClass(final Loader loader, final Source source, final String name) {
         return getSourceClassLoader(loader).loadClass(source, name);
     }
     
     @Override
-    public Class<?> loadClass(final Loader loader, final String name) throws LoadException {
+    public Class<?> loadClass(final Loader loader, final String name) {
         try {
             return getSourceClassLoader(loader).loadClass(name);
         } catch (Throwable t) {
@@ -215,7 +212,7 @@ public class LayeredEngine implements Engine {
     }
             
     @Override
-    public void setCodeLayers(final List<Code> codeLayers) throws ClassNameConflictException {
+    public void setCodeLayers(final List<Code> codeLayers) {
         if (codeLayers == null) {
             throw new IllegalArgumentException("Code layers are null.");
         }
@@ -253,8 +250,7 @@ public class LayeredEngine implements Engine {
     }
     
     @Override
-    public void setCodeLayersBySource(final List<Sources> sourcesLayers)
-            throws CompileException, ClassNameConflictException {
+    public void setCodeLayersBySource(final List<Sources> sourcesLayers) {
         if (sourcesLayers == null) {
             throw new IllegalArgumentException("Sources layers are null.");
         }

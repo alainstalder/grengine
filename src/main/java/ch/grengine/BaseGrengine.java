@@ -152,7 +152,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public abstract Class<?> loadMainClass(Loader loader, Source source) throws CompileException, LoadException;
+    public abstract Class<?> loadMainClass(Loader loader, Source source);
 
     /**
      * loads the main class of the given source from the default loader.
@@ -171,7 +171,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @since 1.1.1
      */
-    public abstract Class<?> loadMainClass(Source source) throws CompileException, LoadException;
+    public abstract Class<?> loadMainClass(Source source);
 
     /**
      * loads a class with the given name and from the given source from the given loader.
@@ -192,7 +192,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public abstract Class<?> loadClass(Loader loader, Source source, String name) throws CompileException, LoadException;
+    public abstract Class<?> loadClass(Loader loader, Source source, String name);
 
     /**
      * loads a class with the given name and from the given source from the default loader.
@@ -212,7 +212,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @since 1.1.1
      */
-    public abstract Class<?> loadClass(Source source, String name) throws CompileException, LoadException;
+    public abstract Class<?> loadClass(Source source, String name);
 
     /**
      * loads a class by name from the given loader.
@@ -230,7 +230,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public abstract Class<?> loadClass(Loader loader, String name) throws LoadException;
+    public abstract Class<?> loadClass(Loader loader, String name);
 
     /**
      * loads a class by name from the default loader.
@@ -247,7 +247,7 @@ public abstract class BaseGrengine implements Closeable {
      *
      * @since 1.1.1
      */
-    public abstract Class<?> loadClass(String name) throws LoadException;
+    public abstract Class<?> loadClass(String name);
 
     /**
      * release metadata for all classed ever loaded using this engine.
@@ -382,7 +382,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final String text) throws CompileException, LoadException {
+    public Class<?> load(final String text) {
         return load(loader, sourceFactory.fromText(text));
     }
 
@@ -399,7 +399,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Loader loader, final String text) throws CompileException, LoadException {
+    public Class<?> load(final Loader loader, final String text) {
         return load(loader, sourceFactory.fromText(text));
     }
 
@@ -416,7 +416,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final String text, final String desiredClassName) throws CompileException, LoadException {
+    public Class<?> load(final String text, final String desiredClassName) {
         return load(loader, sourceFactory.fromText(text, desiredClassName));
     }
 
@@ -434,8 +434,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Loader loader, final String text, final String desiredClassName)
-            throws CompileException, LoadException {
+    public Class<?> load(final Loader loader, final String text, final String desiredClassName) {
         return load(loader, sourceFactory.fromText(text, desiredClassName));
     }
 
@@ -451,7 +450,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final File file) throws CompileException, LoadException {
+    public Class<?> load(final File file) {
         return load(loader, sourceFactory.fromFile(file));
     }
 
@@ -468,7 +467,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Loader loader, final File file) throws CompileException, LoadException {
+    public Class<?> load(final Loader loader, final File file) {
         return load(loader, sourceFactory.fromFile(file));
     }
     
@@ -484,7 +483,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final URL url) throws CompileException, LoadException {
+    public Class<?> load(final URL url) {
         return load(loader, sourceFactory.fromUrl(url));
     }
 
@@ -501,7 +500,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Loader loader, final URL url) throws CompileException, LoadException {
+    public Class<?> load(final Loader loader, final URL url) {
         return load(loader, sourceFactory.fromUrl(url));
     }
 
@@ -517,7 +516,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Source source) throws CompileException, LoadException {
+    public Class<?> load(final Source source) {
         return loadMainClass(source);
     }
 
@@ -534,7 +533,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Class<?> load(final Loader loader, final Source source) throws CompileException, LoadException {
+    public Class<?> load(final Loader loader, final Source source) {
         return loadMainClass(loader, source);
     }
     
@@ -549,7 +548,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Class<?> clazz) throws CreateException {
+    public Script create(final Class<?> clazz) {
         try {
             return (Script)clazz.newInstance();
         } catch (Exception e) {
@@ -571,8 +570,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final String text)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final String text) {
         return create(loader, sourceFactory.fromText(text));
     }
     
@@ -590,8 +588,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Loader loader, final String text)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Loader loader, final String text) {
         return create(loader, sourceFactory.fromText(text));
     }
     
@@ -609,8 +606,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final String text, final String desiredClassName)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final String text, final String desiredClassName) {
         return create(loader, sourceFactory.fromText(text, desiredClassName));
     }
     
@@ -629,8 +625,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Loader loader, final String text, final String desiredClassName)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Loader loader, final String text, final String desiredClassName) {
         return create(loader, sourceFactory.fromText(text, desiredClassName));
     }
     
@@ -647,8 +642,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final File file)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final File file) {
         return create(loader, sourceFactory.fromFile(file));
     }
     
@@ -666,8 +660,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Loader loader, final File file)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Loader loader, final File file) {
         return create(loader, sourceFactory.fromFile(file));
     }
     
@@ -684,8 +677,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final URL url)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final URL url) {
         return create(loader, sourceFactory.fromUrl(url));
     }
     
@@ -703,8 +695,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Loader loader, final URL url)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Loader loader, final URL url) {
         return create(loader, sourceFactory.fromUrl(url));
     }
     
@@ -721,8 +712,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Source source)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Source source) {
         return create(loader, source);
     }
     
@@ -740,8 +730,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Script create(final Loader loader, final Source source)
-            throws CompileException, LoadException, CreateException {
+    public Script create(final Loader loader, final Source source) {
         Class<?> clazz = load(loader, source);
         try {
             return (Script)clazz.newInstance();
@@ -962,8 +951,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text) {
         return run(loader, sourceFactory.fromText(text), new Binding());
     }
 
@@ -982,8 +970,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromText(text), new Binding(bindingMap));
     }
 
@@ -1002,8 +989,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text, final Binding binding) {
         return run(loader, sourceFactory.fromText(text), binding);
     }
 
@@ -1022,8 +1008,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final String text)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final String text) {
         return run(loader, sourceFactory.fromText(text), new Binding());
     }
 
@@ -1043,8 +1028,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final String text, Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final String text, Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromText(text), new Binding(bindingMap));
     }
 
@@ -1064,8 +1048,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final String text, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final String text, final Binding binding) {
         return run(loader, sourceFactory.fromText(text), binding);
     }
 
@@ -1085,8 +1068,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text, final String desiredClassName)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text, final String desiredClassName) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), new Binding());
     }
 
@@ -1106,8 +1088,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text, final String desiredClassName, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text, final String desiredClassName, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), new Binding(bindingMap));
     }
 
@@ -1127,8 +1108,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final String text, final String desiredClassName, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final String text, final String desiredClassName, final Binding binding) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), binding);
     }
 
@@ -1148,8 +1128,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final String text, final String desiredClassName)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final String text, final String desiredClassName) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), new Binding());
     }
 
@@ -1171,8 +1150,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Object run(final Loader loader, final String text, final String desiredClassName,
-            final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+            final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), new Binding(bindingMap));
     }
 
@@ -1194,8 +1172,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Object run(final Loader loader, final String text, final String desiredClassName,
-            final Binding binding)
-            throws CompileException, LoadException, CreateException {
+            final Binding binding) {
         return run(loader, sourceFactory.fromText(text, desiredClassName), binding);
     }
 
@@ -1214,8 +1191,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final File file)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final File file) {
         return run(loader, sourceFactory.fromFile(file), new Binding());
     }
 
@@ -1234,8 +1210,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final File file, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final File file, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromFile(file), new Binding(bindingMap));
     }
 
@@ -1254,8 +1229,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final File file, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final File file, final Binding binding) {
         return run(loader, sourceFactory.fromFile(file), binding);
     }
 
@@ -1274,8 +1248,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final File file)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final File file) {
         return run(loader, sourceFactory.fromFile(file), new Binding());
     }
 
@@ -1295,8 +1268,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final File file, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final File file, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromFile(file), new Binding(bindingMap));
     }
 
@@ -1316,8 +1288,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final File file, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final File file, final Binding binding) {
         return run(loader, sourceFactory.fromFile(file), binding);
     }
 
@@ -1336,8 +1307,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final URL url)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final URL url) {
         return run(loader, sourceFactory.fromUrl(url), new Binding());
     }
 
@@ -1356,8 +1326,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final URL url, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final URL url, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromUrl(url), new Binding(bindingMap));
     }
 
@@ -1376,8 +1345,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final URL url, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final URL url, final Binding binding) {
         return run(loader, sourceFactory.fromUrl(url), binding);
     }
 
@@ -1396,8 +1364,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final URL url)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final URL url) {
         return run(loader, sourceFactory.fromUrl(url), new Binding());
     }
 
@@ -1417,8 +1384,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final URL url, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final URL url, final Map<String,Object> bindingMap) {
         return run(loader, sourceFactory.fromUrl(url), new Binding(bindingMap));
     }
 
@@ -1438,8 +1404,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final URL url, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final URL url, final Binding binding) {
         return run(loader, sourceFactory.fromUrl(url), binding);
     }
 
@@ -1458,8 +1423,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Source source)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Source source) {
         return run(loader, source, new Binding());
     }
 
@@ -1478,8 +1442,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Source source, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Source source, final Map<String,Object> bindingMap) {
         return run(loader, source, new Binding(bindingMap));
     }
 
@@ -1498,8 +1461,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Source source, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Source source, final Binding binding) {
         return run(loader, source, binding);
     }
 
@@ -1518,8 +1480,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final Source source)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final Source source) {
         return run(loader, source, new Binding());
     }
 
@@ -1539,8 +1500,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final Source source, final Map<String,Object> bindingMap)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final Source source, final Map<String,Object> bindingMap) {
         return run(loader, source, new Binding(bindingMap));
     }
 
@@ -1560,8 +1520,7 @@ public abstract class BaseGrengine implements Closeable {
      * 
      * @since 1.0
      */
-    public Object run(final Loader loader, final Source source, final Binding binding)
-            throws CompileException, LoadException, CreateException {
+    public Object run(final Loader loader, final Source source, final Binding binding) {
         Script script = create(loader, source);
         script.setBinding(binding);
         return script.run();

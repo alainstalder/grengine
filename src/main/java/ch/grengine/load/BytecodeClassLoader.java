@@ -204,12 +204,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
     }
     
     @Override
-    public Class<?> loadMainClass(final Source source) throws CompileException, LoadException {
+    public Class<?> loadMainClass(final Source source) {
         return loadMainClassBySource(this, source);
     }
     
     @Override
-    public Class<?> loadClass(final Source source, final String name) throws CompileException, LoadException {
+    public Class<?> loadClass(final Source source, final String name) {
         return loadClassBySourceAndName(this, source, name);
     }
 
@@ -250,8 +250,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * 
      * @since 1.0
      */
-    public static Class<?> loadMainClassBySource(final ClassLoader classLoader, final Source source)
-            throws LoadException {
+    public static Class<?> loadMainClassBySource(final ClassLoader classLoader, final Source source) {
         BytecodeClassLoader loader = null;
         if (classLoader instanceof SourceClassLoader) {
             loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);
@@ -282,7 +281,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * @since 1.0
      */
     public static Class<?> loadClassBySourceAndName(final ClassLoader classLoader, final Source source, 
-            final String name) throws LoadException {
+            final String name) {
         BytecodeClassLoader loader = null;
         if (classLoader instanceof SourceClassLoader) {
             loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);

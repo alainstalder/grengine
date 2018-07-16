@@ -89,7 +89,7 @@ public class LayeredClassLoader extends SourceClassLoader {
      * 
      * @since 1.0
      */
-    protected LayeredClassLoader(final Builder builder, final boolean fromSourcesLayers) throws CompileException {
+    protected LayeredClassLoader(final Builder builder, final boolean fromSourcesLayers) {
         super(builder.getParent());
         this.builder = builder.commit();
         if (fromSourcesLayers) {
@@ -104,7 +104,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         initTopCodeCache();
     }
     
-    private void fromSourcesLayers() throws CompileException {
+    private void fromSourcesLayers() {
         createLoadersFromSourcesLayers();
         initTopCodeCache();
     }
@@ -118,7 +118,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
     }
     
-    private void createLoadersFromSourcesLayers() throws CompileException {
+    private void createLoadersFromSourcesLayers() {
         staticTopLoader = builder.getParent();
         List<Sources> sourcesLayers = builder.getSourcesLayers();
         codeLayers = new LinkedList<>();
@@ -159,7 +159,7 @@ public class LayeredClassLoader extends SourceClassLoader {
     }
     
     @Override
-    public Class<?> loadMainClass(final Source source) throws CompileException, LoadException {
+    public Class<?> loadMainClass(final Source source) {
         
         // loading from code layers only?
         if (!isWithTopCodeCache) {
@@ -188,7 +188,7 @@ public class LayeredClassLoader extends SourceClassLoader {
     }
 
     @Override
-    public Class<?> loadClass(final Source source, final String name) throws CompileException, LoadException {
+    public Class<?> loadClass(final Source source, final String name) {
         
         // loading from static layers only?
         if (!isWithTopCodeCache) {
@@ -606,7 +606,7 @@ public class LayeredClassLoader extends SourceClassLoader {
          * 
          * @since 1.0
          */
-        public LayeredClassLoader buildFromSourcesLayers() throws CompileException {
+        public LayeredClassLoader buildFromSourcesLayers() {
             commit();
             return new LayeredClassLoader(this, true);
         }
