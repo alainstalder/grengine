@@ -18,7 +18,6 @@ package ch.grengine.engine;
 
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
-import ch.grengine.code.CodeUtil;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.load.LoadMode;
 import ch.grengine.source.MockTextSource;
@@ -26,6 +25,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +70,7 @@ public class LayeredEngineConcurrencyTest {
         final Sources sources = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(s1), "concurrent");
         
         Code code = new DefaultGroovyCompiler().compile(sources);
-        List<Code> codeLayers = CodeUtil.codeArrayToList(code);
+        List<Code> codeLayers = Arrays.asList(code);
         
         engine.setCodeLayers(codeLayers);
 
@@ -96,7 +96,7 @@ public class LayeredEngineConcurrencyTest {
                             s1.setText("return " + j);
                             s1.setLastModified(j);
                             Code code1 = new DefaultGroovyCompiler().compile(sources);
-                            List<Code> codeLayers1 = CodeUtil.codeArrayToList(code1);
+                            List<Code> codeLayers1 = Arrays.asList(code1);
                             engine.setCodeLayers(codeLayers1);
                             //System.out.println(j);
                         } else {

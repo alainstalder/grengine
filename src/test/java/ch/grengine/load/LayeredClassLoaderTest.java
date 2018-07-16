@@ -18,7 +18,6 @@ package ch.grengine.load;
 
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
-import ch.grengine.code.CodeUtil;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
@@ -330,7 +329,7 @@ public class LayeredClassLoaderTest {
         DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
         Code code1 = c.compile(sourcesLayers.get(0));
         Code code2 = c.compile(sourcesLayers.get(1));
-        return CodeUtil.codeArrayToList(code1, code2);
+        return Arrays.asList(code1, code2);
     }
 
 

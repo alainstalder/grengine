@@ -24,6 +24,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,7 @@ public class ClassNameConflictAnalyzerTest {
         Code code2 = c.compile(sources2);
         Code code3 = c.compile(sources3);
 
-        return CodeUtil.codeArrayToList(code1, code2, code3);
+        return Arrays.asList(code1, code2, code3);
     }
 
 }

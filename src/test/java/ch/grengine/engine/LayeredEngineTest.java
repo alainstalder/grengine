@@ -18,7 +18,6 @@ package ch.grengine.engine;
 
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
-import ch.grengine.code.CodeUtil;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.LoadException;
@@ -193,7 +192,7 @@ public class LayeredEngineTest {
         f2.setLastModified(offs);
         Code code2 = new DefaultGroovyCompiler().compile(sources2);
         
-        codeLayers = CodeUtil.codeArrayToList(code1, code2);
+        codeLayers = Arrays.asList(code1, code2);
 
     }
     
