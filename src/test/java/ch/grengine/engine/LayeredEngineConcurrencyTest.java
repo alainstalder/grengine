@@ -103,11 +103,11 @@ public class LayeredEngineConcurrencyTest {
                             Loader attachedLoader = engine.newAttachedLoader();
                             Map<Integer, Integer> rcMap = new TreeMap<>();
                             int rc = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
-                                    .newInstance()).run();
+                                    .getConstructor().newInstance()).run();
                             int count = 1;
                             do {
                                 int rc2 = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
-                                        .newInstance()).run();
+                                        .getConstructor().newInstance()).run();
                                 if (rc2 == rc) {
                                     count++;
                                 } else {

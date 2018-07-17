@@ -141,10 +141,10 @@ public class LayeredEngineTest {
 
         Class<?> clazz1a = engine.loadClass(loaderAttached, "Class1");
         Class<?> clazz2a = engine.loadClass(loaderAttached, "Class2");
-        clazz2a.newInstance();
+        clazz2a.getConstructor().newInstance();
         Class<?> clazz1d = engine.loadClass(loaderDetached, "Class1");
         Class<?> clazz2d = engine.loadClass(loaderDetached, "Class2");
-        clazz2d.newInstance();
+        clazz2d.getConstructor().newInstance();
 
         engine.close();
 
@@ -214,9 +214,9 @@ public class LayeredEngineTest {
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
-        Script script11 = (Script)clazz11.newInstance();
-        Script script12 = (Script)clazz12.newInstance();
-        Script script1D = (Script)clazz1D.newInstance();
+        Script script11 = (Script)clazz11.getConstructor().newInstance();
+        Script script12 = (Script)clazz12.getConstructor().newInstance();
+        Script script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -226,8 +226,8 @@ public class LayeredEngineTest {
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        Script script21 = (Script)clazz21.newInstance();
-        Script script22 = (Script)clazz22.newInstance();
+        Script script21 = (Script)clazz21.getConstructor().newInstance();
+        Script script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(1200));
         assertThat((Integer)script21.run(), is(1201));
         assertThat((Integer)script21.run(), is(1202));
@@ -238,15 +238,15 @@ public class LayeredEngineTest {
         // layers current first, so top version counts
         Class<?> clazz31 = engine.loadMainClass(loader, s3);
         Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
-        Script script31 = (Script)clazz31.newInstance();
-        Script script32 = (Script)clazz32.newInstance();
+        Script script31 = (Script)clazz31.getConstructor().newInstance();
+        Script script32 = (Script)clazz32.getConstructor().newInstance();
         assertThat((Integer)script31.run(), is(333));
         assertThat((Integer)script31.run(), is(333));
         assertThat((Integer)script32.run(), is(333));
         assertThat((Integer)script32.run(), is(333));
         
         Class<?> clazz4 = engine.loadMainClass(loader, s4);
-        Script script4 = (Script)clazz4.newInstance();
+        Script script4 = (Script)clazz4.getConstructor().newInstance();
         assertThat((Integer)script4.run(), is(400));
         
         // new loaders for s3+s4 because classes already loaded
@@ -258,12 +258,12 @@ public class LayeredEngineTest {
         @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
-        clazz31.newInstance();
-        clazz32.newInstance();
+        clazz31.getConstructor().newInstance();
+        clazz32.getConstructor().newInstance();
         
         // current layer first, so layer version counts
         Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
-        Script script4direct = (Script)clazz4direct.newInstance();
+        Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
         assertThat((Integer)script4direct.run(), is(400));
 
         prepareCode(2000);
@@ -272,8 +272,8 @@ public class LayeredEngineTest {
         // (could not load differently from static because already loaded, but from top code cache)
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -285,9 +285,9 @@ public class LayeredEngineTest {
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         clazz1D = engine.loadMainClass(detachedLoader, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
-        script1D = (Script)clazz1D.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
+        script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script12.run(), is(2100));
@@ -297,8 +297,8 @@ public class LayeredEngineTest {
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        script21 = (Script)clazz21.newInstance();
-        script22 = (Script)clazz22.newInstance();
+        script21 = (Script)clazz21.getConstructor().newInstance();
+        script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(2200));
         assertThat((Integer)script21.run(), is(2201));
         assertThat((Integer)script21.run(), is(2202));
@@ -334,8 +334,8 @@ public class LayeredEngineTest {
         // layers parent first, so lower version counts
         Class<?> clazz31 = engine.loadMainClass(loader, s3);
         Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
-        Script script31 = (Script)clazz31.newInstance();
-        Script script32 = (Script)clazz32.newInstance();
+        Script script31 = (Script)clazz31.getConstructor().newInstance();
+        Script script32 = (Script)clazz32.getConstructor().newInstance();
         assertThat((Integer)script31.run(), is(300));
         assertThat((Integer)script31.run(), is(300));
         assertThat((Integer)script32.run(), is(300));
@@ -343,7 +343,7 @@ public class LayeredEngineTest {
         
         // class exists in parent, but not source based, so uses one in layer
         Class<?> clazz4 = engine.loadMainClass(loader, s4);
-        Script script4 = (Script)clazz4.newInstance();
+        Script script4 = (Script)clazz4.getConstructor().newInstance();
         assertThat((Integer)script4.run(), is(400));
        
         
@@ -356,13 +356,13 @@ public class LayeredEngineTest {
         @SuppressWarnings("rawtypes")
         Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
         assertThat(classSub21, not(sameInstance(classSub22)));
-        clazz31.newInstance();
-        clazz32.newInstance();
+        clazz31.getConstructor().newInstance();
+        clazz32.getConstructor().newInstance();
         
         // current layer first, so layer version counts
         Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
         try {
-            Script script4direct = (Script)clazz4direct.newInstance();
+            Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
             fail();
             script4direct.run();
         } catch (ClassCastException e) {
@@ -441,9 +441,9 @@ public class LayeredEngineTest {
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
-        Script script11 = (Script)clazz11.newInstance();
-        Script script12 = (Script)clazz12.newInstance();
-        Script script1D = (Script)clazz1D.newInstance();
+        Script script11 = (Script)clazz11.getConstructor().newInstance();
+        Script script12 = (Script)clazz12.getConstructor().newInstance();
+        Script script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -453,8 +453,8 @@ public class LayeredEngineTest {
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        Script script21 = (Script)clazz21.newInstance();
-        Script script22 = (Script)clazz22.newInstance();
+        Script script21 = (Script)clazz21.getConstructor().newInstance();
+        Script script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(1200));
         assertThat((Integer)script21.run(), is(1201));
         assertThat((Integer)script21.run(), is(1202));
@@ -467,8 +467,8 @@ public class LayeredEngineTest {
         // no change even though file modification date has change
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -480,9 +480,9 @@ public class LayeredEngineTest {
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         clazz1D = engine.loadMainClass(detachedLoader, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
-        script1D = (Script)clazz1D.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
+        script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script12.run(), is(2100));
@@ -492,8 +492,8 @@ public class LayeredEngineTest {
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        script21 = (Script)clazz21.newInstance();
-        script22 = (Script)clazz22.newInstance();
+        script21 = (Script)clazz21.getConstructor().newInstance();
+        script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(2200));
         assertThat((Integer)script21.run(), is(2201));
         assertThat((Integer)script21.run(), is(2202));
@@ -520,9 +520,9 @@ public class LayeredEngineTest {
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
-        Script script11 = (Script)clazz11.newInstance();
-        Script script12 = (Script)clazz12.newInstance();
-        Script script1D = (Script)clazz1D.newInstance();
+        Script script11 = (Script)clazz11.getConstructor().newInstance();
+        Script script12 = (Script)clazz12.getConstructor().newInstance();
+        Script script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -532,8 +532,8 @@ public class LayeredEngineTest {
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        Script script21 = (Script)clazz21.newInstance();
-        Script script22 = (Script)clazz22.newInstance();
+        Script script21 = (Script)clazz21.getConstructor().newInstance();
+        Script script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(1200));
         assertThat((Integer)script21.run(), is(1201));
         assertThat((Integer)script21.run(), is(1202));
@@ -546,8 +546,8 @@ public class LayeredEngineTest {
         // no change even though file modification date has change
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -559,9 +559,9 @@ public class LayeredEngineTest {
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         clazz1D = engine.loadMainClass(detachedLoader, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
-        script1D = (Script)clazz1D.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
+        script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script12.run(), is(2100));
@@ -571,8 +571,8 @@ public class LayeredEngineTest {
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        script21 = (Script)clazz21.newInstance();
-        script22 = (Script)clazz22.newInstance();
+        script21 = (Script)clazz21.getConstructor().newInstance();
+        script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(2200));
         assertThat((Integer)script21.run(), is(2201));
         assertThat((Integer)script21.run(), is(2202));
@@ -600,9 +600,9 @@ public class LayeredEngineTest {
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
-        Script script11 = (Script)clazz11.newInstance();
-        Script script12 = (Script)clazz12.newInstance();
-        Script script1D = (Script)clazz1D.newInstance();
+        Script script11 = (Script)clazz11.getConstructor().newInstance();
+        Script script12 = (Script)clazz12.getConstructor().newInstance();
+        Script script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script11.run(), is(1100));
         assertThat((Integer)script12.run(), is(1100));
@@ -612,8 +612,8 @@ public class LayeredEngineTest {
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        Script script21 = (Script)clazz21.newInstance();
-        Script script22 = (Script)clazz22.newInstance();
+        Script script21 = (Script)clazz21.getConstructor().newInstance();
+        Script script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(1200));
         assertThat((Integer)script21.run(), is(1201));
         assertThat((Integer)script21.run(), is(1202));
@@ -627,8 +627,8 @@ public class LayeredEngineTest {
         // change must become available immediately via top code cache
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script12.run(), is(2100));
@@ -636,8 +636,8 @@ public class LayeredEngineTest {
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        script21 = (Script)clazz21.newInstance();
-        script22 = (Script)clazz22.newInstance();
+        script21 = (Script)clazz21.getConstructor().newInstance();
+        script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(2200));
         assertThat((Integer)script21.run(), is(2201));
         assertThat((Integer)script21.run(), is(2202));
@@ -651,9 +651,9 @@ public class LayeredEngineTest {
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         clazz1D = engine.loadMainClass(detachedLoader, s1);
-        script11 = (Script)clazz11.newInstance();
-        script12 = (Script)clazz12.newInstance();
-        script1D = (Script)clazz1D.newInstance();
+        script11 = (Script)clazz11.getConstructor().newInstance();
+        script12 = (Script)clazz12.getConstructor().newInstance();
+        script1D = (Script)clazz1D.getConstructor().newInstance();
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script11.run(), is(2100));
         assertThat((Integer)script12.run(), is(2100));
@@ -663,8 +663,8 @@ public class LayeredEngineTest {
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
-        script21 = (Script)clazz21.newInstance();
-        script22 = (Script)clazz22.newInstance();
+        script21 = (Script)clazz21.getConstructor().newInstance();
+        script22 = (Script)clazz22.getConstructor().newInstance();
         assertThat((Integer)script21.run(), is(2200));
         assertThat((Integer)script21.run(), is(2201));
         assertThat((Integer)script21.run(), is(2202));

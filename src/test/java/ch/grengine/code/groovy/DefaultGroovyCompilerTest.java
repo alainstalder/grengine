@@ -398,7 +398,7 @@ public class DefaultGroovyCompilerTest {
         Code code1 = c1.compile(sources1);
         ClassLoader loader1 = new BytecodeClassLoader(parent, LoadMode.PARENT_FIRST, code1);
         Class<?> clazz1 = loader1.loadClass("Twice");
-        Object obj1 = clazz1.newInstance();
+        Object obj1 = clazz1.getConstructor().newInstance();
         Method method1 = clazz1.getDeclaredMethod("get");
         assertThat((Integer) method1.invoke(obj1), is(1));
         loader1.loadClass("Twice$Inner1");
@@ -414,7 +414,7 @@ public class DefaultGroovyCompilerTest {
         Code code2 = c2.compile(sources2);
         ClassLoader loader2 = new BytecodeClassLoader(loader1, LoadMode.CURRENT_FIRST, code2);
         Class<?> clazz2 = loader2.loadClass("Twice");
-        Object obj2 = clazz2.newInstance();
+        Object obj2 = clazz2.getConstructor().newInstance();
         Method method2 = clazz2.getDeclaredMethod("get");
         assertThat((Integer) method2.invoke(obj2), is(2));
         loader2.loadClass("Twice$Inner1");
@@ -423,7 +423,7 @@ public class DefaultGroovyCompilerTest {
         // source 2 (parent first)
         ClassLoader loader22 = new BytecodeClassLoader(loader1, LoadMode.PARENT_FIRST, code2);
         Class<?> clazz22 = loader22.loadClass("Twice");
-        Object obj22 = clazz22.newInstance();
+        Object obj22 = clazz22.getConstructor().newInstance();
         Method method22 = clazz22.getDeclaredMethod("get");
         assertThat((Integer) method22.invoke(obj22), is(1));
         loader22.loadClass("Twice$Inner1");

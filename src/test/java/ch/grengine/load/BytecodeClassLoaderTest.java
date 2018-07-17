@@ -681,7 +681,7 @@ public class BytecodeClassLoaderTest {
 
         Class<?> clazz1 = loader.loadClass("Class1");
         Class<?> clazz2 = loader.loadClass("Class2");
-        clazz2.newInstance();
+        clazz2.getConstructor().newInstance();
 
         RecordingClassReleaser releaser = new RecordingClassReleaser();
         releaser.throwAfterReleasing = throwAfterReleasing;

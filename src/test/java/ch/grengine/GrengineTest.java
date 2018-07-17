@@ -1185,10 +1185,10 @@ public class GrengineTest {
 
         Class<?> clazz1a = gren.loadClass(loaderAttached, "Class1");
         Class<?> clazz2a = gren.loadClass(loaderAttached, "Class2");
-        clazz2a.newInstance();
+        clazz2a.getConstructor().newInstance();
         Class<?> clazz1d = gren.loadClass(loaderDetached, "Class1");
         Class<?> clazz2d = gren.loadClass(loaderDetached, "Class2");
-        clazz2d.newInstance();
+        clazz2d.getConstructor().newInstance();
 
         gren.close();
 
@@ -1278,30 +1278,30 @@ public class GrengineTest {
         TestUtil.setFileText(fu, "return 'url'");
         URL u = fu.toURI().toURL();
 
-        assertThat((String)((Script) gren.load("return 'text'").newInstance()).run(), is("text"));
+        assertThat((String)((Script) gren.load("return 'text'").getConstructor().newInstance()).run(), is("text"));
         assertThat((String)((Script) gren.load(
-                "return 'text-with-name'", "Script0").newInstance()).run(), is("text-with-name"));
-        assertThat((String)((Script) gren.load(f).newInstance()).run(), is("file"));
-        assertThat((String)((Script) gren.load(u).newInstance()).run(), is("url"));
-        assertThat((String)((Script) gren.load(st).newInstance()).run(), is("text"));
+                "return 'text-with-name'", "Script0").getConstructor().newInstance()).run(), is("text-with-name"));
+        assertThat((String)((Script) gren.load(f).getConstructor().newInstance()).run(), is("file"));
+        assertThat((String)((Script) gren.load(u).getConstructor().newInstance()).run(), is("url"));
+        assertThat((String)((Script) gren.load(st).getConstructor().newInstance()).run(), is("text"));
 
         Loader loader = gren.newAttachedLoader();
 
-        assertThat((String)((Script) gren.load(loader, "return 'text'").newInstance()).run(), is("text"));
+        assertThat((String)((Script) gren.load(loader, "return 'text'").getConstructor().newInstance()).run(), is("text"));
         assertThat((String)((Script) gren.load(loader,
-                "return 'text-with-name'", "Script0").newInstance()).run(), is("text-with-name"));
-        assertThat((String)((Script) gren.load(loader, f).newInstance()).run(), is("file"));
-        assertThat((String)((Script) gren.load(loader, u).newInstance()).run(), is("url"));
-        assertThat((String)((Script) gren.load(loader, st).newInstance()).run(), is("text"));
+                "return 'text-with-name'", "Script0").getConstructor().newInstance()).run(), is("text-with-name"));
+        assertThat((String)((Script) gren.load(loader, f).getConstructor().newInstance()).run(), is("file"));
+        assertThat((String)((Script) gren.load(loader, u).getConstructor().newInstance()).run(), is("url"));
+        assertThat((String)((Script) gren.load(loader, st).getConstructor().newInstance()).run(), is("text"));
 
         Loader loader2 = gren.newDetachedLoader();
 
-        assertThat((String)((Script) gren.load(loader2, "return 'text'").newInstance()).run(), is("text"));
+        assertThat((String)((Script) gren.load(loader2, "return 'text'").getConstructor().newInstance()).run(), is("text"));
         assertThat((String)((Script) gren.load(loader2,
-                "return 'text-with-name'", "Script0").newInstance()).run(), is("text-with-name"));
-        assertThat((String)((Script) gren.load(loader2, f).newInstance()).run(), is("file"));
-        assertThat((String)((Script) gren.load(loader2, u).newInstance()).run(), is("url"));
-        assertThat((String)((Script) gren.load(loader2, st).newInstance()).run(), is("text"));
+                "return 'text-with-name'", "Script0").getConstructor().newInstance()).run(), is("text-with-name"));
+        assertThat((String)((Script) gren.load(loader2, f).getConstructor().newInstance()).run(), is("file"));
+        assertThat((String)((Script) gren.load(loader2, u).getConstructor().newInstance()).run(), is("url"));
+        assertThat((String)((Script) gren.load(loader2, st).getConstructor().newInstance()).run(), is("text"));
     }
 
     @Test

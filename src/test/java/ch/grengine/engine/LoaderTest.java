@@ -138,7 +138,7 @@ public class LoaderTest {
 
         Class<?> clazz1 = loader.getSourceClassLoader(engineId).loadClass("Class1");
         Class<?> clazz2 = loader.getSourceClassLoader(engineId).loadClass("Class2");
-        clazz2.newInstance();
+        clazz2.getConstructor().newInstance();
 
         loader.close();
 

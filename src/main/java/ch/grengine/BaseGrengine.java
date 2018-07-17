@@ -551,7 +551,7 @@ public abstract class BaseGrengine implements Closeable {
      */
     public Script create(final Class<?> clazz) {
         try {
-            return (Script)clazz.newInstance();
+            return (Script)clazz.getConstructor().newInstance();
         } catch (Exception e) {
             throw new CreateException("Could not create script for class " + clazz.getCanonicalName() + ".", e);
         }
@@ -734,7 +734,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Loader loader, final Source source) {
         Class<?> clazz = load(loader, source);
         try {
-            return (Script)clazz.newInstance();
+            return (Script)clazz.getConstructor().newInstance();
         } catch (Throwable t) {
             throw new CreateException("Could not create script for class '" + clazz.getCanonicalName() + 
                     "' from source " + source + ".", t);

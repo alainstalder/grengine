@@ -287,7 +287,7 @@ public class LayeredClassLoaderTest {
 
         Class<?> clazz1 = loader.loadClass("Class1");
         Class<?> clazz2 = loader.loadClass("Class2");
-        clazz2.newInstance();
+        clazz2.getConstructor().newInstance();
 
         Source s4 = f.fromText("class Class4 {}");
         Class<?> clazz4 = loader.loadMainClass(s4);
