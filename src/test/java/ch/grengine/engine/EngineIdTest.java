@@ -23,6 +23,9 @@ public class EngineIdTest {
 
     @Test
     public void testConstruct() {
+
+        // when/then
+
         new EngineId();
     }
 

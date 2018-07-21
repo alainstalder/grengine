@@ -27,7 +27,7 @@ public class MockFileSource extends DefaultFileSource {
     
     private MockFile mockFile;
     
-    public MockFileSource(File file) {
+    public MockFileSource(final File file) {
         super(file);
         try {
             mockFile = new MockFile(file.getCanonicalPath());

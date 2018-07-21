@@ -71,11 +71,11 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
+        final DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
 
         // when
 
-        DefaultGroovyCompiler c = builder.build();
+        final DefaultGroovyCompiler c = builder.build();
 
         // then
 
@@ -91,15 +91,15 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final CompilerConfiguration config = new CompilerConfiguration();
         builder.setParent(parent);
         builder.setCompilerConfiguration(config);
 
         // when
 
-        DefaultGroovyCompiler c = builder.build();
+        final DefaultGroovyCompiler c = builder.build();
 
         // then
 
@@ -115,7 +115,7 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
+        final DefaultGroovyCompiler.Builder builder = new DefaultGroovyCompiler.Builder();
         builder.build();
 
         // when/then
@@ -130,7 +130,7 @@ public class DefaultGroovyCompilerTest {
 
         // when
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
         // then
 
@@ -143,11 +143,11 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
 
         // when
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
 
         // then
 
@@ -160,12 +160,12 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent, config);
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent, config);
 
         // then
 
@@ -209,25 +209,25 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source textSource = f.fromText("println 'text source'");
-        String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
-        Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
-        File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source textSource = f.fromText("println 'text source'");
+        final String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
+        final Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
+        final File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
         TestUtil.setFileText(scriptFile, "println 'file source'");
-        Source fileSource = f.fromFile(scriptFile);
-        File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
+        final Source fileSource = f.fromFile(scriptFile);
+        final File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
         TestUtil.setFileText(urlScriptFile, "println 'url source'");
-        Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
+        final Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
                 textSource, textSourceWithName, fileSource, urlSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic");
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic");
 
         // when
 
-        DefaultCode code = (DefaultCode) c.compile(sources);
+        final DefaultCode code = (DefaultCode) c.compile(sources);
 
 
         // then
@@ -261,35 +261,35 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        File targetDir = new File(tempFolder.getRoot(), "target");
+        final File targetDir = new File(tempFolder.getRoot(), "target");
         assertThat(targetDir.mkdir(), is(true));
         assertThat(targetDir.exists(), is(true));
-        CompilerConfiguration config = new CompilerConfiguration();
+        final CompilerConfiguration config = new CompilerConfiguration();
         config.setTargetDirectory(targetDir);
 
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory(config);
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory(config);
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
-        DefaultGroovyCompiler c = (DefaultGroovyCompiler) compilerFactory.newCompiler(parent);
+        final DefaultGroovyCompiler c = (DefaultGroovyCompiler) compilerFactory.newCompiler(parent);
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source textSource = f.fromText("println 'text source'");
-        String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
-        Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
-        File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source textSource = f.fromText("println 'text source'");
+        final String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
+        final Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
+        final File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
         TestUtil.setFileText(scriptFile, "println 'file source'");
-        Source fileSource = f.fromFile(scriptFile);
-        File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
+        final Source fileSource = f.fromFile(scriptFile);
+        final File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
         TestUtil.setFileText(urlScriptFile, "println 'url source'");
-        Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
+        final Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
                 textSource, textSourceWithName, fileSource, urlSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic", compilerFactory);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basic", compilerFactory);
 
         // when
 
-        DefaultCode code = (DefaultCode) c.compile(sources);
+        final DefaultCode code = (DefaultCode) c.compile(sources);
 
         // then
 
@@ -327,17 +327,17 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source textSource = f.fromText("println 'text source'");
-        String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basicSingle");
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source textSource = f.fromText("println 'text source'");
+        final String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "basicSingle");
 
         // when
 
-        DefaultSingleSourceCode code = (DefaultSingleSourceCode) c.compile(sources);
+        final DefaultSingleSourceCode code = (DefaultSingleSourceCode) c.compile(sources);
 
         // then
 
@@ -374,12 +374,12 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source textSource = f.fromText("%%)(");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "syntaxWrong");
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source textSource = f.fromText("%%)(");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(textSource);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "syntaxWrong");
 
         // when/then
 
@@ -406,11 +406,11 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
-        Source mockSource = new MockSource("id1");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(mockSource);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "unknownSource");
+        final Source mockSource = new MockSource("id1");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(mockSource);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "unknownSource");
 
         // when/then
 
@@ -433,13 +433,13 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("public class Twice { public def x() {} }");
-        Source s2 = f.fromText("public class Twice { public def y() {} }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "twice");
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("public class Twice { public def x() {} }");
+        final Source s2 = f.fromText("public class Twice { public def y() {} }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "twice");
 
         // when/then
 
@@ -464,25 +464,25 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
                 "public class Inner1 { static def get() { return 1 } } }");
-        Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
+        final Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
                 "public class Inner2 { static def get() { return 2 } } }");
-        Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
-        Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
-        Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
-        Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
+        final Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
+        final Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
+        final Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
+        final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
 
         // when/then (source 1)
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        DefaultGroovyCompiler c1 = new DefaultGroovyCompiler(parent);
-        Code code1 = c1.compile(sources1);
-        ClassLoader loader1 = new BytecodeClassLoader(parent, LoadMode.PARENT_FIRST, code1);
-        Class<?> clazz1 = loader1.loadClass("Twice");
-        Object obj1 = clazz1.getConstructor().newInstance();
-        Method method1 = clazz1.getDeclaredMethod("get");
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final DefaultGroovyCompiler c1 = new DefaultGroovyCompiler(parent);
+        final Code code1 = c1.compile(sources1);
+        final ClassLoader loader1 = new BytecodeClassLoader(parent, LoadMode.PARENT_FIRST, code1);
+        final Class<?> clazz1 = loader1.loadClass("Twice");
+        final Object obj1 = clazz1.getConstructor().newInstance();
+        final Method method1 = clazz1.getDeclaredMethod("get");
         assertThat(method1.invoke(obj1), is(1));
         loader1.loadClass("Twice$Inner1");
         assertThrows(() -> loader1.loadClass("Twice$Inner2"),
@@ -491,22 +491,22 @@ public class DefaultGroovyCompilerTest {
 
         // when/then (source 2 - current first)
 
-        DefaultGroovyCompiler c2 = new DefaultGroovyCompiler(loader1);
-        Code code2 = c2.compile(sources2);
-        ClassLoader loader2 = new BytecodeClassLoader(loader1, LoadMode.CURRENT_FIRST, code2);
-        Class<?> clazz2 = loader2.loadClass("Twice");
-        Object obj2 = clazz2.getConstructor().newInstance();
-        Method method2 = clazz2.getDeclaredMethod("get");
+        final DefaultGroovyCompiler c2 = new DefaultGroovyCompiler(loader1);
+        final Code code2 = c2.compile(sources2);
+        final ClassLoader loader2 = new BytecodeClassLoader(loader1, LoadMode.CURRENT_FIRST, code2);
+        final Class<?> clazz2 = loader2.loadClass("Twice");
+        final Object obj2 = clazz2.getConstructor().newInstance();
+        final Method method2 = clazz2.getDeclaredMethod("get");
         assertThat(method2.invoke(obj2), is(2));
         loader2.loadClass("Twice$Inner1");
         loader2.loadClass("Twice$Inner2");
 
         // when/then (source 2 - parent first)
 
-        ClassLoader loader22 = new BytecodeClassLoader(loader1, LoadMode.PARENT_FIRST, code2);
-        Class<?> clazz22 = loader22.loadClass("Twice");
-        Object obj22 = clazz22.getConstructor().newInstance();
-        Method method22 = clazz22.getDeclaredMethod("get");
+        final ClassLoader loader22 = new BytecodeClassLoader(loader1, LoadMode.PARENT_FIRST, code2);
+        final Class<?> clazz22 = loader22.loadClass("Twice");
+        final Object obj22 = clazz22.getConstructor().newInstance();
+        final Method method22 = clazz22.getDeclaredMethod("get");
         assertThat(method22.invoke(obj22), is(1));
         loader22.loadClass("Twice$Inner1");
         loader22.loadClass("Twice$Inner2");
@@ -517,12 +517,12 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
-        GroovyClassLoader loader = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
+        final GroovyClassLoader loader = new GroovyClassLoader();
 
         // when
 
-        CompilerConfiguration config2 = DefaultGroovyCompiler.withGrape(config, loader);
+        final CompilerConfiguration config2 = DefaultGroovyCompiler.withGrape(config, loader);
 
         // then
 
@@ -533,7 +533,7 @@ public class DefaultGroovyCompilerTest {
 
         // when
 
-        DefaultGroovyCompiler.GrapeCompilationCustomizer customizer =
+        final DefaultGroovyCompiler.GrapeCompilationCustomizer customizer =
                 (DefaultGroovyCompiler.GrapeCompilationCustomizer) config.getCompilationCustomizers().get(0);
 
         // then
@@ -548,7 +548,7 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        GroovyClassLoader loader = new GroovyClassLoader();
+        final GroovyClassLoader loader = new GroovyClassLoader();
 
         // when/then
 
@@ -644,7 +644,7 @@ public class DefaultGroovyCompilerTest {
 
             // given
 
-            Object lock = String.class;
+            final Object lock = String.class;
 
             // when (enable)
 
@@ -760,8 +760,8 @@ public class DefaultGroovyCompilerTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
         config.addCompilationCustomizers(new ImportCustomizer());
 
         // when
@@ -826,23 +826,23 @@ public class DefaultGroovyCompilerTest {
 
             DefaultGroovyCompiler.enableGrapeSupport();
 
-            GroovyClassLoader runtimeLoader = new GroovyClassLoader();
-            CompilerConfiguration config = new CompilerConfiguration();
-            DefaultGroovyCompiler.withGrape(config, runtimeLoader);
-            DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
+            final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
+            final CompilerConfiguration config1 = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config1, runtimeLoader);
+            final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
                     (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
                             DefaultGroovyCompiler.GrapeCompilationCustomizer
-                                    .getLoaderIfConfigured(runtimeLoader, config);
+                                    .getLoaderIfConfigured(runtimeLoader, config1);
 
-            config = new CompilerConfiguration();
-            DefaultGroovyCompiler.withGrape(config, null);
+            final CompilerConfiguration config2 = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config2, null);
 
             // when
 
             DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoaderWithNullRuntimeLoaderInside =
                     (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
                             DefaultGroovyCompiler.GrapeCompilationCustomizer
-                                    .getLoaderIfConfigured(null, config);
+                                    .getLoaderIfConfigured(null, config2);
 
             // then
 
@@ -850,7 +850,7 @@ public class DefaultGroovyCompilerTest {
 
             // when
 
-            GrapeEngine engine = Grape.getInstance();
+            final GrapeEngine engine = Grape.getInstance();
 
             // then
 
@@ -967,8 +967,8 @@ public class DefaultGroovyCompilerTest {
 
             DefaultGroovyCompiler.enableGrapeSupport();
 
-            GroovyClassLoader runtimeLoader = new GroovyClassLoader();
-            CompilerConfiguration config = new CompilerConfiguration();
+            final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
             DefaultGroovyCompiler.withGrape(config, runtimeLoader);
             final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
                     (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
@@ -979,7 +979,7 @@ public class DefaultGroovyCompilerTest {
 
             final int n = 50;
             failed = false;
-            List<Thread> threads = new LinkedList<>();
+            final List<Thread> threads = new LinkedList<>();
             for (int i = 0; i < n; i++) {
                 Thread thread = new Thread(() -> {
                     try {
@@ -1023,7 +1023,6 @@ public class DefaultGroovyCompilerTest {
         try {
 
             // set GrapeEngine instance in Grape class directly
-
             new Grape() {
                 void set() {
                     Grape.instance = new DefaultGroovyCompiler.GrengineGrapeEngine(Grape.getInstance());
@@ -1038,13 +1037,13 @@ public class DefaultGroovyCompilerTest {
                             "(current GrapeEngine is ch.grengine.code.groovy.DefaultGroovyCompiler$GrengineGrapeEngine, " +
                             "supported is groovy.grape.GrapeIvy).");
         } finally {
+
             // set back to GrapeIvy
             new Grape() {
                 void set() {
                     Grape.instance = innerEngine;
                 }
             }.set();
-
         }
     }
 

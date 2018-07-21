@@ -38,17 +38,17 @@ public class ClassNameConflictExceptionTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        List<Code> codeLayers = ClassNameConflictAnalyzerTest.getTestCodeLayers();
-        Map<String,List<Code>> map1 =
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final List<Code> codeLayers = ClassNameConflictAnalyzerTest.getTestCodeLayers();
+        final Map<String,List<Code>> map1 =
                 ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
-        Map<String,List<Code>> map2 =
+        final Map<String,List<Code>> map2 =
                 ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
-        String msg = "Got " + (map1.size() + map2.size()) + " conflict(s).";
+        final String msg = "Got " + (map1.size() + map2.size()) + " conflict(s).";
 
         // when
 
-        ClassNameConflictException e = new ClassNameConflictException(msg, map1, map2);
+        final ClassNameConflictException e = new ClassNameConflictException(msg, map1, map2);
 
         // then
 

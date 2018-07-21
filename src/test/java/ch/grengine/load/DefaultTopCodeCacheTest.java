@@ -36,33 +36,34 @@ public class DefaultTopCodeCacheTest {
 
         // given
         
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        DefaultTopCodeCache.Builder builder =
-                new DefaultTopCodeCache.Builder(parent).setCompilerFactory(compilerFactory);
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final DefaultTopCodeCache.Builder builder = new DefaultTopCodeCache.Builder(parent);
 
         // when
 
-        DefaultTopCodeCache c = builder.build();
+        final DefaultTopCodeCache c1 = builder
+                .setCompilerFactory(compilerFactory)
+                .build();
 
         // then
 
-        assertThat(c.getBuilder(), is(builder));
-        assertThat(c.getCompilerFactory(), is(compilerFactory));
-        assertThat(c.getParent(), is(parent));
+        assertThat(c1.getBuilder(), is(builder));
+        assertThat(c1.getCompilerFactory(), is(compilerFactory));
+        assertThat(c1.getParent(), is(parent));
 
         // when
         
-        ClassLoader parentNew = Thread.currentThread().getContextClassLoader();
-        c.setParent(parentNew);
+        final ClassLoader parentNew = Thread.currentThread().getContextClassLoader();
+        c1.setParent(parentNew);
 
         // then
 
-        assertThat(c.getParent(), is(parentNew));
+        assertThat(c1.getParent(), is(parentNew));
 
         // when
-        
-        DefaultTopCodeCache c2 = c.clone();
+
+        final DefaultTopCodeCache c2 = c1.clone();
 
         // then
 
@@ -71,21 +72,21 @@ public class DefaultTopCodeCacheTest {
 
         // when
 
-        c = new DefaultTopCodeCache.Builder(null).build();
+        final DefaultTopCodeCache c3 = new DefaultTopCodeCache.Builder(null).build();
 
         // then
 
-        assertThat(c.getParent(), is(nullValue()));
-        assertThat(c.getCompilerFactory(), is(notNullValue()));
-        assertThat(c.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+        assertThat(c3.getParent(), is(nullValue()));
+        assertThat(c3.getCompilerFactory(), is(notNullValue()));
+        assertThat(c3.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
 
         // when
 
-        c.setParent(parentNew);
+        c3.setParent(parentNew);
 
         // then
 
-        assertThat(c.getParent(), is(parentNew));
+        assertThat(c3.getParent(), is(parentNew));
     }
     
     @Test
@@ -93,7 +94,7 @@ public class DefaultTopCodeCacheTest {
 
         // given
 
-        DefaultTopCodeCache.Builder builder = new DefaultTopCodeCache.Builder(null);
+        final DefaultTopCodeCache.Builder builder = new DefaultTopCodeCache.Builder(null);
         builder.build();
 
         // when/then
@@ -108,8 +109,8 @@ public class DefaultTopCodeCacheTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        TopCodeCache c = new DefaultTopCodeCache.Builder(parent).build();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final TopCodeCache c = new DefaultTopCodeCache.Builder(parent).build();
 
         // when/then
 

@@ -32,11 +32,11 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // given
 
-        DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
+        final DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
 
         // when
 
-        DefaultGroovyCompilerFactory cf = builder.build();
+        final DefaultGroovyCompilerFactory cf = builder.build();
 
         // then
 
@@ -50,13 +50,14 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // given
 
-        DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
-        CompilerConfiguration config = new CompilerConfiguration();
-        builder.setCompilerConfiguration(config);
+        final DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        DefaultGroovyCompilerFactory cf = builder.build();
+        final DefaultGroovyCompilerFactory cf = builder
+                .setCompilerConfiguration(config)
+                .build();
 
         // then
 
@@ -70,7 +71,7 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // given
 
-        DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
+        final DefaultGroovyCompilerFactory.Builder builder = new DefaultGroovyCompilerFactory.Builder();
         builder.build();
 
         // when/then
@@ -85,12 +86,12 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // given
 
-        DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
         // when
 
-        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
+        final DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
 
         // then
 
@@ -103,13 +104,13 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
-        DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory(config);
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final CompilerConfiguration config = new CompilerConfiguration();
+        final DefaultGroovyCompilerFactory cf = new DefaultGroovyCompilerFactory(config);
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
 
         // when
 
-        DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
+        final DefaultGroovyCompiler dc = (DefaultGroovyCompiler)cf.newCompiler(parent);
 
         // then
 

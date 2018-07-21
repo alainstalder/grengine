@@ -34,15 +34,16 @@ public class DefaultTopCodeCacheFactoryTest {
     public void testConstructFromBuilderAndGetters() {
 
         // given
-        
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        DefaultTopCodeCacheFactory.Builder builder = 
-                new DefaultTopCodeCacheFactory.Builder().setCompilerFactory(compilerFactory);
+
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final DefaultTopCodeCacheFactory.Builder builder = new DefaultTopCodeCacheFactory.Builder();
 
         // when
 
-        DefaultTopCodeCacheFactory cf = builder.build();
+        final DefaultTopCodeCacheFactory cf = builder
+                .setCompilerFactory(compilerFactory)
+                .build();
 
         // then
 
@@ -51,7 +52,7 @@ public class DefaultTopCodeCacheFactoryTest {
 
         // when
         
-        DefaultTopCodeCache c = (DefaultTopCodeCache)cf.newTopCodeCache(parent);
+        final DefaultTopCodeCache c = (DefaultTopCodeCache)cf.newTopCodeCache(parent);
 
         // then
 
@@ -64,7 +65,7 @@ public class DefaultTopCodeCacheFactoryTest {
 
         // when
 
-        DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory();
+        final DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory();
 
         // then
 
@@ -77,11 +78,11 @@ public class DefaultTopCodeCacheFactoryTest {
 
         // given
 
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
 
         // when
 
-        DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory(compilerFactory);
+        final DefaultTopCodeCacheFactory cf = new DefaultTopCodeCacheFactory(compilerFactory);
 
         // then
 
@@ -103,7 +104,7 @@ public class DefaultTopCodeCacheFactoryTest {
 
         // given
 
-        DefaultTopCodeCacheFactory.Builder builder = new DefaultTopCodeCacheFactory.Builder();
+        final DefaultTopCodeCacheFactory.Builder builder = new DefaultTopCodeCacheFactory.Builder();
         builder.build();
 
         // when/then

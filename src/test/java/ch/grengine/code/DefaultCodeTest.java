@@ -38,36 +38,36 @@ public class DefaultCodeTest {
     public void testConstructPlusGetters() {
 
         // given
-        
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        MockSource mNotPartOfCode = new MockSource("id3");
-        String name1 = "MainClassName1";
-        String name2 = "MainClassName2";
-        Set<String> names1 = new HashSet<>();
+
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final MockSource mNotPartOfCode = new MockSource("id3");
+        final String name1 = "MainClassName1";
+        final String name2 = "MainClassName2";
+        final Set<String> names1 = new HashSet<>();
         names1.add("Side1");
         names1.add("MainClassName1");
-        Set<String> names2 = new HashSet<>();
+        final Set<String> names2 = new HashSet<>();
         names2.add("Side2");
         names2.add("MainClassName2");
-        CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
-        CompiledSourceInfo i2 = new CompiledSourceInfo(m2, name2, names2, 22);
-        
-        String sourcesName = "sourcesName";
+        final CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
+        final CompiledSourceInfo i2 = new CompiledSourceInfo(m2, name2, names2, 22);
 
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
+        final String sourcesName = "sourcesName";
+
+        final Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(m1, i1);
         infoMap.put(m2, i2);
-        
-        Map<String,Bytecode> bytecodeMap = new HashMap<>();
-        String name1sub = name1 + "#Sub";
+
+        final Map<String,Bytecode> bytecodeMap = new HashMap<>();
+        final String name1sub = name1 + "#Sub";
         bytecodeMap.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
         bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
         bytecodeMap.put(name2, new Bytecode(name2, new byte[] { 7, 8, 9 }));
 
         // when
 
-        Code code = new DefaultCode(sourcesName, infoMap, bytecodeMap);
+        final Code code = new DefaultCode(sourcesName, infoMap, bytecodeMap);
 
         // then
 

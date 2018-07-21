@@ -79,15 +79,15 @@ public class GrengineGrapeTest {
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine();
+        final Grengine gren = Grengine.Grape.newGrengine();
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
+        final CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
 
@@ -98,18 +98,18 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
+        final GroovyClassLoader parent = new GroovyClassLoader();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent);
+        final Grengine gren = Grengine.Grape.newGrengine(parent);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
+        final CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
 
@@ -120,15 +120,15 @@ public class GrengineGrapeTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(config);
+        final Grengine gren = Grengine.Grape.newGrengine(config);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
@@ -142,16 +142,16 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, config);
+        final Grengine gren = Grengine.Grape.newGrengine(parent, config);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
@@ -165,20 +165,19 @@ public class GrengineGrapeTest {
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(new File("."));
+        final Grengine gren = Grengine.Grape.newGrengine(new File("."));
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromDirBasedSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config2 = getCompilerConfigFromDirBasedSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -187,23 +186,22 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
+        final GroovyClassLoader parent = new GroovyClassLoader();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, new File("."));
+        final Grengine gren = Grengine.Grape.newGrengine(parent, new File("."));
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromDirBasedSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config2 = getCompilerConfigFromDirBasedSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -212,15 +210,15 @@ public class GrengineGrapeTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(config, new File("."));
+        final Grengine gren = Grengine.Grape.newGrengine(config, new File("."));
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
@@ -235,16 +233,16 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."));
+        final Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."));
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
@@ -259,20 +257,19 @@ public class GrengineGrapeTest {
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(new File("."), DirMode.NO_SUBDIRS);
+        final Grengine gren = Grengine.Grape.newGrengine(new File("."), DirMode.NO_SUBDIRS);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromDirBasedSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        CompilerConfiguration config2 = getCompilerConfigFromDirBasedSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -281,23 +278,22 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
+        final GroovyClassLoader parent = new GroovyClassLoader();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, new File("."), DirMode.NO_SUBDIRS);
+        final Grengine gren = Grengine.Grape.newGrengine(parent, new File("."), DirMode.NO_SUBDIRS);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromDirBasedSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config2 = getCompilerConfigFromDirBasedSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -306,15 +302,15 @@ public class GrengineGrapeTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(config, new File("."), DirMode.NO_SUBDIRS);
+        final Grengine gren = Grengine.Grape.newGrengine(config, new File("."), DirMode.NO_SUBDIRS);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
@@ -329,16 +325,16 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        CompilerConfiguration config = new CompilerConfiguration();
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."), DirMode.NO_SUBDIRS);
+        final Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."), DirMode.NO_SUBDIRS);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
@@ -353,24 +349,23 @@ public class GrengineGrapeTest {
 
         // given
 
-        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+        final List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(urls);
+        final Grengine gren = Grengine.Grape.newGrengine(urls);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromFixedSetSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config2 = getCompilerConfigFromFixedSetSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -379,24 +374,23 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, urls);
+        final Grengine gren = Grengine.Grape.newGrengine(parent, urls);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
-        CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config1 = getCompilerConfigFromEngineTopCodeCache(engine);
+        assertThat(config1.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
-
-        config = getCompilerConfigFromFixedSetSources(gren);
-        assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
+        final CompilerConfiguration config2 = getCompilerConfigFromFixedSetSources(gren);
+        assertThat(config2.getCompilationCustomizers().get(0).getClass().getSimpleName(),
                 is("GrapeCompilationCustomizer"));
     }
 
@@ -405,16 +399,16 @@ public class GrengineGrapeTest {
 
         // given
 
-        CompilerConfiguration config = new CompilerConfiguration();
-        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+        final CompilerConfiguration config = new CompilerConfiguration();
+        final List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(config, urls);
+        final Grengine gren = Grengine.Grape.newGrengine(config, urls);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
 
@@ -429,17 +423,17 @@ public class GrengineGrapeTest {
 
         // given
 
-        GroovyClassLoader parent = new GroovyClassLoader();
-        CompilerConfiguration config = new CompilerConfiguration();
-        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+        final GroovyClassLoader parent = new GroovyClassLoader();
+        final CompilerConfiguration config = new CompilerConfiguration();
+        final List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
 
         // when
 
-        Grengine gren = Grengine.Grape.newGrengine(parent, config, urls);
+        final Grengine gren = Grengine.Grape.newGrengine(parent, config, urls);
 
         // then
 
-        LayeredEngine engine = (LayeredEngine)gren.getEngine();
+        final LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));

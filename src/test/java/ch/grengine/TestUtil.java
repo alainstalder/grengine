@@ -44,7 +44,7 @@ public class TestUtil {
     }
 
     @FunctionalInterface
-    public interface Code {
+    public interface CodeExpectedToThrow {
         void run() throws Throwable;
     }
 
@@ -57,8 +57,9 @@ public class TestUtil {
      * @param expectedClass expected throwable class
      * @param expectedMessage expected throwable message, may be null
      */
-    public static void assertThrows(Code code, Class<? extends Throwable> expectedClass,
-                                    String expectedMessage) {
+    public static void assertThrows(final CodeExpectedToThrow code,
+                                    final Class<? extends Throwable> expectedClass,
+                                    final String expectedMessage) {
         assertThrowsInternal(code, expectedClass, expectedMessage, MessageAssertionMode.IS);
     }
 
@@ -69,8 +70,9 @@ public class TestUtil {
      * @param expectedClass expected throwable class
      * @param expectedMessagePart text expected to be contained in throwable message
      */
-    public static void assertThrowsContains(Code code, Class<? extends Throwable> expectedClass,
-                                            String expectedMessagePart) {
+    public static void assertThrowsContains(final CodeExpectedToThrow code,
+                                            final Class<? extends Throwable> expectedClass,
+                                            final String expectedMessagePart) {
         assertThrowsInternal(code, expectedClass, expectedMessagePart, MessageAssertionMode.CONTAINS);
     }
 
@@ -81,13 +83,16 @@ public class TestUtil {
      * @param expectedClass expected throwable class
      * @param expectedMessageStart text expected to be at the start of the throwable message
      */
-    public static void assertThrowsStartsWith(Code code, Class<? extends Throwable> expectedClass,
-                                            String expectedMessageStart) {
+    public static void assertThrowsStartsWith(final CodeExpectedToThrow code,
+                                              final Class<? extends Throwable> expectedClass,
+                                              final String expectedMessageStart) {
         assertThrowsInternal(code, expectedClass, expectedMessageStart, MessageAssertionMode.STARTS_WITH);
     }
 
-    private static void assertThrowsInternal(Code code, Class<? extends Throwable> expectedClass,
-                                    String expectedMessage, MessageAssertionMode mode) {
+    private static void assertThrowsInternal(final CodeExpectedToThrow code,
+                                             final Class<? extends Throwable> expectedClass,
+                                             final String expectedMessage,
+                                             final MessageAssertionMode mode) {
         boolean thrown;
         try {
             code.run();
@@ -115,9 +120,9 @@ public class TestUtil {
 
 
     @SuppressWarnings("unchecked")
-    public static <K,V> Map<K,V> argsToMap(Object... args) {
+    public static <K,V> Map<K,V> argsToMap(final Object... args) {
         assertThat(args.length % 2 == 0, is(true));
-        Map<K,V> map = new HashMap<>();
+        final Map<K,V> map = new HashMap<>();
         boolean isKey = true;
         K key = null;
         for (Object arg : args) {
@@ -131,23 +136,23 @@ public class TestUtil {
         return map;
     }
     
-    public static String multiply(String s, int nTimes) {
-        StringBuilder out = new StringBuilder();
+    public static String multiply(final String s, final int nTimes) {
+        final StringBuilder out = new StringBuilder();
         for (int i=0; i<nTimes; i++) {
             out.append(s);
         }
         return out.toString();
     }
     
-    public static void setFileText(File file, String text)
+    public static void setFileText(final File file, final String text)
             throws FileNotFoundException, UnsupportedEncodingException {
-        PrintWriter writer = new PrintWriter(file, "UTF-8");
+        final PrintWriter writer = new PrintWriter(file, "UTF-8");
         writer.write(text);
         writer.close();
     }
     
-    public static String getFileText(File file) throws FileNotFoundException {
-        try (Scanner scan = new Scanner(file, StandardCharsets.UTF_8.name())) {
+    public static String getFileText(final File file) throws FileNotFoundException {
+        try (final Scanner scan = new Scanner(file, StandardCharsets.UTF_8.name())) {
             scan.useDelimiter("\\A");
             return scan.hasNext() ? scan.next() : "";
         }

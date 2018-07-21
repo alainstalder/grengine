@@ -35,12 +35,12 @@ public class CompileExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+        final String msg = "Something.";
+        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
 
         // when
 
-        CompileException e = new CompileException(msg, s);
+        final CompileException e = new CompileException(msg, s);
 
         // then
 
@@ -57,13 +57,13 @@ public class CompileExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
-        Throwable cause = new RuntimeException();
+        final String msg = "Something.";
+        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+        final Throwable cause = new RuntimeException();
 
         // when
 
-        CompileException e = new CompileException(msg, cause, s);
+        final CompileException e = new CompileException(msg, cause, s);
 
         // then
 
@@ -80,12 +80,12 @@ public class CompileExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+        final String msg = "Something.";
+        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
 
         // when
 
-        CompileException e = new CompileException(msg, null, s);
+        final CompileException e = new CompileException(msg, null, s);
 
         // then
 

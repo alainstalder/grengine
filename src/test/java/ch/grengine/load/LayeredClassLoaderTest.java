@@ -61,39 +61,39 @@ public class LayeredClassLoaderTest {
 
         // given
         
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
 
         // when
 
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
 
         // then
 
-        assertThat(loader.getBuilder(), is(builder));
-        assertThat(loader.getParent(), is(Thread.currentThread().getContextClassLoader()));
-        assertThat(loader.getLoadMode(), is(LoadMode.CURRENT_FIRST));
-        assertThat(loader.getCodeLayers().isEmpty(), is(true));
-        assertThat(loader.getTopCodeCache(), is(nullValue()));
+        assertThat(loader1.getBuilder(), is(builder));
+        assertThat(loader1.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(loader1.getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader1.getCodeLayers().isEmpty(), is(true));
+        assertThat(loader1.getTopCodeCache(), is(nullValue()));
 
-        assertThat(loader.getBuilder().getParent(), is(loader.getParent()));
-        assertThat(loader.getBuilder().getLoadMode(), is(loader.getLoadMode()));
-        assertThat(loader.getBuilder().getSourcesLayers().isEmpty(), is(true));
-        assertThat(loader.getBuilder().getCodeLayers(), is(loader.getCodeLayers()));
-        assertThat(loader.getBuilder().isWithTopCodeCache(), is(false));
-        assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
-        assertThat(loader.getBuilder().getTopCodeCache(), is(nullValue()));
+        assertThat(loader1.getBuilder().getParent(), is(loader1.getParent()));
+        assertThat(loader1.getBuilder().getLoadMode(), is(loader1.getLoadMode()));
+        assertThat(loader1.getBuilder().getSourcesLayers().isEmpty(), is(true));
+        assertThat(loader1.getBuilder().getCodeLayers(), is(loader1.getCodeLayers()));
+        assertThat(loader1.getBuilder().isWithTopCodeCache(), is(false));
+        assertThat(loader1.getBuilder().getTopLoadMode(), is(LoadMode.PARENT_FIRST));
+        assertThat(loader1.getBuilder().getTopCodeCache(), is(nullValue()));
 
         // when (extra: constructor with explicitly from code layers)
 
-        loader = new LayeredClassLoader(builder, false);
+        final LayeredClassLoader loader2 = new LayeredClassLoader(builder, false);
 
         // then
 
-        assertThat(loader.getBuilder(), is(builder));
-        assertThat(loader.getParent(), is(Thread.currentThread().getContextClassLoader()));
-        assertThat(loader.getLoadMode(), is(LoadMode.CURRENT_FIRST));
-        assertThat(loader.getCodeLayers().isEmpty(), is(true));
-        assertThat(loader.getTopCodeCache(), is(nullValue()));
+        assertThat(loader2.getBuilder(), is(builder));
+        assertThat(loader2.getParent(), is(Thread.currentThread().getContextClassLoader()));
+        assertThat(loader2.getLoadMode(), is(LoadMode.CURRENT_FIRST));
+        assertThat(loader2.getCodeLayers().isEmpty(), is(true));
+        assertThat(loader2.getTopCodeCache(), is(nullValue()));
     }
 
     @Test
@@ -101,19 +101,20 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        builder.setParent(parent);
-        builder.setLoadMode(LoadMode.PARENT_FIRST);
-        List<Code> codeLayers = getTestCodeLayers(parent);
-        builder.setCodeLayers(codeLayers);
-        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
-        builder.setWithTopCodeCache(true, topCodeCache);
-        builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final List<Code> codeLayers = getTestCodeLayers(parent);
+        final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
 
         // when
 
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader = builder
+                .setParent(parent)
+                .setLoadMode(LoadMode.PARENT_FIRST)
+                .setCodeLayers(codeLayers)
+                .setWithTopCodeCache(true, topCodeCache)
+                .setTopLoadMode(LoadMode.CURRENT_FIRST)
+                .buildFromCodeLayers();
 
         // then
 
@@ -137,11 +138,11 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
 
         // when
 
-        LayeredClassLoader loader = builder.buildFromSourcesLayers();
+        final LayeredClassLoader loader = builder.buildFromSourcesLayers();
 
         // then
 
@@ -165,19 +166,20 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        builder.setParent(parent);
-        builder.setLoadMode(LoadMode.PARENT_FIRST);
-        List<Sources> sourcesLayers = getTestSourcesLayers();
-        builder.setSourcesLayers(sourcesLayers);
-        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
-        builder.setWithTopCodeCache(true, topCodeCache);
-        builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final List<Sources> sourcesLayers = getTestSourcesLayers();
+        final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
 
         // when
 
-        LayeredClassLoader loader = builder.buildFromSourcesLayers();
+        final LayeredClassLoader loader = builder
+                .setParent(parent)
+                .setLoadMode(LoadMode.PARENT_FIRST)
+                .setSourcesLayers(sourcesLayers)
+                .setWithTopCodeCache(true, topCodeCache)
+                .setTopLoadMode(LoadMode.CURRENT_FIRST)
+                .buildFromSourcesLayers();
 
         // then
 
@@ -201,13 +203,13 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
 
         // when
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        List<Code> codeLayers = getTestCodeLayers(parent);
-        List<Sources> sourcesLayers = getTestSourcesLayers();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final List<Code> codeLayers = getTestCodeLayers(parent);
+        final List<Sources> sourcesLayers = getTestSourcesLayers();
 
         // then
 
@@ -216,13 +218,13 @@ public class LayeredClassLoaderTest {
 
         // when
 
-        Code code1 = codeLayers.get(0);
-        Code code2 = codeLayers.get(1);
-        Sources sources1 = sourcesLayers.get(0);
-        Sources sources2 = sourcesLayers.get(1);
+        final Code code1 = codeLayers.get(0);
+        final Code code2 = codeLayers.get(1);
+        final Sources sources1 = sourcesLayers.get(0);
+        final Sources sources2 = sourcesLayers.get(1);
         
         builder.setCodeLayers(code1, code2);
-        List<Code> codeLayersRead = builder.getCodeLayers();
+        final List<Code> codeLayersRead = builder.getCodeLayers();
 
         // then
 
@@ -233,7 +235,7 @@ public class LayeredClassLoaderTest {
         // when
 
         builder.setSourcesLayers(sources1, sources2);
-        List<Sources> sourcesLayersRead = builder.getSourcesLayers();
+        final List<Sources> sourcesLayersRead = builder.getSourcesLayers();
 
         // then
 
@@ -247,7 +249,7 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
         builder.buildFromCodeLayers();
 
         // when/then
@@ -263,12 +265,12 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader loader = builder.buildFromCodeLayers();
 
         // when
 
-        LayeredClassLoader clone = loader.clone();
+        final LayeredClassLoader clone = loader.clone();
 
         // then
 
@@ -283,15 +285,16 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
-        builder.setWithTopCodeCache(true, topCodeCache);
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
+        final LayeredClassLoader loader = builder
+                .setWithTopCodeCache(true, topCodeCache)
+                .buildFromCodeLayers();
 
         // when
 
-        LayeredClassLoader clone = loader.clone();
+        final LayeredClassLoader clone = loader.clone();
 
         // then
 
@@ -306,12 +309,12 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final LayeredClassLoader loader = builder.buildFromCodeLayers();
 
         // when
 
-        LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
+        final LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
 
         // then
 
@@ -326,15 +329,16 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
-        builder.setWithTopCodeCache(true, topCodeCache);
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
+        final LayeredClassLoader loader = builder
+                .setWithTopCodeCache(true, topCodeCache)
+                .buildFromCodeLayers();
 
         // when
 
-        LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
+        final LayeredClassLoader clone = loader.cloneWithSeparateTopCodeCache();
 
         // then
 
@@ -351,32 +355,33 @@ public class LayeredClassLoaderTest {
 
         // given
 
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
-        builder.setWithTopCodeCache(true, topCodeCache);
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        List<Sources> sourcesList = Collections.singletonList(sources);
-        builder.setSourcesLayers(sourcesList);
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final List<Sources> sourcesList = Collections.singletonList(sources);
 
-        LayeredClassLoader loader = builder.buildFromSourcesLayers();
+        final LayeredClassLoader loader = builder
+                .setWithTopCodeCache(true, topCodeCache)
+                .setSourcesLayers(sourcesList)
+                .buildFromSourcesLayers();
 
-        Class<?> clazz1 = loader.loadClass("Class1");
-        Class<?> clazz2 = loader.loadClass("Class2");
+        final Class<?> clazz1 = loader.loadClass("Class1");
+        final Class<?> clazz2 = loader.loadClass("Class2");
         clazz2.getConstructor().newInstance();
 
-        Source s4 = f.fromText("class Class4 {}");
+        final Source s4 = f.fromText("class Class4 {}");
         Class<?> clazz4 = loader.loadMainClass(s4);
 
-        Source s5 = f.fromText("class Class4 { int get() { return 1 } }");
+        final Source s5 = f.fromText("class Class4 { int get() { return 1 } }");
         Class<?> clazz5 = loader.loadMainClass(s5);
 
-        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        final RecordingClassReleaser releaser = new RecordingClassReleaser();
 
         // when
 
@@ -397,23 +402,23 @@ public class LayeredClassLoaderTest {
     
     
     private static List<Sources> getTestSourcesLayers() {
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
                 "public class Inner1 { static def get() { return 1 } } }");
-        Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
+        final Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
                 "public class Inner2 { static def get() { return 2 } } }");
-        Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
-        Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
-        Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
-        Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
+        final Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
+        final Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
+        final Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
+        final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
         return Arrays.asList(sources1, sources2);
     }
     
-    private static List<Code> getTestCodeLayers(ClassLoader parent) {
-        List<Sources> sourcesLayers = getTestSourcesLayers();
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
-        Code code1 = c.compile(sourcesLayers.get(0));
-        Code code2 = c.compile(sourcesLayers.get(1));
+    private static List<Code> getTestCodeLayers(final ClassLoader parent) {
+        final List<Sources> sourcesLayers = getTestSourcesLayers();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);
+        final Code code1 = c.compile(sourcesLayers.get(0));
+        final Code code2 = c.compile(sourcesLayers.get(1));
         return Arrays.asList(code1, code2);
     }
 
@@ -428,11 +433,11 @@ public class LayeredClassLoaderTest {
     private void prepareCode(boolean setLastModifiedAtEnd) throws Exception {
         fMain = new MockFile(tempFolder.getRoot(), "Main.groovy");
         sMain = new MockFileSource(fMain);
-        MockFile fAssume = new MockFile(tempFolder.getRoot(), "Assume.groovy");
+        final MockFile fAssume = new MockFile(tempFolder.getRoot(), "Assume.groovy");
         sAssume = new MockFileSource(fAssume);
         sNotInCodeLayers = new DefaultTextSource("class NotInCodeLayers {}");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(sMain, sAssume);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(sMain, sAssume);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         
         // code parent class loader if source class loader
         TestUtil.setFileText(fMain, "class Main { def methodParent() {} }\nclass Side { def methodParent() {} }");
@@ -442,12 +447,12 @@ public class LayeredClassLoaderTest {
         // code layer 0
         TestUtil.setFileText(fMain, "class Main { def methodLayer0() {} }\nclass Side { def methodLayer0() {} }");
         TestUtil.setFileText(fAssume, "package org.junit\nclass Assume  { def methodLayer0() {} }");
-        Code codeLayer0 = new DefaultGroovyCompiler().compile(sources);
+        final Code codeLayer0 = new DefaultGroovyCompiler().compile(sources);
         
         // code layer 1
         TestUtil.setFileText(fMain, "class Main { def methodLayer1() {} }\nclass Side { def methodLayer1() {} }");
         TestUtil.setFileText(fAssume, "package org.junit\nclass Assume  { def methodLayer1() {} }");
-        Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
+        final Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
 
         codeLayers = new LinkedList<>();
         codeLayers.add(codeLayer0);
@@ -483,7 +488,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -517,7 +522,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -546,7 +551,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -588,7 +593,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -622,7 +627,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -651,7 +656,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -689,7 +694,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -723,7 +728,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -752,7 +757,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -791,7 +796,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -825,7 +830,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -854,7 +859,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -892,7 +897,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -929,7 +934,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -956,7 +961,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -995,7 +1000,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1032,7 +1037,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1060,7 +1065,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1098,7 +1103,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
 
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1135,7 +1140,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1162,7 +1167,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1201,7 +1206,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1238,7 +1243,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1265,7 +1270,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1303,7 +1308,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1340,7 +1345,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1361,7 +1366,7 @@ public class LayeredClassLoaderTest {
         assertThat(loader2.loadClass(sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
           
         // not found by sMain with top code cache
         assertThrowsStartsWith(() -> loader3.loadClass(sMain, "org.junit.Assume"),
@@ -1371,7 +1376,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader4 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader4 = builder.buildFromCodeLayers();
         
         clazz = loader4.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1410,7 +1415,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1447,7 +1452,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1468,7 +1473,7 @@ public class LayeredClassLoaderTest {
         assertThat(loader2.loadClass(sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
           
         // not found by sMain with top code cache
         assertThrowsStartsWith(() -> loader3.loadClass(sMain, "org.junit.Assume"),
@@ -1478,7 +1483,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader4 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader4 = builder.buildFromCodeLayers();
         
         clazz = loader4.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1516,7 +1521,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1553,7 +1558,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1574,7 +1579,7 @@ public class LayeredClassLoaderTest {
         assertThat(loader2.loadClass(sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
           
         // not found by sMain with top code cache
         assertThrowsStartsWith(() -> loader3.loadClass(sMain, "org.junit.Assume"),
@@ -1584,7 +1589,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader4 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader4 = builder.buildFromCodeLayers();
         
         clazz = loader4.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1623,7 +1628,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1660,7 +1665,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1681,7 +1686,7 @@ public class LayeredClassLoaderTest {
         assertThat(loader2.loadClass(sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
           
         // not found by sMain with top code cache
         assertThrowsStartsWith(() -> loader3.loadClass(sMain, "org.junit.Assume"),
@@ -1691,7 +1696,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader4 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader4 = builder.buildFromCodeLayers();
         
         clazz = loader4.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1729,7 +1734,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1763,7 +1768,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1792,7 +1797,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1831,7 +1836,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1865,7 +1870,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1894,7 +1899,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1932,7 +1937,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -1966,7 +1971,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -1995,7 +2000,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2034,7 +2039,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2068,7 +2073,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2097,7 +2102,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2135,7 +2140,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2172,7 +2177,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2199,7 +2204,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2238,7 +2243,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2275,7 +2280,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2302,7 +2307,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2340,7 +2345,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2377,7 +2382,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2404,7 +2409,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2443,7 +2448,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2480,7 +2485,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2507,7 +2512,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2545,7 +2550,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2581,7 +2586,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2608,7 +2613,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2647,7 +2652,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2684,7 +2689,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2711,7 +2716,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2749,7 +2754,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2786,7 +2791,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2813,7 +2818,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2852,7 +2857,7 @@ public class LayeredClassLoaderTest {
         builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
         builder.setTopLoadMode(topLoadMode);
         
-        LayeredClassLoader loader1 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader1 = builder.buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2889,7 +2894,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader2 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
         clazz = loader2.loadClass(sMain, "Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2916,7 +2921,7 @@ public class LayeredClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        LayeredClassLoader loader3 = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader3 = builder.buildFromCodeLayers();
         
         clazz = loader3.loadClass("Main");
         assertThat(clazz.getName(), is("Main"));
@@ -2948,14 +2953,15 @@ public class LayeredClassLoaderTest {
         final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
         final LoadMode topLoadMode = null;
         
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        builder.setParent(parent);
-        builder.setLoadMode(layerLoadMode);
-        builder.setCodeLayers(codeLayers);
-        builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
-        builder.setTopLoadMode(topLoadMode);
-        
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+
+        final LayeredClassLoader loader = builder
+                .setParent(parent)
+                .setLoadMode(layerLoadMode)
+                .setCodeLayers(codeLayers)
+                .setWithTopCodeCache(isWithTopLoadMode, topCodeCache)
+                .setTopLoadMode(topLoadMode)
+                .buildFromCodeLayers();
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -2981,39 +2987,40 @@ public class LayeredClassLoaderTest {
         final TopCodeCache topCodeCache = new DefaultTopCodeCache.Builder(parent).build();
         final LoadMode topLoadMode = LoadMode.CURRENT_FIRST;
         
-        LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
-        builder.setParent(parent);
-        builder.setLoadMode(layerLoadMode);
-        builder.setCodeLayers(codeLayers);
-        builder.setWithTopCodeCache(isWithTopLoadMode, topCodeCache);
-        builder.setTopLoadMode(topLoadMode);
-        
-        LayeredClassLoader loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
+
+        final LayeredClassLoader loader1 = builder
+                .setParent(parent)
+                .setLoadMode(layerLoadMode)
+                .setCodeLayers(codeLayers)
+                .setWithTopCodeCache(isWithTopLoadMode, topCodeCache)
+                .setTopLoadMode(topLoadMode)
+                .buildFromCodeLayers();
         
         // when/then (loadMainClass(source))
         
-        Class<?> clazz = loader.loadMainClass(sMain);
+        Class<?> clazz = loader1.loadMainClass(sMain);
         assertThat(clazz.getName(), is("Main"));
         clazz.getDeclaredMethod("methodTop");
         
         assertThat(fMain.setLastModified(55555), is(true));
         
-        clazz = loader.loadMainClass(sMain);
+        clazz = loader1.loadMainClass(sMain);
         assertThat(clazz.getName(), is("Main"));
         clazz.getDeclaredMethod("methodTop");
 
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        loader = builder.buildFromCodeLayers();
+        final LayeredClassLoader loader2 = builder.buildFromCodeLayers();
         
-        clazz = loader.loadClass(sMain, "Side");
+        clazz = loader2.loadClass(sMain, "Side");
         assertThat(clazz.getName(), is("Side"));
         clazz.getDeclaredMethod("methodTop");
 
         assertThat(fMain.setLastModified(77777), is(true));
 
-        clazz = loader.loadClass(sMain, "Side");
+        clazz = loader2.loadClass(sMain, "Side");
         assertThat(clazz.getName(), is("Side"));
         clazz.getDeclaredMethod("methodTop");
     }

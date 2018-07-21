@@ -30,10 +30,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.assertThrowsStartsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class SourceUtilTest {
@@ -51,13 +52,13 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
-        List<String> texts = Arrays.asList(text1, text2);
+        final String text1 = "println 1";
+        final String text2 = "println 2";
+        final List<String> texts = Arrays.asList(text1, text2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
 
         // then
 
@@ -71,12 +72,12 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
+        final String text1 = "println 1";
+        final String text2 = "println 2";
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), text1, text2);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), text1, text2);
 
         // then
 
@@ -90,13 +91,13 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
-        List<String> texts = Arrays.asList(text1, text2);
+        final String text1 = "println 1";
+        final String text2 = "println 2";
+        final List<String> texts = Arrays.asList(text1, text2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
 
         // then
 
@@ -110,12 +111,12 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
+        final String text1 = "println 1";
+        final String text2 = "println 2";
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(text1, text2);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(text1, text2);
 
         // then
 
@@ -129,15 +130,15 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
-        String name1 = "Script1";
-        String name2 = "Script2";
-        Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
+        final String text1 = "println 1";
+        final String text2 = "println 2";
+        final String name1 = "Script1";
+        final String name2 = "Script2";
+        final Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(new DefaultSourceFactory(), texts);
 
         // then
 
@@ -151,15 +152,15 @@ public class SourceUtilTest {
 
         // given
 
-        String text1 = "println 1";
-        String text2 = "println 2";
-        String name1 = "Script1";
-        String name2 = "Script2";
-        Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
+        final String text1 = "println 1";
+        final String text2 = "println 2";
+        final String name1 = "Script1";
+        final String name2 = "Script2";
+        final Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
+        final Set<Source> sourceSet = SourceUtil.textsToSourceSet(texts);
 
         // then
 
@@ -174,13 +175,13 @@ public class SourceUtilTest {
 
         // given
 
-        File file1 = new File("Script1.groovy");
-        File file2 = new File("Script2.groovy");
-        List<File> files = Arrays.asList(file1, file2);
+        final File file1 = new File("Script1.groovy");
+        final File file2 = new File("Script2.groovy");
+        final List<File> files = Arrays.asList(file1, file2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), files);
+        final Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), files);
 
         // then
 
@@ -194,12 +195,12 @@ public class SourceUtilTest {
 
         // given
 
-        File file1 = new File("Script1.groovy");
-        File file2 = new File("Script2.groovy");
+        final File file1 = new File("Script1.groovy");
+        final File file2 = new File("Script2.groovy");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), file1, file2);
+        final Set<Source> sourceSet = SourceUtil.filesToSourceSet(new DefaultSourceFactory(), file1, file2);
 
         // then
 
@@ -213,13 +214,13 @@ public class SourceUtilTest {
 
         // given
 
-        File file1 = new File("Script1.groovy");
-        File file2 = new File("Script2.groovy");
-        List<File> files = Arrays.asList(file1, file2);
+        final File file1 = new File("Script1.groovy");
+        final File file2 = new File("Script2.groovy");
+        final List<File> files = Arrays.asList(file1, file2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.filesToSourceSet(files);
+        final Set<Source> sourceSet = SourceUtil.filesToSourceSet(files);
 
         // then
 
@@ -233,12 +234,12 @@ public class SourceUtilTest {
 
         // given
 
-        File file1 = new File("Script1.groovy");
-        File file2 = new File("Script2.groovy");
+        final File file1 = new File("Script1.groovy");
+        final File file2 = new File("Script2.groovy");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.filesToSourceSet(file1, file2);
+        final Set<Source> sourceSet = SourceUtil.filesToSourceSet(file1, file2);
 
         // then
 
@@ -253,13 +254,13 @@ public class SourceUtilTest {
 
         // given
 
-        URL url1 = new URL("http://foo.bar/Script1.groovy");
-        URL url2 = new URL("http://foo.bar/Script2.groovy");
-        List<URL> urls = Arrays.asList(url1, url2);
+        final URL url1 = new URL("http://foo.bar/Script1.groovy");
+        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final List<URL> urls = Arrays.asList(url1, url2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), urls);
+        final Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), urls);
 
         // then
 
@@ -273,12 +274,12 @@ public class SourceUtilTest {
 
         // given
 
-        URL url1 = new URL("http://foo.bar/Script1.groovy");
-        URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = new URL("http://foo.bar/Script1.groovy");
+        final URL url2 = new URL("http://foo.bar/Script2.groovy");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), url1, url2);
+        final Set<Source> sourceSet = SourceUtil.urlsToSourceSet(new DefaultSourceFactory(), url1, url2);
 
         // then
 
@@ -292,13 +293,13 @@ public class SourceUtilTest {
 
         // given
 
-        URL url1 = new URL("http://foo.bar/Script1.groovy");
-        URL url2 = new URL("http://foo.bar/Script2.groovy");
-        List<URL> urls = Arrays.asList(url1, url2);
+        final URL url1 = new URL("http://foo.bar/Script1.groovy");
+        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final List<URL> urls = Arrays.asList(url1, url2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(urls);
+        final Set<Source> sourceSet = SourceUtil.urlsToSourceSet(urls);
 
         // then
 
@@ -312,12 +313,12 @@ public class SourceUtilTest {
 
         // given
 
-        URL url1 = new URL("http://foo.bar/Script1.groovy");
-        URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = new URL("http://foo.bar/Script1.groovy");
+        final URL url2 = new URL("http://foo.bar/Script2.groovy");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(url1, url2);
+        final Set<Source> sourceSet = SourceUtil.urlsToSourceSet(url1, url2);
 
         // then
 
@@ -332,11 +333,11 @@ public class SourceUtilTest {
 
         // given
 
-        Source source = new DefaultTextSource("println 1");
+        final Source source = new DefaultTextSource("println 1");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.sourceToSourceSet(source);
+        final Set<Source> sourceSet = SourceUtil.sourceToSourceSet(source);
 
         // then
 
@@ -349,13 +350,13 @@ public class SourceUtilTest {
 
         // given
 
-        Source source1 = new DefaultTextSource("println 1");
-        Source source2 = new DefaultTextSource("println 2");
-        List<Source> sourceList = Arrays.asList(source1, source2);
+        final Source source1 = new DefaultTextSource("println 1");
+        final Source source2 = new DefaultTextSource("println 2");
+        final List<Source> sourceList = Arrays.asList(source1, source2);
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.sourceCollectionToSourceSet(sourceList);
+        final Set<Source> sourceSet = SourceUtil.sourceCollectionToSourceSet(sourceList);
 
         // then
 
@@ -369,12 +370,12 @@ public class SourceUtilTest {
 
         // given
 
-        Source source1 = new DefaultTextSource("println 1");
-        Source source2 = new DefaultTextSource("println 2");
+        final Source source1 = new DefaultTextSource("println 1");
+        final Source source2 = new DefaultTextSource("println 2");
 
         // when
 
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(source1, source2);
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(source1, source2);
 
         // then
 
@@ -386,7 +387,9 @@ public class SourceUtilTest {
 
     @Test
     public void testMd5() {
-        // RFC 1321 test vectors
+
+        // when/then (RFC 1321 test vectors)
+
         assertThat(SourceUtil.md5(""), is("D41D8CD98F00B204E9800998ECF8427E"));
         assertThat(SourceUtil.md5("a"), is("0CC175B9C0F1B6A831C399E269772661"));
         assertThat(SourceUtil.md5("abc"), is("900150983CD24FB0D6963F7D28E17F72"));
@@ -398,42 +401,48 @@ public class SourceUtilTest {
     
     @Test
     public void testHash() {
+
+        // when/then
+
         assertThat(SourceUtil.hash("abc", "MD5"), is("900150983CD24FB0D6963F7D28E17F72"));
     }
     
     @Test
     public void testHashUnsupportedDigestAlgorithm() {
-        try {
-            SourceUtil.hash("abc", "BatHash");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            assertThat(e.getMessage(), is("No message digest BatHash."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourceUtil.hash("abc", "BatHash"),
+                UnsupportedOperationException.class,
+                "No message digest BatHash.");
     }
     
     @Test
     public void testGetTextStartNoLineBreaksNullText() {
+
+        // when/then
+
         assertThat(SourceUtil.getTextStartNoLineBreaks(null, 0), is(nullValue()));
     }
     
     @Test
     public void testGetTextStartNoLineBreaksNegMaxLen() {
-        try {
-            SourceUtil.getTextStartNoLineBreaks("hello", -1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Max len (-1) is negative."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourceUtil.getTextStartNoLineBreaks("hello", -1),
+                IllegalArgumentException.class,
+                "Max len (-1) is negative.");
     }
     
     @Test
     public void testGetTextStartNoLineBreaksMaxLenLessThan10() {
-        try {
-            SourceUtil.getTextStartNoLineBreaks("hello", 9);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Max len (9) must be at least 10."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourceUtil.getTextStartNoLineBreaks("hello", 9),
+                IllegalArgumentException.class,
+                "Max len (9) must be at least 10.");
     }
 
     @Test
@@ -462,14 +471,14 @@ public class SourceUtilTest {
 
         // given
 
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
-        String text = "println 55";
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final String text = "println 55";
         TestUtil.setFileText(file, text);
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        String textRead = SourceUtil.readUrlText(url, "UTF-8");
+        final String textRead = SourceUtil.readUrlText(url, "UTF-8");
 
         // then
 
@@ -481,14 +490,14 @@ public class SourceUtilTest {
 
         // given
 
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
-        String text = "";
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final String text = "";
         TestUtil.setFileText(file, text);
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        String textRead = SourceUtil.readUrlText(url, "UTF-8");
+        final String textRead = SourceUtil.readUrlText(url, "UTF-8");
 
         // then
 
@@ -497,14 +506,17 @@ public class SourceUtilTest {
     
     @Test
     public void testReadUrlTextNothingThere() throws Exception {
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
-        URL url = file.toURI().toURL();
-        try {
-           SourceUtil.readUrlText(url, "UTF-8");
-           fail();
-        } catch(IOException e) {
-            assertThat(e.getMessage().startsWith("Could not open stream for URL '" + url + "':"), is(true));
-        }
+
+        // given
+
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final URL url = file.toURI().toURL();
+
+        // when/then
+
+        assertThrowsStartsWith(() -> SourceUtil.readUrlText(url, "UTF-8"),
+                IOException.class,
+                "Could not open stream for URL '" + url + "':");
     }
 
 }

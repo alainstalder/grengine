@@ -57,13 +57,13 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
 
         // when
 
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
 
         // then
 
@@ -77,7 +77,7 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
 
         // when/then
@@ -92,8 +92,8 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
 
         // when/then
@@ -108,7 +108,7 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
         // when/then
 
@@ -123,26 +123,26 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        LoadMode loadMode = LoadMode.PARENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {\n" +
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.PARENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {\n" +
                 "static class Sub {} }\n" +
                 "class Side {}");
-        Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
-        Source s3 = f.fromText("class Class3 {}");
-        Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
+        final Source s3 = f.fromText("class Class3 {}");
+        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
         
         // when/then (findBytecodeClassLoaderBySource(source))
-        
+
         BytecodeClassLoader loaderFound = loader1.findBytecodeClassLoaderBySource(s1);
         assertThat(loader1, is(loaderFound));
         loaderFound = loader1.findBytecodeClassLoaderBySource(s2);
@@ -153,7 +153,7 @@ public class BytecodeClassLoaderTest {
         assertThat(loader1, is(loaderFound));
 
         // when/then (loadMainClass(source))
-        
+
         Class<?> clazz = loader1.loadMainClass(s1);
         assertThat(clazz.getName(), is("Class1"));
         clazz = loader1.loadMainClass(s2);
@@ -169,7 +169,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -185,14 +185,14 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
         assertThrows(() -> loader3.loadClass(s3, "Class1"),
                 LoadException.class,
                 "Source not found: " + s3.toString());
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
@@ -202,7 +202,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader5.loadClass("Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -222,24 +222,24 @@ public class BytecodeClassLoaderTest {
     public void testParentNotSourceClassLoaderCurrentFirst() throws Exception {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {\n" +
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {\n" +
                 "static class Sub {} }\n" +
                 "class Side {}");
-        Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
-        Source s3 = f.fromText("class Class3 {}");
-        Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
+        final Source s3 = f.fromText("class Class3 {}");
+        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -269,7 +269,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -289,7 +289,7 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
         assertThrows(() -> loader3.loadClass(s3, "Class1"),
                 LoadException.class,
@@ -298,7 +298,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader4.loadClass("Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -318,29 +318,29 @@ public class BytecodeClassLoaderTest {
     public void testParentIsSourceClassLoaderParentFirst() throws Exception {
 
         // given
-        
-        LoadMode loadMode = LoadMode.PARENT_FIRST;
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        File f1 = new File(tempFolder.getRoot(), "Class1.groovy");
+        final LoadMode loadMode = LoadMode.PARENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final File f1 = new File(tempFolder.getRoot(), "Class1.groovy");
         TestUtil.setFileText(f1, "class Class1 { def marker11() { return 11 } }");
-        Source s1 = f.fromFile(f1);
-        Set<Source> sourceSetParent = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sourcesParent = SourcesUtil.sourceSetToSources(sourceSetParent, "testParent");
-        Code codeParent = c.compile(sourcesParent);
-        ClassLoader parent = new BytecodeClassLoader(Thread.currentThread().getContextClassLoader(), 
+        final Source s1 = f.fromFile(f1);
+        final Set<Source> sourceSetParent = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sourcesParent = SourcesUtil.sourceSetToSources(sourceSetParent, "testParent");
+        final Code codeParent = c.compile(sourcesParent);
+        final ClassLoader parent = new BytecodeClassLoader(Thread.currentThread().getContextClassLoader(),
                 loadMode, codeParent);
         
         TestUtil.setFileText(f1, "class Class1 { def marker22() { return 22 } }");
-        Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
-        Source s3 = f.fromText("class Class3 {}");
-        Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
+        final Source s3 = f.fromText("class Class3 {}");
+        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -370,7 +370,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -383,14 +383,14 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
         assertThrows(() -> loader3.loadClass(s3, "Class1"),
                 LoadException.class,
                 "Source not found: " + s3.toString());
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
@@ -400,7 +400,7 @@ public class BytecodeClassLoaderTest {
         // -- loadClass(name) --
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader5.loadClass("Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -416,29 +416,29 @@ public class BytecodeClassLoaderTest {
     public void testParentIsSourceClassLoaderCurrentFirst() throws Exception {
 
         // given
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        File f1 = new File(tempFolder.getRoot(), "Class1.groovy");
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final File f1 = new File(tempFolder.getRoot(), "Class1.groovy");
         TestUtil.setFileText(f1, "class Class1 { def marker11() { return 11 } }");
-        Source s1 = f.fromFile(f1);
-        Set<Source> sourceSetParent = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sourcesParent = SourcesUtil.sourceSetToSources(sourceSetParent, "testParent");
-        Code codeParent = c.compile(sourcesParent);
-        ClassLoader parent = new BytecodeClassLoader(Thread.currentThread().getContextClassLoader(), 
+        final Source s1 = f.fromFile(f1);
+        final Set<Source> sourceSetParent = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sourcesParent = SourcesUtil.sourceSetToSources(sourceSetParent, "testParent");
+        final Code codeParent = c.compile(sourcesParent);
+        final ClassLoader parent = new BytecodeClassLoader(Thread.currentThread().getContextClassLoader(),
                 loadMode, codeParent);
         
         TestUtil.setFileText(f1, "class Class1 { def marker22() { return 22 } }");
-        Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
-        Source s3 = f.fromText("class Class3 {}");
-        Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
+        final Source s3 = f.fromText("class Class3 {}");
+        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader1 = new BytecodeClassLoader(parent, loadMode, code);
         
         // when/then (findBytecodeClassLoaderBySource(source))
         
@@ -468,7 +468,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(source, name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader2 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -481,14 +481,14 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
         assertThrows(() -> loader3.loadClass(s3, "Class1"),
                 LoadException.class,
                 "Source not found: " + s3.toString());
 
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader4 = new BytecodeClassLoader(parent, loadMode, code);
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
@@ -498,7 +498,7 @@ public class BytecodeClassLoaderTest {
         // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
-        BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
         
         clazz = loader5.loadClass("Class1");
         assertThat(clazz.getName(), is("Class1"));
@@ -513,19 +513,19 @@ public class BytecodeClassLoaderTest {
     public void testLoadClassWithResolveCurrentFirst() throws Exception {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
 
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
 
         // when/then (load class with resolve (protected method))
 
@@ -536,11 +536,11 @@ public class BytecodeClassLoaderTest {
     public void testStaticLoadMainClassBySource() {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
@@ -549,23 +549,23 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s1.toString());
 
         // when/then (fabricate inconsistent code)
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
-        
-        Set<String> classNames1 = new HashSet<>();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final Set<String> classNames1 = new HashSet<>();
         classNames1.add("Class1");
-        CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
+        final CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
+        final Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(s1, info);
-        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
-        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
-        
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
+        final Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
+        final Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
         assertThrows(() -> BytecodeClassLoader.loadMainClassBySource(loader, s1),
                 LoadException.class,
@@ -577,11 +577,11 @@ public class BytecodeClassLoaderTest {
     public void testStaticLoadMainBySourceAndName() {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
@@ -590,23 +590,23 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s1.toString());
 
         // when/then (fabricate inconsistent code)
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
-        
-        Set<String> classNames1 = new HashSet<>();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final Set<String> classNames1 = new HashSet<>();
         classNames1.add("Class33NoBytecode");
-        CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
+        final CompiledSourceInfo info = new CompiledSourceInfo(s1, "Class1", classNames1, 0);
+        final Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(s1, info);
-        Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
-        Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
-        
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
+        final Map<String,Bytecode> bytecodeMapEmpty = new HashMap<>();
+        final Code inconsistentCode = new DefaultCode(code.getSourcesName(), infoMap, bytecodeMapEmpty);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
         assertThrows(() -> BytecodeClassLoader.loadClassBySourceAndName(loader, s1, "Class33NoBytecode"),
                 LoadException.class,
@@ -618,23 +618,23 @@ public class BytecodeClassLoaderTest {
     public void testClone() {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
 
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
 
         // when
-        
-        BytecodeClassLoader clone = loader.clone();
+
+        final BytecodeClassLoader clone = loader.clone();
 
         // then
 
@@ -658,25 +658,25 @@ public class BytecodeClassLoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
 
-        Class<?> clazz1 = loader.loadClass("Class1");
-        Class<?> clazz2 = loader.loadClass("Class2");
+        final Class<?> clazz1 = loader.loadClass("Class1");
+        final Class<?> clazz2 = loader.loadClass("Class2");
         clazz2.getConstructor().newInstance();
 
-        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        final RecordingClassReleaser releaser = new RecordingClassReleaser();
         releaser.throwAfterReleasing = throwAfterReleasing;
 
         // when
@@ -709,19 +709,19 @@ public class BytecodeClassLoaderTest {
     public void testThrowsInSynchronizedBlock() {
 
         // given
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
-        
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
 
-        BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
         final ThrowingBytecodeClassLoader throwingLoader = new ThrowingBytecodeClassLoader(loader);
 
         // when/then

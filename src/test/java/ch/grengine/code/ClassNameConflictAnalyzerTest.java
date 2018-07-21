@@ -49,19 +49,19 @@ public class ClassNameConflictAnalyzerTest {
 
         // given
 
-        List<Code> codeLayers = getTestCodeLayers();
+        final List<Code> codeLayers = getTestCodeLayers();
 
         // when
 
-        Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getAllClassNamesMap(codeLayers);
+        final Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getAllClassNamesMap(codeLayers);
 
         // then
 
         assertThat(origins.size(), is(4));
 
         // when
-        
-        List<Code> twiceList = origins.get("Twice");
+
+        final List<Code> twiceList = origins.get("Twice");
 
         // then
 
@@ -70,8 +70,8 @@ public class ClassNameConflictAnalyzerTest {
         assertThat(codeLayers.get(1), is(twiceList.get(1)));
 
         // when
-        
-        List<Code> twiceInner1List = origins.get("Twice$Inner1");
+
+        final List<Code> twiceInner1List = origins.get("Twice$Inner1");
 
         // then
 
@@ -79,8 +79,8 @@ public class ClassNameConflictAnalyzerTest {
         assertThat(codeLayers.get(0), is(twiceInner1List.get(0)));
 
         // when
-        
-        List<Code> twiceInner2List = origins.get("Twice$Inner2");
+
+        final List<Code> twiceInner2List = origins.get("Twice$Inner2");
 
         // then
 
@@ -89,7 +89,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when
 
-        List<Code> fileList = origins.get("java.io.File");
+        final List<Code> fileList = origins.get("java.io.File");
 
         // then
 
@@ -113,19 +113,19 @@ public class ClassNameConflictAnalyzerTest {
 
         // given
 
-        List<Code> codeLayers = getTestCodeLayers();
+        final List<Code> codeLayers = getTestCodeLayers();
 
         // when
 
-        Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
+        final Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
 
         // then
 
         assertThat(origins.size(), is(1));
 
         // when
-        
-        List<Code> twiceList = origins.get("Twice");
+
+        final List<Code> twiceList = origins.get("Twice");
 
         // then
 
@@ -150,12 +150,12 @@ public class ClassNameConflictAnalyzerTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        List<Code> codeLayers = getTestCodeLayers();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final List<Code> codeLayers = getTestCodeLayers();
 
         // when
 
-        Map<String,List<Code>> origins = ClassNameConflictAnalyzer.
+        final Map<String,List<Code>> origins = ClassNameConflictAnalyzer.
                 getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
 
         // then
@@ -164,7 +164,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when
 
-        List<Code> fileList = origins.get("java.io.File");
+        final List<Code> fileList = origins.get("java.io.File");
 
         // then
 
@@ -188,7 +188,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
 
         // when/then
@@ -201,24 +201,24 @@ public class ClassNameConflictAnalyzerTest {
 
     
     public static List<Code> getTestCodeLayers() {
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
                 "public class Inner1 { static def get() { return 1 } } }");
-        Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
+        final Source s2 = f.fromText("public class Twice { public def get() { return Inner2.get() }\n" +
                 "public class Inner2 { static def get() { return 2 } } }");
-        Source s3 = f.fromText("package java.io\nclass File {}");
-        Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
-        Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
-        Set<Source> sourceSet3 = SourceUtil.sourceArrayToSourceSet(s3);
-        Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
-        Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
-        Sources sources3 = SourcesUtil.sourceSetToSources(sourceSet3, "sources3");
-        
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler.Builder().setParent(parent).build();
-        Code code1 = c.compile(sources1);
-        Code code2 = c.compile(sources2);
-        Code code3 = c.compile(sources3);
+        final Source s3 = f.fromText("package java.io\nclass File {}");
+        final Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s1);
+        final Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s2);
+        final Set<Source> sourceSet3 = SourceUtil.sourceArrayToSourceSet(s3);
+        final Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "sources1");
+        final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
+        final Sources sources3 = SourcesUtil.sourceSetToSources(sourceSet3, "sources3");
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler.Builder().setParent(parent).build();
+        final Code code1 = c.compile(sources1);
+        final Code code2 = c.compile(sources2);
+        final Code code3 = c.compile(sources3);
 
         return Arrays.asList(code1, code2, code3);
     }

@@ -29,12 +29,12 @@ public class BytecodeTest {
 
         // given
 
-        String className = "MyScript";
-        byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
+        final String className = "MyScript";
+        final byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
 
         // when
 
-        Bytecode bytecode = new Bytecode(className, bytes);
+        final Bytecode bytecode = new Bytecode(className, bytes);
 
         // then
 
@@ -47,12 +47,12 @@ public class BytecodeTest {
 
         // given
 
-        String className = "MyScript";
-        byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
+        final String className = "MyScript";
+        final byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
 
         // when
 
-        Bytecode bytecode = new Bytecode(className, bytes);
+        final Bytecode bytecode = new Bytecode(className, bytes);
 
         // then
 
@@ -66,7 +66,7 @@ public class BytecodeTest {
 
         // given
 
-        byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
+        final byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
 
         // when/then
 
@@ -80,7 +80,7 @@ public class BytecodeTest {
 
         // given
 
-        String className = "MyScript";
+        final String className = "MyScript";
 
         // when/then
 

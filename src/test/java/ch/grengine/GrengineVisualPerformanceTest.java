@@ -37,10 +37,10 @@ public class GrengineVisualPerformanceTest {
     private static final int N_RUNS = 4;
     private static final long N_INNER = 100;
 
-    public static void main(String... args) throws Exception {
-        
-        File tempDir = new File(System.getProperty("java.io.tmpdir"));
-        File scriptDir = new File(tempDir, UUID.randomUUID().toString());
+    public static void main(final String... args) throws Exception {
+
+        final File tempDir = new File(System.getProperty("java.io.tmpdir"));
+        final File scriptDir = new File(tempDir, UUID.randomUUID().toString());
         if (!scriptDir.mkdirs()) {
             throw new RuntimeException("Could not create dirs for script dir '" +
                     scriptDir.getCanonicalPath() + "'.");
@@ -238,10 +238,10 @@ public class GrengineVisualPerformanceTest {
         printRunInfo(runForDuration(runner));
     }
 
-    private static long[] runForDuration(Runnable runner) {
-        long[] timesPerRunNs = new long[N_RUNS];
+    private static long[] runForDuration(final Runnable runner) {
+        final long[] timesPerRunNs = new long[N_RUNS];
         for (int j=0; j<N_RUNS; j++) {
-            long t0 = System.nanoTime();
+            final long t0 = System.nanoTime();
             long t1;
             int n = 0;
             do {
@@ -249,13 +249,13 @@ public class GrengineVisualPerformanceTest {
                 t1 = System.nanoTime();
                 n+= N_INNER;
             } while (t1-t0 < RUN_DURATION_NS);
-            long timePerRunNs = (t1-t0) / n;
+            final long timePerRunNs = (t1-t0) / n;
             timesPerRunNs[j] = timePerRunNs;
         }
         return timesPerRunNs;
     }
 
-    private static void printRunInfo(long[] timesPerRunNs) {
+    private static void printRunInfo(final long[] timesPerRunNs) {
         System.out.println();
         System.out.print("  Run: ");
         for (int i=0; i<N_RUNS; i++) {

@@ -36,15 +36,15 @@ public class CompiledSourceInfoTest {
 
         // given
 
-        Source m1 = new MockSource("id1");
-        String name = "MainClassName";
-        Set<String> names = new HashSet<>();
+        final Source m1 = new MockSource("id1");
+        final String name = "MainClassName";
+        final Set<String> names = new HashSet<>();
         names.add("Side");
         names.add("MainClassName");
 
         // when
 
-        CompiledSourceInfo info = new CompiledSourceInfo(m1, name, names, 55);
+        final CompiledSourceInfo info = new CompiledSourceInfo(m1, name, names, 55);
 
         // then
 

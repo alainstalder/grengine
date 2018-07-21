@@ -69,11 +69,11 @@ public class LayeredEngineTest {
 
         // given
         
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        final LayeredEngine.Builder builder = new LayeredEngine.Builder();
 
         // when
 
-        LayeredEngine engine = builder.build();
+        final LayeredEngine engine = builder.build();
 
         // then
 
@@ -92,23 +92,24 @@ public class LayeredEngineTest {
     public void testConstructAllDefined() {
 
         // given
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
-        builder.setParent(parent);
-        builder.setLoadMode(LoadMode.PARENT_FIRST);
-        builder.setWithTopCodeCache(false);
-        builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
-        TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory();
-        builder.setTopCodeCacheFactory(topCodeCacheFactory);
-        ClassReleaser releaser = new RecordingClassReleaser();
-        builder.setClassReleaser(releaser);
-        builder.setAllowSameClassNamesInMultipleCodeLayers(false);
-        builder.setAllowSameClassNamesInParentAndCodeLayers(false);
+
+        final LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
+        final TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory();
+        final ClassReleaser releaser = new RecordingClassReleaser();
 
         // when
-        
-        LayeredEngine engine = builder.build();
+
+        final LayeredEngine engine = builder
+                .setParent(parent)
+                .setLoadMode(LoadMode.PARENT_FIRST)
+                .setWithTopCodeCache(false)
+                .setTopLoadMode(LoadMode.CURRENT_FIRST)
+                .setTopCodeCacheFactory(topCodeCacheFactory)
+                .setClassReleaser(releaser)
+                .setAllowSameClassNamesInMultipleCodeLayers(false)
+                .setAllowSameClassNamesInParentAndCodeLayers(false)
+                .build();
 
         // then
 
@@ -128,7 +129,7 @@ public class LayeredEngineTest {
 
         // given
 
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        final LayeredEngine.Builder builder = new LayeredEngine.Builder();
         builder.build();
 
         // when/then
@@ -143,29 +144,30 @@ public class LayeredEngineTest {
 
         // given
 
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        RecordingClassReleaser releaser = new RecordingClassReleaser();
-        builder.setClassReleaser(releaser);
+        final LayeredEngine.Builder builder = new LayeredEngine.Builder();
+        final RecordingClassReleaser releaser = new RecordingClassReleaser();
 
-        LayeredEngine engine = builder.build();
+        final LayeredEngine engine = builder
+                .setClassReleaser(releaser)
+                .build();
 
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        List<Sources> sourcesList = Collections.singletonList(sources);
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final List<Sources> sourcesList = Collections.singletonList(sources);
 
         engine.setCodeLayersBySource(sourcesList);
 
-        Loader loaderAttached = engine.newAttachedLoader();
-        Loader loaderDetached = engine.newDetachedLoader();
+        final Loader loaderAttached = engine.newAttachedLoader();
+        final Loader loaderDetached = engine.newDetachedLoader();
 
-        Class<?> clazz1a = engine.loadClass(loaderAttached, "Class1");
-        Class<?> clazz2a = engine.loadClass(loaderAttached, "Class2");
+        final Class<?> clazz1a = engine.loadClass(loaderAttached, "Class1");
+        final Class<?> clazz2a = engine.loadClass(loaderAttached, "Class2");
         clazz2a.getConstructor().newInstance();
-        Class<?> clazz1d = engine.loadClass(loaderDetached, "Class1");
-        Class<?> clazz2d = engine.loadClass(loaderDetached, "Class2");
+        final Class<?> clazz1d = engine.loadClass(loaderDetached, "Class1");
+        final Class<?> clazz2d = engine.loadClass(loaderDetached, "Class2");
         clazz2d.getConstructor().newInstance();
 
         // when
@@ -191,24 +193,24 @@ public class LayeredEngineTest {
     private List<Sources> sourcesLayers;
     private List<Code> codeLayers;
     
-    private void prepareCode(int offs) throws Exception {
-        MockFile f1 = new MockFile(tempFolder.getRoot(), "Script1.groovy");
+    private void prepareCode(final int offs) throws Exception {
+        final MockFile f1 = new MockFile(tempFolder.getRoot(), "Script1.groovy");
         s1 = new MockFileSource(f1);
-        MockFile f2 = new MockFile(tempFolder.getRoot(), "Script2.groovy");
+        final MockFile f2 = new MockFile(tempFolder.getRoot(), "Script2.groovy");
         s2 = new MockFileSource(f2);
-        MockFile f3 = new MockFile(tempFolder.getRoot(), "Script3.groovy");
+        final MockFile f3 = new MockFile(tempFolder.getRoot(), "Script3.groovy");
         s3 = new MockFileSource(f3);
         s4 = new DefaultTextSource(
                 "package org.junit\npublic class Assume extends Script { public def run() { return 400 } }");
-        
-        Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s3, s4);
-        Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "test");
-        Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s1, s2, s3);
-        Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "test");
+
+        final Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s3, s4);
+        final Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "test");
+        final Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s1, s2, s3);
+        final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "test");
         sourcesLayers = Arrays.asList(sources1, sources2);
         
         TestUtil.setFileText(f3, "public class Script3 extends Script { public def run() { return 300 } }");
-        Code code1 = new DefaultGroovyCompiler().compile(sources1);
+        final Code code1 = new DefaultGroovyCompiler().compile(sources1);
         
         TestUtil.setFileText(f1, "return " + offs + "+100");
         TestUtil.setFileText(f2, "public class Script2 extends Script { public def run() { return Sub.get() } }\n" +
@@ -216,81 +218,110 @@ public class LayeredEngineTest {
         TestUtil.setFileText(f3, "public class Script3 extends Script { public def run() { return 333 } }");
         assertThat(f1.setLastModified(offs), is(true));
         assertThat(f2.setLastModified(offs), is(true));
-        Code code2 = new DefaultGroovyCompiler().compile(sources2);
+        final Code code2 = new DefaultGroovyCompiler().compile(sources2);
         
         codeLayers = Arrays.asList(code1, code2);
-
     }
     
     @Test
     public void testFromCodeLayersNoTopCodeCache() throws Exception {
 
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        
-        LayeredEngine engine = builder.build();
-        
+        // given
+
         prepareCode(1000);
+
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .build();
+        
         engine.setCodeLayers(codeLayers);
-        
-        Loader loader = engine.getLoader();
-        Loader attachedLoader2 = engine.newAttachedLoader();
-        Loader detachedLoader = engine.newDetachedLoader();
-        
+
+        final Loader loader = engine.getLoader();
+        final Loader attachedLoader2 = engine.newAttachedLoader();
+        final Loader detachedLoader = engine.newDetachedLoader();
+
+        // when
+
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
         Script script11 = (Script)clazz11.getConstructor().newInstance();
         Script script12 = (Script)clazz12.getConstructor().newInstance();
         Script script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
-        
+
+        // when
+
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.getConstructor().newInstance();
         Script script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(1200));
         assertThat(script21.run(), is(1201));
         assertThat(script21.run(), is(1202));
         assertThat(script22.run(), is(1200));
         assertThat(script22.run(), is(1201));
         assertThat(script22.run(), is(1202));
-        
-        // layers current first, so top version counts
-        Class<?> clazz31 = engine.loadMainClass(loader, s3);
-        Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
-        Script script31 = (Script)clazz31.getConstructor().newInstance();
-        Script script32 = (Script)clazz32.getConstructor().newInstance();
-        assertThat(script31.run(), is(333));
-        assertThat(script31.run(), is(333));
-        assertThat(script32.run(), is(333));
-        assertThat(script32.run(), is(333));
-        
-        Class<?> clazz4 = engine.loadMainClass(loader, s4);
-        Script script4 = (Script)clazz4.getConstructor().newInstance();
-        assertThat(script4.run(), is(400));
-        
-        // new loaders for s3+s4 because classes already loaded
-        Loader attachedLoader3 = engine.newAttachedLoader();
-        Loader attachedLoader4 = engine.newAttachedLoader();
 
+        // when (layers current first, so top version counts)
+
+        final Class<?> clazz31 = engine.loadMainClass(loader, s3);
+        final Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
+        final Script script31 = (Script)clazz31.getConstructor().newInstance();
+        final Script script32 = (Script)clazz32.getConstructor().newInstance();
+
+        // then
+
+        assertThat(script31.run(), is(333));
+        assertThat(script31.run(), is(333));
+        assertThat(script32.run(), is(333));
+        assertThat(script32.run(), is(333));
+
+        // when
+
+        final Class<?> clazz4 = engine.loadMainClass(loader, s4);
+        final Script script4 = (Script)clazz4.getConstructor().newInstance();
+
+        // then
+
+        assertThat(script4.run(), is(400));
+
+        // when (new loaders for s3+s4 because classes already loaded)
+
+        final Loader attachedLoader3 = engine.newAttachedLoader();
+        final Loader attachedLoader4 = engine.newAttachedLoader();
         @SuppressWarnings("rawtypes")
-        Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        final Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
         @SuppressWarnings("rawtypes")
-        Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
+        final Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
+
+        // then
+
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.getConstructor().newInstance();
         clazz32.getConstructor().newInstance();
-        
-        // current layer first, so layer version counts
-        Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
-        Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
+
+        // when (current layer first, so layer version counts)
+
+        final Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
+        final Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
+
+        // then
+
         assertThat(script4direct.run(), is(400));
+
+        // when
 
         prepareCode(2000);
         
@@ -300,10 +331,15 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
+
+        // when
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -314,155 +350,176 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
         script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(2100));
         assertThat(script11.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
+
+        // when
         
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
         script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(2200));
         assertThat(script21.run(), is(2201));
         assertThat(script21.run(), is(2202));
         assertThat(script22.run(), is(2200));
         assertThat(script22.run(), is(2201));
         assertThat(script22.run(), is(2202));
-        
-        // extra: try to load class that does not exist
-        try {
-            engine.loadClass(loader, "DoesNotExist235134");
-            fail();
-        } catch (LoadException e) {
-            assertThat(e.getMessage(), is("Could not load class 'DoesNotExist235134'. " +
-                    "Cause: java.lang.ClassNotFoundException: DoesNotExist235134"));
-        }
+
+        // when/then (extra: try to load class that does not exist)
+
+        assertThrows(() -> engine.loadClass(loader, "DoesNotExist235134"),
+                LoadException.class,
+                "Could not load class 'DoesNotExist235134'. " +
+                        "Cause: java.lang.ClassNotFoundException: DoesNotExist235134");
     }
     
     @Test
     public void testFromCodeLayersNoTopCodeCacheParentFirst() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        builder.setLoadMode(LoadMode.PARENT_FIRST);
-        
-        LayeredEngine engine = builder.build();
-        
+
+        // given
+
         prepareCode(1000);
+
+        LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .setLoadMode(LoadMode.PARENT_FIRST)
+                .build();
+
         engine.setCodeLayers(codeLayers);
-        
-        Loader loader = engine.getLoader();
-        Loader attachedLoader2 = engine.newAttachedLoader();
-                
-        // layers parent first, so lower version counts
-        Class<?> clazz31 = engine.loadMainClass(loader, s3);
-        Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
-        Script script31 = (Script)clazz31.getConstructor().newInstance();
-        Script script32 = (Script)clazz32.getConstructor().newInstance();
+
+        final Loader loader = engine.getLoader();
+        final Loader attachedLoader2 = engine.newAttachedLoader();
+
+        // when (layers parent first, so lower version counts)
+
+        final Class<?> clazz31 = engine.loadMainClass(loader, s3);
+        final Class<?> clazz32 = engine.loadMainClass(attachedLoader2, s3);
+        final Script script31 = (Script)clazz31.getConstructor().newInstance();
+        final Script script32 = (Script)clazz32.getConstructor().newInstance();
+
+        // then
+
         assertThat(script31.run(), is(300));
         assertThat(script31.run(), is(300));
         assertThat(script32.run(), is(300));
         assertThat(script32.run(), is(300));
         
-        // class exists in parent, but not source based, so uses one in layer
-        Class<?> clazz4 = engine.loadMainClass(loader, s4);
-        Script script4 = (Script)clazz4.getConstructor().newInstance();
+        // when (class exists in parent, but not source based, so uses one in layer)
+
+        final Class<?> clazz4 = engine.loadMainClass(loader, s4);
+        final Script script4 = (Script)clazz4.getConstructor().newInstance();
+
+        // then
+
         assertThat(script4.run(), is(400));
-       
-        
-        // new loaders for s3+s4 because classes already loaded
+
+        // when (new loaders for s3+s4 because classes already loaded)
+
         Loader attachedLoader3 = engine.newAttachedLoader();
         Loader attachedLoader4 = engine.newAttachedLoader();
+        @SuppressWarnings("rawtypes")
+        final Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
+        @SuppressWarnings("rawtypes")
+        final Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
 
-        @SuppressWarnings("rawtypes")
-        Class classSub21 = engine.loadClass(attachedLoader3, s2, "Sub");
-        @SuppressWarnings("rawtypes")
-        Class classSub22 = engine.loadClass(attachedLoader4, s2, "Sub");
+        // then
+
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.getConstructor().newInstance();
         clazz32.getConstructor().newInstance();
         
-        // current layer first, so layer version counts
+        // when (current layer first, so layer version counts)
+
         Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
-        try {
-            Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
-            fail();
-            script4direct.run();
-        } catch (ClassCastException e) {
-            // expected
-        }
+
+        // then
+
+        assertThat(clazz4direct.getConstructor().newInstance(), not(instanceOf(Script.class)));
     }
     
     @Test
     public void testFromCodeLayersNoTopCodeCacheClassNameConflictChecks() throws Exception {
         
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        builder.setAllowSameClassNamesInMultipleCodeLayers(false);
-        builder.setAllowSameClassNamesInParentAndCodeLayers(true);
-        
-        LayeredEngine engine = builder.build();
-        
+        // given
+
         prepareCode(1000);
-        
-        try {
-            engine.setCodeLayers(codeLayers);
-            fail();
-        } catch (ClassNameConflictException e) {
-            assertThat(e.getMessage(), is("Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
-                    "classes in code layers and parent: (not checked)"));
-        }
-        
-        builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        builder.setAllowSameClassNamesInMultipleCodeLayers(true);
-        builder.setAllowSameClassNamesInParentAndCodeLayers(false);
-        
-        engine = builder.build();
-        
-        try {
-            engine.setCodeLayers(codeLayers);
-            fail();
-        } catch (ClassNameConflictException e) {
-            assertThat(e.getMessage(), is("Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
-                    "classes in code layers and parent: [org.junit.Assume]"));
-        }
-        
-        builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        builder.setAllowSameClassNamesInMultipleCodeLayers(false);
-        builder.setAllowSameClassNamesInParentAndCodeLayers(false);
-        
-        engine = builder.build();
-        
-        try {
-            engine.setCodeLayers(codeLayers);
-            fail();
-        } catch (ClassNameConflictException e) {
-            assertThat(e.getMessage(), is("Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
-                    "classes in code layers and parent: [org.junit.Assume]"));
-        }
-        
+
+        // when
+
+        final LayeredEngine engine1 = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .setAllowSameClassNamesInMultipleCodeLayers(false)
+                .setAllowSameClassNamesInParentAndCodeLayers(true)
+                .build();
+
+        // then
+
+        assertThrows(() -> engine1.setCodeLayers(codeLayers),
+                ClassNameConflictException.class,
+                "Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
+                        "classes in code layers and parent: (not checked)");
+
+        // when
+
+        final LayeredEngine engine2 = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .setAllowSameClassNamesInMultipleCodeLayers(true)
+                .setAllowSameClassNamesInParentAndCodeLayers(false)
+                .build();
+
+        // then
+
+        assertThrows(() -> engine2.setCodeLayers(codeLayers),
+                ClassNameConflictException.class,
+                "Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
+                        "classes in code layers and parent: [org.junit.Assume]");
+
+        // when
+
+        final LayeredEngine engine3 = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .setAllowSameClassNamesInMultipleCodeLayers(false)
+                .setAllowSameClassNamesInParentAndCodeLayers(false)
+                .build();
+
+        // then
+
+        assertThrows(() -> engine3.setCodeLayers(codeLayers),
+                ClassNameConflictException.class,
+                "Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
+                        "classes in code layers and parent: [org.junit.Assume]");
     }
 
     
     @Test
     public void testFromSourcesLayersNoTopCodeCache() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        
-        LayeredEngine engine = builder.build();
-        
+
+        // given
+
         prepareCode(1000);
+
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .build();
+        
         engine.setCodeLayersBySource(sourcesLayers);
         
-        Loader loader = engine.getLoader();
-        Loader attachedLoader2 = engine.newAttachedLoader();
-        Loader detachedLoader = engine.newDetachedLoader();
+        final Loader loader = engine.getLoader();
+        final Loader attachedLoader2 = engine.newAttachedLoader();
+        final Loader detachedLoader = engine.newDetachedLoader();
+
+        // when
         
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
@@ -470,23 +527,33 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.getConstructor().newInstance();
         Script script12 = (Script)clazz12.getConstructor().newInstance();
         Script script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
+
+        // when
         
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.getConstructor().newInstance();
         Script script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(1200));
         assertThat(script21.run(), is(1201));
         assertThat(script21.run(), is(1202));
         assertThat(script22.run(), is(1200));
         assertThat(script22.run(), is(1201));
         assertThat(script22.run(), is(1202));
+
+        // when
         
         prepareCode(2000);
         
@@ -495,10 +562,15 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
+
+        // when
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayersBySource(sourcesLayers);
@@ -509,17 +581,25 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
         script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(2100));
         assertThat(script11.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
-        
+
+        // when
+
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
         script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(2200));
         assertThat(script21.run(), is(2201));
         assertThat(script21.run(), is(2202));
@@ -530,18 +610,22 @@ public class LayeredEngineTest {
     
     @Test
     public void testFromCodeLayersTopCodeCacheParentFirst() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(true);
-        
-        LayeredEngine engine = builder.build();
-        
+
+        // given
+
         prepareCode(1000);
+
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(true)
+                .build();
+        
         engine.setCodeLayers(codeLayers);
         
-        Loader loader = engine.getLoader();
-        Loader attachedLoader2 = engine.newAttachedLoader();
-        Loader detachedLoader = engine.newDetachedLoader();
+        final Loader loader = engine.getLoader();
+        final Loader attachedLoader2 = engine.newAttachedLoader();
+        final Loader detachedLoader = engine.newDetachedLoader();
+
+        // when
         
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
@@ -549,24 +633,34 @@ public class LayeredEngineTest {
         Script script11 = (Script)clazz11.getConstructor().newInstance();
         Script script12 = (Script)clazz12.getConstructor().newInstance();
         Script script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
-        
+
+        // when
+
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.getConstructor().newInstance();
         Script script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(1200));
         assertThat(script21.run(), is(1201));
         assertThat(script21.run(), is(1202));
         assertThat(script22.run(), is(1200));
         assertThat(script22.run(), is(1201));
         assertThat(script22.run(), is(1202));
-        
+
+        // when
+
         prepareCode(2000);
         
         // no change even though file modification date has change
@@ -574,10 +668,16 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
+
+
+        // when
 
         // now replace code layers, then changes must become available (except if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -588,17 +688,26 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
         script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(2100));
         assertThat(script11.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
-        
+
+
+        // when
+
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
         script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(2200));
         assertThat(script21.run(), is(2201));
         assertThat(script21.run(), is(2202));
@@ -609,44 +718,58 @@ public class LayeredEngineTest {
 
     @Test
     public void testFromCodeLayersTopCodeCacheCurrentFirst() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(true);
-        builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
-        
-        LayeredEngine engine = builder.build();
-        
+
+        // given
+
         prepareCode(1000);
+
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(true)
+                .setTopLoadMode(LoadMode.CURRENT_FIRST)
+                .build();
+        
         engine.setCodeLayers(codeLayers);
-        
-        Loader loader = engine.getLoader();
-        Loader attachedLoader2 = engine.newAttachedLoader();
-        Loader detachedLoader = engine.newDetachedLoader();
-        
+
+        final Loader loader = engine.getLoader();
+        final Loader attachedLoader2 = engine.newAttachedLoader();
+        final Loader detachedLoader = engine.newDetachedLoader();
+
+        // when
+
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
         Script script11 = (Script)clazz11.getConstructor().newInstance();
         Script script12 = (Script)clazz12.getConstructor().newInstance();
         Script script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(1100));
         assertThat(script11.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script12.run(), is(1100));
         assertThat(script1D.run(), is(1100));
         assertThat(script1D.run(), is(1100));
-        
+
+        // when
+
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.getConstructor().newInstance();
         Script script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(1200));
         assertThat(script21.run(), is(1201));
         assertThat(script21.run(), is(1202));
         assertThat(script22.run(), is(1200));
         assertThat(script22.run(), is(1201));
         assertThat(script22.run(), is(1202));
-        
+
+        // when
+
         prepareCode(2000);
         
         // file modification date has changed,
@@ -655,21 +778,31 @@ public class LayeredEngineTest {
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(2100));
         assertThat(script11.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script12.run(), is(2100));
-        
+
+        // when
+
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
         script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(2200));
         assertThat(script21.run(), is(2201));
         assertThat(script21.run(), is(2202));
         assertThat(script22.run(), is(2200));
         assertThat(script22.run(), is(2201));
         assertThat(script22.run(), is(2202));
+
+        // when
 
         // now replace code layers, changes must remain available (even if loader is detached)
         engine.setCodeLayers(codeLayers);
@@ -680,17 +813,25 @@ public class LayeredEngineTest {
         script11 = (Script)clazz11.getConstructor().newInstance();
         script12 = (Script)clazz12.getConstructor().newInstance();
         script1D = (Script)clazz1D.getConstructor().newInstance();
+
+        // then
+
         assertThat(script11.run(), is(2100));
         assertThat(script11.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script12.run(), is(2100));
         assertThat(script1D.run(), is(2100));
         assertThat(script1D.run(), is(2100));
-        
+
+        // when
+
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
         script22 = (Script)clazz22.getConstructor().newInstance();
+
+        // then
+
         assertThat(script21.run(), is(2200));
         assertThat(script21.run(), is(2201));
         assertThat(script21.run(), is(2202));
@@ -724,12 +865,11 @@ public class LayeredEngineTest {
 
         // given
 
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        LayeredEngine engine = builder.build();
+        final LayeredEngine engine = new LayeredEngine.Builder().build();
 
         // when
 
-        ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
+        final ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
 
         // then
 
@@ -752,14 +892,13 @@ public class LayeredEngineTest {
 
         // given
 
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        LayeredEngine engine = builder.build();
+        final LayeredEngine engine = new LayeredEngine.Builder().build();
 
-        ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
+        final ClassLoader classLoader = engine.asClassLoader(engine.getLoader());
 
         // when
 
-        Method findClassMethod = classLoader.getClass().getDeclaredMethod("findClass", String.class);
+        final Method findClassMethod = classLoader.getClass().getDeclaredMethod("findClass", String.class);
 
         // then
 
@@ -792,7 +931,7 @@ public class LayeredEngineTest {
 
         // given
 
-        LayeredEngine engine2 = new LayeredEngine.Builder().build();
+        final LayeredEngine engine2 = new LayeredEngine.Builder().build();
 
 
         // when/then

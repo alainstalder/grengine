@@ -44,11 +44,11 @@ public class SourcesUtilTest {
 
         // given
 
-        MockSource m = new MockSource("id1");
+        final MockSource m = new MockSource("id1");
 
         // when
 
-        Sources s = SourcesUtil.sourceToSources(m);
+        final Sources s = SourcesUtil.sourceToSources(m);
 
         // then
 
@@ -74,12 +74,12 @@ public class SourcesUtilTest {
 
         // given
 
-        MockSource m = new MockSource("id1");
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final MockSource m = new MockSource("id1");
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
 
         // when
 
-        Sources s = SourcesUtil.sourceToSources(m, compilerFactory);
+        final Sources s = SourcesUtil.sourceToSources(m, compilerFactory);
 
         // then
 
@@ -115,12 +115,12 @@ public class SourcesUtilTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
 
         // when
 
-        Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myName");
+        final Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myName");
 
         // then
 
@@ -157,13 +157,13 @@ public class SourcesUtilTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
 
         // when
 
-        Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2),
+        final Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2),
                 "myName", compilerFactory);
 
         // then

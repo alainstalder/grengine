@@ -32,13 +32,13 @@ public class SourceSetStateTest {
 
         // given
         
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
 
         // when
 
-        SourceSetState s1 = new SourceSetState(set);
+        final SourceSetState s1 = new SourceSetState(set);
 
         // then
 
@@ -49,7 +49,7 @@ public class SourceSetStateTest {
 
         // when (same set with last modified unchanged)
 
-        SourceSetState s2 = s1.update(set);
+        final SourceSetState s2 = s1.update(set);
 
         // then
 
@@ -62,7 +62,7 @@ public class SourceSetStateTest {
         // when (same set with second source different last modified)
 
         m2.setLastModified(1);
-        SourceSetState s3 = s2.update(set);
+        final SourceSetState s3 = s2.update(set);
 
         // then
 
@@ -74,9 +74,9 @@ public class SourceSetStateTest {
         
         // when (additional source)
 
-        MockSource m3 = new MockSource("id3");
-        Set<Source> setNew = SourceUtil.sourceArrayToSourceSet(m1, m2, m3);
-        SourceSetState s4 = s3.update(setNew);
+        final MockSource m3 = new MockSource("id3");
+        final Set<Source> setNew = SourceUtil.sourceArrayToSourceSet(m1, m2, m3);
+        final SourceSetState s4 = s3.update(setNew);
 
         // then
 
@@ -88,8 +88,8 @@ public class SourceSetStateTest {
 
         // when (empty source set)
 
-        Set<Source> setEmpty = new HashSet<>();
-        SourceSetState s5 = s4.update(setEmpty);
+        final Set<Source> setEmpty = new HashSet<>();
+        final SourceSetState s5 = s4.update(setEmpty);
 
         // then
 
@@ -101,8 +101,8 @@ public class SourceSetStateTest {
 
         // when (different source set of same size)
 
-        Set<Source> setDifferent = SourceUtil.sourceArrayToSourceSet(m1, m3);
-        SourceSetState s6 = s3.update(setDifferent);
+        final Set<Source> setDifferent = SourceUtil.sourceArrayToSourceSet(m1, m3);
+        final SourceSetState s6 = s3.update(setDifferent);
 
         // then
 

@@ -30,11 +30,11 @@ public class GrengineExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        GrengineException e = new GrengineException(msg);
+        final GrengineException e = new GrengineException(msg);
 
         // then
 
@@ -49,12 +49,12 @@ public class GrengineExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Throwable cause = new RuntimeException();
+        final String msg = "Something.";
+        final Throwable cause = new RuntimeException();
 
         // when
 
-        GrengineException e = new GrengineException(msg, cause);
+        final GrengineException e = new GrengineException(msg, cause);
 
         // then
 
@@ -69,11 +69,11 @@ public class GrengineExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        GrengineException e = new GrengineException(msg, null);
+        final GrengineException e = new GrengineException(msg, null);
 
         // then
 

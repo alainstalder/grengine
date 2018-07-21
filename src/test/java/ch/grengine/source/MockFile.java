@@ -32,7 +32,7 @@ public class MockFile extends File {
     
     private final File lastModifiedFile;
     
-    public MockFile(String pathname) {
+    public MockFile(final String pathname) {
         super(pathname);
         lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
         if (!lastModifiedFile.exists()) {
@@ -40,7 +40,7 @@ public class MockFile extends File {
         }
     }
 
-    public MockFile(File file, String name) {
+    public MockFile(final File file, final String name) {
         super(file, name);
         lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
         assertThat(setLastModified(0), is(true));
@@ -58,7 +58,7 @@ public class MockFile extends File {
     }
     
     @Override
-    public boolean setLastModified(long lastModified) {
+    public boolean setLastModified(final long lastModified) {
         try {
             TestUtil.setFileText(lastModifiedFile, Long.toString(lastModified));
             return true;

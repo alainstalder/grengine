@@ -40,13 +40,13 @@ public class DefaultUrlSourceTest {
 
         // given
 
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 22");
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        DefaultUrlSource s = new DefaultUrlSource(url);
+        final DefaultUrlSource s = new DefaultUrlSource(url);
 
         // then
 
@@ -72,12 +72,12 @@ public class DefaultUrlSourceTest {
 
         // given
 
-        URL url = new File(tempFolder.getRoot(), "MyScript.groovy").toURI().toURL();
-        URL url2 = new File(tempFolder.getRoot(), "MyScript2.groovy").toURI().toURL();
+        final URL url = new File(tempFolder.getRoot(), "MyScript.groovy").toURI().toURL();
+        final URL url2 = new File(tempFolder.getRoot(), "MyScript2.groovy").toURI().toURL();
 
         // when
 
-        DefaultUrlSource s = new DefaultUrlSource(url);
+        final DefaultUrlSource s = new DefaultUrlSource(url);
 
         // then
 

@@ -54,12 +54,12 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
+        final File dir = tempFolder.getRoot();
 
         // when
 
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.build();
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder.build();
 
         // then
         
@@ -91,15 +91,15 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Set<String> scriptExtensions = new HashSet<>(Arrays.asList("groovy", "gradle"));
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        SourceFactory sourceFactory = new DefaultSourceFactory();
+        final File dir = tempFolder.getRoot();
+        final Set<String> scriptExtensions = new HashSet<>(Arrays.asList("groovy", "gradle"));
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final SourceFactory sourceFactory = new DefaultSourceFactory();
 
         // when
 
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions)
                 .setScriptExtensions("groovy", "gradle")
                 .setName("dirBased")
@@ -147,8 +147,8 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final File dir = tempFolder.getRoot();
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         builder.build();
 
         // when/then
@@ -163,17 +163,18 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Map<String,File> m = createFiles(dir);
+        final File dir = tempFolder.getRoot();
+        final Map<String,File> m = createFiles(dir);
+
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder.build();
 
         // when
 
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.build();
+        final Set<Source> set = s.getSourceSet();
 
         // then
 
-        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -193,17 +194,18 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Map<String,File> m = createFiles(dir);
+        final File dir = tempFolder.getRoot();
+        final Map<String,File> m = createFiles(dir);
+
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).build();
 
         // when
 
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).build();
+        final Set<Source> set = s.getSourceSet();
 
         // then
 
-        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -223,17 +225,18 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Map<String,File> m = createFiles(dir);
+        final File dir = tempFolder.getRoot();
+        final Map<String,File> m = createFiles(dir);
+
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder.setScriptExtensions("groovy", "goo").build();
 
         // when
 
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.setScriptExtensions("groovy", "goo").build();
+        final Set<Source> set = s.getSourceSet();
 
         // then
 
-        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -253,20 +256,21 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Map<String,File> m = createFiles(dir);
+        final File dir = tempFolder.getRoot();
+        final Map<String,File> m = createFiles(dir);
 
-        // when
-
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setScriptExtensions("groovy", "goo")
                 .build();
 
+        // when
+
+        final Set<Source> set = s.getSourceSet();
+
         // then
 
-        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -286,19 +290,20 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = new File(tempFolder.getRoot(), "does/not/exist");
+        final File dir = new File(tempFolder.getRoot(), "does/not/exist");
 
-        // when
-
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setScriptExtensions("groovy", "goo")
                 .build();
 
+        // when
+
+        final Set<Source> set = s.getSourceSet();
+
         // then
 
-        Set<Source> set = s.getSourceSet();
         assertThat(set.isEmpty(), is(true));
     }
     
@@ -307,21 +312,22 @@ public class DirBasedSourcesTest {
 
         // given
 
-        File dir = tempFolder.getRoot();
-        Map<String,File> m = createFiles(dir);
+        final File dir = tempFolder.getRoot();
+        final Map<String,File> m = createFiles(dir);
 
-        // when
-
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources s = builder
                 .setSourceFactory(new MockSourceFactory())
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setLatencyMs(50)
                 .build();
 
+        // when
+
+        final File file = m.get("file");
+
         // then
 
-        File file = m.get("file");
         assertThat(file, instanceOf(MockFile.class));
 
         // when (change file last modified)
@@ -331,24 +337,24 @@ public class DirBasedSourcesTest {
         // then
 
         assertThat(file.lastModified(), is(1L));
-        long lastMod = s.getLastModified();
+        final long lastMod = s.getLastModified();
         Thread.sleep(30);
         assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(30);
-        long lastMod2 = s.getLastModified();
+        final long lastMod2 = s.getLastModified();
         assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(60);
         assertThat(lastMod2, is(s.getLastModified()));
 
         // when (add a file)
 
-        File newFile = new MockFile(dir, "MyScript2New.groovy");
+        final File newFile = new MockFile(dir, "MyScript2New.groovy");
         TestUtil.setFileText(newFile, "println 'new'");
 
         // then
 
         Thread.sleep(60);
-        long lastMod3 = s.getLastModified();
+        final long lastMod3 = s.getLastModified();
         assertThat(lastMod3 > lastMod2, is(true));
 
         // when (remove a file)
@@ -359,29 +365,29 @@ public class DirBasedSourcesTest {
 
         assertThat(!newFile.exists(), is(true));
         Thread.sleep(60);
-        long lastMod4 = s.getLastModified();
+        final long lastMod4 = s.getLastModified();
         assertThat(lastMod4 > lastMod3, is(true));
 
         // when (add a file that is not part of the set to watch)
 
-        File newFile2 = new MockFile(dir, "MyScript2New.off");
+        final File newFile2 = new MockFile(dir, "MyScript2New.off");
         TestUtil.setFileText(newFile2, "println 'new'");
 
         // then
 
         Thread.sleep(60);
-        long lastMod5 = s.getLastModified();
+        final long lastMod5 = s.getLastModified();
         assertThat(lastMod4, is(lastMod5));
     }
 
     
     private static Map<String,File> createFiles(File dir) throws Exception {
-        File subDir = new File(dir, "foo");
-        File subSubDir = new File(subDir, "bar");
+        final File subDir = new File(dir, "foo");
+        final File subSubDir = new File(subDir, "bar");
         assertThat(subSubDir.mkdirs(), is(true));
         assertThat(subSubDir.exists(), is(true));
-        
-        Map<String,File> m = new HashMap<>();
+
+        final Map<String,File> m = new HashMap<>();
         m.put("dir", dir);
         m.put("subDir", subDir);
         m.put("subSubDir", subSubDir);

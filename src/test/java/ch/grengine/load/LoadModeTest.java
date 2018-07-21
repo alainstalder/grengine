@@ -25,12 +25,18 @@ public class LoadModeTest {
 
     @Test
     public void testValueOf() {
+
+        // when/then
+
         assertThat(LoadMode.valueOf(LoadMode.CURRENT_FIRST.toString()), is(LoadMode.CURRENT_FIRST));
         assertThat(LoadMode.valueOf(LoadMode.PARENT_FIRST.toString()), is(LoadMode.PARENT_FIRST));
     }
     
     @Test
     public void testValues() {
+
+        // when/then
+
         assertThat(LoadMode.values().length, is(2));
     }
 

@@ -40,14 +40,14 @@ public class FixedSetSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
 
         // when
 
-        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
-        FixedSetSources s = builder.build();
+        final FixedSetSources s = builder.build();
 
         // then
         
@@ -69,15 +69,15 @@ public class FixedSetSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
-        CompilerFactory factory = new DefaultGroovyCompilerFactory();
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final CompilerFactory factory = new DefaultGroovyCompilerFactory();
+        final FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
 
         // when
 
-        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
-        FixedSetSources s = builder
+        final FixedSetSources s = builder
                 .setName("fixed")
                 .setCompilerFactory(factory)
                 .setLatencyMs(200)
@@ -112,10 +112,10 @@ public class FixedSetSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
-        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
         builder.build();
 
         // when/then
@@ -130,26 +130,25 @@ public class FixedSetSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        MockSource m2 = new MockSource("id2");
-        Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final MockSource m1 = new MockSource("id1");
+        final MockSource m2 = new MockSource("id2");
+        final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+        final FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
 
         // when
 
-        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
-        FixedSetSources s = builder
+        final FixedSetSources s = builder
                 .setLatencyMs(50)
                 .build();
-
         m2.setLastModified(1);
 
         // then
 
-        long lastMod = s.getLastModified();
+        final long lastMod = s.getLastModified();
         Thread.sleep(30);
         assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(30);
-        long lastMod2 = s.getLastModified();
+        final long lastMod2 = s.getLastModified();
         assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(60);
         assertThat(lastMod2, is(s.getLastModified()));

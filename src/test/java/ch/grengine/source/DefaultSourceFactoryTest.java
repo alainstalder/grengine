@@ -46,12 +46,12 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        SourceFactory sf = new DefaultSourceFactory();
-        String text = "println 'hello'";
+        final SourceFactory sf = new DefaultSourceFactory();
+        final String text = "println 'hello'";
 
         // when
 
-        Source s = sf.fromText(text);
+        final Source s = sf.fromText(text);
 
         // then
 
@@ -61,7 +61,7 @@ public class DefaultSourceFactoryTest {
 
         // when
 
-        Source s2 = sf.fromText(text);
+        final Source s2 = sf.fromText(text);
 
         // then
 
@@ -75,14 +75,14 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackTextSourceIds(true)
                 .build();
-        String text = "println 'hello'";
+        final String text = "println 'hello'";
 
         // when
 
-        Source s = sf.fromText(text);
+        final Source s = sf.fromText(text);
 
         // then
 
@@ -92,7 +92,7 @@ public class DefaultSourceFactoryTest {
 
         // when
 
-        Source s2 = sf.fromText(text);
+        final Source s2 = sf.fromText(text);
 
         // then
 
@@ -107,13 +107,13 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        SourceFactory sf = new DefaultSourceFactory();
-        String text = "println 'hello'";
-        String name = "MyScript";
+        final SourceFactory sf = new DefaultSourceFactory();
+        final String text = "println 'hello'";
+        final String name = "MyScript";
 
         // when
 
-        Source s = sf.fromText(text, name);
+        final Source s = sf.fromText(text, name);
 
         // then
 
@@ -124,7 +124,7 @@ public class DefaultSourceFactoryTest {
 
         // when
 
-        Source s2 = sf.fromText(text, name);
+        final Source s2 = sf.fromText(text, name);
 
         // then
 
@@ -138,15 +138,15 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackTextSourceIds(true)
                 .build();
-        String text = "println 'hello'";
-        String name = "MyScript";
+        final String text = "println 'hello'";
+        final String name = "MyScript";
 
         // when
 
-        Source s = sf.fromText(text, name);
+        final Source s = sf.fromText(text, name);
 
         // then
 
@@ -157,7 +157,7 @@ public class DefaultSourceFactoryTest {
 
         // when
 
-        Source s2 = sf.fromText(text, name);
+        final Source s2 = sf.fromText(text, name);
 
         // then
 
@@ -172,14 +172,14 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        SourceFactory sf = new DefaultSourceFactory();
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final SourceFactory sf = new DefaultSourceFactory();
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
-        long lastMod = file.lastModified();
+        final long lastMod = file.lastModified();
 
         // when
 
-        Source s = sf.fromFile(file);
+        final Source s = sf.fromFile(file);
 
         // then
 
@@ -195,17 +195,17 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackFileSourceLastModified(true)
                 .setFileLastModifiedTrackingLatencyMs(50)
                 .build();
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
-        long lastMod = file.lastModified();
+        final long lastMod = file.lastModified();
 
         // when
 
-        Source s = sf.fromFile(file);
+        final Source s = sf.fromFile(file);
 
         // then
 
@@ -226,14 +226,14 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        SourceFactory sf = new DefaultSourceFactory();
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final SourceFactory sf = new DefaultSourceFactory();
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        Source s = sf.fromUrl(url);
+        final Source s = sf.fromUrl(url);
 
         // then
 
@@ -248,17 +248,17 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackUrlContent(true)
                 .setUrlTrackingLatencyMs(0)
                 .build();
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        Source s = sf.fromUrl(url);
+        final Source s = sf.fromUrl(url);
 
         // then
 
@@ -338,17 +338,17 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackUrlContent(true)
                 .setUrlTrackingLatencyMs(50)
                 .build();
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
-        URL url = file.toURI().toURL();
+        final URL url = file.toURI().toURL();
 
         // when
 
-        Source s = sf.fromUrl(url);
+        final Source s = sf.fromUrl(url);
 
         // then
 
@@ -358,7 +358,7 @@ public class DefaultSourceFactoryTest {
         assertThat(s.getLastModified(), is(not(0L)));
         
         // wait a bit, last modified must remain unchanged
-        long lastModifiedOld = s.getLastModified();
+        final long lastModifiedOld = s.getLastModified();
         Thread.sleep(80);
         assertThat(s.getLastModified(), is(lastModifiedOld));
 
@@ -402,7 +402,7 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackTextSourceIds(true)
                 .build();
 
@@ -418,7 +418,7 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
+        final DefaultSourceFactory sf = new DefaultSourceFactory.Builder()
                 .setTrackTextSourceIds(true)
                 .build();
 
@@ -435,8 +435,8 @@ public class DefaultSourceFactoryTest {
 
         // given
 
-        DefaultSourceFactory.Builder builder = new DefaultSourceFactory.Builder();
-        DefaultSourceFactory sf = builder.build();
+        final DefaultSourceFactory.Builder builder = new DefaultSourceFactory.Builder();
+        final DefaultSourceFactory sf = builder.build();
 
         // when/then
 

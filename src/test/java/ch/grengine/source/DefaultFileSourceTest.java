@@ -40,12 +40,12 @@ public class DefaultFileSourceTest {
 
         // given
 
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
         TestUtil.setFileText(file, "println 22");
 
         // when
 
-        FileSource s = new DefaultFileSource(file);
+        final FileSource s = new DefaultFileSource(file);
 
         // then
 
@@ -71,11 +71,11 @@ public class DefaultFileSourceTest {
 
         // given
 
-        File file = new File(TestUtil.FileThatThrowsInGetCanonicalFile.ABSOLUTE_PATH);
+        final File file = new File(TestUtil.FileThatThrowsInGetCanonicalFile.ABSOLUTE_PATH);
 
         // when
 
-        FileSource s = new DefaultFileSource(new TestUtil.FileThatThrowsInGetCanonicalFile());
+        final FileSource s = new DefaultFileSource(new TestUtil.FileThatThrowsInGetCanonicalFile());
 
         // then
 
@@ -88,12 +88,12 @@ public class DefaultFileSourceTest {
 
         // given
 
-        File file = new File(tempFolder.getRoot(), "MyScript.groovy");
-        File file2 = new File(tempFolder.getRoot(), "MyScript2.groovy");
+        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File file2 = new File(tempFolder.getRoot(), "MyScript2.groovy");
 
         // when
 
-        FileSource s = new DefaultFileSource(file);
+        final FileSource s = new DefaultFileSource(file);
 
         // then
 

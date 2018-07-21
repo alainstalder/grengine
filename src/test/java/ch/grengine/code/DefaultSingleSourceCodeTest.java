@@ -39,27 +39,27 @@ public class DefaultSingleSourceCodeTest {
 
         // given
         
-        Source m1 = new MockSource("id1");
-        Source mNotPartOfCode = new MockSource("id3");
-        String name1 = "MainClassName1";
-        Set<String> names1 = new HashSet<>();
+        final Source m1 = new MockSource("id1");
+        final Source mNotPartOfCode = new MockSource("id3");
+        final String name1 = "MainClassName1";
+        final Set<String> names1 = new HashSet<>();
         names1.add("Side1");
         names1.add("MainClassName1");
-        CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
-        
-        String sourcesName = "sourcesName";
+        final CompiledSourceInfo i1 = new CompiledSourceInfo(m1, name1, names1, 11);
 
-        Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
+        final String sourcesName = "sourcesName";
+
+        final Map<Source,CompiledSourceInfo> infoMap = new HashMap<>();
         infoMap.put(m1, i1);
-        
-        Map<String,Bytecode> bytecodeMap = new HashMap<>();
-        String name1sub = name1 + "#Sub";
+
+        final Map<String,Bytecode> bytecodeMap = new HashMap<>();
+        final String name1sub = name1 + "#Sub";
         bytecodeMap.put(name1, new Bytecode(name1, new byte[] { 1, 2, 3 }));
         bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
 
         // when
 
-        SingleSourceCode code = new DefaultSingleSourceCode(sourcesName, infoMap, bytecodeMap);
+        final SingleSourceCode code = new DefaultSingleSourceCode(sourcesName, infoMap, bytecodeMap);
 
         // then
 
@@ -106,7 +106,7 @@ public class DefaultSingleSourceCodeTest {
 
         // when
 
-        String codeString =  code.toString();
+        final String codeString =  code.toString();
 
         // then
 

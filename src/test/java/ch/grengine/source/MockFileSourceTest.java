@@ -39,13 +39,13 @@ public class MockFileSourceTest {
 
         // given
 
-        File f = new File(tempFolder.getRoot(), "file");
+        final File f = new File(tempFolder.getRoot(), "file");
         TestUtil.setFileText(f, "dummy");
-        File fMod = new File(tempFolder.getRoot(), "file.lastModified");
+        final File fMod = new File(tempFolder.getRoot(), "file.lastModified");
 
         // when
 
-        MockFileSource s = new MockFileSource(f);
+        final MockFileSource s = new MockFileSource(f);
 
         // then
 

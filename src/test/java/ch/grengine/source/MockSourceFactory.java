@@ -26,7 +26,7 @@ public class MockSourceFactory extends DefaultSourceFactory {
     }
 
     @Override
-    public Source fromFile(File file) {
+    public Source fromFile(final File file) {
         return new MockFileSource(file);
     }
 

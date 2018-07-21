@@ -33,8 +33,8 @@ public class DefaultClassReleaserTest {
     public void testGetInstance() {
 
         // when
-        ClassReleaser releaser1 = DefaultClassReleaser.getInstance();
-        ClassReleaser releaser2 = DefaultClassReleaser.getInstance();
+        final ClassReleaser releaser1 = DefaultClassReleaser.getInstance();
+        final ClassReleaser releaser2 = DefaultClassReleaser.getInstance();
 
         // then
 
@@ -50,16 +50,16 @@ public class DefaultClassReleaserTest {
 
         // given
 
-        Class<?> clazz = new Grengine().load("class Class {}");
+        final Class<?> clazz = new Grengine().load("class Class {}");
 
         // when
 
-        MetaClass metaClass1 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+        final MetaClass metaClass1 = InvokerHelper.metaRegistry.getMetaClass(clazz);
 
-        ClassReleaser releaser = DefaultClassReleaser.getInstance();
+        final ClassReleaser releaser = DefaultClassReleaser.getInstance();
         releaser.release(clazz);
 
-        MetaClass metaClass2 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+        final MetaClass metaClass2 = InvokerHelper.metaRegistry.getMetaClass(clazz);
 
         // then
 

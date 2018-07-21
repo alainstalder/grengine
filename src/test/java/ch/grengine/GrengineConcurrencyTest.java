@@ -46,23 +46,31 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class GrengineConcurrencyTest {
 
+    private static final int N_THREADS = 4;
+    private static final int N_CODE_CHANGES = 5;
+    private static final long DELAY_BETWEEN_CODE_CHANGES_MS = 500;
+    private static final long MINI_DELAY_MS = 5;
+    private static final int MAX_DIGITS = 8;
+
     private volatile boolean failed;
-    private void setFailed(boolean failed) {
+    private void setFailed(final boolean failed) {
         this.failed = failed;
     }
     
-    private static String mapToString(final int nCodeChanges, final Map<Integer,Integer> map, final int maxDigits) {
-        StringBuilder out = new StringBuilder();
-        for (int i=0; i<nCodeChanges; i++) {
-            Integer value = map.get(i);
-            String s = (value == null) ? "" : Integer.toString(value);
-            out.append(TestUtil.multiply(" ", maxDigits - s.length()));
+    private static String mapToString(final Map<Integer,Integer> map) {
+        final StringBuilder out = new StringBuilder();
+        for (int i = 0; i< N_CODE_CHANGES; i++) {
+            final Integer value = map.get(i);
+            final String s = (value == null) ? "" : Integer.toString(value);
+            out.append(TestUtil.multiply(" ", MAX_DIGITS - s.length()));
             out.append(s);
         }
         return out.toString();
     }
 
     private void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+
+        // given
 
         setFailed(false);
 
@@ -72,7 +80,7 @@ public class GrengineConcurrencyTest {
                 .setLatencyMs(10)
                 .setName("concurrent")
                 .build();
-        List<Sources> sourcesLayers = Collections.singletonList(sources);
+        final List<Sources> sourcesLayers = Collections.singletonList(sources);
         
         final Grengine gren = new Grengine.Builder()
                 .setEngine(engine)
@@ -80,25 +88,21 @@ public class GrengineConcurrencyTest {
                 .setLatencyMs(30)
                 .build();
         
-        final int nThreads = 4;
-        final int nCodeChanges = 5;
-        final long delayBetweenCodeChangesMs = 500;
-        final long miniDelayMs = 5;
         final Map<Integer,Integer> totalMap = new HashMap<>();
         
         System.out.println(info);
-        
-        long t0 = System.currentTimeMillis();
 
-        Thread[] threads = new Thread[nThreads+1];
-        for (int i=0; i<nThreads+1; i++) {
+        final long t0 = System.currentTimeMillis();
+
+        Thread[] threads = new Thread[N_THREADS +1];
+        for (int i = 0; i< N_THREADS +1; i++) {
             final int x = i;
             threads[i] = new Thread(
                     () -> {
                         try {
-                            for (int j=1; j<=nCodeChanges; j++) {
+                            for (int j = 1; j<= N_CODE_CHANGES; j++) {
                                 if (x == 0) {
-                                    Thread.sleep(delayBetweenCodeChangesMs);
+                                    Thread.sleep(DELAY_BETWEEN_CODE_CHANGES_MS);
                                     s1.setText("return " + j);
                                     s1.setLastModified(j);
                                     //System.out.println(j);
@@ -115,10 +119,10 @@ public class GrengineConcurrencyTest {
                                             rc = rc2;
                                             rcMap.put(rc-1, count);
                                             count = 1;
-                                            Thread.sleep(x * miniDelayMs);
-                                            if (rc == nCodeChanges) {
+                                            Thread.sleep(x * MINI_DELAY_MS);
+                                            if (rc == N_CODE_CHANGES) {
                                                 System.out.printf("Thread %2d %2d: %s%n", x, rcMap.size(),
-                                                        mapToString(nCodeChanges, rcMap, 8));
+                                                        mapToString(rcMap));
                                                 synchronized(totalMap) {
                                                     for (Entry<Integer, Integer> entry : rcMap.entrySet()) {
                                                         int i1 = entry.getKey();
@@ -130,7 +134,7 @@ public class GrengineConcurrencyTest {
                                                 }
                                                 return;
                                             }
-                                            Thread.sleep(x * miniDelayMs);
+                                            Thread.sleep(x * MINI_DELAY_MS);
                                         }
                                     } while (true);
                                 }
@@ -142,6 +146,8 @@ public class GrengineConcurrencyTest {
                         }
                     });
         }
+
+        // when
         
         for (Thread t : threads) {
             t.start();
@@ -150,55 +156,47 @@ public class GrengineConcurrencyTest {
         for (Thread t : threads) {
             t.join();
         }
-        
-        int n = totalMap.size();
-        System.out.printf("TOTAL  %s %2d: %s%n", n == nCodeChanges ? "OK" : "--", totalMap.size(),
-                mapToString(nCodeChanges, totalMap, 8));
-        int totalRuns = 0;
-        for (Entry<Integer, Integer> entry : totalMap.entrySet()) {
-            totalRuns += entry.getValue();
-        }
+
+        // then
+
+        final int n = totalMap.size();
+        System.out.printf("TOTAL  %s %2d: %s%n", n == N_CODE_CHANGES ? "OK" : "--", totalMap.size(),
+                mapToString(totalMap));
+        final int totalRuns = totalMap.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
         System.out.println("Script runs: " + totalRuns);
-        long t1 = System.currentTimeMillis();
+        final long t1 = System.currentTimeMillis();
         System.out.println("Duration: " + (t1 - t0) + " ms");
         System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
-        assertThat(nCodeChanges, is(n));
+        assertThat(N_CODE_CHANGES, is(n));
 
         assertThat(failed, is(false));
     }
 
     @Test
     public void testConcurrentNoTopCodeCache() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(false);
-        
-        final LayeredEngine engine = builder.build();
-        
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(false)
+                .build();
         testConcurrent(engine, "TEST Grengine concurrent - no top code cache");
     }
 
     @Test
     public void testConcurrentTopCodeCacheParentFirst() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(true);
-        builder.setTopLoadMode(LoadMode.PARENT_FIRST);
-        
-        final LayeredEngine engine = builder.build();
-        
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(true)
+                .setTopLoadMode(LoadMode.PARENT_FIRST)
+                .build();
         testConcurrent(engine, "TEST Grengine concurrent - top code cache - parent first");
     }
 
     @Test
     public void testConcurrentTopCodeCacheCurrentFirst() throws Exception {
-        
-        LayeredEngine.Builder builder = new LayeredEngine.Builder();
-        builder.setWithTopCodeCache(true);
-        builder.setTopLoadMode(LoadMode.CURRENT_FIRST);
-        
-        final LayeredEngine engine = builder.build();
-        
+        final LayeredEngine engine = new LayeredEngine.Builder()
+                .setWithTopCodeCache(true)
+                .setTopLoadMode(LoadMode.CURRENT_FIRST)
+                .build();
         testConcurrent(engine, "TEST Grengine concurrent - top code cache - current first");
     }
 

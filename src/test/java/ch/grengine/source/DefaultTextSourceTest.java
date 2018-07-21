@@ -32,11 +32,11 @@ public class DefaultTextSourceTest {
 
         // given
 
-        String text = "println 55";
+        final String text = "println 55";
 
         // when
 
-        TextSource s = new DefaultTextSource(text);
+        final TextSource s = new DefaultTextSource(text);
 
         // then
 
@@ -52,12 +52,12 @@ public class DefaultTextSourceTest {
 
         // given
 
-        String text = "println 55";
-        String name = "FirstScript";
+        final String text = "println 55";
+        final String name = "FirstScript";
 
         // when
 
-        TextSource s = new DefaultTextSource(text, name);
+        final TextSource s = new DefaultTextSource(text, name);
 
         // then
 
@@ -103,18 +103,18 @@ public class DefaultTextSourceTest {
 
         // given
 
-        String text = "println " + TestUtil.multiply("1", 300);
+        final String text = "println " + TestUtil.multiply("1", 300);
 
         // when
 
-        TextSource s = new DefaultTextSource(text);
+        final TextSource s = new DefaultTextSource(text);
 
         // then
 
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
-        String expectedText = "println " + TestUtil.multiply("1", 188) + "[..]";
+        final String expectedText = "println " + TestUtil.multiply("1", 188) + "[..]";
         assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
 
@@ -123,18 +123,18 @@ public class DefaultTextSourceTest {
 
         // given
 
-        String text = "class Class1 {\nstatic class Sub {} }\r\nclass Side {}";
+        final String text = "class Class1 {\nstatic class Sub {} }\r\nclass Side {}";
 
         // when
 
-        TextSource s = new DefaultTextSource(text);
+        final TextSource s = new DefaultTextSource(text);
 
         // then
 
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
-        String expectedText = "class Class1 {%n" + "static class Sub {} }%n" + "class Side {}";
+        final String expectedText = "class Class1 {%n" + "static class Sub {} }%n" + "class Side {}";
         assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
 
@@ -143,12 +143,12 @@ public class DefaultTextSourceTest {
 
         // given
 
-        String text = "println 11";
-        String text2 = "println 22";
+        final String text = "println 11";
+        final String text2 = "println 22";
 
         // when
 
-        TextSource s = new DefaultTextSource(text);
+        final TextSource s = new DefaultTextSource(text);
 
         // then
 

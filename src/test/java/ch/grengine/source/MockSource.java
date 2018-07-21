@@ -21,7 +21,7 @@ public class MockSource extends BaseSource {
     
     private long lastModified;
     
-    public MockSource(String id) {
+    public MockSource(final String id) {
         this.id = id;
     }
         
@@ -30,7 +30,7 @@ public class MockSource extends BaseSource {
         return lastModified;
     }
     
-    public MockSource setLastModified(long lastModified) {
+    public MockSource setLastModified(final long lastModified) {
         this.lastModified = lastModified;
         return this;
     }

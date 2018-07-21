@@ -23,12 +23,12 @@ public class MockUpdateExceptionNotifier implements UpdateExceptionNotifier {
     
     private GrengineException lastUpdateException;
     
-    public MockUpdateExceptionNotifier(GrengineException lastUpdateException) {
+    public MockUpdateExceptionNotifier(final GrengineException lastUpdateException) {
         this.lastUpdateException = lastUpdateException;
     }
 
     @Override
-    public void notify(GrengineException updateException) {
+    public void notify(final GrengineException updateException) {
         lastUpdateException = updateException;
     }
     

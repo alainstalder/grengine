@@ -49,18 +49,18 @@ public class CompositeSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1)).build();
-        File dir = tempFolder.getRoot();
-        File file = new File(dir, "MyScript.groovy");
+        final MockSource m1 = new MockSource("id1");
+        final FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1)).build();
+        final File dir = tempFolder.getRoot();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
-        DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
-        List<Sources> sourcesList = Arrays.asList(s1, s2);
+        final DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
+        final List<Sources> sourcesList = Arrays.asList(s1, s2);
 
         // when
 
-        CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
-        CompositeSources s = builder.build();
+        final CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
+        final CompositeSources s = builder.build();
 
         // then
 
@@ -86,20 +86,20 @@ public class CompositeSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        FixedSetSources s1 = new FixedSetSources.Builder(
+        final MockSource m1 = new MockSource("id1");
+        final FixedSetSources s1 = new FixedSetSources.Builder(
                 SourceUtil.sourceArrayToSourceSet(m1)).build();
-        File dir = tempFolder.getRoot();
-        File file = new File(dir, "MyScript.groovy");
+        final File dir = tempFolder.getRoot();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
-        DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
-        List<Sources> sourcesList = Arrays.asList(s1, s2);
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+        final DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
+        final List<Sources> sourcesList = Arrays.asList(s1, s2);
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
 
         // when
 
-        CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
-        CompositeSources s = builder
+        final CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
+        final CompositeSources s = builder
                 .setName("composite")
                 .setCompilerFactory(compilerFactory)
                 .setLatencyMs(200)
@@ -138,7 +138,7 @@ public class CompositeSourcesTest {
 
         // given
 
-        CompositeSources.Builder builder = new CompositeSources.Builder(new LinkedList<>());
+        final CompositeSources.Builder builder = new CompositeSources.Builder(new LinkedList<>());
         builder.build();
 
 
@@ -154,18 +154,18 @@ public class CompositeSourcesTest {
 
         // given
 
-        MockSource m1 = new MockSource("id1");
-        FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1))
+        final MockSource m1 = new MockSource("id1");
+        final FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1))
             .setLatencyMs(50).build();
-        MockSource m2 = new MockSource("id2");
-        FixedSetSources s2 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m2))
+        final MockSource m2 = new MockSource("id2");
+        final FixedSetSources s2 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m2))
             .setLatencyMs(50).build();
-        List<Sources> sourcesList = Arrays.asList(s1, s2);
+        final List<Sources> sourcesList = Arrays.asList(s1, s2);
 
         // when
 
-        CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
-        CompositeSources s = builder
+        final CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
+        final CompositeSources s = builder
                 .setLatencyMs(50)
                 .build();
 
@@ -182,11 +182,11 @@ public class CompositeSourcesTest {
 
         // then
 
-        long lastMod = s.getLastModified();
+        final long lastMod = s.getLastModified();
         Thread.sleep(30);
         assertThat(lastMod, is(s.getLastModified()));
         Thread.sleep(120);
-        long lastMod2 = s.getLastModified();
+        final long lastMod2 = s.getLastModified();
         assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(120);
         assertThat(lastMod2, is(s.getLastModified()));
@@ -198,7 +198,7 @@ public class CompositeSourcesTest {
         // then
 
         Thread.sleep(120);
-        long lastMod3 = s.getLastModified();
+        final long lastMod3 = s.getLastModified();
         assertThat(lastMod3 > lastMod2, is(true));
         Thread.sleep(120);
         assertThat(lastMod3, is(s.getLastModified()));

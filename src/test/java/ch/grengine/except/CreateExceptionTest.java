@@ -31,11 +31,11 @@ public class CreateExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        CreateException e = new CreateException(msg);
+        final CreateException e = new CreateException(msg);
 
         // then
 
@@ -51,12 +51,12 @@ public class CreateExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Throwable cause = new RuntimeException();
+        final String msg = "Something.";
+        final Throwable cause = new RuntimeException();
 
         // when
 
-        CreateException e = new CreateException(msg, cause);
+        final CreateException e = new CreateException(msg, cause);
 
         // then
 
@@ -72,11 +72,11 @@ public class CreateExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        CreateException e = new CreateException(msg, null);
+        final CreateException e = new CreateException(msg, null);
 
         // then
 

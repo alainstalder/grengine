@@ -23,18 +23,18 @@ public class MockTextSource extends DefaultTextSource {
     private volatile long lastModified;
     private volatile RuntimeException runtimeEx;
     
-    public MockTextSource(String text) {
+    public MockTextSource(final String text) {
         super(text);
         this.text = text;
         lastModified = 0;
     }
     
-    public MockTextSource(String text, String name) {
+    public MockTextSource(final String text, final String name) {
         super(text, name);
         lastModified = 0;
     }
     
-    public void setText(String text) {
+    public void setText(final String text) {
         this.text = text;
     }
 
@@ -46,11 +46,11 @@ public class MockTextSource extends DefaultTextSource {
         return text;
     }
     
-    public void setThrowAtGetText(RuntimeException runtimeEx) {
+    public void setThrowAtGetText(final RuntimeException runtimeEx) {
         this.runtimeEx = runtimeEx;
     }
     
-    public void setLastModified(long lastModified) {
+    public void setLastModified(final long lastModified) {
         this.lastModified = lastModified;
     }
 

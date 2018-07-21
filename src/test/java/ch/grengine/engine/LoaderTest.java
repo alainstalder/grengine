@@ -47,17 +47,17 @@ public class LoaderTest {
 
         // given
 
-        EngineId engineId1 = new EngineId();
-        EngineId engineId2 = new EngineId();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final EngineId engineId1 = new EngineId();
+        final EngineId engineId2 = new EngineId();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
-        SourceClassLoader classLoader1 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
-        SourceClassLoader classLoader2 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        final SourceClassLoader classLoader1 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        final SourceClassLoader classLoader2 = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
 
         // when
 
-        Loader loader = new Loader(engineId1, 17, true, classLoader1);
+        final Loader loader = new Loader(engineId1, 17, true, classLoader1);
 
         // then
 
@@ -93,7 +93,7 @@ public class LoaderTest {
 
         // when
 
-        Loader detachedLoader = new Loader(engineId1, 17, false, classLoader1);
+        final Loader detachedLoader = new Loader(engineId1, 17, false, classLoader1);
 
         // then
 
@@ -107,10 +107,10 @@ public class LoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
-        BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        final BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
 
         // when/then
 
@@ -134,28 +134,28 @@ public class LoaderTest {
 
         // given
 
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
 
-        LoadMode loadMode = LoadMode.CURRENT_FIRST;
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
 
-        DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        SourceFactory f = new DefaultSourceFactory();
-        Source s1 = f.fromText("class Class1 {}");
-        Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
-        Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        Code code = c.compile(sources);
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+        final Source s1 = f.fromText("class Class1 {}");
+        final Source s2 = f.fromText("class Class2 { Class2() { new Class3() }; static class Class3 {} }");
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
 
-        BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, loadMode, code);
+        final BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, loadMode, code);
 
-        EngineId engineId = new EngineId();
+        final EngineId engineId = new EngineId();
 
-        RecordingClassReleaser releaser = new RecordingClassReleaser();
+        final RecordingClassReleaser releaser = new RecordingClassReleaser();
 
-        Loader loader = new Loader(engineId, 17, true, releaser, classLoader);
+        final Loader loader = new Loader(engineId, 17, true, releaser, classLoader);
 
-        Class<?> clazz1 = loader.getSourceClassLoader(engineId).loadClass("Class1");
-        Class<?> clazz2 = loader.getSourceClassLoader(engineId).loadClass("Class2");
+        final Class<?> clazz1 = loader.getSourceClassLoader(engineId).loadClass("Class1");
+        final Class<?> clazz2 = loader.getSourceClassLoader(engineId).loadClass("Class2");
         clazz2.getConstructor().newInstance();
 
         // when
@@ -177,17 +177,17 @@ public class LoaderTest {
 
         // given
 
-        long number = 15;
-        EngineId id = new EngineId();
-        ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        Code code = new DefaultCode("name", new HashMap<>(),
+        final long number = 15;
+        final EngineId id = new EngineId();
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final Code code = new DefaultCode("name", new HashMap<>(),
                 new HashMap<>());
-        BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
-        BytecodeClassLoader classLoader2 = new BytecodeClassLoader(parent.getParent(), LoadMode.PARENT_FIRST, code);
+        final BytecodeClassLoader classLoader = new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, code);
+        final BytecodeClassLoader classLoader2 = new BytecodeClassLoader(parent.getParent(), LoadMode.PARENT_FIRST, code);
 
         // when
 
-        Loader loader = new Loader(id, number, true, classLoader);
+        final Loader loader = new Loader(id, number, true, classLoader);
 
         // then
 

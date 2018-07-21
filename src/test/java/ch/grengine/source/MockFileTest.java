@@ -39,13 +39,13 @@ public class MockFileTest {
 
         // given
 
-        File f = new File(tempFolder.getRoot(), "file");
+        final File f = new File(tempFolder.getRoot(), "file");
         TestUtil.setFileText(f, "dummy");
-        File fMod = new File(tempFolder.getRoot(), "file.lastModified");
+        final File fMod = new File(tempFolder.getRoot(), "file.lastModified");
 
         // when
 
-        MockFile mock = new MockFile(f.getAbsolutePath());
+        final MockFile mock = new MockFile(f.getAbsolutePath());
 
         // then
 

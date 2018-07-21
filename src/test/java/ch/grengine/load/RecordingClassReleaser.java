@@ -29,20 +29,17 @@ public class RecordingClassReleaser implements ClassReleaser {
     public boolean throwAfterReleasing;
 
     @Override
-    public void release(Class<?> clazz) {
+    public void release(final Class<?> clazz) {
         classes.add(clazz);
         if (throwAfterReleasing) {
             throw new RuntimeException(clazz.getName());
         }
     }
 
-    public int countClassesWithName(String className) {
-        int count = 0;
-        for (Class<?> clazz : classes) {
-            if (className.equals(clazz.getName())) {
-                count++;
-            }
-        }
-        return count;
+    public int countClassesWithName(final String className) {
+        return (int)classes.stream()
+                .filter(c -> className.equals(c.getName()))
+                .count();
     }
+
 }

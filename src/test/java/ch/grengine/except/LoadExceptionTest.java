@@ -31,11 +31,11 @@ public class LoadExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        LoadException e = new LoadException(msg);
+        final LoadException e = new LoadException(msg);
 
         // then
 
@@ -51,12 +51,12 @@ public class LoadExceptionTest {
 
         // given
 
-        String msg = "Something.";
-        Throwable cause = new RuntimeException();
+        final String msg = "Something.";
+        final Throwable cause = new RuntimeException();
 
         // when
 
-        LoadException e = new LoadException(msg, cause);
+        final LoadException e = new LoadException(msg, cause);
 
         // then
 
@@ -72,11 +72,11 @@ public class LoadExceptionTest {
 
         // given
 
-        String msg = "Something.";
+        final String msg = "Something.";
 
         // when
 
-        LoadException e = new LoadException(msg, null);
+        final LoadException e = new LoadException(msg, null);
 
         // then
 
