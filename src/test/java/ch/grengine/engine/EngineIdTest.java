@@ -16,18 +16,13 @@
 
 package ch.grengine.engine;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 
 public class EngineIdTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
-    public void testConstruct() throws Exception {
+    public void testConstruct() {
         new EngineId();
     }
 

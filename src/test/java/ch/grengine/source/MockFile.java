@@ -20,6 +20,8 @@ import ch.grengine.TestUtil;
 
 import java.io.File;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 
@@ -34,22 +36,23 @@ public class MockFile extends File {
         super(pathname);
         lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
         if (!lastModifiedFile.exists()) {
-            setLastModified(0);
+            assertThat(setLastModified(0), is(true));
         }
     }
-        
+
     public MockFile(File file, String name) {
         super(file, name);
         lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
-        setLastModified(0);
+        assertThat(setLastModified(0), is(true));
     }
-        
+
     @Override
     public long lastModified() {
         try {
             return Long.parseLong(TestUtil.getFileText(lastModifiedFile));
         } catch (Exception e) {
             fail(e.toString());
+            // never gets here...
             return 0;
         }            
     }
@@ -61,6 +64,7 @@ public class MockFile extends File {
             return true;
         } catch (Exception e) {
             fail(e.toString());
+            // never gets here...
             return false;
         }
     }

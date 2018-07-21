@@ -37,11 +37,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class DirBasedSourcesTest {
@@ -51,9 +51,17 @@ public class DirBasedSourcesTest {
 
     @Test
     public void testConstructDefaults() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         DirBasedSources s = builder.build();
+
+        // then
         
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
@@ -80,18 +88,27 @@ public class DirBasedSourcesTest {
     
     @Test
     public void testConstructAllDefined() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         Set<String> scriptExtensions = new HashSet<>(Arrays.asList("groovy", "gradle"));
-        builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions);
-        builder.setScriptExtensions("groovy", "gradle");
-        builder.setName("dirBased");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        builder.setCompilerFactory(compilerFactory);
         SourceFactory sourceFactory = new DefaultSourceFactory();
-        builder.setSourceFactory(sourceFactory);
-        builder.setLatencyMs(200);
-        DirBasedSources s = builder.build();
+
+        // when
+
+        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        DirBasedSources s = builder
+                .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).setScriptExtensions(scriptExtensions)
+                .setScriptExtensions("groovy", "gradle")
+                .setName("dirBased")
+                .setCompilerFactory(compilerFactory)
+                .setSourceFactory(sourceFactory)
+                .setLatencyMs(200)
+                .build();
+
+        // then
         
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
@@ -116,37 +133,47 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testConstructDirNull() throws Exception {
-        try {
-            new DirBasedSources.Builder(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Dir is null."));
-        }
+    public void testConstructDirNull() {
+
+        // when/then
+
+        assertThrows(() -> new DirBasedSources.Builder(null),
+                NullPointerException.class,
+                "Dir is null.");
     }
     
     @Test
-    public void testModifyBuilderAfterUse() throws Exception {
+    public void testModifyBuilderAfterUse() {
+
+        // given
+
         File dir = tempFolder.getRoot();
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         builder.build();
-        try {
-            builder.setName("name");
-            fail();
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Builder already used."));
-        }
+
+        // when/then
+
+        assertThrows(() -> builder.setName("name"),
+                IllegalStateException.class,
+                "Builder already used.");
     }
     
     @Test
     public void testGetSourcesNoSubDirsDefaultExtensions() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         DirBasedSources s = builder.build();
-        
-        Set<Source> set = s.getSourceSet();
 
+        // then
+
+        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -163,13 +190,20 @@ public class DirBasedSourcesTest {
     
     @Test
     public void testGetSourcesWithSubDirsDefaultExtensions() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE).build();
-        
-        Set<Source> set = s.getSourceSet();
 
+        // then
+
+        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -186,13 +220,20 @@ public class DirBasedSourcesTest {
     
     @Test
     public void testGetSourcesNoSubDirsSpecificExtensions() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         DirBasedSources s = builder.setScriptExtensions("groovy", "goo").build();
-        
-        Set<Source> set = s.getSourceSet();
 
+        // then
+
+        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -209,14 +250,23 @@ public class DirBasedSourcesTest {
 
     @Test
     public void testGetSourcesWithSubDirsSpecificExtensions() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
-        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
-                .setScriptExtensions("groovy", "goo").build();
-        
-        Set<Source> set = s.getSourceSet();
 
+        // when
+
+        DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        DirBasedSources s = builder
+                .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
+                .setScriptExtensions("groovy", "goo")
+                .build();
+
+        // then
+
+        Set<Source> set = s.getSourceSet();
         assertThat(set.contains(new DefaultFileSource(m.get("file"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileNoExt"))), is(true));
@@ -232,30 +282,54 @@ public class DirBasedSourcesTest {
     }
 
     @Test
-    public void testGetSourcesNonExistentDir() throws Exception {
+    public void testGetSourcesNonExistentDir() {
+
+        // given
+
         File dir = new File(tempFolder.getRoot(), "does/not/exist");
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
-        DirBasedSources s = builder.setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
-                .setScriptExtensions("groovy", "goo").build();
+        DirBasedSources s = builder
+                .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
+                .setScriptExtensions("groovy", "goo")
+                .build();
+
+        // then
+
         Set<Source> set = s.getSourceSet();
         assertThat(set.isEmpty(), is(true));
     }
     
     @Test
     public void testLastModified() throws Exception {
+
+        // given
+
         File dir = tempFolder.getRoot();
         Map<String,File> m = createFiles(dir);
+
+        // when
+
         DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         DirBasedSources s = builder
                 .setSourceFactory(new MockSourceFactory())
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setLatencyMs(50)
                 .build();
-        
-        // change file last modified
+
+        // then
+
         File file = m.get("file");
         assertThat(file, instanceOf(MockFile.class));
-        file.setLastModified(1);
+
+        // when (change file last modified)
+
+        assertThat(file.setLastModified(1), is(true));
+
+        // then
+
         assertThat(file.lastModified(), is(1L));
         long lastMod = s.getLastModified();
         Thread.sleep(30);
@@ -265,24 +339,36 @@ public class DirBasedSourcesTest {
         assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(60);
         assertThat(lastMod2, is(s.getLastModified()));
-        
-        // add a file
+
+        // when (add a file)
+
         File newFile = new MockFile(dir, "MyScript2New.groovy");
         TestUtil.setFileText(newFile, "println 'new'");
+
+        // then
+
         Thread.sleep(60);
         long lastMod3 = s.getLastModified();
         assertThat(lastMod3 > lastMod2, is(true));
-        
-        // remove a file
-        newFile.delete();
+
+        // when (remove a file)
+
+        assertThat(newFile.delete(), is(true));
+
+        // then
+
         assertThat(!newFile.exists(), is(true));
         Thread.sleep(60);
         long lastMod4 = s.getLastModified();
         assertThat(lastMod4 > lastMod3, is(true));
 
-        // add a file that is not part of the set to watch
+        // when (add a file that is not part of the set to watch)
+
         File newFile2 = new MockFile(dir, "MyScript2New.off");
         TestUtil.setFileText(newFile2, "println 'new'");
+
+        // then
+
         Thread.sleep(60);
         long lastMod5 = s.getLastModified();
         assertThat(lastMod4, is(lastMod5));
@@ -292,7 +378,7 @@ public class DirBasedSourcesTest {
     private static Map<String,File> createFiles(File dir) throws Exception {
         File subDir = new File(dir, "foo");
         File subSubDir = new File(subDir, "bar");
-        subSubDir.mkdirs();
+        assertThat(subSubDir.mkdirs(), is(true));
         assertThat(subSubDir.exists(), is(true));
         
         Map<String,File> m = new HashMap<>();

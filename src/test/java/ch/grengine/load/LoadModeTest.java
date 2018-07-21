@@ -16,18 +16,13 @@
 
 package ch.grengine.load;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LoadModeTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testValueOf() {
         assertThat(LoadMode.valueOf(LoadMode.CURRENT_FIRST.toString()), is(LoadMode.CURRENT_FIRST));

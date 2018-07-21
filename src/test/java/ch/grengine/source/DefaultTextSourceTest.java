@@ -18,24 +18,28 @@ package ch.grengine.source;
 
 import ch.grengine.TestUtil;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class DefaultTextSourceTest {
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-
     @Test
     public void testConstructFromTextPlusGetters() {
+
+        // given
+
         String text = "println 55";
+
+        // when
+
         TextSource s = new DefaultTextSource(text);
+
+        // then
+
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
@@ -45,9 +49,18 @@ public class DefaultTextSourceTest {
 
     @Test
     public void testConstructFromTextAndNamePlusGetters() {
+
+        // given
+
         String text = "println 55";
         String name = "FirstScript";
+
+        // when
+
         TextSource s = new DefaultTextSource(text, name);
+
+        // then
+
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text) + "/" + name));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
@@ -57,38 +70,47 @@ public class DefaultTextSourceTest {
 
     @Test
     public void testConstructFromTextWithTextNull() {
-        try {
-            new DefaultTextSource(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Text is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new DefaultTextSource(null),
+                NullPointerException.class,
+                "Text is null.");
     }
 
     @Test
     public void testConstructFromTextAndNameWithTextNull() {
-        try {
-            new DefaultTextSource(null, "name");
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Text is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new DefaultTextSource(null, "name"),
+                NullPointerException.class,
+                "Text is null.");
     }
 
     @Test
     public void testConstructFromTextAndNameWithNameNull() {
-        try {
-            new DefaultTextSource("println 33", null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Desired class name is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new DefaultTextSource("println 33", null),
+                NullPointerException.class,
+                "Desired class name is null.");
     }
 
     @Test
     public void testLongText() {
+
+        // given
+
         String text = "println " + TestUtil.multiply("1", 300);
+
+        // when
+
         TextSource s = new DefaultTextSource(text);
+
+        // then
+
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
@@ -98,8 +120,17 @@ public class DefaultTextSourceTest {
 
     @Test
     public void testTextWithLineBreaks() {
+
+        // given
+
         String text = "class Class1 {\nstatic class Sub {} }\r\nclass Side {}";
+
+        // when
+
         TextSource s = new DefaultTextSource(text);
+
+        // then
+
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
@@ -109,13 +140,23 @@ public class DefaultTextSourceTest {
 
     @Test
     public void testEquals() {
+
+        // given
+
         String text = "println 11";
         String text2 = "println 22";
-        assertThat(new DefaultTextSource(text), is(new DefaultTextSource(text)));
-        assertThat(new DefaultTextSource(text).equals(new DefaultTextSource(text2)), is(false));
-        assertThat(new DefaultTextSource(text).equals(new DefaultTextSource(text2)), is(false));
-        assertThat(new DefaultTextSource(text).equals("different class"), is(false));
-        assertThat(new DefaultTextSource(text).equals(null), is(false));
+
+        // when
+
+        TextSource s = new DefaultTextSource(text);
+
+        // then
+
+        assertThat(s, is(new DefaultTextSource(text)));
+        assertThat(s.equals(new DefaultTextSource(text2)), is(false));
+        assertThat(s.equals(new DefaultTextSource(text2)), is(false));
+        assertThat(s.equals("different class"), is(false));
+        assertThat(s.equals(null), is(false));
     }
 
 }

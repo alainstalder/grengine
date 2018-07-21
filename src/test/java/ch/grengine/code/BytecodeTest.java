@@ -16,33 +16,46 @@
 
 package ch.grengine.code;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 public class BytecodeTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructPlusGetters() {
+
+        // given
+
         String className = "MyScript";
         byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
+
+        // when
+
         Bytecode bytecode = new Bytecode(className, bytes);
+
+        // then
+
         assertThat(bytecode.getClassName(), is(className));
         assertThat(bytecode.getBytes(), is(bytes));
     }
 
     @Test
     public void testToString() {
+
+        // given
+
         String className = "MyScript";
         byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
+
+        // when
+
         Bytecode bytecode = new Bytecode(className, bytes);
+
+        // then
+
         //System.out.println(bytecode);
         assertThat(bytecode.toString().startsWith("Bytecode[className=MyScript, bytes=["), is(true));
         assertThat(bytecode.toString().endsWith("]"), is(true));
@@ -50,24 +63,30 @@ public class BytecodeTest {
     
     @Test
     public void testConstructWithNameNull() {
+
+        // given
+
         byte[] bytes = new byte[] { 1, 2, 3, 4, 5 };
-        try {
-            new Bytecode(null, bytes);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Class name is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new Bytecode(null, bytes),
+                NullPointerException.class,
+                "Class name is null.");
     }
     
     @Test
     public void testConstructWithBytesNull() {
+
+        // given
+
         String className = "MyScript";
-        try {
-            new Bytecode(className, null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Bytes are null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new Bytecode(className, null),
+                NullPointerException.class,
+                "Bytes are null.");
     }
 
 }

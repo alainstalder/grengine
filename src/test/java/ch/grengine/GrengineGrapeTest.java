@@ -27,15 +27,13 @@ import ch.grengine.sources.FixedSetSources;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -50,19 +48,16 @@ import static org.junit.Assert.fail;
  *
  */
 public class GrengineGrapeTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
-    public void testHelloWorldWithGrape() throws Exception {
+    public void testHelloWorldWithGrape() {
         Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
                 + "import com.google.common.base.Ascii\n" +
                 "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
     }
 
     @Test
-    public void testNoGrapeByDefault() throws Exception {
+    public void testNoGrapeByDefault() {
         try {
             new Grengine().run("@Grab('com.google.guava:guava:18.0')\n"
                     + "import com.google.common.base.Ascii\n" +
@@ -80,10 +75,14 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty() throws Exception {
+    public void testConstructEmpty() {
+
+        // when
 
         Grengine gren = Grengine.Grape.newGrengine();
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
@@ -95,13 +94,20 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_parent() throws Exception {
+    public void testConstructEmpty_parent() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
@@ -110,10 +116,17 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_config() throws Exception {
+    public void testConstructEmpty_config() {
+
+        // given
 
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(config);
+
+        // then
 
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
@@ -125,14 +138,21 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_parent_config() throws Exception {
+    public void testConstructEmpty_parent_config() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, config);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
@@ -141,10 +161,14 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructDir() throws Exception {
+    public void testConstructDir() {
+
+        // when
 
         Grengine gren = Grengine.Grape.newGrengine(new File("."));
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
@@ -159,13 +183,20 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_parent() throws Exception {
+    public void testConstructDir_parent() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, new File("."));
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
@@ -177,10 +208,17 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_config() throws Exception {
+    public void testConstructDir_config() {
+
+        // given
 
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(config, new File("."));
+
+        // then
 
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
@@ -193,14 +231,21 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_parent_config() throws Exception {
+    public void testConstructDir_parent_config() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."));
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
         assertThat(getCompilerConfigFromDirBasedSources(gren), sameInstance(config));
@@ -210,10 +255,14 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructDirDirMode() throws Exception {
+    public void testConstructDirDirMode() {
+
+        // when
 
         Grengine gren = Grengine.Grape.newGrengine(new File("."), DirMode.NO_SUBDIRS);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
         assertThat(engine.getBuilder().getParent().getParent(), is(Thread.currentThread().getContextClassLoader()));
@@ -228,13 +277,20 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_parent() throws Exception {
+    public void testConstructDirDirMode_parent() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, new File("."), DirMode.NO_SUBDIRS);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
@@ -246,10 +302,17 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_config() throws Exception {
+    public void testConstructDirDirMode_config() {
+
+        // given
 
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(config, new File("."), DirMode.NO_SUBDIRS);
+
+        // then
 
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
@@ -262,14 +325,21 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_parent_config() throws Exception {
+    public void testConstructDirDirMode_parent_config() {
+
+        // given
 
         GroovyClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, config, new File("."), DirMode.NO_SUBDIRS);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
         assertThat(getCompilerConfigFromDirBasedSources(gren), sameInstance(config));
@@ -281,8 +351,15 @@ public class GrengineGrapeTest {
     @Test
     public void testConstructUrl() throws Exception {
 
-        List<URL> urls = Arrays.asList(new File(".").toURI().toURL());
+        // given
+
+        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(urls);
+
+        // then
 
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
@@ -300,12 +377,19 @@ public class GrengineGrapeTest {
     @Test
     public void testConstructUrl_parent() throws Exception {
 
+        // given
+
         GroovyClassLoader parent = new GroovyClassLoader();
-        List<URL> urls = Arrays.asList(new File(".").toURI().toURL());
+        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, urls);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         CompilerConfiguration config = getCompilerConfigFromEngineTopCodeCache(engine);
         assertThat(config.getCompilationCustomizers().get(0).getClass().getSimpleName(),
@@ -319,9 +403,16 @@ public class GrengineGrapeTest {
     @Test
     public void testConstructUrl_config() throws Exception {
 
+        // given
+
         CompilerConfiguration config = new CompilerConfiguration();
-        List<URL> urls = Arrays.asList(new File(".").toURI().toURL());
+        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(config, urls);
+
+        // then
 
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
         assertThat(engine.getBuilder().getParent(), instanceOf(GroovyClassLoader.class));
@@ -336,13 +427,20 @@ public class GrengineGrapeTest {
     @Test
     public void testConstructUrl_parent_config() throws Exception {
 
+        // given
+
         GroovyClassLoader parent = new GroovyClassLoader();
         CompilerConfiguration config = new CompilerConfiguration();
-        List<URL> urls = Arrays.asList(new File(".").toURI().toURL());
+        List<URL> urls = Collections.singletonList(new File(".").toURI().toURL());
+
+        // when
+
         Grengine gren = Grengine.Grape.newGrengine(parent, config, urls);
 
+        // then
+
         LayeredEngine engine = (LayeredEngine)gren.getEngine();
-        assertThat(engine.getBuilder().getParent(), sameInstance((ClassLoader)parent));
+        assertThat(engine.getBuilder().getParent(), sameInstance(parent));
 
         assertThat(getCompilerConfigFromEngineTopCodeCache(engine), sameInstance(config));
         assertThat(getCompilerConfigFromFixedSetSources(gren), sameInstance(config));
@@ -351,19 +449,19 @@ public class GrengineGrapeTest {
     }
 
 
-    private CompilerConfiguration getCompilerConfigFromEngineTopCodeCache(LayeredEngine engine) {
+    private static CompilerConfiguration getCompilerConfigFromEngineTopCodeCache(LayeredEngine engine) {
         CompilerFactory compilerFactory = ((DefaultTopCodeCacheFactory)engine.getBuilder().getTopCodeCacheFactory())
                 .getCompilerFactory();
         return ((DefaultGroovyCompilerFactory)compilerFactory).getCompilerConfiguration();
     }
 
-    private CompilerConfiguration getCompilerConfigFromDirBasedSources(Grengine gren) {
+    private static CompilerConfiguration getCompilerConfigFromDirBasedSources(Grengine gren) {
         DirBasedSources sources = (DirBasedSources)gren.getBuilder().getSourcesLayers().get(0);
         CompilerFactory compilerFactory = sources.getBuilder().getCompilerFactory();
         return ((DefaultGroovyCompilerFactory)compilerFactory).getCompilerConfiguration();
     }
 
-    private CompilerConfiguration getCompilerConfigFromFixedSetSources(Grengine gren) {
+    private static CompilerConfiguration getCompilerConfigFromFixedSetSources(Grengine gren) {
         FixedSetSources sources = (FixedSetSources)gren.getBuilder().getSourcesLayers().get(0);
         CompilerFactory compilerFactory = sources.getBuilder().getCompilerFactory();
         return ((DefaultGroovyCompilerFactory)compilerFactory).getCompilerConfiguration();
@@ -371,26 +469,46 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructGrape() throws Exception {
+    public void testConstructGrape() {
         new Grengine.Grape();
     }
 
     @Test
-    public void testActivateDeactivate() throws Exception {
+    public void testActivateDeactivate() {
 
         try {
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
 
-            Grengine.Grape.activate();
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
+            // when
 
             Grengine.Grape.activate();
+
+            // then
+
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
+
+            // when
+
+            Grengine.Grape.activate();
+
+            // then
+
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
+
+            // when
 
             Grengine.Grape.deactivate();
+
+            // then
+
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
 
+            // when
+
             Grengine.Grape.deactivate();
+
+            // then
+
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
 
         } finally {
@@ -400,12 +518,17 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testActivateDifferentLock() throws Exception {
+    public void testActivateDifferentLock() {
 
         try {
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
 
+            // when
+
             Grengine.Grape.activate(new Object());
+
+            // then
+
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
 
             try {
@@ -420,10 +543,6 @@ public class GrengineGrapeTest {
         }
 
     }
-
-
-
-
 
 }
 

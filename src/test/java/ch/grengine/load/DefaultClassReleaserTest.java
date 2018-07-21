@@ -30,20 +30,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class DefaultClassReleaserTest {
     
     @Test
-    public void testGetInstance() throws Exception {
+    public void testGetInstance() {
+
+        // when
         ClassReleaser releaser1 = DefaultClassReleaser.getInstance();
         ClassReleaser releaser2 = DefaultClassReleaser.getInstance();
+
+        // then
+
         assertThat(releaser1, sameInstance(releaser2));
         assertThat(releaser1, instanceOf(DefaultClassReleaser.class));
     }
 
     @Test
-    public void testReleaseBasic() throws Exception {
+    public void testReleaseBasic() {
 
         // hard to test in full detail because depends also on Groovy version,
         // so only this basic test here, testing elsewhere that allows to GC
 
+        // given
+
         Class<?> clazz = new Grengine().load("class Class {}");
+
+        // when
 
         MetaClass metaClass1 = InvokerHelper.metaRegistry.getMetaClass(clazz);
 
@@ -51,6 +60,8 @@ public class DefaultClassReleaserTest {
         releaser.release(clazz);
 
         MetaClass metaClass2 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+
+        // then
 
         assertThat(metaClass1, not(sameInstance(metaClass2)));
     }

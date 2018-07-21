@@ -24,26 +24,24 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class DefaultCodeTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructPlusGetters() {
+
+        // given
         
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
+        MockSource mNotPartOfCode = new MockSource("id3");
         String name1 = "MainClassName1";
         String name2 = "MainClassName2";
         Set<String> names1 = new HashSet<>();
@@ -67,7 +65,11 @@ public class DefaultCodeTest {
         bytecodeMap.put(name1sub, new Bytecode(name1sub, new byte[] { 4, 5, 6 }));
         bytecodeMap.put(name2, new Bytecode(name2, new byte[] { 7, 8, 9 }));
 
+        // when
+
         Code code = new DefaultCode(sourcesName, infoMap, bytecodeMap);
+
+        // then
 
         assertThat(code.getSourcesName(), is(sourcesName));
         assertThat(code.getSourceSet(), is(infoMap.keySet()));
@@ -76,89 +78,70 @@ public class DefaultCodeTest {
         assertThat(code.getBytecode(name1).getBytes()[0], is((byte)1));
         assertThat(code.getBytecode("SomeOtherClassName"), is(nullValue()));
         assertThat(code.getBytecode(null), is(nullValue()));
-        
-        MockSource m3 = new MockSource("id3");
+
         assertThat(code.isForSource(m1), is(true));
         assertThat(code.isForSource(m2), is(true));
-        assertThat(code.isForSource(m3), is(false));
+        assertThat(code.isForSource(mNotPartOfCode), is(false));
         assertThat(code.isForSource(null), is(false));
 
         assertThat(code.getMainClassName(m1), is(name1));
         assertThat(code.getMainClassName(m2), is(name2));
-        try {
-            code.getMainClassName(m3);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
-        }
-        try {
-            code.getMainClassName(null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
-        }
+        assertThrows(() -> code.getMainClassName(mNotPartOfCode),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: " + mNotPartOfCode);
+        assertThrows(() -> code.getMainClassName(null),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: null");
 
         assertThat(code.getClassNames(m1), is(names1));
         assertThat(code.getClassNames(m2), is(names2));
-        try {
-            code.getClassNames(m3);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
-        }
-        try {
-            code.getClassNames(null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
-        }
+        assertThrows(() -> code.getClassNames(mNotPartOfCode),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: " + mNotPartOfCode);
+        assertThrows(() -> code.getClassNames(null),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: null");
 
         assertThat(code.getLastModifiedAtCompileTime(m1), is(11L));
         assertThat(code.getLastModifiedAtCompileTime(m2), is(22L));
-        try {
-            code.getLastModifiedAtCompileTime(m3);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: " + m3));
-        }
-        try {
-            code.getLastModifiedAtCompileTime(null);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is("Source is not for this code. Source: null"));
-        }
+        assertThrows(() -> code.getLastModifiedAtCompileTime(mNotPartOfCode),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: " + mNotPartOfCode);
+        assertThrows(() -> code.getLastModifiedAtCompileTime(null),
+                IllegalArgumentException.class,
+                "Source is not for this code. Source: null");
 
         assertThat(code.toString(), is("DefaultCode[sourcesName='sourcesName', sources:2, classes:3]"));
     }
     
     @Test
-    public void testConstructSourcesNameNull() throws Exception {
-        try {
-            new DefaultCode(null, new HashMap<>(), new HashMap<>());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Sources name is null."));
-        }
+    public void testConstructSourcesNameNull() {
+
+        // when/then
+
+        assertThrows(() -> new DefaultCode(null, new HashMap<>(), new HashMap<>()),
+                NullPointerException.class,
+                "Sources name is null.");
     }
     
     @Test
-    public void testConstructCompiledSourceInfoMapNull() throws Exception {
-        try {
-            new DefaultCode("name", null, new HashMap<>());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Compiled source info map is null."));
-        }
+    public void testConstructCompiledSourceInfoMapNull() {
+
+        // when/then
+
+        assertThrows(() -> new DefaultCode("name", null, new HashMap<>()),
+                NullPointerException.class,
+                "Compiled source info map is null.");
     }
     
     @Test
-    public void testConstructBytecodeMapNull() throws Exception {
-        try {
-            new DefaultCode("name", new HashMap<>(), null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Bytecode map is null."));
-        }
+    public void testConstructBytecodeMapNull() {
+
+        // when/then
+
+        assertThrows(() -> new DefaultCode("name", new HashMap<>(), null),
+                NullPointerException.class,
+                "Bytecode map is null.");
     }
 
 }

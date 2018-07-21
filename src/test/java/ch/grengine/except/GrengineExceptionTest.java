@@ -16,9 +16,7 @@
 
 package ch.grengine.except;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -26,14 +24,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class GrengineExceptionTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructFromMessage() {
+
+        // given
+
         String msg = "Something.";
+
+        // when
+
         GrengineException e = new GrengineException(msg);
+
+        // then
+
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getCause(), is(nullValue()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
@@ -42,9 +46,18 @@ public class GrengineExceptionTest {
     
     @Test
     public void testConstructFromMessageAndThrowable() {
+
+        // given
+
         String msg = "Something.";
         Throwable cause = new RuntimeException();
+
+        // when
+
         GrengineException e = new GrengineException(msg, cause);
+
+        // then
+
         assertThat(e.getMessage(), is(msg + " Cause: " + cause));
         assertThat(e.getCause(), is(cause));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
@@ -53,8 +66,17 @@ public class GrengineExceptionTest {
 
     @Test
     public void testConstructFromMessageAndThrowableNull() {
+
+        // given
+
         String msg = "Something.";
+
+        // when
+
         GrengineException e = new GrengineException(msg, null);
+
+        // then
+
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getCause(), is(nullValue()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));

@@ -19,75 +19,103 @@ package ch.grengine.load;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class DefaultTopCodeCacheTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
-    public void testConstructAndGettersAndMore() throws Exception {
+    public void testConstructAndGettersAndMore() {
+
+        // given
         
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         DefaultTopCodeCache.Builder builder =
                 new DefaultTopCodeCache.Builder(parent).setCompilerFactory(compilerFactory);
+
+        // when
+
         DefaultTopCodeCache c = builder.build();
+
+        // then
 
         assertThat(c.getBuilder(), is(builder));
         assertThat(c.getCompilerFactory(), is(compilerFactory));
         assertThat(c.getParent(), is(parent));
+
+        // when
         
         ClassLoader parentNew = Thread.currentThread().getContextClassLoader();
         c.setParent(parentNew);
+
+        // then
+
         assertThat(c.getParent(), is(parentNew));
+
+        // when
         
         DefaultTopCodeCache c2 = c.clone();
+
+        // then
+
         assertThat(c2.getCompilerFactory(), is(compilerFactory));
         assertThat(c2.getParent(), is(parentNew));
 
+        // when
+
         c = new DefaultTopCodeCache.Builder(null).build();
+
+        // then
+
         assertThat(c.getParent(), is(nullValue()));
         assertThat(c.getCompilerFactory(), is(notNullValue()));
         assertThat(c.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
+
+        // when
+
         c.setParent(parentNew);
+
+        // then
+
         assertThat(c.getParent(), is(parentNew));
     }
     
     @Test
-    public void testModifyBuilderAfterUse() throws Exception {
+    public void testModifyBuilderAfterUse() {
+
+        // given
+
         DefaultTopCodeCache.Builder builder = new DefaultTopCodeCache.Builder(null);
         builder.build();
-        try {
-            builder.setCompilerFactory(new DefaultGroovyCompilerFactory());
-            fail();
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Builder already used."));
-        }
+
+        // when/then
+
+        assertThrows(() -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
+                IllegalStateException.class,
+                "Builder already used.");
     }
 
     @Test
-    public void testSetParentNull() throws Exception {
+    public void testSetParentNull() {
+
+        // given
+
         ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         TopCodeCache c = new DefaultTopCodeCache.Builder(parent).build();
-        
-        try {
-            c.setParent(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Parent class loader is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> c.setParent(null),
+                NullPointerException.class,
+                "Parent class loader is null.");
     }
     
     // most functionality is tested in LayeredClassLoaderTest

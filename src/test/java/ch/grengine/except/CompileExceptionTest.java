@@ -20,9 +20,7 @@ import ch.grengine.source.MockSource;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,15 +29,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class CompileExceptionTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructFromMessage() {
+
+        // given
+
         String msg = "Something.";
         Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+
+        // when
+
         CompileException e = new CompileException(msg, s);
+
+        // then
+
         assertThat(e, instanceOf(GrengineException.class));
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getSources(), is(s));
@@ -50,10 +54,19 @@ public class CompileExceptionTest {
     
     @Test
     public void testConstructFromMessageAndThrowable() {
+
+        // given
+
         String msg = "Something.";
         Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
         Throwable cause = new RuntimeException();
+
+        // when
+
         CompileException e = new CompileException(msg, cause, s);
+
+        // then
+
         assertThat(e, instanceOf(GrengineException.class));
         assertThat(e.getMessage(), is(msg + " Cause: " + cause));
         assertThat(e.getCause(), is(cause));
@@ -64,9 +77,18 @@ public class CompileExceptionTest {
 
     @Test
     public void testConstructFromMessageAndThrowableNull() {
+
+        // given
+
         String msg = "Something.";
         Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+
+        // when
+
         CompileException e = new CompileException(msg, null, s);
+
+        // then
+
         assertThat(e, instanceOf(GrengineException.class));
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getCause(), is(nullValue()));

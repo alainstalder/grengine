@@ -24,8 +24,6 @@ import java.util.UUID;
 
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 /**
  * Command line visual performance test.
@@ -34,24 +32,19 @@ import org.junit.rules.TemporaryFolder;
  *
  */
 public class GrengineVisualPerformanceTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     private static final long RUN_DURATION_NS = 1000L * 1000L * 1000L;
     private static final int N_RUNS = 4;
     private static final long N_INNER = 100;
-    
-    //@Test
-    public void runMain() throws Exception {
-        main();
-    }
 
     public static void main(String... args) throws Exception {
         
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         File scriptDir = new File(tempDir, UUID.randomUUID().toString());
-        scriptDir.mkdirs();
+        if (!scriptDir.mkdirs()) {
+            throw new RuntimeException("Could not create dirs for script dir '" +
+                    scriptDir.getCanonicalPath() + "'.");
+        }
         Runnable runner;
         
         System.out.printf("Grengine Visual Performance Test%n");

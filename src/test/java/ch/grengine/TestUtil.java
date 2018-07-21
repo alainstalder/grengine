@@ -26,8 +26,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 
 public class TestUtil {
@@ -39,6 +42,77 @@ public class TestUtil {
         @Override public File getCanonicalFile() throws IOException { throw new IOException(); }
         @Override public File getAbsoluteFile() { return this; }
     }
+
+    @FunctionalInterface
+    public interface Code {
+        void run() throws Throwable;
+    }
+
+    private enum MessageAssertionMode { IS, CONTAINS, STARTS_WITH }
+
+    /**
+     * Asserts that the given code throws the expected throwable with the expected message.
+     *
+     * @param code Code to run that is expected to throw
+     * @param expectedClass expected throwable class
+     * @param expectedMessage expected throwable message, may be null
+     */
+    public static void assertThrows(Code code, Class<? extends Throwable> expectedClass,
+                                    String expectedMessage) {
+        assertThrowsInternal(code, expectedClass, expectedMessage, MessageAssertionMode.IS);
+    }
+
+    /**
+     * Asserts that the given code throws the expected throwable with the expected message.
+     *
+     * @param code Code to run that is expected to throw
+     * @param expectedClass expected throwable class
+     * @param expectedMessagePart text expected to be contained in throwable message
+     */
+    public static void assertThrowsContains(Code code, Class<? extends Throwable> expectedClass,
+                                            String expectedMessagePart) {
+        assertThrowsInternal(code, expectedClass, expectedMessagePart, MessageAssertionMode.CONTAINS);
+    }
+
+    /**
+     * Asserts that the given code throws the expected throwable and the message.
+     *
+     * @param code Code to run that is expected to throw
+     * @param expectedClass expected throwable class
+     * @param expectedMessageStart text expected to be at the start of the throwable message
+     */
+    public static void assertThrowsStartsWith(Code code, Class<? extends Throwable> expectedClass,
+                                            String expectedMessageStart) {
+        assertThrowsInternal(code, expectedClass, expectedMessageStart, MessageAssertionMode.STARTS_WITH);
+    }
+
+    private static void assertThrowsInternal(Code code, Class<? extends Throwable> expectedClass,
+                                    String expectedMessage, MessageAssertionMode mode) {
+        boolean thrown;
+        try {
+            code.run();
+            thrown = false;
+        } catch (Throwable t) {
+            thrown = true;
+            assertThat("Expected " + expectedClass.getName() + " but got " + t.getClass().getName(),
+                    t.getClass().equals(expectedClass), is(true));
+            switch (mode) {
+                case IS:
+                    assertThat(t.getMessage(), is(expectedMessage));
+                    break;
+                case CONTAINS:
+                    assertThat(t.getMessage(), containsString(expectedMessage));
+                    break;
+                case STARTS_WITH:
+                    assertThat(t.getMessage(), startsWith(expectedMessage));
+                    break;
+            }
+        }
+        if (!thrown) {
+            fail("expected to throw");
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> argsToMap(Object... args) {

@@ -27,9 +27,7 @@ import ch.grengine.sources.SourcesUtil;
 
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,14 +35,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class BytecodeClassLoaderConcurrencyTest {
     
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
     private class SlowBytecodeClassLoader extends BytecodeClassLoader {
         private final long delayDefinePackageMs;
         private final long delayDefineClassMs;
 
-        public SlowBytecodeClassLoader(BytecodeClassLoader loader, long delayDefinePackageMs, long delayDefineClassMs) {
+        SlowBytecodeClassLoader(BytecodeClassLoader loader, long delayDefinePackageMs, long delayDefineClassMs) {
             super(loader.getParent(), loader.getLoadMode(), loader.getCode());
             this.delayDefinePackageMs = delayDefinePackageMs;
             this.delayDefineClassMs = delayDefineClassMs;

@@ -16,19 +16,14 @@
 
 package ch.grengine.sources;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class DirModeTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testValueOf() {
         assertThat(DirMode.valueOf(DirMode.NO_SUBDIRS.toString()), is(DirMode.NO_SUBDIRS));

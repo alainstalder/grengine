@@ -25,7 +25,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.FixedSetSources;
 import ch.grengine.sources.Sources;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +33,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,16 +45,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *
  */
 public class GrengineConcurrencyTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     private volatile boolean failed;
     private void setFailed(boolean failed) {
         this.failed = failed;
     }
     
-    private String mapToString(int nCodeChanges, Map<Integer,Integer> map, int maxDigits) {
+    private static String mapToString(final int nCodeChanges, final Map<Integer,Integer> map, final int maxDigits) {
         StringBuilder out = new StringBuilder();
         for (int i=0; i<nCodeChanges; i++) {
             Integer value = map.get(i);
@@ -77,7 +72,7 @@ public class GrengineConcurrencyTest {
                 .setLatencyMs(10)
                 .setName("concurrent")
                 .build();
-        List<Sources> sourcesLayers = Arrays.asList(sources);
+        List<Sources> sourcesLayers = Collections.singletonList(sources);
         
         final Grengine gren = new Grengine.Builder()
                 .setEngine(engine)

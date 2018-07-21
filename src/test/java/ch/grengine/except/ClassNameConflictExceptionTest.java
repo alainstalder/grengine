@@ -23,9 +23,7 @@ import ch.grengine.code.Code;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -35,11 +33,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ClassNameConflictExceptionTest {
     
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
     @Test
-    public void testConstruct() throws Exception {
+    public void testConstruct() {
+
+        // given
+
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
         List<Code> codeLayers = ClassNameConflictAnalyzerTest.getTestCodeLayers();
         Map<String,List<Code>> map1 =
@@ -47,7 +45,12 @@ public class ClassNameConflictExceptionTest {
         Map<String,List<Code>> map2 =
                 ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
         String msg = "Got " + (map1.size() + map2.size()) + " conflict(s).";
+
+        // when
+
         ClassNameConflictException e = new ClassNameConflictException(msg, map1, map2);
+
+        // then
 
         assertThat(e, instanceOf(GrengineException.class));
         assertThat(e.getMessage(), is("Got 2 conflict(s). " +

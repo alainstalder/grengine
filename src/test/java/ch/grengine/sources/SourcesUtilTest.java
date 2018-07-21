@@ -23,22 +23,17 @@ import ch.grengine.source.SourceUtil;
 
 import java.util.HashSet;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class SourcesUtilTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructor() {
         new SourcesUtil();
@@ -46,8 +41,17 @@ public class SourcesUtilTest {
 
     @Test
     public void testSourceToSourcesDefaultCompilerFactory() {
+
+        // given
+
         MockSource m = new MockSource("id1");
+
+        // when
+
         Sources s = SourcesUtil.sourceToSources(m);
+
+        // then
+
         assertThat(s.getName(), is("id1"));
         assertThat(s.getCompilerFactory(), is(notNullValue()));
         assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
@@ -56,20 +60,29 @@ public class SourcesUtilTest {
     }
 
     @Test
-    public void testSourceToSourcesDefaultCompilerFactorySourceNull() throws Exception {
-        try {
-            SourcesUtil.sourceToSources(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source is null."));
-        }
+    public void testSourceToSourcesDefaultCompilerFactorySourceNull() {
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceToSources(null),
+                NullPointerException.class,
+                "Source is null.");
     }
 
     @Test
     public void testSourceToSourcesSpecificCompilerFactory() {
+
+        // given
+
         MockSource m = new MockSource("id1");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
+
+        // when
+
         Sources s = SourcesUtil.sourceToSources(m, compilerFactory);
+
+        // then
+
         assertThat(s.getName(), is("id1"));
         assertThat(s.getCompilerFactory(), is(compilerFactory));
         assertThat(s.getSourceSet().size(), is(1));
@@ -77,31 +90,40 @@ public class SourcesUtilTest {
     }
     
     @Test
-    public void testSourceToSourcesSpecificCompilerFactorySourceNull() throws Exception {
-        try {
-            SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source is null."));
-        }
+    public void testSourceToSourcesSpecificCompilerFactorySourceNull() {
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory()),
+                NullPointerException.class,
+                "Source is null.");
     }
     
     @Test
-    public void testSourceToSourcesSpecificCompilerFactoryNull() throws Exception {
-        try {
-            SourcesUtil.sourceToSources(new MockSource("id1"), null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Compiler factory is null."));
-        }
+    public void testSourceToSourcesSpecificCompilerFactoryNull() {
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceToSources(new MockSource("id1"), null),
+                NullPointerException.class,
+                "Compiler factory is null.");
     }
 
     
     @Test
     public void testSourceSetToSourcesDefaultCompilerFactory() {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
+
+        // when
+
         Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myName");
+
+        // then
+
         assertThat(s.getName(), is("myName"));
         assertThat(s.getCompilerFactory(), is(notNullValue()));
         assertThat(s.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
@@ -112,31 +134,40 @@ public class SourcesUtilTest {
 
     @Test
     public void testSourceSetToSourcesDefaultCompilerFactorySourceSetNull() {
-        try {
-            SourcesUtil.sourceSetToSources(null, "myName");
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source set is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceSetToSources(null, "myName"),
+                NullPointerException.class,
+                "Source set is null.");
     }
 
     @Test
     public void testSourceSetToSourcesDefaultCompilerFactorySourceNameNull() {
-        try {
-            SourcesUtil.sourceSetToSources(new HashSet<>(), null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Name is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), null),
+                NullPointerException.class,
+                "Name is null.");
     }
     
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactory() {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2), "myName",
-                compilerFactory);
+
+        // when
+
+        Sources s = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(m1, m2),
+                "myName", compilerFactory);
+
+        // then
+
         assertThat(s.getName(), is("myName"));
         assertThat(s.getCompilerFactory(), is(compilerFactory));
         assertThat(s.getSourceSet().size(), is(2));
@@ -146,32 +177,34 @@ public class SourcesUtilTest {
 
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactorySourceSetNull() {
-        try {
-            SourcesUtil.sourceSetToSources(null, "myName", new DefaultGroovyCompilerFactory());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source set is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceSetToSources(null, "myName",
+                new DefaultGroovyCompilerFactory()),
+                NullPointerException.class,
+                "Source set is null.");
     }
 
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactorySourceNameNull() {
-        try {
-            SourcesUtil.sourceSetToSources(new HashSet<>(), null, new DefaultGroovyCompilerFactory());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Name is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), null,
+                new DefaultGroovyCompilerFactory()),
+                NullPointerException.class,
+                "Name is null.");
     }
 
     @Test
     public void testSourceSetToSourcesSpecificCompilerFactoryNull() {
-        try {
-            SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Compiler factory is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null),
+                NullPointerException.class,
+                "Compiler factory is null.");
     }
 
 }

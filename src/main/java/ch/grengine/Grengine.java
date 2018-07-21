@@ -173,7 +173,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config) {
-        this(builderEmpty((ClassLoader)null, true, config, false));
+        this(builderEmpty(null, true, config, false));
     }
 
     /**
@@ -189,7 +189,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0.3
      */
     public Grengine(final ClassLoader parent) {
-        this(builderEmpty(parent, false, (CompilerConfiguration)null, true));
+        this(builderEmpty(parent, false, null, true));
     }
 
     /**
@@ -230,7 +230,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final File dir) {
-        this(builderFromDir((ClassLoader)null, true, (CompilerConfiguration)null, true, dir, DirMode.NO_SUBDIRS));
+        this(builderFromDir(null, true, null, true, dir, DirMode.NO_SUBDIRS));
     }
 
     /**
@@ -255,7 +255,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0.3
      */
     public Grengine(final ClassLoader parent, final File dir) {
-        this(builderFromDir(parent, false, (CompilerConfiguration)null, true, dir, DirMode.NO_SUBDIRS));
+        this(builderFromDir(parent, false, null, true, dir, DirMode.NO_SUBDIRS));
     }
 
     /**
@@ -281,7 +281,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final File dir) {
-        this(builderFromDir((ClassLoader)null, true, config, false, dir, DirMode.NO_SUBDIRS));
+        this(builderFromDir(null, true, config, false, dir, DirMode.NO_SUBDIRS));
     }
 
     /**
@@ -334,7 +334,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final File dir, final DirMode dirMode) {
-        this(builderFromDir((ClassLoader)null, true, (CompilerConfiguration)null, true, dir, dirMode));
+        this(builderFromDir(null, true, null, true, dir, dirMode));
     }
 
     /**
@@ -361,7 +361,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0.3
      */
     public Grengine(ClassLoader parent, final File dir, final DirMode dirMode) {
-        this(builderFromDir(parent, false, (CompilerConfiguration)null, true, dir, dirMode));
+        this(builderFromDir(parent, false, null, true, dir, dirMode));
     }
 
     /**
@@ -389,7 +389,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final File dir, final DirMode dirMode) {
-        this(builderFromDir((ClassLoader)null, true, config, false, dir, dirMode));
+        this(builderFromDir(null, true, config, false, dir, dirMode));
     }
 
     /**
@@ -441,7 +441,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final Collection<URL> urls) {
-        this(builderFromUrls((ClassLoader)null, true, (CompilerConfiguration)null, true, urls));
+        this(builderFromUrls(null, true, null, true, urls));
     }
 
     /**
@@ -465,7 +465,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0.3
      */
     public Grengine(final ClassLoader parent, final Collection<URL> urls) {
-        this(builderFromUrls(parent, false, (CompilerConfiguration)null, true, urls));
+        this(builderFromUrls(parent, false, null, true, urls));
     }
 
     /**
@@ -489,7 +489,7 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     public Grengine(final CompilerConfiguration config, final Collection<URL> urls) {
-        this(builderFromUrls((ClassLoader)null, true, config, false, urls));
+        this(builderFromUrls(null, true, config, false, urls));
     }
 
     /**

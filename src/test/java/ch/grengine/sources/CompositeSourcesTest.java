@@ -32,11 +32,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class CompositeSourcesTest {
@@ -46,6 +46,9 @@ public class CompositeSourcesTest {
 
     @Test
     public void testConstructDefaults() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1)).build();
         File dir = tempFolder.getRoot();
@@ -53,9 +56,14 @@ public class CompositeSourcesTest {
         TestUtil.setFileText(file, "println 33");
         DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
         List<Sources> sourcesList = Arrays.asList(s1, s2);
+
+        // when
+
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
         CompositeSources s = builder.build();
-        
+
+        // then
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
         assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
@@ -75,6 +83,9 @@ public class CompositeSourcesTest {
     
     @Test
     public void testConstructAllDefined() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         FixedSetSources s1 = new FixedSetSources.Builder(
                 SourceUtil.sourceArrayToSourceSet(m1)).build();
@@ -83,13 +94,19 @@ public class CompositeSourcesTest {
         TestUtil.setFileText(file, "println 33");
         DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
         List<Sources> sourcesList = Arrays.asList(s1, s2);
-        CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
-        builder.setName("composite");
         CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
-        builder.setCompilerFactory(compilerFactory);
-        builder.setLatencyMs(200);
-        CompositeSources s = builder.build();
-        
+
+        // when
+
+        CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
+        CompositeSources s = builder
+                .setName("composite")
+                .setCompilerFactory(compilerFactory)
+                .setLatencyMs(200)
+                .build();
+
+        // then
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
         assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
@@ -107,29 +124,36 @@ public class CompositeSourcesTest {
     }
     
     @Test
-    public void testConstructSourcesCollectionNull() throws Exception {
-        try {
-            new CompositeSources.Builder(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Sources collection is null."));
-        }
+    public void testConstructSourcesCollectionNull() {
+
+        // when/then
+
+        assertThrows(() -> new CompositeSources.Builder(null),
+                NullPointerException.class,
+                "Sources collection is null.");
     }
 
     @Test
-    public void testModifyBuilderAfterUse() throws Exception {
+    public void testModifyBuilderAfterUse() {
+
+        // given
+
         CompositeSources.Builder builder = new CompositeSources.Builder(new LinkedList<>());
         builder.build();
-        try {
-            builder.setName("name");
-            fail();
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Builder already used."));
-        }
+
+
+        // when/then
+
+        assertThrows(() -> builder.setName("name"),
+                IllegalStateException.class,
+                "Builder already used.");
     }
     
     @Test
     public void testLastModified() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1))
             .setLatencyMs(50).build();
@@ -137,15 +161,27 @@ public class CompositeSourcesTest {
         FixedSetSources s2 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m2))
             .setLatencyMs(50).build();
         List<Sources> sourcesList = Arrays.asList(s1, s2);
+
+        // when
+
         CompositeSources.Builder builder = new CompositeSources.Builder(sourcesList);
-        CompositeSources s = builder.setLatencyMs(50).build();
+        CompositeSources s = builder
+                .setLatencyMs(50)
+                .build();
+
+        // then
 
         assertThat(s.getBuilder().getSourcesCollection().size(), is(2));
         assertThat(s.getSourceSet().size(), is(2));
         assertThat(s.getSourceSet().contains(m1), is(true));
         assertThat(s.getSourceSet().contains(m2), is(true));
 
+        // when
+
         m2.setLastModified(1);
+
+        // then
+
         long lastMod = s.getLastModified();
         Thread.sleep(30);
         assertThat(lastMod, is(s.getLastModified()));
@@ -154,8 +190,13 @@ public class CompositeSourcesTest {
         assertThat(lastMod2 > lastMod, is(true));
         Thread.sleep(120);
         assertThat(lastMod2, is(s.getLastModified()));
+
+        // when
         
         m1.setLastModified(1);
+
+        // then
+
         Thread.sleep(120);
         long lastMod3 = s.getLastModified();
         assertThat(lastMod3 > lastMod2, is(true));

@@ -25,7 +25,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +33,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import groovy.lang.Script;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class LayeredEngineConcurrencyTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private volatile boolean failed;
     private void setFailed(boolean failed) {
@@ -70,7 +65,7 @@ public class LayeredEngineConcurrencyTest {
         final Sources sources = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(s1), "concurrent");
         
         Code code = new DefaultGroovyCompiler().compile(sources);
-        List<Code> codeLayers = Arrays.asList(code);
+        List<Code> codeLayers = Collections.singletonList(code);
         
         engine.setCodeLayers(codeLayers);
 
@@ -96,7 +91,7 @@ public class LayeredEngineConcurrencyTest {
                             s1.setText("return " + j);
                             s1.setLastModified(j);
                             Code code1 = new DefaultGroovyCompiler().compile(sources);
-                            List<Code> codeLayers1 = Arrays.asList(code1);
+                            List<Code> codeLayers1 = Collections.singletonList(code1);
                             engine.setCodeLayers(codeLayers1);
                             //System.out.println(j);
                         } else {

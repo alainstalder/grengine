@@ -30,122 +30,177 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class ClassNameConflictAnalyzerTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
-    public void testConstruct() throws Exception {
+    public void testConstruct() {
         new ClassNameConflictAnalyzer();
     }
     
     @Test
-    public void testGetAllClassOrigins() throws Exception {
+    public void testGetAllClassOrigins() {
+
+        // given
+
         List<Code> codeLayers = getTestCodeLayers();
+
+        // when
+
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getAllClassNamesMap(codeLayers);
 
+        // then
+
         assertThat(origins.size(), is(4));
+
+        // when
         
         List<Code> twiceList = origins.get("Twice");
+
+        // then
+
         assertThat(twiceList.size(), is(2));
         assertThat(codeLayers.get(0), is(twiceList.get(0)));
         assertThat(codeLayers.get(1), is(twiceList.get(1)));
+
+        // when
         
         List<Code> twiceInner1List = origins.get("Twice$Inner1");
+
+        // then
+
         assertThat(twiceInner1List.size(), is(1));
         assertThat(codeLayers.get(0), is(twiceInner1List.get(0)));
+
+        // when
         
         List<Code> twiceInner2List = origins.get("Twice$Inner2");
+
+        // then
+
         assertThat(twiceInner2List.size(), is(1));
         assertThat(codeLayers.get(1), is(twiceInner2List.get(0)));
-        
+
+        // when
+
         List<Code> fileList = origins.get("java.io.File");
+
+        // then
+
         assertThat(fileList.size(), is(1));
         assertThat(codeLayers.get(2), is(fileList.get(0)));
     }
     
     @Test
-    public void testGetAllClassOriginsCodeLayersNull() throws Exception {
-        try {
-            ClassNameConflictAnalyzer.getAllClassNamesMap(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Code layers are null."));
-        }
+    public void testGetAllClassOriginsCodeLayersNull() {
+
+        // when/then
+
+        assertThrows(() -> ClassNameConflictAnalyzer.getAllClassNamesMap(null),
+                NullPointerException.class,
+                "Code layers are null.");
     }
     
     
     @Test
-    public void testClassOriginsWithDuplicates() throws Exception {
+    public void testClassOriginsWithDuplicates() {
+
+        // given
+
         List<Code> codeLayers = getTestCodeLayers();
+
+        // when
+
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
 
+        // then
+
         assertThat(origins.size(), is(1));
+
+        // when
         
         List<Code> twiceList = origins.get("Twice");
+
+        // then
+
         assertThat(twiceList.size(), is(2));
         assertThat(codeLayers.get(0), is(twiceList.get(0)));
         assertThat(codeLayers.get(1), is(twiceList.get(1)));
     }
     
     @Test
-    public void testClassOriginsWithDuplicatesCodeLayersNull() throws Exception {
-        try {
-            ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Code layers are null."));
-        }
+    public void testClassOriginsWithDuplicatesCodeLayersNull() {
+
+        // when/then
+
+        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null),
+                NullPointerException.class,
+                "Code layers are null.");
     }
     
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParent() throws Exception {
+    public void testDetermineClassOriginsWithDuplicateInParent() {
+
+        // given
+
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
         List<Code> codeLayers = getTestCodeLayers();
+
+        // when
+
         Map<String,List<Code>> origins = ClassNameConflictAnalyzer.
                 getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
 
+        // then
+
         assertThat(origins.size(), is(1));
 
+        // when
+
         List<Code> fileList = origins.get("java.io.File");
+
+        // then
+
         assertThat(fileList.size(), is(1));
         assertThat(codeLayers.get(2), is(fileList.get(0)));
     }
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParentParentNull() throws Exception {
-        try {
-            ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(null, new LinkedList<>());
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Parent class loader is null."));
-        }
+    public void testDetermineClassOriginsWithDuplicateInParentParentNull() {
+
+        // when/then
+
+        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
+                null, new LinkedList<>()),
+                NullPointerException.class,
+                "Parent class loader is null.");
     }
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParentCodeLayersNull() throws Exception {
+    public void testDetermineClassOriginsWithDuplicateInParentCodeLayersNull() {
+
+        // given
+
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
-        try {
-            ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Code layers are null."));
-        }
+
+
+        // when/then
+
+        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
+                parent, null),
+                NullPointerException.class,
+                "Code layers are null.");
     }
 
     
-    public static List<Code> getTestCodeLayers() throws Exception {
+    public static List<Code> getTestCodeLayers() {
         SourceFactory f = new DefaultSourceFactory();
         Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
                 "public class Inner1 { static def get() { return 1 } } }");

@@ -22,28 +22,32 @@ import ch.grengine.source.Source;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class CompiledSourceInfoTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
-    
+
     @Test
     public void testConstructPlusGetters() {
+
+        // given
+
         Source m1 = new MockSource("id1");
         String name = "MainClassName";
         Set<String> names = new HashSet<>();
         names.add("Side");
         names.add("MainClassName");
+
+        // when
+
         CompiledSourceInfo info = new CompiledSourceInfo(m1, name, names, 55);
+
+        // then
+
         assertThat(info.getSource(), is(m1));
         assertThat(info.getMainClassName(), is(name));
         assertThat(info.getClassNames(), is(names));
@@ -54,32 +58,37 @@ public class CompiledSourceInfoTest {
     
     @Test
     public void testConstructSourceNull() {
-        try {
-            new CompiledSourceInfo(null, "", new HashSet<>(), 0);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source is null."));
-        }
+
+        // when/then
+
+        assertThrows(() -> new CompiledSourceInfo(null, "",
+                        new HashSet<>(), 0),
+                NullPointerException.class,
+                "Source is null.");
     }
     
     @Test
     public void testConstructMainClassNameNull() {
-        try {
-            new CompiledSourceInfo(new MockSource("id1"), null, new HashSet<>(), 0);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Main class name is null."));
-        }
+
+
+        // when/then
+
+        assertThrows(() -> new CompiledSourceInfo(new MockSource("id1"), null,
+                        new HashSet<>(), 0),
+                NullPointerException.class,
+                "Main class name is null.");
     }
     
     @Test
     public void testConstructClassNamesNull() {
-        try {
-            new CompiledSourceInfo(new MockSource("id1"), "", null, 0);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Class names are null."));
-        }
+
+
+        // when/then
+
+        assertThrows(() -> new CompiledSourceInfo(new MockSource("id1"), "",
+                        null, 0),
+                NullPointerException.class,
+                "Class names are null.");
     }
 
 }

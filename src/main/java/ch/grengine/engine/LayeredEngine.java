@@ -214,9 +214,7 @@ public class LayeredEngine implements Engine {
             
     @Override
     public void setCodeLayers(final List<Code> codeLayers) {
-        if (codeLayers == null) {
-            throw new IllegalArgumentException("Code layers are null.");
-        }
+        requireNonNull(codeLayers, "Code layers are null.");
         
         int nConflicts = 0;
         Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap = null;
@@ -252,9 +250,7 @@ public class LayeredEngine implements Engine {
     
     @Override
     public void setCodeLayersBySource(final List<Sources> sourcesLayers) {
-        if (sourcesLayers == null) {
-            throw new IllegalArgumentException("Sources layers are null.");
-        }
+        requireNonNull(sourcesLayers, "Sources layers are null.");
         setCodeLayers(newLayeredClassLoaderFromSourceSetLayers(sourcesLayers).getCodeLayers());
     }
 

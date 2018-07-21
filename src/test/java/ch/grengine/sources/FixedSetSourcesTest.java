@@ -24,29 +24,32 @@ import ch.grengine.source.SourceUtil;
 
 import java.util.Set;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
+import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 
 public class FixedSetSourcesTest {
-    
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testConstructDefaults() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+
+        // when
+
         FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
         FixedSetSources s = builder.build();
+
+        // then
         
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
@@ -63,13 +66,24 @@ public class FixedSetSourcesTest {
     
     @Test
     public void testConstructAllDefined() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
-        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
         CompilerFactory factory = new DefaultGroovyCompilerFactory();
-        builder.setName("fixed").setCompilerFactory(factory).setLatencyMs(200);
-        FixedSetSources s = builder.build();
+
+        // when
+
+        FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
+        FixedSetSources s = builder
+                .setName("fixed")
+                .setCompilerFactory(factory)
+                .setLatencyMs(200)
+                .build();
+
+        // then
         
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
@@ -84,39 +98,53 @@ public class FixedSetSourcesTest {
     }
     
     @Test
-    public void testConstructSourceSetNull() throws Exception {
-        try {
-            new FixedSetSources.Builder(null);
-            fail();
-        } catch (NullPointerException e) {
-            assertThat(e.getMessage(), is("Source set is null."));
-        }
+    public void testConstructSourceSetNull() {
+
+        // when/then
+
+        assertThrows(() -> new FixedSetSources.Builder(null),
+                NullPointerException.class,
+                "Source set is null.");
     }
     
     @Test
-    public void testModifyBuilderAfterUse() throws Exception {
+    public void testModifyBuilderAfterUse() {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
         FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
         builder.build();
-        try {
-            builder.setName("name");
-            fail();
-        } catch (IllegalStateException e) {
-            assertThat(e.getMessage(), is("Builder already used."));
-        }
+
+        // when/then
+
+        assertThrows(() -> builder.setName("name"),
+                IllegalStateException.class,
+                "Builder already used.");
     }
     
     @Test
     public void testLastModified() throws Exception {
+
+        // given
+
         MockSource m1 = new MockSource("id1");
         MockSource m2 = new MockSource("id2");
         Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
+
+        // when
+
         FixedSetSources.Builder builder = new FixedSetSources.Builder(set);
-        FixedSetSources s = builder.setLatencyMs(50).build();
-        
+        FixedSetSources s = builder
+                .setLatencyMs(50)
+                .build();
+
         m2.setLastModified(1);
+
+        // then
+
         long lastMod = s.getLastModified();
         Thread.sleep(30);
         assertThat(lastMod, is(s.getLastModified()));

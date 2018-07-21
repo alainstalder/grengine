@@ -36,10 +36,18 @@ public class MockFileSourceTest {
 
     @Test
     public void testMockFileSource() throws Exception {
+
+        // given
+
         File f = new File(tempFolder.getRoot(), "file");
         TestUtil.setFileText(f, "dummy");
         File fMod = new File(tempFolder.getRoot(), "file.lastModified");
+
+        // when
+
         MockFileSource s = new MockFileSource(f);
+
+        // then
 
         assertThat(f.exists(), is(true));
         assertThat(fMod.exists(), is(true));
@@ -48,7 +56,12 @@ public class MockFileSourceTest {
         assertThat(s.getFile().lastModified(), is(0L));
         assertThat(f.lastModified(), is(not(0L)));
 
+        // when
+
         assertThat(s.getFile().setLastModified(100), is(true));
+
+        // then
+
         assertThat(TestUtil.getFileText(fMod), is("100"));
         assertThat(s.getLastModified(), is(100L));
         assertThat(s.getFile().lastModified(), is(100L));
