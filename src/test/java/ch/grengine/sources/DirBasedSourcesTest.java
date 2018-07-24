@@ -49,6 +49,8 @@ public class DirBasedSourcesTest {
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
 
+    private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+
     @Test
     public void testConstructDefaults() throws Exception {
 
@@ -182,11 +184,9 @@ public class DirBasedSourcesTest {
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
-        if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
-        }
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
     
     @Test
@@ -213,11 +213,9 @@ public class DirBasedSourcesTest {
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
-        if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
-        }
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
     
     @Test
@@ -244,11 +242,9 @@ public class DirBasedSourcesTest {
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(!set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
-        if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
-        }
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
 
     @Test
@@ -278,11 +274,9 @@ public class DirBasedSourcesTest {
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubGoo"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSub"))), is(true));
         assertThat(set.contains(new DefaultFileSource(m.get("fileSubSubGoo"))), is(true));
-        if (!TestUtil.isWindows()) {
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(true));
-            assertThat(!set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(true));
-        }
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible1"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
+        assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
 
     @Test

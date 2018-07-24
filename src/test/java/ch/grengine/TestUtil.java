@@ -157,9 +157,5 @@ public class TestUtil {
             return scan.hasNext() ? scan.next() : "";
         }
     }
-    
-    public static boolean isWindows() {
-        return System.getProperty("os.name").startsWith("Windows");
-    }
 
 }
