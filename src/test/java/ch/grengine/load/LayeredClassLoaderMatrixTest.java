@@ -116,9 +116,9 @@ public class LayeredClassLoaderMatrixTest {
         LayeredClassLoader.Builder builder;
     }
 
-    private void testGeneric(ParentClassLoaderType parentClassLoaderType,
-                             CodeLayersType codeLayersType, TopCodeCacheType topCodeCacheType,
-                             SourcesChangedState sourcesChangedState) throws Exception {
+    private void testGeneric(final ParentClassLoaderType parentClassLoaderType,
+                             final CodeLayersType codeLayersType, final TopCodeCacheType topCodeCacheType,
+                             final SourcesChangedState sourcesChangedState) throws Exception {
 
         TestContext ctx = new TestContext();
         ctx.parentClassLoaderType = parentClassLoaderType;
@@ -135,7 +135,7 @@ public class LayeredClassLoaderMatrixTest {
         testLoadClassByName(ctx);
     }
 
-    private void prepareCode(TestContext ctx) throws Exception {
+    private void prepareCode(final TestContext ctx) throws Exception {
         ctx.fMain = new MockFile(tempFolder.getRoot(), "Main.groovy");
         ctx.sMain = new MockFileSource(ctx.fMain);
         ctx.fAssume = new MockFile(tempFolder.getRoot(), "Assume.groovy");
@@ -171,7 +171,7 @@ public class LayeredClassLoaderMatrixTest {
         }
     }
 
-    private void prepareBuilder(TestContext ctx) {
+    private void prepareBuilder(final TestContext ctx) {
 
         switch (ctx.parentClassLoaderType) {
             case PARENT_IS_SOURCE_CLASS_LOADER:
@@ -218,7 +218,7 @@ public class LayeredClassLoaderMatrixTest {
                 .setTopLoadMode(ctx.topLoadMode);
     }
 
-    private static String getExpectedMethod(TestContext ctx, boolean loadBySource) {
+    private static String getExpectedMethod(final TestContext ctx, final boolean loadBySource) {
         if (ctx.topCodeCacheType == TOP_CODE_CACHE_CURRENT_FIRST
                 && ctx.sourcesChangedState == SOURCES_CHANGED) {
             if (loadBySource) {
@@ -245,7 +245,7 @@ public class LayeredClassLoaderMatrixTest {
         }
     }
 
-    private void testFindBytecodeClassLoaderBySource(TestContext ctx) {
+    private void testFindBytecodeClassLoaderBySource(final TestContext ctx) {
 
         // given
 
@@ -290,7 +290,7 @@ public class LayeredClassLoaderMatrixTest {
         assertThat(loaderFound, is(nullValue()));
     }
 
-    private void testLoadMainClassBySource(TestContext ctx) throws Exception {
+    private void testLoadMainClassBySource(final TestContext ctx) throws Exception {
 
         // given
 
@@ -349,7 +349,7 @@ public class LayeredClassLoaderMatrixTest {
 
     }
 
-    private void testLoadClassBySourceAndName(TestContext ctx) throws Exception {
+    private void testLoadClassBySourceAndName(final TestContext ctx) throws Exception {
 
         // given
 
@@ -411,7 +411,7 @@ public class LayeredClassLoaderMatrixTest {
 
     }
 
-    private void testLoadClassByName(TestContext ctx) throws Exception {
+    private void testLoadClassByName(final TestContext ctx) throws Exception {
 
         // given
 
@@ -606,7 +606,7 @@ public class LayeredClassLoaderMatrixTest {
 
         // given
 
-        TestContext ctx = new TestContext();
+        final TestContext ctx = new TestContext();
         ctx.parentClassLoaderType = PARENT_IS_REGULAR_CLASS_LOADER;
         ctx.codeLayersType = CODE_LAYERS_PARENT_FIRST;
         ctx.topCodeCacheType = TOP_CODE_CACHE_OFF;
@@ -633,7 +633,7 @@ public class LayeredClassLoaderMatrixTest {
 
         // given
 
-        TestContext ctx = new TestContext();
+        final TestContext ctx = new TestContext();
         ctx.parentClassLoaderType = PARENT_IS_SOURCE_CLASS_LOADER;
         ctx.codeLayersType = CODE_LAYERS_PARENT_FIRST;
         ctx.topCodeCacheType = TOP_CODE_CACHE_CURRENT_FIRST;

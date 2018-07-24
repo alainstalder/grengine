@@ -21,11 +21,13 @@ import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -90,229 +92,100 @@ public class BytecodeClassLoaderConcurrencyTest {
         }
 
     }
-    
+
     private volatile boolean failed;
     private void setFailed(boolean failed) {
         this.failed = failed;
     }
 
+    public void testGeneric(final String packageName, final String... classNames) throws Exception {
+
+        // given
+
+        setFailed(false);
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+
+        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
+
+        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
+        final SourceFactory f = new DefaultSourceFactory();
+
+        final String packageDeclarePrefix = packageName.isEmpty() ? "" : "package " + packageName + "; ";
+        Set<Source> sourceSet = Arrays.stream(classNames)
+                .map(className -> packageDeclarePrefix + "class " + className + " {}")
+                .map(f::fromText)
+                .collect(Collectors.toSet());
+
+        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
+        final Code code = c.compile(sources);
+
+        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
+
+        final SlowBytecodeClassLoader slowLoader;
+        if (packageName.isEmpty() || classNames.length > 1) {
+            slowLoader = new SlowBytecodeClassLoader(loader, 0, 100);
+        } else {
+            slowLoader = new SlowBytecodeClassLoader(loader, 100, 0);
+        }
+
+        final String packageLoadPrefix = packageName.isEmpty() ? "" : packageName + ".";
+        final List<String> classNamesToLoad = Arrays.stream(classNames)
+                .map(className -> packageLoadPrefix + className)
+                .collect(Collectors.toList());
+        final int nClassNamesToLoad = classNamesToLoad.size();
+
+        final int nThreads = 10;
+
+        final Thread[] threads = new Thread[nThreads];
+        for (int i = 0; i < nThreads; i++) {
+            final int x = i;
+            threads[i] = new Thread(() -> {
+                try {
+                    final String threadName = "Thread-" + x;
+                    Thread.currentThread().setName(threadName);
+                    System.out.println(threadName + " about to load...");
+                    int index = (x % nClassNamesToLoad);
+                    slowLoader.loadClass(classNamesToLoad.get(index));
+                    System.out.println(threadName + " loaded.");
+                } catch (Throwable t) {
+                    setFailed(true);
+                }
+            });
+        }
+
+        // when
+
+
+        for (Thread t : threads) {
+            t.start();
+        }
+
+        for (Thread t : threads) {
+            t.join();
+        }
+
+        // then
+
+        assertThat(failed, is(false));
+    }
+
+
     @Test
     public void testConcurrentSingleClassNoPackage() throws Exception {
-
-        // given
-
-        setFailed(false);
-
-        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
-
-        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
-
-        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("class Class1 {}");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        final Code code = c.compile(sources);
-
-        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
-        final SlowBytecodeClassLoader slowLoader = new SlowBytecodeClassLoader(loader, 0, 100);
-
-        final int nThreads = 10;
-
-        final Thread[] threads = new Thread[nThreads];
-        for (int i = 0; i < nThreads; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    final String threadName = "Thread-" + x;
-                    Thread.currentThread().setName(threadName);
-                    System.out.println(threadName + " about to load...");
-                    slowLoader.loadClass("Class1");
-                    System.out.println(threadName + " loaded.");
-                } catch (Throwable t) {
-                    setFailed(true);
-                }
-            });
-        }
-
-        // when
-
-
-        for (Thread t : threads) {
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        // then
-
-        assertThat(failed, is(false));
+        testGeneric("", "Class1");
     }
-
     @Test
     public void testConcurrentSingleClassWithPackage() throws Exception {
-
-        // given
-
-        setFailed(false);
-
-        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
-
-        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
-
-        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("package a.b.c; class Class1 {}");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        final Code code = c.compile(sources);
-
-        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
-        final SlowBytecodeClassLoader slowLoader = new SlowBytecodeClassLoader(loader, 100, 0);
-
-        final int nThreads = 10;
-
-        final Thread[] threads = new Thread[nThreads];
-        for (int i = 0; i < nThreads; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    final String threadName = "Thread-" + x;
-                    Thread.currentThread().setName(threadName);
-                    System.out.println(threadName + " about to load...");
-                    slowLoader.loadClass("a.b.c.Class1");
-                    System.out.println(threadName + " loaded.");
-                } catch (Throwable t) {
-                    setFailed(true);
-                }
-            });
-        }
-
-        // when
-
-        for (Thread t : threads) {
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        // then
-
-        assertThat(failed, is(false));
+        testGeneric("a.b.c", "Class1");
     }
-
     @Test
     public void testConcurrentMultiClassNoPackage() throws Exception {
-
-        // given
-
-        setFailed(false);
-
-        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
-
-        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
-
-        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("class Class1 {}");
-        final Source s2 = f.fromText("class Class2 {}");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        final Code code = c.compile(sources);
-
-        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
-        final SlowBytecodeClassLoader slowLoader = new SlowBytecodeClassLoader(loader, 0, 100);
-
-        final int nThreads = 10;
-
-        final Thread[] threads = new Thread[nThreads];
-        for (int i = 0; i < nThreads; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    final String threadName = "Thread-" + x;
-                    Thread.currentThread().setName(threadName);
-                    System.out.println(threadName + " about to load...");
-                    slowLoader.loadClass((x % 2 == 0) ? "Class1" : "Class2");
-                    System.out.println(threadName + " loaded.");
-                } catch (Throwable t) {
-                    setFailed(true);
-                }
-            });
-        }
-
-        // when
-
-        for (Thread t : threads) {
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        // then
-
-        assertThat(failed, is(false));
+        testGeneric("", "Class1", "Class2");
     }
-
     @Test
     public void testConcurrentMultiClassWithPackage() throws Exception {
-
-        // given
-
-        setFailed(false);
-
-        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
-
-        final LoadMode loadMode = LoadMode.CURRENT_FIRST;
-
-        final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
-        final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("package a.b.c; class Class1 {}");
-        final Source s2 = f.fromText("package a.b.c; class Class2 {}");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2);
-        final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        final Code code = c.compile(sources);
-
-        final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, code);
-        final SlowBytecodeClassLoader slowLoader = new SlowBytecodeClassLoader(loader, 0, 100);
-
-        final int nThreads = 10;
-
-        final Thread[] threads = new Thread[nThreads];
-        for (int i = 0; i < nThreads; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    final String threadName = "Thread-" + x;
-                    Thread.currentThread().setName(threadName);
-                    System.out.println(threadName + " about to load...");
-                    slowLoader.loadClass((x % 2 == 0) ? "a.b.c.Class1" : "a.b.c.Class2");
-                    System.out.println(threadName + " loaded.");
-                } catch (Throwable t) {
-                    setFailed(true);
-                }
-            });
-        }
-
-        // when
-
-        for (Thread t : threads) {
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
-
-        // then
-
-        assertThat(failed, is(false));
+        testGeneric("a.b.c", "Class1", "Class2");
     }
 
 }

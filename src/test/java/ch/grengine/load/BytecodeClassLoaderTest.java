@@ -163,7 +163,7 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         // when/then (loadClass(source, name))
@@ -196,7 +196,7 @@ public class BytecodeClassLoaderTest {
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345" );
         
         // when/then (loadClass(name))
@@ -263,7 +263,7 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         // when/then (loadClass(source, name))
@@ -282,7 +282,7 @@ public class BytecodeClassLoaderTest {
                 LoadException.class,
                 "Class 'org.junit.Assume' not found for source. Source: " + s1.toString());
         clazz = loader2.loadClass(s4, "org.junit.Assume");
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         clazz = loader2.loadClass(s2, "ch.grengine.test.Class2");
@@ -309,7 +309,7 @@ public class BytecodeClassLoaderTest {
         clazz = loader4.loadClass("ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
         clazz = loader4.loadClass("org.junit.Assume");
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
     }
 
@@ -364,7 +364,7 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         // when/then (loadClass(source, name))
@@ -394,10 +394,10 @@ public class BytecodeClassLoaderTest {
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
-        // -- loadClass(name) --
+        // when/then (loadClass(name))
         
         // new loader instance, else already loaded classes cannot be loaded differently
         final BytecodeClassLoader loader5 = new BytecodeClassLoader(parent, loadMode, code);
@@ -462,7 +462,7 @@ public class BytecodeClassLoaderTest {
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         // when/then (loadClass(source, name))
@@ -492,7 +492,7 @@ public class BytecodeClassLoaderTest {
 
         clazz = loader4.loadClass(s4, "org.junit.Assume");
         assertThat(clazz.getName(), is("org.junit.Assume"));
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
         
         // when/then (loadClass(name))
@@ -505,7 +505,7 @@ public class BytecodeClassLoaderTest {
         clazz = loader5.loadClass("ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
         clazz = loader5.loadClass("org.junit.Assume");
-        // make sure the groovy version of the class was loaded
+        // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
     }
     
