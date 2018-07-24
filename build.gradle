@@ -31,7 +31,7 @@
   dependencies {
     compile "org.codehaus.groovy:groovy:$groovyVersion"
     testCompile "junit:junit:$junitVersion"
-    testCompile "org.hamcrest:hamcrest-all:$hamcrestVersion"
+    testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
     testCompile "org.apache.ivy:ivy:$ivyVersion"
   }
 
