@@ -24,25 +24,21 @@ import ch.grengine.source.DefaultSourceFactory.SourceIdTrackingTextSource;
 import java.io.File;
 import java.net.URL;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultSourceFactoryTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-    
+class DefaultSourceFactoryTest {
+
     @Test
-    public void testFromTextNoNameNoIdTracking() {
+    void testFromTextNoNameNoIdTracking() {
 
         // given
 
@@ -71,7 +67,7 @@ public class DefaultSourceFactoryTest {
     }
 
     @Test
-    public void testFromTextNoNameWithIdTracking() {
+    void testFromTextNoNameWithIdTracking() {
 
         // given
 
@@ -103,7 +99,7 @@ public class DefaultSourceFactoryTest {
     }
 
     @Test
-    public void testFromTextWithNameNoIdTracking() {
+    void testFromTextWithNameNoIdTracking() {
 
         // given
 
@@ -134,7 +130,7 @@ public class DefaultSourceFactoryTest {
     }
 
     @Test
-    public void testFromTextWithNameWithIdTracking() {
+    void testFromTextWithNameWithIdTracking() {
 
         // given
 
@@ -168,12 +164,13 @@ public class DefaultSourceFactoryTest {
     }
     
     @Test
-    public void testFromFileNoLastModifiedTracking() throws Exception {
+    void testFromFileNoLastModifiedTracking() throws Exception {
 
         // given
 
         final SourceFactory sf = new DefaultSourceFactory();
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
         final long lastMod = file.lastModified();
 
@@ -191,7 +188,7 @@ public class DefaultSourceFactoryTest {
     }
         
     @Test
-    public void testFromFileWithLastModifiedTracking() throws Exception {
+    void testFromFileWithLastModifiedTracking() throws Exception {
 
         // given
 
@@ -199,7 +196,8 @@ public class DefaultSourceFactoryTest {
                 .setTrackFileSourceLastModified(true)
                 .setFileLastModifiedTrackingLatencyMs(50)
                 .build();
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
         final long lastMod = file.lastModified();
 
@@ -222,12 +220,13 @@ public class DefaultSourceFactoryTest {
     }
         
     @Test
-    public void testFromUrlNoTracking() throws Exception {
+    void testFromUrlNoTracking() throws Exception {
 
         // given
 
         final SourceFactory sf = new DefaultSourceFactory();
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
         final URL url = file.toURI().toURL();
 
@@ -244,7 +243,7 @@ public class DefaultSourceFactoryTest {
     }
     
     @Test
-    public void testFromUrlWithTrackingNoLatency() throws Exception {
+    void testFromUrlWithTrackingNoLatency() throws Exception {
 
         // given
 
@@ -252,7 +251,8 @@ public class DefaultSourceFactoryTest {
                 .setTrackUrlContent(true)
                 .setUrlTrackingLatencyMs(0)
                 .build();
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
         final URL url = file.toURI().toURL();
 
@@ -334,7 +334,7 @@ public class DefaultSourceFactoryTest {
     }
     
     @Test
-    public void testFromUrlWithTrackingWithLatency() throws Exception {
+    void testFromUrlWithTrackingWithLatency() throws Exception {
 
         // given
 
@@ -342,7 +342,8 @@ public class DefaultSourceFactoryTest {
                 .setTrackUrlContent(true)
                 .setUrlTrackingLatencyMs(50)
                 .build();
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 1");
         final URL url = file.toURI().toURL();
 
@@ -382,7 +383,7 @@ public class DefaultSourceFactoryTest {
     }
     
     @Test
-    public void testConstructWithTextSourceIdTrackingFromTextWithTextNull() {
+    void testConstructWithTextSourceIdTrackingFromTextWithTextNull() {
 
         // given
 
@@ -392,13 +393,13 @@ public class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(() -> sf.fromText(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> sf.fromText(null),
                 "Text is null.");
     }
     
     @Test
-    public void testConstructWithTextSourceIdTrackingFromTextAndNameWithTextNull() {
+    void testConstructWithTextSourceIdTrackingFromTextAndNameWithTextNull() {
 
         // given
 
@@ -408,13 +409,13 @@ public class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(() -> sf.fromText(null, "name"),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> sf.fromText(null, "name"),
                 "Text is null.");
     }
 
     @Test
-    public void testConstructWithTextSourceIdTrackingFromTextAndNameWithNameNull() {
+    void testConstructWithTextSourceIdTrackingFromTextAndNameWithNameNull() {
 
         // given
 
@@ -424,14 +425,14 @@ public class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(() -> sf.fromText("println 33", null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> sf.fromText("println 33", null),
                 "Desired class name is null.");
     }
 
 
     @Test
-    public void testModifyBuilderAfterUseAndGetBuilder() {
+    void testModifyBuilderAfterUseAndGetBuilder() {
 
         // given
 
@@ -440,8 +441,8 @@ public class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(() -> builder.setTrackUrlContent(false),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setTrackUrlContent(false),
                 "Builder already used.");
 
         // extra test, get builder

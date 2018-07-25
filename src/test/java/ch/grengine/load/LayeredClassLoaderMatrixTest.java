@@ -28,16 +28,16 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.assertThrowsStartsWith;
+import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.load.LayeredClassLoaderMatrixTest.CodeLayersType.CODE_LAYERS_CURRENT_FIRST;
 import static ch.grengine.load.LayeredClassLoaderMatrixTest.CodeLayersType.CODE_LAYERS_PARENT_FIRST;
 import static ch.grengine.load.LayeredClassLoaderMatrixTest.ParentClassLoaderType.PARENT_IS_REGULAR_CLASS_LOADER;
@@ -55,10 +55,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class LayeredClassLoaderMatrixTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class LayeredClassLoaderMatrixTest {
 
     // whether the parent class loader of the layered class loader to test
     // is a source class loader or not
@@ -101,8 +98,8 @@ public class LayeredClassLoaderMatrixTest {
 
         MockFile fMain;
         Source sMain;
-        MockFile fAssume;
-        Source sAssume;
+        MockFile fExpando;
+        Source sExpando;
         Source sNotInCodeLayers;
         Code codeParent;
         List<Code> codeLayers;
@@ -136,38 +133,39 @@ public class LayeredClassLoaderMatrixTest {
     }
 
     private void prepareCode(final TestContext ctx) throws Exception {
-        ctx.fMain = new MockFile(tempFolder.getRoot(), "Main.groovy");
+        final File dir = createTestDir();
+        ctx.fMain = new MockFile(dir, "Main.groovy");
         ctx.sMain = new MockFileSource(ctx.fMain);
-        ctx.fAssume = new MockFile(tempFolder.getRoot(), "Assume.groovy");
-        ctx.sAssume = new MockFileSource(ctx.fAssume);
+        ctx.fExpando = new MockFile(dir, "Expando.groovy");
+        ctx.sExpando = new MockFileSource(ctx.fExpando);
         ctx.sNotInCodeLayers = new DefaultTextSource("class NotInCodeLayers {}");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(ctx.sMain, ctx.sAssume);
+        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(ctx.sMain, ctx.sExpando);
         final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         
         // code parent class loader if source class loader
         TestUtil.setFileText(ctx.fMain, "class Main { def methodParent() {} }\nclass Side { def methodParent() {} }");
-        TestUtil.setFileText(ctx.fAssume, "package org.junit\nclass Assume  { def methodParent() {} }");
+        TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodParent() {} }");
         ctx.codeParent = new DefaultGroovyCompiler().compile(sources);
         
         // code layer 0
         TestUtil.setFileText(ctx.fMain, "class Main { def methodLayer0() {} }\nclass Side { def methodLayer0() {} }");
-        TestUtil.setFileText(ctx.fAssume, "package org.junit\nclass Assume  { def methodLayer0() {} }");
+        TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodLayer0() {} }");
         final Code codeLayer0 = new DefaultGroovyCompiler().compile(sources);
         
         // code layer 1
         TestUtil.setFileText(ctx.fMain, "class Main { def methodLayer1() {} }\nclass Side { def methodLayer1() {} }");
-        TestUtil.setFileText(ctx.fAssume, "package org.junit\nclass Assume  { def methodLayer1() {} }");
+        TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodLayer1() {} }");
         final Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
 
         ctx.codeLayers = Arrays.asList(codeLayer0, codeLayer1);
         
         // prepare files for top code cache
         TestUtil.setFileText(ctx.fMain, "class Main { def methodTop() {} }\nclass Side { def methodTop() {} }");
-        TestUtil.setFileText(ctx.fAssume, "package org.junit\nclass Assume  { def methodTop() {} }");
+        TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodTop() {} }");
 
         if (ctx.sourcesChangedState == SOURCES_CHANGED) {
             assertThat(ctx.fMain.setLastModified(100), is(true));
-            assertThat(ctx.fAssume.setLastModified(100), is(true));
+            assertThat(ctx.fExpando.setLastModified(100), is(true));
         }
     }
 
@@ -270,7 +268,7 @@ public class LayeredClassLoaderMatrixTest {
 
         // when
 
-        loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sAssume);
+        loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sExpando);
 
         // then
 
@@ -330,11 +328,11 @@ public class LayeredClassLoaderMatrixTest {
 
         // when
 
-        clazz = loader.loadMainClass(ctx.sAssume);
+        clazz = loader.loadMainClass(ctx.sExpando);
 
         // when
 
-        assertThat(clazz.getName(), is("org.junit.Assume"));
+        assertThat(clazz.getName(), is("groovy.util.Expando"));
         clazz.getDeclaredMethod(expectedMethod);
 
         // when/then
@@ -342,8 +340,8 @@ public class LayeredClassLoaderMatrixTest {
         if (expectLoadIfNotInCodeLayers) {
             assertThat(loader.loadMainClass(ctx.sNotInCodeLayers), notNullValue());
         } else {
-            assertThrowsStartsWith(() -> loader.loadMainClass(ctx.sNotInCodeLayers),
-                    LoadException.class,
+            assertThrowsStartsWith(LoadException.class,
+                    () -> loader.loadMainClass(ctx.sNotInCodeLayers),
                     "Source not found: ");
         }
 
@@ -386,17 +384,17 @@ public class LayeredClassLoaderMatrixTest {
 
 
         // when/then (wrong source, not found)
-        assertThrowsStartsWith(() -> loader.loadClass(ctx.sMain, "org.junit.Assume"),
-                LoadException.class,
-                "Class 'org.junit.Assume' not found for source. Source: " + ctx.sMain.toString());
+        assertThrowsStartsWith(LoadException.class,
+                () -> loader.loadClass(ctx.sMain, "groovy.util.Expando"),
+                "Class 'groovy.util.Expando' not found for source. Source: " + ctx.sMain.toString());
 
         // when (correct source)
 
-        clazz = loader.loadClass(ctx.sAssume, "org.junit.Assume");
+        clazz = loader.loadClass(ctx.sExpando, "groovy.util.Expando");
 
         // then
 
-        assertThat(clazz.getName(), is("org.junit.Assume"));
+        assertThat(clazz.getName(), is("groovy.util.Expando"));
         clazz.getDeclaredMethod(expectedMethod);
 
         // when/then
@@ -404,8 +402,8 @@ public class LayeredClassLoaderMatrixTest {
         if (expectLoadIfNotInCodeLayers) {
             assertThat(loader.loadClass(ctx.sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         } else {
-            assertThrowsStartsWith(() -> loader.loadClass(ctx.sNotInCodeLayers, "NotInCodeLayers"),
-                    LoadException.class,
+            assertThrowsStartsWith(LoadException.class,
+                    () -> loader.loadClass(ctx.sNotInCodeLayers, "NotInCodeLayers"),
                     "Source not found: ");
         }
 
@@ -417,7 +415,7 @@ public class LayeredClassLoaderMatrixTest {
 
         final LayeredClassLoader loader = ctx.builder.buildFromCodeLayers();
         final String expectedMethod = getExpectedMethod(ctx, false);
-        final boolean expectedLoadJUnitAssume =
+        final boolean expectedLoadJUnitExpando =
                 ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST
                 && ctx.parentClassLoaderType == PARENT_IS_REGULAR_CLASS_LOADER;
 
@@ -442,12 +440,12 @@ public class LayeredClassLoaderMatrixTest {
 
         // when
 
-        clazz = loader.loadClass("org.junit.Assume");
+        clazz = loader.loadClass("groovy.util.Expando");
 
         // then
 
-        if (expectedLoadJUnitAssume) {
-            clazz.getDeclaredMethod("assumeNoException", Throwable.class);
+        if (expectedLoadJUnitExpando) {
+            clazz.getDeclaredMethod("createMap");
         } else {
             clazz.getDeclaredMethod(expectedMethod);
         }
@@ -455,8 +453,8 @@ public class LayeredClassLoaderMatrixTest {
 
         // when/then
 
-        assertThrowsStartsWith(() -> loader.loadClass("NotInCodeLayers"),
-                ClassNotFoundException.class,
+        assertThrowsStartsWith(ClassNotFoundException.class,
+                () -> loader.loadClass("NotInCodeLayers"),
                 "NotInCodeLayers");
 
 
@@ -469,66 +467,66 @@ public class LayeredClassLoaderMatrixTest {
 
     // top off, top sources changed
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_CHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopOff_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopOff_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopOff_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopOff_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_CHANGED);
     }
 
     // top parent first, top sources changed
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopParentFirst_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopParentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopParentFirst_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopParentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopParentFirst_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopParentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopParentFirst_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopParentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_CHANGED);
     }
 
     // top current first, top sources changed
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_CHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_CHANGED);
     }
@@ -536,73 +534,73 @@ public class LayeredClassLoaderMatrixTest {
 
     // top off, top sources unchanged
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopOff_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopOff_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopOff_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopOff_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopOff_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopOff_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopOff_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopOff_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_OFF, SOURCES_UNCHANGED);
     }
 
     // top parent first, top sources unchanged
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopParentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_PARENT_FIRST, SOURCES_UNCHANGED);
     }
 
     // top current first, top sources unchanged
     @Test
-    public void testParentRegularClassLoader_LayersParentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersParentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_PARENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentRegularClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
+    void testParentRegularClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_REGULAR_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_UNCHANGED);
     }
     @Test
-    public void testParentSourceClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
+    void testParentSourceClassLoader_LayersCurrentFirst_TopCurrentFirst_SourcesUnchanged() throws Exception {
         testGeneric(PARENT_IS_SOURCE_CLASS_LOADER, CODE_LAYERS_CURRENT_FIRST,
                 TOP_CODE_CACHE_CURRENT_FIRST, SOURCES_UNCHANGED);
     }
 
 
     @Test
-    public void testExtraNoCodeLayers_ParentRegularClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
+    void testExtraNoCodeLayers_ParentRegularClassLoader_LayersParentFirst_TopOff_SourcesChanged() throws Exception {
 
         // given
 
@@ -622,14 +620,14 @@ public class LayeredClassLoaderMatrixTest {
 
         BytecodeClassLoader loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sMain);
         assertThat(loaderFound, is(nullValue()));
-        loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sAssume);
+        loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sExpando);
         assertThat(loaderFound, is(nullValue()));
         loaderFound = loader.findBytecodeClassLoaderBySource(ctx.sNotInCodeLayers);
         assertThat(loaderFound, is(nullValue()));
     }
 
     @Test
-    public void testExtraSourcesChangedTop_ParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
+    void testExtraSourcesChangedTop_ParentSourceClassLoader_LayersParentFirst_TopCurrentFirst_SourcesChanged() throws Exception {
 
         // given
 

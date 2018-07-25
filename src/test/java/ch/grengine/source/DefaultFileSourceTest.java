@@ -21,26 +21,23 @@ import ch.grengine.TestUtil;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultFileSourceTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-    
+class DefaultFileSourceTest {
+
     @Test
-    public void testConstructFromFilePlusGetters() throws IOException {
+    void testConstructFromFilePlusGetters() throws IOException {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 22");
 
         // when
@@ -57,17 +54,17 @@ public class DefaultFileSourceTest {
     }
     
     @Test
-    public void testConstructFromFileWithFileNull() {
+    void testConstructFromFileWithFileNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultFileSource(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultFileSource(null),
                 "File is null.");
     }
 
     @Test
-    public void testConstructorFromFileExceptionGetCanonicalFile() {
+    void testConstructorFromFileExceptionGetCanonicalFile() {
 
         // given
 
@@ -84,12 +81,13 @@ public class DefaultFileSourceTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
-        final File file2 = new File(tempFolder.getRoot(), "MyScript2.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
+        final File file2 = new File(dir, "MyScript2.groovy");
 
         // when
 

@@ -16,13 +16,13 @@
 
 package ch.grengine.engine;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
-public class EngineIdTest {
+class EngineIdTest {
 
     @Test
-    public void testConstruct() {
+    void testConstruct() {
 
         // when/then
 

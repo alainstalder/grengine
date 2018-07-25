@@ -16,15 +16,15 @@
 
 package ch.grengine.load;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class LoadModeTest {
+class LoadModeTest {
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
 
         // when/then
 
@@ -33,7 +33,7 @@ public class LoadModeTest {
     }
     
     @Test
-    public void testValues() {
+    void testValues() {
 
         // when/then
 

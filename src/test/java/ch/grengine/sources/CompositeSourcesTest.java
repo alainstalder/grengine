@@ -28,30 +28,26 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class CompositeSourcesTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class CompositeSourcesTest {
 
     @Test
-    public void testConstructDefaults() throws Exception {
+    void testConstructDefaults() throws Exception {
 
         // given
 
         final MockSource m1 = new MockSource("id1");
         final FixedSetSources s1 = new FixedSetSources.Builder(SourceUtil.sourceArrayToSourceSet(m1)).build();
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
         final DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
@@ -82,14 +78,14 @@ public class CompositeSourcesTest {
     }
     
     @Test
-    public void testConstructAllDefined() throws Exception {
+    void testConstructAllDefined() throws Exception {
 
         // given
 
         final MockSource m1 = new MockSource("id1");
         final FixedSetSources s1 = new FixedSetSources.Builder(
                 SourceUtil.sourceArrayToSourceSet(m1)).build();
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 33");
         final DirBasedSources s2 =  new DirBasedSources.Builder(dir).build();
@@ -124,17 +120,17 @@ public class CompositeSourcesTest {
     }
     
     @Test
-    public void testConstructSourcesCollectionNull() {
+    void testConstructSourcesCollectionNull() {
 
         // when/then
 
-        assertThrows(() -> new CompositeSources.Builder(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new CompositeSources.Builder(null),
                 "Sources collection is null.");
     }
 
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -144,13 +140,13 @@ public class CompositeSourcesTest {
 
         // when/then
 
-        assertThrows(() -> builder.setName("name"),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setName("name"),
                 "Builder already used.");
     }
     
     @Test
-    public void testLastModified() throws Exception {
+    void testLastModified() throws Exception {
 
         // given
 

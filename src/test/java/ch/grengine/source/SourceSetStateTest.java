@@ -19,16 +19,16 @@ package ch.grengine.source;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SourceSetStateTest {
+class SourceSetStateTest {
 
     @Test
-    public void testConstructAndUpdate() throws Exception {
+    void testConstructAndUpdate() throws Exception {
 
         // given
         
@@ -114,22 +114,22 @@ public class SourceSetStateTest {
     }
     
     @Test
-    public void testConstructWithSourceSetNull() {
+    void testConstructWithSourceSetNull() {
 
         // when/then
 
-        assertThrows(() -> new SourceSetState(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new SourceSetState(null),
                 "Source set is null.");
     }
     
     @Test
-    public void testUpdateWithSourceSetNull() {
+    void testUpdateWithSourceSetNull() {
 
         // when/then
 
-        assertThrows(() -> new SourceSetState(new HashSet<>()).update(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new SourceSetState(new HashSet<>()).update(null),
                 "New source set is null.");
     }
 

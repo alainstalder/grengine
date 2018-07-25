@@ -30,22 +30,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ClassNameConflictAnalyzerTest {
 
     @Test
-    public void testConstruct() {
+    void testConstruct() {
         new ClassNameConflictAnalyzer();
     }
     
     @Test
-    public void testGetAllClassOrigins() {
+    void testGetAllClassOrigins() {
 
         // given
 
@@ -98,18 +98,18 @@ public class ClassNameConflictAnalyzerTest {
     }
     
     @Test
-    public void testGetAllClassOriginsCodeLayersNull() {
+    void testGetAllClassOriginsCodeLayersNull() {
 
         // when/then
 
-        assertThrows(() -> ClassNameConflictAnalyzer.getAllClassNamesMap(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> ClassNameConflictAnalyzer.getAllClassNamesMap(null),
                 "Code layers are null.");
     }
     
     
     @Test
-    public void testClassOriginsWithDuplicates() {
+    void testClassOriginsWithDuplicates() {
 
         // given
 
@@ -135,18 +135,18 @@ public class ClassNameConflictAnalyzerTest {
     }
     
     @Test
-    public void testClassOriginsWithDuplicatesCodeLayersNull() {
+    void testClassOriginsWithDuplicatesCodeLayersNull() {
 
         // when/then
 
-        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null),
                 "Code layers are null.");
     }
     
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParent() {
+    void testDetermineClassOriginsWithDuplicateInParent() {
 
         // given
 
@@ -173,18 +173,18 @@ public class ClassNameConflictAnalyzerTest {
     }
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParentParentNull() {
+    void testDetermineClassOriginsWithDuplicateInParentParentNull() {
 
         // when/then
 
-        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
+        assertThrows(NullPointerException.class,
+                () -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
                 null, new LinkedList<>()),
-                NullPointerException.class,
                 "Parent class loader is null.");
     }
     
     @Test
-    public void testDetermineClassOriginsWithDuplicateInParentCodeLayersNull() {
+    void testDetermineClassOriginsWithDuplicateInParentCodeLayersNull() {
 
         // given
 
@@ -193,9 +193,9 @@ public class ClassNameConflictAnalyzerTest {
 
         // when/then
 
-        assertThrows(() -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
+        assertThrows(NullPointerException.class,
+                () -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
                 parent, null),
-                NullPointerException.class,
                 "Code layers are null.");
     }
 

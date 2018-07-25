@@ -37,6 +37,7 @@ import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -45,27 +46,23 @@ import java.util.List;
 import java.util.Set;
 
 import groovy.lang.Script;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class LayeredEngineTest {
-
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class LayeredEngineTest {
 
     @Test
-    public void testConstructDefaults() {
+    void testConstructDefaults() {
 
         // given
         
@@ -89,7 +86,7 @@ public class LayeredEngineTest {
     }
 
     @Test
-    public void testConstructAllDefined() {
+    void testConstructAllDefined() {
 
         // given
 
@@ -125,7 +122,7 @@ public class LayeredEngineTest {
     }
 
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -134,13 +131,13 @@ public class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(() -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
                 "Builder already used.");
     }
 
     @Test
-    public void testClose() throws Exception {
+    void testClose() throws Exception {
 
         // given
 
@@ -193,15 +190,15 @@ public class LayeredEngineTest {
     private List<Sources> sourcesLayers;
     private List<Code> codeLayers;
     
-    private void prepareCode(final int offs) throws Exception {
-        final MockFile f1 = new MockFile(tempFolder.getRoot(), "Script1.groovy");
+    private void prepareCode(final File dir, final int offs) throws Exception {
+        final MockFile f1 = new MockFile(dir, "Script1.groovy");
         s1 = new MockFileSource(f1);
-        final MockFile f2 = new MockFile(tempFolder.getRoot(), "Script2.groovy");
+        final MockFile f2 = new MockFile(dir, "Script2.groovy");
         s2 = new MockFileSource(f2);
-        final MockFile f3 = new MockFile(tempFolder.getRoot(), "Script3.groovy");
+        final MockFile f3 = new MockFile(dir, "Script3.groovy");
         s3 = new MockFileSource(f3);
         s4 = new DefaultTextSource(
-                "package org.junit\npublic class Assume extends Script { public def run() { return 400 } }");
+                "package groovy.util\npublic class Expando extends Script { public def run() { return 400 } }");
 
         final Set<Source> sourceSet1 = SourceUtil.sourceArrayToSourceSet(s3, s4);
         final Sources sources1 = SourcesUtil.sourceSetToSources(sourceSet1, "test");
@@ -224,11 +221,12 @@ public class LayeredEngineTest {
     }
     
     @Test
-    public void testFromCodeLayersNoTopCodeCache() throws Exception {
+    void testFromCodeLayersNoTopCodeCache() throws Exception {
 
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
@@ -314,7 +312,7 @@ public class LayeredEngineTest {
 
         // when (current layer first, so layer version counts)
 
-        final Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
+        final Class<?> clazz4direct = engine.loadClass(attachedLoader3, "groovy.util.Expando");
         final Script script4direct = (Script)clazz4direct.getConstructor().newInstance();
 
         // then
@@ -323,7 +321,7 @@ public class LayeredEngineTest {
 
         // when
 
-        prepareCode(2000);
+        prepareCode(dir, 2000);
         
         // no change even though file modification date has changed
         // (could not load differently from static because already loaded, but from top code cache)
@@ -378,18 +376,19 @@ public class LayeredEngineTest {
 
         // when/then (extra: try to load class that does not exist)
 
-        assertThrows(() -> engine.loadClass(loader, "DoesNotExist235134"),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> engine.loadClass(loader, "DoesNotExist235134"),
                 "Could not load class 'DoesNotExist235134'. " +
                         "Cause: java.lang.ClassNotFoundException: DoesNotExist235134");
     }
     
     @Test
-    public void testFromCodeLayersNoTopCodeCacheParentFirst() throws Exception {
+    void testFromCodeLayersNoTopCodeCacheParentFirst() throws Exception {
 
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
@@ -441,7 +440,7 @@ public class LayeredEngineTest {
         
         // when (current layer first, so layer version counts)
 
-        Class<?> clazz4direct = engine.loadClass(attachedLoader3, "org.junit.Assume");
+        Class<?> clazz4direct = engine.loadClass(attachedLoader3, "groovy.util.Expando");
 
         // then
 
@@ -449,11 +448,12 @@ public class LayeredEngineTest {
     }
     
     @Test
-    public void testFromCodeLayersNoTopCodeCacheClassNameConflictChecks() throws Exception {
+    void testFromCodeLayersNoTopCodeCacheClassNameConflictChecks() throws Exception {
         
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         // when
 
@@ -465,8 +465,8 @@ public class LayeredEngineTest {
 
         // then
 
-        assertThrows(() -> engine1.setCodeLayers(codeLayers),
-                ClassNameConflictException.class,
+        assertThrows(ClassNameConflictException.class,
+                () -> engine1.setCodeLayers(codeLayers),
                 "Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
                         "classes in code layers and parent: (not checked)");
 
@@ -480,10 +480,10 @@ public class LayeredEngineTest {
 
         // then
 
-        assertThrows(() -> engine2.setCodeLayers(codeLayers),
-                ClassNameConflictException.class,
+        assertThrows(ClassNameConflictException.class,
+                () -> engine2.setCodeLayers(codeLayers),
                 "Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
-                        "classes in code layers and parent: [org.junit.Assume]");
+                        "classes in code layers and parent: [groovy.util.Expando]");
 
         // when
 
@@ -495,19 +495,20 @@ public class LayeredEngineTest {
 
         // then
 
-        assertThrows(() -> engine3.setCodeLayers(codeLayers),
-                ClassNameConflictException.class,
+        assertThrows(ClassNameConflictException.class,
+                () -> engine3.setCodeLayers(codeLayers),
                 "Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
-                        "classes in code layers and parent: [org.junit.Assume]");
+                        "classes in code layers and parent: [groovy.util.Expando]");
     }
 
     
     @Test
-    public void testFromSourcesLayersNoTopCodeCache() throws Exception {
+    void testFromSourcesLayersNoTopCodeCache() throws Exception {
 
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
@@ -555,7 +556,7 @@ public class LayeredEngineTest {
 
         // when
         
-        prepareCode(2000);
+        prepareCode(dir,2000);
         
         // no change even though file modification date has change
         clazz11 = engine.loadMainClass(loader, s1);
@@ -609,11 +610,12 @@ public class LayeredEngineTest {
     }
     
     @Test
-    public void testFromCodeLayersTopCodeCacheParentFirst() throws Exception {
+    void testFromCodeLayersTopCodeCacheParentFirst() throws Exception {
 
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
@@ -661,7 +663,7 @@ public class LayeredEngineTest {
 
         // when
 
-        prepareCode(2000);
+        prepareCode(dir, 2000);
         
         // no change even though file modification date has change
         clazz11 = engine.loadMainClass(loader, s1);
@@ -717,11 +719,12 @@ public class LayeredEngineTest {
     }
 
     @Test
-    public void testFromCodeLayersTopCodeCacheCurrentFirst() throws Exception {
+    void testFromCodeLayersTopCodeCacheCurrentFirst() throws Exception {
 
         // given
 
-        prepareCode(1000);
+        final File dir = createTestDir();
+        prepareCode(dir, 1000);
 
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
@@ -770,7 +773,7 @@ public class LayeredEngineTest {
 
         // when
 
-        prepareCode(2000);
+        prepareCode(dir, 2000);
         
         // file modification date has changed,
         // change must become available immediately via top code cache
@@ -841,27 +844,27 @@ public class LayeredEngineTest {
     }
 
     @Test
-    public void testSetCodeLayersNull() {
+    void testSetCodeLayersNull() {
 
         // when/then
 
-        assertThrows(() -> new LayeredEngine.Builder().build().setCodeLayers(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new LayeredEngine.Builder().build().setCodeLayers(null),
                 "Code layers are null.");
     }
 
     @Test
-    public void testSetCodeLayersBySourceNull() {
+    void testSetCodeLayersBySourceNull() {
 
         // when/then
 
-        assertThrows(() -> new LayeredEngine.Builder().build().setCodeLayersBySource(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new LayeredEngine.Builder().build().setCodeLayersBySource(null),
                 "Sources layers are null.");
     }
 
     @Test
-    public void testAsClassLoader() throws Exception {
+    void testAsClassLoader() throws Exception {
 
         // given
 
@@ -882,13 +885,13 @@ public class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(() -> classLoader.loadClass("NoSuchClass"),
-                ClassNotFoundException.class,
+        assertThrows(ClassNotFoundException.class,
+                () -> classLoader.loadClass("NoSuchClass"),
                 "NoSuchClass");
     }
 
     @Test
-    public void testAsClassLoaderFindClass() throws Exception {
+    void testAsClassLoaderFindClass() throws Exception {
 
         // given
 
@@ -909,7 +912,7 @@ public class LayeredEngineTest {
 
         try {
             findClassMethod.invoke(classLoader, "NoSuchClass");
-            fail();
+            fail("did not throw");
         } catch (InvocationTargetException e) {
             assertThat(e.getCause(), instanceOf(ClassNotFoundException.class));
             assertThat(e.getCause().getMessage(), is("NoSuchClass"));
@@ -917,17 +920,17 @@ public class LayeredEngineTest {
     }
 
     @Test
-    public void testAsClassLoaderLoaderNull() {
+    void testAsClassLoaderLoaderNull() {
 
         // when/then
 
-        assertThrows(() -> new LayeredEngine.Builder().build().asClassLoader(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new LayeredEngine.Builder().build().asClassLoader(null),
                 "Loader is null.");
     }
 
     @Test
-    public void testAsClassLoaderLoaderForOtherEngine() {
+    void testAsClassLoaderLoaderForOtherEngine() {
 
         // given
 
@@ -936,8 +939,8 @@ public class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(() -> new LayeredEngine.Builder().build().asClassLoader(engine2.getLoader()),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> new LayeredEngine.Builder().build().asClassLoader(engine2.getLoader()),
                 "Engine ID does not match (loader created by a different engine).");
     }
 

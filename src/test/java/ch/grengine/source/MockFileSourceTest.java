@@ -20,28 +20,25 @@ import ch.grengine.TestUtil;
 
 import java.io.File;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class MockFileSourceTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class MockFileSourceTest {
 
     @Test
-    public void testMockFileSource() throws Exception {
+    void testMockFileSource() throws Exception {
 
         // given
 
-        final File f = new File(tempFolder.getRoot(), "file");
+        final File dir = createTestDir();
+        final File f = new File(dir, "file");
         TestUtil.setFileText(f, "dummy");
-        final File fMod = new File(tempFolder.getRoot(), "file.lastModified");
+        final File fMod = new File(dir, "file.lastModified");
 
         // when
 

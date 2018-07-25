@@ -16,22 +16,28 @@
 
 package ch.grengine.sources;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class DirModeTest {
+class DirModeTest {
 
     @Test
-    public void testValueOf() {
+    void testValueOf() {
+
+        // when/then
+
         assertThat(DirMode.valueOf(DirMode.NO_SUBDIRS.toString()), is(DirMode.NO_SUBDIRS));
         assertThat(DirMode.valueOf(DirMode.WITH_SUBDIRS_RECURSIVE.toString()), is(DirMode.WITH_SUBDIRS_RECURSIVE));
     }
     
     @Test
-    public void testValues() {
+    void testValues() {
+
+        // when/then
+
         assertThat(DirMode.values().length, is(2));
     }
 

@@ -46,11 +46,9 @@ import groovy.grape.GrapeEngine;
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -58,16 +56,14 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class DefaultGroovyCompilerTest {
-
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class DefaultGroovyCompilerTest {
 
     @Test
-    public void testConstructDefaults() {
+    void testConstructDefaults() {
 
         // given
 
@@ -87,7 +83,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testConstructAllDefined() {
+    void testConstructAllDefined() {
 
         // given
 
@@ -111,7 +107,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -120,13 +116,13 @@ public class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(() -> builder.setParent(Thread.currentThread().getContextClassLoader()),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setParent(Thread.currentThread().getContextClassLoader()),
                 "Builder already used.");
     }
 
     @Test
-    public void testConstructorNoArgs() {
+    void testConstructorNoArgs() {
 
         // when
 
@@ -139,7 +135,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testConstructorFromParent() {
+    void testConstructorFromParent() {
 
         // given
 
@@ -156,7 +152,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testConstructorFromParentAndConfig() {
+    void testConstructorFromParentAndConfig() {
 
         // given
 
@@ -174,38 +170,38 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testConstructFromParentNull() {
+    void testConstructFromParentNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultGroovyCompiler((ClassLoader) null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultGroovyCompiler((ClassLoader) null),
                 "Parent class loader is null.");
     }
 
     @Test
-    public void testConstructFromParentAndConfigParentNull() {
+    void testConstructFromParentAndConfigParentNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultGroovyCompiler(null, new CompilerConfiguration()),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultGroovyCompiler(null, new CompilerConfiguration()),
                 "Parent class loader is null.");
     }
 
     @Test
-    public void testConstructFromParentAndConfigConfigNull() {
+    void testConstructFromParentAndConfigConfigNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultGroovyCompiler(Thread.currentThread().getContextClassLoader(), null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultGroovyCompiler(Thread.currentThread().getContextClassLoader(), null),
                 "Compiler configuration is null.");
     }
 
 
     @Test
-    public void testCompileBasic() throws Exception {
+    void testCompileBasic() throws Exception {
 
         // given
 
@@ -215,10 +211,11 @@ public class DefaultGroovyCompilerTest {
         final Source textSource = f.fromText("println 'text source'");
         final String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
         final Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
-        final File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
+        final File dir = createTestDir();
+        final File scriptFile = new File(dir, "MyFileScript.groovy");
         TestUtil.setFileText(scriptFile, "println 'file source'");
         final Source fileSource = f.fromFile(scriptFile);
-        final File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
+        final File urlScriptFile = new File(dir, "MyUrlScript.groovy");
         TestUtil.setFileText(urlScriptFile, "println 'url source'");
         final Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
@@ -257,11 +254,12 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileBasicWithTargetDir() throws Exception {
+    void testCompileBasicWithTargetDir() throws Exception {
 
         // given
 
-        final File targetDir = new File(tempFolder.getRoot(), "target");
+        final File dir = createTestDir();
+        final File targetDir = new File(dir, "target");
         assertThat(targetDir.mkdir(), is(true));
         assertThat(targetDir.exists(), is(true));
         final CompilerConfiguration config = new CompilerConfiguration();
@@ -277,10 +275,10 @@ public class DefaultGroovyCompilerTest {
         final Source textSource = f.fromText("println 'text source'");
         final String expectedTextSourceMainClassName = "Script" + SourceUtil.md5("println 'text source'");
         final Source textSourceWithName = f.fromText("println 'text source'", "MyTextScript");
-        final File scriptFile = new File(tempFolder.getRoot(), "MyFileScript.groovy");
+        final File scriptFile = new File(dir, "MyFileScript.groovy");
         TestUtil.setFileText(scriptFile, "println 'file source'");
         final Source fileSource = f.fromFile(scriptFile);
-        final File urlScriptFile = new File(tempFolder.getRoot(), "MyUrlScript.groovy");
+        final File urlScriptFile = new File(dir, "MyUrlScript.groovy");
         TestUtil.setFileText(urlScriptFile, "println 'url source'");
         final Source urlSource = f.fromUrl(urlScriptFile.toURI().toURL());
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(
@@ -323,7 +321,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileBasicSingleSource() {
+    void testCompileBasicSingleSource() {
 
         // given
 
@@ -360,17 +358,17 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileSourcesNull() {
+    void testCompileSourcesNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultGroovyCompiler().compile(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultGroovyCompiler().compile(null),
                 "Sources are null.");
     }
 
     @Test
-    public void testCompileFailsSyntaxWrong() throws Exception {
+    void testCompileFailsSyntaxWrong() throws Exception {
 
         // given
 
@@ -385,7 +383,7 @@ public class DefaultGroovyCompilerTest {
 
         try {
             c.compile(sources);
-            fail();
+            fail("did not throw");
         } catch (CompileException e) {
             //System.out.println(e);
             assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='syntaxWrong']. " +
@@ -402,7 +400,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileFailsUnknownSource() throws Exception {
+    void testCompileFailsUnknownSource() throws Exception {
 
         // given
 
@@ -416,7 +414,7 @@ public class DefaultGroovyCompilerTest {
 
         try {
             c.compile(sources);
-            fail();
+            fail("did not throw");
         } catch (CompileException e) {
             //System.out.println(e);
             assertThat(e.getMessage(), is("Don't know how to compile source MockSource[ID='id1', lastModified=0]."));
@@ -429,7 +427,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileFailsSameClassNameTwice() throws Exception {
+    void testCompileFailsSameClassNameTwice() throws Exception {
 
         // given
 
@@ -445,7 +443,7 @@ public class DefaultGroovyCompilerTest {
 
         try {
             c.compile(sources);
-            fail();
+            fail("did not throw");
         } catch (CompileException e) {
             //System.out.println(e);
             assertThat(e.getMessage().startsWith("Compile failed for sources FixedSetSources[name='twice']. Cause: "), is(true));
@@ -460,7 +458,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testCompileSameClassNameTwiceDifferentLoaders() throws Exception {
+    void testCompileSameClassNameTwiceDifferentLoaders() throws Exception {
 
         // given
 
@@ -485,8 +483,8 @@ public class DefaultGroovyCompilerTest {
         final Method method1 = clazz1.getDeclaredMethod("get");
         assertThat(method1.invoke(obj1), is(1));
         loader1.loadClass("Twice$Inner1");
-        assertThrows(() -> loader1.loadClass("Twice$Inner2"),
-                ClassNotFoundException.class,
+        assertThrows(ClassNotFoundException.class,
+                () -> loader1.loadClass("Twice$Inner2"),
                 "Twice$Inner2");
 
         // when/then (source 2 - current first)
@@ -513,7 +511,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testWithGrape() {
+    void testWithGrape() {
 
         // given
 
@@ -544,7 +542,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testWithGrape_configNull() {
+    void testWithGrape_configNull() {
 
         // given
 
@@ -552,13 +550,13 @@ public class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(() -> DefaultGroovyCompiler.withGrape(null, loader),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> DefaultGroovyCompiler.withGrape(null, loader),
                 "Compiler configuration is null.");
     }
 
     @Test
-    public void testEnableDisableGrapeSupportDefault() {
+    void testEnableDisableGrapeSupportDefault() {
         try {
 
             // when (enable)
@@ -639,7 +637,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testEnableDisableGrapeSupportSpecificLock() {
+    void testEnableDisableGrapeSupportSpecificLock() {
         try {
 
             // given
@@ -724,7 +722,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testEnableGrapeSupport_differentLock() {
+    void testEnableGrapeSupport_differentLock() {
         try {
 
             // given
@@ -733,8 +731,8 @@ public class DefaultGroovyCompilerTest {
 
             // when/then
 
-            assertThrows(() -> DefaultGroovyCompiler.enableGrapeSupport(new Object()),
-                    IllegalStateException.class,
+            assertThrows(IllegalStateException.class,
+                    () -> DefaultGroovyCompiler.enableGrapeSupport(new Object()),
                     "Attempt to change lock for wrapped Grape class (unwrap first).");
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -742,13 +740,13 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testEnableGrapeSupport_lockNull() {
+    void testEnableGrapeSupport_lockNull() {
         try {
 
             // when/then
 
-            assertThrows(() -> DefaultGroovyCompiler.enableGrapeSupport(null),
-                    NullPointerException.class,
+            assertThrows(NullPointerException.class,
+                    () -> DefaultGroovyCompiler.enableGrapeSupport(null),
                     "Lock is null.");
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -756,7 +754,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testGetLoaderIfConfigured() {
+    void testGetLoaderIfConfigured() {
 
         // given
 
@@ -819,7 +817,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testGrabs() {
+    void testGrabs() {
         try {
 
             // given
@@ -904,8 +902,8 @@ public class DefaultGroovyCompilerTest {
 
             // when/then (grab(endorsed) - no idea what could passed and would not throw)
 
-            assertThrows(() -> engine.grab("endorsed"),
-                    RuntimeException.class,
+            assertThrows(RuntimeException.class,
+                    () -> engine.grab("endorsed"),
                     "No suitable ClassLoader found for grab");
 
 
@@ -960,7 +958,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testConcurrentGrabs() throws Exception {
+    void testConcurrentGrabs() throws Exception {
         try {
 
             // given
@@ -1015,7 +1013,7 @@ public class DefaultGroovyCompilerTest {
     }
 
     @Test
-    public void testWrappingFails_instanceNotGrapeIvy() {
+    void testWrappingFails_instanceNotGrapeIvy() {
 
         // given
 
@@ -1031,8 +1029,8 @@ public class DefaultGroovyCompilerTest {
 
             // when/then
 
-            assertThrows(DefaultGroovyCompiler::enableGrapeSupport,
-                    IllegalStateException.class,
+            assertThrows(IllegalStateException.class,
+                    DefaultGroovyCompiler::enableGrapeSupport,
                     "Unable to wrap GrapeEngine in Grape.class " +
                             "(current GrapeEngine is ch.grengine.code.groovy.DefaultGroovyCompiler$GrengineGrapeEngine, " +
                             "supported is groovy.grape.GrapeIvy).");

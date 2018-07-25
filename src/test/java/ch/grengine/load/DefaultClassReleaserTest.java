@@ -20,17 +20,17 @@ import ch.grengine.Grengine;
 
 import groovy.lang.MetaClass;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DefaultClassReleaserTest {
+class DefaultClassReleaserTest {
     
     @Test
-    public void testGetInstance() {
+    void testGetInstance() {
 
         // when
         final ClassReleaser releaser1 = DefaultClassReleaser.getInstance();
@@ -43,7 +43,7 @@ public class DefaultClassReleaserTest {
     }
 
     @Test
-    public void testReleaseBasic() {
+    void testReleaseBasic() {
 
         // hard to test in full detail because depends also on Groovy version,
         // so only this basic test here, testing elsewhere that allows to GC

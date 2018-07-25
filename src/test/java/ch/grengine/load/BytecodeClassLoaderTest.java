@@ -36,24 +36,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BytecodeClassLoaderTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class BytecodeClassLoaderTest {
     
     @Test
-    public void testConstructAndGetters() {
+    void testConstructAndGetters() {
 
         // given
 
@@ -73,7 +69,7 @@ public class BytecodeClassLoaderTest {
     }
     
     @Test
-    public void testConstructParentNull() {
+    void testConstructParentNull() {
 
         // given
 
@@ -82,13 +78,13 @@ public class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(() -> new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code),
                 "Parent class loader is null.");
     }
     
     @Test
-    public void testConstructLoadModeNull() {
+    void testConstructLoadModeNull() {
 
         // given
 
@@ -98,13 +94,13 @@ public class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(() -> new BytecodeClassLoader(parent, null, code),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new BytecodeClassLoader(parent, null, code),
                 "Load mode is null.");
     }
     
     @Test
-    public void testConstructCodeNull() {
+    void testConstructCodeNull() {
 
         // given
 
@@ -112,8 +108,8 @@ public class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(() -> new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, null),
                 "Code is null.");
     }
 
@@ -131,7 +127,7 @@ public class BytecodeClassLoaderTest {
                 "class Side {}");
         final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
         final Source s3 = f.fromText("class Class3 {}");
-        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Source s4 = f.fromText("package groovy.util\nclass Expando { def marker12345() { return 1 } }");
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
         final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         final Code code = c.compile(sources);
@@ -155,11 +151,11 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("Class1"));
         clazz = loader1.loadMainClass(s2);
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
-        assertThrows(() -> loader1.loadMainClass(s3),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> loader1.loadMainClass(s3),
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
-        assertThat(clazz.getName(), is("org.junit.Assume"));
+        assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
 
@@ -175,10 +171,10 @@ public class BytecodeClassLoaderTest {
         clazz = loader2.loadClass(s1, "Side");
         assertThat(clazz.getName(), is("Side"));
         // wrong source, not found
-        assertThrows(() -> loader2.loadClass(s1, "org.junit.Assume"),
-                LoadException.class,
-                "Class 'org.junit.Assume' not found for source. Source: " + s1.toString());
-        clazz = loader2.loadClass(s4, "org.junit.Assume");
+        assertThrows(LoadException.class,
+                () -> loader2.loadClass(s1, "groovy.util.Expando"),
+                "Class 'groovy.util.Expando' not found for source. Source: " + s1.toString());
+        clazz = loader2.loadClass(s4, "groovy.util.Expando");
         // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
 
@@ -188,8 +184,8 @@ public class BytecodeClassLoaderTest {
         // new loader instance, else already loaded classes cannot be loaded differently
         final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
-        assertThrows(() -> loader3.loadClass(s3, "Class1"),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> loader3.loadClass(s3, "Class1"),
                 "Source not found: " + s3.toString());
 
         // when/then (loadClass(name))
@@ -205,11 +201,11 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("Side"));
         clazz = loader4.loadClass("ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
-        clazz = loader4.loadClass("org.junit.Assume");
+        clazz = loader4.loadClass("groovy.util.Expando");
 
         if (loadMode == LoadMode.PARENT_FIRST) {
             // make sure the Java version of the class was loaded
-            clazz.getDeclaredMethod("assumeNoException", Throwable.class);
+            clazz.getDeclaredMethod("createMap");
         } else {
             // make sure the Groovy version of the class was loaded
             clazz.getDeclaredMethod("marker12345");
@@ -217,12 +213,12 @@ public class BytecodeClassLoaderTest {
     }
 
     @Test
-    public void testParentRegularClassLoaderParentFirst() throws Exception {
+    void testParentRegularClassLoaderParentFirst() throws Exception {
         testParentRegularClassLoader(LoadMode.PARENT_FIRST);
     }
 
     @Test
-    public void testParentRegularClassLoaderCurrentFirst() throws Exception {
+    void testParentRegularClassLoaderCurrentFirst() throws Exception {
         testParentRegularClassLoader(LoadMode.CURRENT_FIRST);
     }
 
@@ -233,7 +229,8 @@ public class BytecodeClassLoaderTest {
 
         final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
         final SourceFactory f = new DefaultSourceFactory();
-        final File f1 = new File(tempFolder.getRoot(), "Class1.groovy");
+        final File dir = createTestDir();
+        final File f1 = new File(dir, "Class1.groovy");
         TestUtil.setFileText(f1, "class Class1 { def marker11() { return 11 } }");
         final Source s1 = f.fromFile(f1);
         final Set<Source> sourceSetParent = SourceUtil.sourceArrayToSourceSet(s1);
@@ -245,7 +242,7 @@ public class BytecodeClassLoaderTest {
         TestUtil.setFileText(f1, "class Class1 { def marker22() { return 22 } }");
         final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
         final Source s3 = f.fromText("class Class3 {}");
-        final Source s4 = f.fromText("package org.junit\nclass Assume { def marker12345() { return 1 } }");
+        final Source s4 = f.fromText("package groovy.util\nclass Expando { def marker12345() { return 1 } }");
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1, s2, s4); // not s3
         final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
         final Code code = c.compile(sources);
@@ -274,11 +271,11 @@ public class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("Class1"));
         clazz = loader1.loadMainClass(s2);
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
-        assertThrows(() -> loader1.loadMainClass(s3),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> loader1.loadMainClass(s3),
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
-        assertThat(clazz.getName(), is("org.junit.Assume"));
+        assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
 
@@ -290,11 +287,11 @@ public class BytecodeClassLoaderTest {
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
         // wrong source, not found
-        assertThrows(() -> loader2.loadClass(s1, "org.junit.Assume"),
-                LoadException.class,
-                "Class 'org.junit.Assume' not found for source. Source: " + s1.toString());
-        clazz = loader2.loadClass(s4, "org.junit.Assume");
-        assertThat(clazz.getName(), is("org.junit.Assume"));
+        assertThrows(LoadException.class,
+                () -> loader2.loadClass(s1, "groovy.util.Expando"),
+                "Class 'groovy.util.Expando' not found for source. Source: " + s1.toString());
+        clazz = loader2.loadClass(s4, "groovy.util.Expando");
+        assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
         clazz.getDeclaredMethod("marker12345");
 
@@ -304,8 +301,8 @@ public class BytecodeClassLoaderTest {
         // new loader instance, else already loaded classes cannot be loaded differently
         final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
-        assertThrows(() -> loader3.loadClass(s3, "Class1"),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> loader3.loadClass(s3, "Class1"),
                 "Source not found: " + s3.toString());
 
         // when/then (loadClass(name))
@@ -318,10 +315,10 @@ public class BytecodeClassLoaderTest {
         clazz = loader4.loadClass("ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
 
-        clazz = loader4.loadClass("org.junit.Assume");
+        clazz = loader4.loadClass("groovy.util.Expando");
         if (loadMode == LoadMode.PARENT_FIRST) {
             // make sure the Java version of the class was loaded
-            clazz.getDeclaredMethod("assumeNoException", Throwable.class);
+            clazz.getDeclaredMethod("createMap");
         } else {
             // make sure the Groovy version of the class was loaded
             clazz.getDeclaredMethod("marker12345");
@@ -329,19 +326,19 @@ public class BytecodeClassLoaderTest {
     }
 
     @Test
-    public void testParentSourceClassLoaderParentFirst() throws Exception {
+    void testParentSourceClassLoaderParentFirst() throws Exception {
         testParentSourceClassLoader(LoadMode.PARENT_FIRST);
     }
     
     
     @Test
-    public void testParentIsSourceClassLoaderCurrentFirst() throws Exception {
+    void testParentIsSourceClassLoaderCurrentFirst() throws Exception {
         testParentSourceClassLoader(LoadMode.CURRENT_FIRST);
     }
 
 
     @Test
-    public void testLoadClassWithResolveCurrentFirst() throws Exception {
+    void testLoadClassWithResolveCurrentFirst() throws Exception {
 
         // given
 
@@ -364,7 +361,7 @@ public class BytecodeClassLoaderTest {
     }
 
     @Test
-    public void testStaticLoadMainClassBySource() {
+    void testStaticLoadMainClassBySource() {
 
         // given
 
@@ -375,8 +372,8 @@ public class BytecodeClassLoaderTest {
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
-        assertThrows(() -> BytecodeClassLoader.loadMainClassBySource(parent, s1),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> BytecodeClassLoader.loadMainClassBySource(parent, s1),
                 "Source not found: " + s1.toString());
 
         // when/then (fabricate inconsistent code)
@@ -398,14 +395,14 @@ public class BytecodeClassLoaderTest {
 
         final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
-        assertThrows(() -> BytecodeClassLoader.loadMainClassBySource(loader, s1),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> BytecodeClassLoader.loadMainClassBySource(loader, s1),
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Main class 'Class1' not found for source. Source: " + s1.toString());
     }
     
     @Test
-    public void testStaticLoadMainBySourceAndName() {
+    void testStaticLoadMainBySourceAndName() {
 
         // given
 
@@ -416,8 +413,8 @@ public class BytecodeClassLoaderTest {
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
-        assertThrows(() -> BytecodeClassLoader.loadClassBySourceAndName(parent, s1, "Class1"),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> BytecodeClassLoader.loadClassBySourceAndName(parent, s1, "Class1"),
                 "Source not found: " + s1.toString());
 
         // when/then (fabricate inconsistent code)
@@ -439,14 +436,14 @@ public class BytecodeClassLoaderTest {
 
         final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
-        assertThrows(() -> BytecodeClassLoader.loadClassBySourceAndName(loader, s1, "Class33NoBytecode"),
-                LoadException.class,
+        assertThrows(LoadException.class,
+                () -> BytecodeClassLoader.loadClassBySourceAndName(loader, s1, "Class33NoBytecode"),
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Class 'Class33NoBytecode' not found for source. Source: " + s1.toString());
     }
     
     @Test
-    public void testClone() {
+    void testClone() {
 
         // given
 
@@ -476,12 +473,12 @@ public class BytecodeClassLoaderTest {
     }
 
     @Test
-    public void testReleaseClasses() throws Exception {
+    void testReleaseClasses() throws Exception {
         testReleaseClasses(false);
     }
 
     @Test
-    public void testReleaseClassesThrows() throws Exception {
+    void testReleaseClassesThrows() throws Exception {
         testReleaseClasses(true);
     }
 
@@ -537,7 +534,7 @@ public class BytecodeClassLoaderTest {
     }
     
     @Test
-    public void testThrowsInSynchronizedBlock() {
+    void testThrowsInSynchronizedBlock() {
 
         // given
 
@@ -557,8 +554,8 @@ public class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(() -> throwingLoader.loadClass("Class1"),
-                RuntimeException.class,
+        assertThrows(RuntimeException.class,
+                () -> throwingLoader.loadClass("Class1"),
                 "unit test");
     }
 

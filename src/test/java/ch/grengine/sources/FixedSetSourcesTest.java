@@ -24,19 +24,19 @@ import ch.grengine.source.SourceUtil;
 
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class FixedSetSourcesTest {
+class FixedSetSourcesTest {
 
     @Test
-    public void testConstructDefaults() throws Exception {
+    void testConstructDefaults() throws Exception {
 
         // given
 
@@ -65,7 +65,7 @@ public class FixedSetSourcesTest {
     }
     
     @Test
-    public void testConstructAllDefined() throws Exception {
+    void testConstructAllDefined() throws Exception {
 
         // given
 
@@ -98,17 +98,17 @@ public class FixedSetSourcesTest {
     }
     
     @Test
-    public void testConstructSourceSetNull() {
+    void testConstructSourceSetNull() {
 
         // when/then
 
-        assertThrows(() -> new FixedSetSources.Builder(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new FixedSetSources.Builder(null),
                 "Source set is null.");
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -120,13 +120,13 @@ public class FixedSetSourcesTest {
 
         // when/then
 
-        assertThrows(() -> builder.setName("name"),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setName("name"),
                 "Builder already used.");
     }
     
     @Test
-    public void testLastModified() throws Exception {
+    void testLastModified() throws Exception {
 
         // given
 

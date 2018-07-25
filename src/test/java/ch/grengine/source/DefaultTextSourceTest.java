@@ -18,17 +18,17 @@ package ch.grengine.source;
 
 import ch.grengine.TestUtil;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultTextSourceTest {
+class DefaultTextSourceTest {
 
     @Test
-    public void testConstructFromTextPlusGetters() {
+    void testConstructFromTextPlusGetters() {
 
         // given
 
@@ -48,7 +48,7 @@ public class DefaultTextSourceTest {
     }
 
     @Test
-    public void testConstructFromTextAndNamePlusGetters() {
+    void testConstructFromTextAndNamePlusGetters() {
 
         // given
 
@@ -69,37 +69,37 @@ public class DefaultTextSourceTest {
     }
 
     @Test
-    public void testConstructFromTextWithTextNull() {
+    void testConstructFromTextWithTextNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultTextSource(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultTextSource(null),
                 "Text is null.");
     }
 
     @Test
-    public void testConstructFromTextAndNameWithTextNull() {
+    void testConstructFromTextAndNameWithTextNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultTextSource(null, "name"),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultTextSource(null, "name"),
                 "Text is null.");
     }
 
     @Test
-    public void testConstructFromTextAndNameWithNameNull() {
+    void testConstructFromTextAndNameWithNameNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultTextSource("println 33", null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultTextSource("println 33", null),
                 "Desired class name is null.");
     }
 
     @Test
-    public void testLongText() {
+    void testLongText() {
 
         // given
 
@@ -119,7 +119,7 @@ public class DefaultTextSourceTest {
     }
 
     @Test
-    public void testTextWithLineBreaks() {
+    void testTextWithLineBreaks() {
 
         // given
 
@@ -139,7 +139,7 @@ public class DefaultTextSourceTest {
     }
 
     @Test
-    public void testEquals() {
+    void testEquals() {
 
         // given
 

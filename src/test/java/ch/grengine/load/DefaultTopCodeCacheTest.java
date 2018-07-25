@@ -19,20 +19,20 @@ package ch.grengine.load;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultTopCodeCacheTest {
+class DefaultTopCodeCacheTest {
 
     @Test
-    public void testConstructAndGettersAndMore() {
+    void testConstructAndGettersAndMore() {
 
         // given
         
@@ -90,7 +90,7 @@ public class DefaultTopCodeCacheTest {
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -99,13 +99,13 @@ public class DefaultTopCodeCacheTest {
 
         // when/then
 
-        assertThrows(() -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
                 "Builder already used.");
     }
 
     @Test
-    public void testSetParentNull() {
+    void testSetParentNull() {
 
         // given
 
@@ -114,8 +114,8 @@ public class DefaultTopCodeCacheTest {
 
         // when/then
 
-        assertThrows(() -> c.setParent(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> c.setParent(null),
                 "Parent class loader is null.");
     }
     

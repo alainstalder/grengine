@@ -21,26 +21,23 @@ import ch.grengine.TestUtil;
 import java.io.File;
 import java.net.URL;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultUrlSourceTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-    
+class DefaultUrlSourceTest {
+
     @Test
-    public void testConstructFromUrlPlusGetters() throws Exception {
+    void testConstructFromUrlPlusGetters() throws Exception {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         TestUtil.setFileText(file, "println 22");
         final URL url = file.toURI().toURL();
 
@@ -58,22 +55,23 @@ public class DefaultUrlSourceTest {
     }
     
     @Test
-    public void testConstructFromUrlWithUrlNull() {
+    void testConstructFromUrlWithUrlNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultUrlSource(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultUrlSource(null),
                 "URL is null.");
     }
         
     @Test
-    public void testEquals() throws Exception {
+    void testEquals() throws Exception {
 
         // given
 
-        final URL url = new File(tempFolder.getRoot(), "MyScript.groovy").toURI().toURL();
-        final URL url2 = new File(tempFolder.getRoot(), "MyScript2.groovy").toURI().toURL();
+        final File dir = createTestDir();
+        final URL url = new File(dir, "MyScript.groovy").toURI().toURL();
+        final URL url2 = new File(dir, "MyScript2.groovy").toURI().toURL();
 
         // when
 

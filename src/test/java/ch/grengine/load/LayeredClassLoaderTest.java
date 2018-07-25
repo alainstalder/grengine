@@ -30,11 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -42,15 +39,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class LayeredClassLoaderTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
+class LayeredClassLoaderTest {
     
     @Test
-    public void testConstructFromCodeLayersDefaults() {
+    void testConstructFromCodeLayersDefaults() {
 
         // given
         
@@ -90,7 +85,7 @@ public class LayeredClassLoaderTest {
     }
 
     @Test
-    public void testConstructFromCodeLayersAllSet() {
+    void testConstructFromCodeLayersAllSet() {
 
         // given
 
@@ -127,7 +122,7 @@ public class LayeredClassLoaderTest {
     }
 
     @Test
-    public void testConstructFromSourcesLayersDefaults() {
+    void testConstructFromSourcesLayersDefaults() {
 
         // given
 
@@ -155,7 +150,7 @@ public class LayeredClassLoaderTest {
     }
 
     @Test
-    public void testConstructFromSourcesLayersAllSet() {
+    void testConstructFromSourcesLayersAllSet() {
 
         // given
 
@@ -192,7 +187,7 @@ public class LayeredClassLoaderTest {
     }
     
     @Test
-    public void testSetLayersWithVarargs() {
+    void testSetLayersWithVarargs() {
 
         // given
 
@@ -238,7 +233,7 @@ public class LayeredClassLoaderTest {
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -247,14 +242,14 @@ public class LayeredClassLoaderTest {
 
         // when/then
 
-        assertThrows(() -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
-            IllegalStateException.class,
-            "Builder already used.");
+        assertThrows(IllegalStateException.class,
+                () -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
+                "Builder already used.");
     }
     
     
     @Test
-    public void testClone_NoTopCodeCache() {
+    void testClone_NoTopCodeCache() {
 
         // given
 
@@ -274,7 +269,7 @@ public class LayeredClassLoaderTest {
     }
     
     @Test
-    public void testClone_WithTopCodeCache() {
+    void testClone_WithTopCodeCache() {
 
         // given
 
@@ -298,7 +293,7 @@ public class LayeredClassLoaderTest {
     }
     
     @Test
-    public void testCloneWithSeparateTopCodeCache_NoTopCodeCache() {
+    void testCloneWithSeparateTopCodeCache_NoTopCodeCache() {
 
         // given
 
@@ -318,7 +313,7 @@ public class LayeredClassLoaderTest {
     }
     
     @Test
-    public void testCloneWithSeparateTopCodeCache_WithTopCodeCache() {
+    void testCloneWithSeparateTopCodeCache_WithTopCodeCache() {
 
         // given
 
@@ -344,7 +339,7 @@ public class LayeredClassLoaderTest {
     }
 
     @Test
-    public void testReleaseClasses() throws Exception {
+    void testReleaseClasses() throws Exception {
 
         // given
 

@@ -23,24 +23,24 @@ import ch.grengine.source.SourceUtil;
 
 import java.util.HashSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class SourcesUtilTest {
+class SourcesUtilTest {
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         new SourcesUtil();
     }
 
     @Test
-    public void testSourceToSourcesDefaultCompilerFactory() {
+    void testSourceToSourcesDefaultCompilerFactory() {
 
         // given
 
@@ -60,17 +60,17 @@ public class SourcesUtilTest {
     }
 
     @Test
-    public void testSourceToSourcesDefaultCompilerFactorySourceNull() {
+    void testSourceToSourcesDefaultCompilerFactorySourceNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceToSources(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceToSources(null),
                 "Source is null.");
     }
 
     @Test
-    public void testSourceToSourcesSpecificCompilerFactory() {
+    void testSourceToSourcesSpecificCompilerFactory() {
 
         // given
 
@@ -90,28 +90,28 @@ public class SourcesUtilTest {
     }
     
     @Test
-    public void testSourceToSourcesSpecificCompilerFactorySourceNull() {
+    void testSourceToSourcesSpecificCompilerFactorySourceNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory()),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory()),
                 "Source is null.");
     }
     
     @Test
-    public void testSourceToSourcesSpecificCompilerFactoryNull() {
+    void testSourceToSourcesSpecificCompilerFactoryNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceToSources(new MockSource("id1"), null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceToSources(new MockSource("id1"), null),
                 "Compiler factory is null.");
     }
 
     
     @Test
-    public void testSourceSetToSourcesDefaultCompilerFactory() {
+    void testSourceSetToSourcesDefaultCompilerFactory() {
 
         // given
 
@@ -133,27 +133,27 @@ public class SourcesUtilTest {
     }
 
     @Test
-    public void testSourceSetToSourcesDefaultCompilerFactorySourceSetNull() {
+    void testSourceSetToSourcesDefaultCompilerFactorySourceSetNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceSetToSources(null, "myName"),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceSetToSources(null, "myName"),
                 "Source set is null.");
     }
 
     @Test
-    public void testSourceSetToSourcesDefaultCompilerFactorySourceNameNull() {
+    void testSourceSetToSourcesDefaultCompilerFactorySourceNameNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceSetToSources(new HashSet<>(), null),
                 "Name is null.");
     }
     
     @Test
-    public void testSourceSetToSourcesSpecificCompilerFactory() {
+    void testSourceSetToSourcesSpecificCompilerFactory() {
 
         // given
 
@@ -176,34 +176,34 @@ public class SourcesUtilTest {
     }
 
     @Test
-    public void testSourceSetToSourcesSpecificCompilerFactorySourceSetNull() {
+    void testSourceSetToSourcesSpecificCompilerFactorySourceSetNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceSetToSources(null, "myName",
-                new DefaultGroovyCompilerFactory()),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceSetToSources(null, "myName",
+                        new DefaultGroovyCompilerFactory()),
                 "Source set is null.");
     }
 
     @Test
-    public void testSourceSetToSourcesSpecificCompilerFactorySourceNameNull() {
+    void testSourceSetToSourcesSpecificCompilerFactorySourceNameNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), null,
-                new DefaultGroovyCompilerFactory()),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceSetToSources(new HashSet<>(), null,
+                        new DefaultGroovyCompilerFactory()),
                 "Name is null.");
     }
 
     @Test
-    public void testSourceSetToSourcesSpecificCompilerFactoryNull() {
+    void testSourceSetToSourcesSpecificCompilerFactoryNull() {
 
         // when/then
 
-        assertThrows(() -> SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null),
                 "Compiler factory is null.");
     }
 

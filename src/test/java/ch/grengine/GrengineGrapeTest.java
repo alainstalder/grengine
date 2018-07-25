@@ -33,31 +33,26 @@ import java.util.List;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * Tests the respective class.
- * 
- * @author Alain Stalder
- *
- */
-public class GrengineGrapeTest {
+
+class GrengineGrapeTest {
 
     @Test
-    public void testHelloWorldWithGrape() {
+    void testHelloWorldWithGrape() {
         Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
                 + "import com.google.common.base.Ascii\n" +
                 "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
     }
 
     @Test
-    public void testNoGrapeByDefault() {
+    void testNoGrapeByDefault() {
         try {
             new Grengine().run("@Grab('com.google.guava:guava:18.0')\n"
                     + "import com.google.common.base.Ascii\n" +
@@ -75,7 +70,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty() {
+    void testConstructEmpty() {
 
         // when
 
@@ -94,7 +89,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_parent() {
+    void testConstructEmpty_parent() {
 
         // given
 
@@ -116,7 +111,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_config() {
+    void testConstructEmpty_config() {
 
         // given
 
@@ -138,7 +133,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructEmpty_parent_config() {
+    void testConstructEmpty_parent_config() {
 
         // given
 
@@ -161,7 +156,7 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructDir() {
+    void testConstructDir() {
 
         // when
 
@@ -182,7 +177,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_parent() {
+    void testConstructDir_parent() {
 
         // given
 
@@ -206,7 +201,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_config() {
+    void testConstructDir_config() {
 
         // given
 
@@ -229,7 +224,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDir_parent_config() {
+    void testConstructDir_parent_config() {
 
         // given
 
@@ -253,7 +248,7 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructDirDirMode() {
+    void testConstructDirDirMode() {
 
         // when
 
@@ -274,7 +269,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_parent() {
+    void testConstructDirDirMode_parent() {
 
         // given
 
@@ -298,7 +293,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_config() {
+    void testConstructDirDirMode_config() {
 
         // given
 
@@ -321,7 +316,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructDirDirMode_parent_config() {
+    void testConstructDirDirMode_parent_config() {
 
         // given
 
@@ -345,7 +340,7 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructUrl() throws Exception {
+    void testConstructUrl() throws Exception {
 
         // given
 
@@ -370,7 +365,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructUrl_parent() throws Exception {
+    void testConstructUrl_parent() throws Exception {
 
         // given
 
@@ -395,7 +390,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructUrl_config() throws Exception {
+    void testConstructUrl_config() throws Exception {
 
         // given
 
@@ -419,7 +414,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testConstructUrl_parent_config() throws Exception {
+    void testConstructUrl_parent_config() throws Exception {
 
         // given
 
@@ -463,12 +458,12 @@ public class GrengineGrapeTest {
 
 
     @Test
-    public void testConstructGrape() {
+    void testConstructGrape() {
         new Grengine.Grape();
     }
 
     @Test
-    public void testActivateDeactivate() {
+    void testActivateDeactivate() {
 
         try {
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
@@ -512,7 +507,7 @@ public class GrengineGrapeTest {
     }
 
     @Test
-    public void testActivateDifferentLock() {
+    void testActivateDifferentLock() {
 
         try {
             assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));

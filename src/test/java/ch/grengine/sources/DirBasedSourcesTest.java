@@ -33,30 +33,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DirBasedSourcesTest {
+class DirBasedSourcesTest {
     
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-
     private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
     @Test
-    public void testConstructDefaults() throws Exception {
+    void testConstructDefaults() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
 
         // when
 
@@ -89,11 +85,11 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testConstructAllDefined() throws Exception {
+    void testConstructAllDefined() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Set<String> scriptExtensions = new HashSet<>(Arrays.asList("groovy", "gradle"));
         final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         final SourceFactory sourceFactory = new DefaultSourceFactory();
@@ -135,37 +131,37 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testConstructDirNull() {
+    void testConstructDirNull() {
 
         // when/then
 
-        assertThrows(() -> new DirBasedSources.Builder(null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DirBasedSources.Builder(null),
                 "Dir is null.");
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
         builder.build();
 
         // when/then
 
-        assertThrows(() -> builder.setName("name"),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setName("name"),
                 "Builder already used.");
     }
     
     @Test
-    public void testGetSourcesNoSubDirsDefaultExtensions() throws Exception {
+    void testGetSourcesNoSubDirsDefaultExtensions() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Map<String,File> m = createFiles(dir);
 
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -190,11 +186,11 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testGetSourcesWithSubDirsDefaultExtensions() throws Exception {
+    void testGetSourcesWithSubDirsDefaultExtensions() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Map<String,File> m = createFiles(dir);
 
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -219,11 +215,11 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testGetSourcesNoSubDirsSpecificExtensions() throws Exception {
+    void testGetSourcesNoSubDirsSpecificExtensions() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Map<String,File> m = createFiles(dir);
 
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -248,11 +244,11 @@ public class DirBasedSourcesTest {
     }
 
     @Test
-    public void testGetSourcesWithSubDirsSpecificExtensions() throws Exception {
+    void testGetSourcesWithSubDirsSpecificExtensions() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Map<String,File> m = createFiles(dir);
 
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
@@ -280,13 +276,14 @@ public class DirBasedSourcesTest {
     }
 
     @Test
-    public void testGetSourcesNonExistentDir() {
+    void testGetSourcesNonExistentDir() {
 
         // given
 
-        final File dir = new File(tempFolder.getRoot(), "does/not/exist");
+        final File dir = createTestDir();
+        final File dirDoesNotExist = new File(dir, "does/not/exist");
 
-        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);
+        final DirBasedSources.Builder builder = new DirBasedSources.Builder(dirDoesNotExist);
         final DirBasedSources s = builder
                 .setDirMode(DirMode.WITH_SUBDIRS_RECURSIVE)
                 .setScriptExtensions("groovy", "goo")
@@ -302,11 +299,11 @@ public class DirBasedSourcesTest {
     }
     
     @Test
-    public void testLastModified() throws Exception {
+    void testLastModified() throws Exception {
 
         // given
 
-        final File dir = tempFolder.getRoot();
+        final File dir = createTestDir();
         final Map<String,File> m = createFiles(dir);
 
         final DirBasedSources.Builder builder = new DirBasedSources.Builder(dir);

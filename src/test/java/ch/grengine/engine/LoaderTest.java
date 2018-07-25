@@ -33,17 +33,17 @@ import ch.grengine.sources.SourcesUtil;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class LoaderTest {
+class LoaderTest {
 
     @Test
-    public void testConstructAndGetSetSourceClassLoader() {
+    void testConstructAndGetSetSourceClassLoader() {
 
         // given
 
@@ -70,11 +70,11 @@ public class LoaderTest {
 
         // when/then
 
-        assertThrows(() -> loader.getSourceClassLoader(engineId2),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> loader.getSourceClassLoader(engineId2),
                 "Engine ID does not match (loader created by a different engine).");
-        assertThrows(() -> loader.setSourceClassLoader(engineId2, classLoader2),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> loader.setSourceClassLoader(engineId2, classLoader2),
                 "Engine ID does not match (loader created by a different engine).");
 
         // when
@@ -87,8 +87,8 @@ public class LoaderTest {
 
         // when/then
 
-        assertThrows(() -> loader.getSourceClassLoader(engineId2),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> loader.getSourceClassLoader(engineId2),
                 "Engine ID does not match (loader created by a different engine).");
 
         // when
@@ -103,7 +103,7 @@ public class LoaderTest {
     }
     
     @Test
-    public void testConstructEngineIdNull() {
+    void testConstructEngineIdNull() {
 
         // given
 
@@ -114,23 +114,23 @@ public class LoaderTest {
 
         // when/then
 
-        assertThrows(() -> new Loader(null, 0, false, classLoader),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new Loader(null, 0, false, classLoader),
                 "Engine ID is null.");
     }
     
     @Test
-    public void testConstructSourceClassLoaderNull() {
+    void testConstructSourceClassLoaderNull() {
 
         // when/then
 
-        assertThrows(() -> new Loader(new EngineId(), 0, false, null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new Loader(new EngineId(), 0, false, null),
                 "Source class loader is null.");
     }
 
     @Test
-    public void testConstructWithClassReleaserAndClose() throws Exception {
+    void testConstructWithClassReleaserAndClose() throws Exception {
 
         // given
 
@@ -173,7 +173,7 @@ public class LoaderTest {
     }
     
     @Test
-    public void testEquals() {
+    void testEquals() {
 
         // given
 

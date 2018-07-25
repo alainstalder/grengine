@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class BytecodeClassLoaderConcurrencyTest {
+class BytecodeClassLoaderConcurrencyTest {
     
     private class SlowBytecodeClassLoader extends BytecodeClassLoader {
         private final long delayDefinePackageMs;
@@ -98,7 +98,7 @@ public class BytecodeClassLoaderConcurrencyTest {
         this.failed = failed;
     }
 
-    public void testGeneric(final String packageName, final String... classNames) throws Exception {
+    private void testGeneric(final String packageName, final String... classNames) throws Exception {
 
         // given
 
@@ -172,19 +172,19 @@ public class BytecodeClassLoaderConcurrencyTest {
 
 
     @Test
-    public void testConcurrentSingleClassNoPackage() throws Exception {
+    void testConcurrentSingleClassNoPackage() throws Exception {
         testGeneric("", "Class1");
     }
     @Test
-    public void testConcurrentSingleClassWithPackage() throws Exception {
+    void testConcurrentSingleClassWithPackage() throws Exception {
         testGeneric("a.b.c", "Class1");
     }
     @Test
-    public void testConcurrentMultiClassNoPackage() throws Exception {
+    void testConcurrentMultiClassNoPackage() throws Exception {
         testGeneric("", "Class1", "Class2");
     }
     @Test
-    public void testConcurrentMultiClassWithPackage() throws Exception {
+    void testConcurrentMultiClassWithPackage() throws Exception {
         testGeneric("a.b.c", "Class1", "Class2");
     }
 

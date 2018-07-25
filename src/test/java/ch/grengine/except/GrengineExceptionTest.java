@@ -16,17 +16,17 @@
 
 package ch.grengine.except;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class GrengineExceptionTest {
+class GrengineExceptionTest {
 
     @Test
-    public void testConstructFromMessage() {
+    void testConstructFromMessage() {
 
         // given
 
@@ -45,7 +45,7 @@ public class GrengineExceptionTest {
     }
     
     @Test
-    public void testConstructFromMessageAndThrowable() {
+    void testConstructFromMessageAndThrowable() {
 
         // given
 
@@ -65,7 +65,7 @@ public class GrengineExceptionTest {
     }
 
     @Test
-    public void testConstructFromMessageAndThrowableNull() {
+    void testConstructFromMessageAndThrowableNull() {
 
         // given
 

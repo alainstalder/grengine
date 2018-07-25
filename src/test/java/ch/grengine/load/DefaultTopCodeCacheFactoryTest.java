@@ -19,19 +19,19 @@ package ch.grengine.load;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultTopCodeCacheFactoryTest {
+class DefaultTopCodeCacheFactoryTest {
 
     @Test
-    public void testConstructFromBuilderAndGetters() {
+    void testConstructFromBuilderAndGetters() {
 
         // given
 
@@ -61,7 +61,7 @@ public class DefaultTopCodeCacheFactoryTest {
     }
 
     @Test
-    public void testConstructDefault() {
+    void testConstructDefault() {
 
         // when
 
@@ -74,7 +74,7 @@ public class DefaultTopCodeCacheFactoryTest {
     }
     
     @Test
-    public void testConstructFromCompilerFactory() {
+    void testConstructFromCompilerFactory() {
 
         // given
 
@@ -90,17 +90,17 @@ public class DefaultTopCodeCacheFactoryTest {
     }
     
     @Test
-    public void testConstructFromCompilerFactoryNull() {
+    void testConstructFromCompilerFactoryNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultTopCodeCacheFactory((CompilerFactory)null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultTopCodeCacheFactory((CompilerFactory)null),
                 "Compiler factory is null.");
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -109,8 +109,8 @@ public class DefaultTopCodeCacheFactoryTest {
 
         // when/then
 
-        assertThrows(() -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
                 "Builder already used.");
     }
 

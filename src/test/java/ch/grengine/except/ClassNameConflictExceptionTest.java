@@ -23,7 +23,7 @@ import ch.grengine.code.Code;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,10 +31,10 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class ClassNameConflictExceptionTest {
+class ClassNameConflictExceptionTest {
     
     @Test
-    public void testConstruct() {
+    void testConstruct() {
 
         // given
 

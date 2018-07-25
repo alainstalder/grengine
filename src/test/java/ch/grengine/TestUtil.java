@@ -17,20 +17,21 @@
 package ch.grengine;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.function.Executable;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TestUtil {
@@ -43,81 +44,33 @@ public class TestUtil {
         @Override public File getAbsoluteFile() { return this; }
     }
 
-    @FunctionalInterface
-    public interface CodeExpectedToThrow {
-        void run() throws Throwable;
-    }
-
-    private enum MessageAssertionMode { IS, CONTAINS, STARTS_WITH }
-
     /**
-     * Asserts that the given code throws the expected throwable with the expected message.
+     * Asserts that the given code throws the expected throwable
+     * and that its message contains the expected text.
      *
-     * @param code Code to run that is expected to throw
-     * @param expectedClass expected throwable class
-     * @param expectedMessage expected throwable message, may be null
-     */
-    public static void assertThrows(final CodeExpectedToThrow code,
-                                    final Class<? extends Throwable> expectedClass,
-                                    final String expectedMessage) {
-        assertThrowsInternal(code, expectedClass, expectedMessage, MessageAssertionMode.IS);
-    }
-
-    /**
-     * Asserts that the given code throws the expected throwable with the expected message.
-     *
-     * @param code Code to run that is expected to throw
-     * @param expectedClass expected throwable class
+     * @param expectedType expected throwable class
+     * @param executable Code to run that is expected to throw
      * @param expectedMessagePart text expected to be contained in throwable message
      */
-    public static void assertThrowsContains(final CodeExpectedToThrow code,
-                                            final Class<? extends Throwable> expectedClass,
-                                            final String expectedMessagePart) {
-        assertThrowsInternal(code, expectedClass, expectedMessagePart, MessageAssertionMode.CONTAINS);
+    public static <T extends Throwable> void assertThrowsContains(
+            final Class<T> expectedType, final Executable executable, final String expectedMessagePart) {
+        Throwable t = assertThrows(expectedType, executable);
+        assertThat(t.getMessage(), containsString(expectedMessagePart));
     }
 
     /**
-     * Asserts that the given code throws the expected throwable and the message.
+     * Asserts that the given code throws the expected throwable
+     * and that its message starts with the expected text.
      *
-     * @param code Code to run that is expected to throw
-     * @param expectedClass expected throwable class
-     * @param expectedMessageStart text expected to be at the start of the throwable message
+     * @param expectedType expected throwable class
+     * @param executable Code to run that is expected to throw
+     * @param expectedMessageStart text expected to start the throwable message
      */
-    public static void assertThrowsStartsWith(final CodeExpectedToThrow code,
-                                              final Class<? extends Throwable> expectedClass,
-                                              final String expectedMessageStart) {
-        assertThrowsInternal(code, expectedClass, expectedMessageStart, MessageAssertionMode.STARTS_WITH);
+    public static <T extends Throwable> void assertThrowsStartsWith(
+            final Class<T> expectedType, final Executable executable, final String expectedMessageStart) {
+        Throwable t = assertThrows(expectedType, executable);
+        assertThat(t.getMessage(), startsWith(expectedMessageStart));
     }
-
-    private static void assertThrowsInternal(final CodeExpectedToThrow code,
-                                             final Class<? extends Throwable> expectedClass,
-                                             final String expectedMessage,
-                                             final MessageAssertionMode mode) {
-        boolean thrown;
-        try {
-            code.run();
-            thrown = false;
-        } catch (Throwable t) {
-            thrown = true;
-            assertThat("Expected " + expectedClass.getName() + " but got " + t.getClass().getName(),
-                    t.getClass().equals(expectedClass), is(true));
-            switch (mode) {
-                case IS:
-                    assertThat(t.getMessage(), is(expectedMessage));
-                    break;
-                case CONTAINS:
-                    assertThat(t.getMessage(), containsString(expectedMessage));
-                    break;
-                case STARTS_WITH:
-                    assertThat(t.getMessage(), startsWith(expectedMessage));
-                    break;
-            }
-        }
-        if (!thrown) {
-            fail("expected to throw");
-        }
-    }
-
 
     @SuppressWarnings("unchecked")
     public static <K,V> Map<K,V> argsToMap(final Object... args) {
@@ -144,18 +97,24 @@ public class TestUtil {
         return out.toString();
     }
     
-    public static void setFileText(final File file, final String text)
-            throws FileNotFoundException, UnsupportedEncodingException {
-        final PrintWriter writer = new PrintWriter(file, "UTF-8");
-        writer.write(text);
-        writer.close();
+    public static void setFileText(final File file, final String text) throws IOException {
+        FileUtils.writeStringToFile(file, text, StandardCharsets.UTF_8);
     }
     
-    public static String getFileText(final File file) throws FileNotFoundException {
-        try (final Scanner scan = new Scanner(file, StandardCharsets.UTF_8.name())) {
-            scan.useDelimiter("\\A");
-            return scan.hasNext() ? scan.next() : "";
+    public static String getFileText(final File file) throws IOException {
+        return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+    }
+
+    public static File createTestDir() {
+        File testDir;
+        try {
+            testDir = Files.createTempDirectory("gren").toFile();
+            FileUtils.forceDeleteOnExit(testDir);
+        } catch (IOException e) {
+            testDir = null;
+            fail("could not create test dir");
         }
+        return testDir;
     }
 
 }

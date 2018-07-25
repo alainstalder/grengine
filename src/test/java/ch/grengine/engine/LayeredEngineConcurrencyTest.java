@@ -33,13 +33,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import groovy.lang.Script;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
-public class LayeredEngineConcurrencyTest {
+class LayeredEngineConcurrencyTest {
 
     private static final int N_THREADS = 4;
     private static final int N_CODE_CHANGES = 5;
@@ -168,7 +168,7 @@ public class LayeredEngineConcurrencyTest {
     }
 
     @Test
-    public void testConcurrentNoTopCodeCache() throws Exception {
+    void testConcurrentNoTopCodeCache() throws Exception {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
                 .build();
@@ -176,7 +176,7 @@ public class LayeredEngineConcurrencyTest {
     }
 
     @Test
-    public void testConcurrentTopCodeCacheParentFirst() throws Exception {
+    void testConcurrentTopCodeCacheParentFirst() throws Exception {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.PARENT_FIRST)
@@ -185,7 +185,7 @@ public class LayeredEngineConcurrencyTest {
     }
 
     @Test
-    public void testConcurrentTopCodeCacheCurrentFirst() throws Exception {
+    void testConcurrentTopCodeCacheCurrentFirst() throws Exception {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.CURRENT_FIRST)

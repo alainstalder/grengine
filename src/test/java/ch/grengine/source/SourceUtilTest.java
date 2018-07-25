@@ -26,29 +26,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static ch.grengine.TestUtil.assertThrowsStartsWith;
+import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class SourceUtilTest {
-    
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-    
+class SourceUtilTest {
+
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         new SourceUtil();
     }
     
     @Test
-    public void testTextsToSourceSetNoNamesWithFactoryWithCollection() {
+    void testTextsToSourceSetNoNamesWithFactoryWithCollection() {
 
         // given
 
@@ -68,7 +64,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testTextsToSourceSetNoNamesWithFactoryWithArrayVarargs() {
+    void testTextsToSourceSetNoNamesWithFactoryWithArrayVarargs() {
 
         // given
 
@@ -87,7 +83,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testTextsToSourceSetNoNamesNoFactoryWithCollection() {
+    void testTextsToSourceSetNoNamesNoFactoryWithCollection() {
 
         // given
 
@@ -107,7 +103,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testTextsToSourceSetNoNamesNoFactoryWithArrayVarargs() {
+    void testTextsToSourceSetNoNamesNoFactoryWithArrayVarargs() {
 
         // given
 
@@ -126,7 +122,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testTextsToSourceSetWithNamesWithFactory() {
+    void testTextsToSourceSetWithNamesWithFactory() {
 
         // given
 
@@ -148,7 +144,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testTextsToSourceSetWithNamesNoFactory() {
+    void testTextsToSourceSetWithNamesNoFactory() {
 
         // given
 
@@ -171,7 +167,7 @@ public class SourceUtilTest {
     
     
     @Test
-    public void testFilesToSourceSetWithFactoryWithCollection() {
+    void testFilesToSourceSetWithFactoryWithCollection() {
 
         // given
 
@@ -191,7 +187,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testFilesToSourceSetWithFactoryWithArrayVarargs() {
+    void testFilesToSourceSetWithFactoryWithArrayVarargs() {
 
         // given
 
@@ -210,7 +206,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testFilesToSourceSetNoFactoryWithCollection() {
+    void testFilesToSourceSetNoFactoryWithCollection() {
 
         // given
 
@@ -230,7 +226,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testFilesToSourceSetNoFactoryWithArrayVarargs() {
+    void testFilesToSourceSetNoFactoryWithArrayVarargs() {
 
         // given
 
@@ -250,7 +246,7 @@ public class SourceUtilTest {
 
     
     @Test
-    public void testUrlsToSourceSetWithFactoryWithCollection() throws Exception {
+    void testUrlsToSourceSetWithFactoryWithCollection() throws Exception {
 
         // given
 
@@ -270,7 +266,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testUrlsToSourceSetWithFactoryWithArrayVarargs() throws Exception {
+    void testUrlsToSourceSetWithFactoryWithArrayVarargs() throws Exception {
 
         // given
 
@@ -289,7 +285,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testUrlsToSourceSetNoFactoryWithCollection() throws Exception {
+    void testUrlsToSourceSetNoFactoryWithCollection() throws Exception {
 
         // given
 
@@ -309,7 +305,7 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testUrlsToSourceSetNoFactoryWithArrayVarargs() throws Exception {
+    void testUrlsToSourceSetNoFactoryWithArrayVarargs() throws Exception {
 
         // given
 
@@ -329,7 +325,7 @@ public class SourceUtilTest {
 
     
     @Test
-    public void testSourceToSourceSet() {
+    void testSourceToSourceSet() {
 
         // given
 
@@ -346,7 +342,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testSourceCollectionToSourceSet() {
+    void testSourceCollectionToSourceSet() {
 
         // given
 
@@ -366,7 +362,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testSourceArrayVarargsToSourceSet() {
+    void testSourceArrayVarargsToSourceSet() {
 
         // given
 
@@ -386,7 +382,7 @@ public class SourceUtilTest {
     
 
     @Test
-    public void testMd5() {
+    void testMd5() {
 
         // when/then (RFC 1321 test vectors)
 
@@ -400,7 +396,7 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testHash() {
+    void testHash() {
 
         // when/then
 
@@ -408,17 +404,17 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testHashUnsupportedDigestAlgorithm() {
+    void testHashUnsupportedDigestAlgorithm() {
 
         // when/then
 
-        assertThrows(() -> SourceUtil.hash("abc", "BatHash"),
-                UnsupportedOperationException.class,
+        assertThrows(UnsupportedOperationException.class,
+                () -> SourceUtil.hash("abc", "BatHash"),
                 "No message digest BatHash.");
     }
     
     @Test
-    public void testGetTextStartNoLineBreaksNullText() {
+    void testGetTextStartNoLineBreaksNullText() {
 
         // when/then
 
@@ -426,27 +422,27 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testGetTextStartNoLineBreaksNegMaxLen() {
+    void testGetTextStartNoLineBreaksNegMaxLen() {
 
         // when/then
 
-        assertThrows(() -> SourceUtil.getTextStartNoLineBreaks("hello", -1),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> SourceUtil.getTextStartNoLineBreaks("hello", -1),
                 "Max len (-1) is negative.");
     }
     
     @Test
-    public void testGetTextStartNoLineBreaksMaxLenLessThan10() {
+    void testGetTextStartNoLineBreaksMaxLenLessThan10() {
 
         // when/then
 
-        assertThrows(() -> SourceUtil.getTextStartNoLineBreaks("hello", 9),
-                IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
+                () -> SourceUtil.getTextStartNoLineBreaks("hello", 9),
                 "Max len (9) must be at least 10.");
     }
 
     @Test
-    public void testGetTextStartNoLineBreaks() {
+    void testGetTextStartNoLineBreaks() {
         assertThat(SourceUtil.getTextStartNoLineBreaks("hello", 10), is("hello"));
         assertThat(SourceUtil.getTextStartNoLineBreaks("hello1", 10), is("hello1"));
         assertThat(SourceUtil.getTextStartNoLineBreaks("hello12", 10), is("hello12"));
@@ -467,11 +463,12 @@ public class SourceUtilTest {
     }
 
     @Test
-    public void testReadUrlText() throws Exception {
+    void testReadUrlText() throws Exception {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         final String text = "println 55";
         TestUtil.setFileText(file, text);
         final URL url = file.toURI().toURL();
@@ -486,11 +483,12 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testReadUrlTextEmptyText() throws Exception {
+    void testReadUrlTextEmptyText() throws Exception {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         final String text = "";
         TestUtil.setFileText(file, text);
         final URL url = file.toURI().toURL();
@@ -505,17 +503,18 @@ public class SourceUtilTest {
     }
     
     @Test
-    public void testReadUrlTextNothingThere() throws Exception {
+    void testReadUrlTextNothingThere() throws Exception {
 
         // given
 
-        final File file = new File(tempFolder.getRoot(), "MyScript.groovy");
+        final File dir = createTestDir();
+        final File file = new File(dir, "MyScript.groovy");
         final URL url = file.toURI().toURL();
 
         // when/then
 
-        assertThrowsStartsWith(() -> SourceUtil.readUrlText(url, "UTF-8"),
-                IOException.class,
+        assertThrowsStartsWith(IOException.class,
+                () -> SourceUtil.readUrlText(url, "UTF-8"),
                 "Could not open stream for URL '" + url + "':");
     }
 

@@ -22,17 +22,17 @@ import ch.grengine.source.Source;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class CompiledSourceInfoTest {
+class CompiledSourceInfoTest {
 
     @Test
-    public void testConstructPlusGetters() {
+    void testConstructPlusGetters() {
 
         // given
 
@@ -57,37 +57,37 @@ public class CompiledSourceInfoTest {
     }
     
     @Test
-    public void testConstructSourceNull() {
+    void testConstructSourceNull() {
 
         // when/then
 
-        assertThrows(() -> new CompiledSourceInfo(null, "",
+        assertThrows(NullPointerException.class,
+                () -> new CompiledSourceInfo(null, "",
                         new HashSet<>(), 0),
-                NullPointerException.class,
                 "Source is null.");
     }
     
     @Test
-    public void testConstructMainClassNameNull() {
+    void testConstructMainClassNameNull() {
 
 
         // when/then
 
-        assertThrows(() -> new CompiledSourceInfo(new MockSource("id1"), null,
+        assertThrows(NullPointerException.class,
+                () -> new CompiledSourceInfo(new MockSource("id1"), null,
                         new HashSet<>(), 0),
-                NullPointerException.class,
                 "Main class name is null.");
     }
     
     @Test
-    public void testConstructClassNamesNull() {
+    void testConstructClassNamesNull() {
 
 
         // when/then
 
-        assertThrows(() -> new CompiledSourceInfo(new MockSource("id1"), "",
+        assertThrows(NullPointerException.class,
+                () -> new CompiledSourceInfo(new MockSource("id1"), "",
                         null, 0),
-                NullPointerException.class,
                 "Class names are null.");
     }
 

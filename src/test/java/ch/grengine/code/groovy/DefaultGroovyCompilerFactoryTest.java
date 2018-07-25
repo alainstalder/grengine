@@ -17,18 +17,18 @@
 package ch.grengine.code.groovy;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrows;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class DefaultGroovyCompilerFactoryTest {
+class DefaultGroovyCompilerFactoryTest {
 
     @Test
-    public void testConstructDefaults() {
+    void testConstructDefaults() {
 
         // given
 
@@ -46,7 +46,7 @@ public class DefaultGroovyCompilerFactoryTest {
     }
     
     @Test
-    public void testConstructAllDefined() {
+    void testConstructAllDefined() {
 
         // given
 
@@ -67,7 +67,7 @@ public class DefaultGroovyCompilerFactoryTest {
     }
     
     @Test
-    public void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() {
 
         // given
 
@@ -76,13 +76,13 @@ public class DefaultGroovyCompilerFactoryTest {
 
         // when/then
 
-        assertThrows(() -> builder.setCompilerConfiguration(new CompilerConfiguration()),
-                IllegalStateException.class,
+        assertThrows(IllegalStateException.class,
+                () -> builder.setCompilerConfiguration(new CompilerConfiguration()),
                 "Builder already used.");
     }
     
     @Test
-    public void testConstructorDefaultCompilerConfiguration() {
+    void testConstructorDefaultCompilerConfiguration() {
 
         // given
 
@@ -100,7 +100,7 @@ public class DefaultGroovyCompilerFactoryTest {
     }
     
     @Test
-    public void testConstructorSpecificCompilerConfiguration() {
+    void testConstructorSpecificCompilerConfiguration() {
 
         // given
 
@@ -120,12 +120,12 @@ public class DefaultGroovyCompilerFactoryTest {
     }
 
     @Test
-    public void testConstructFromConfigNull() {
+    void testConstructFromConfigNull() {
 
         // when/then
 
-        assertThrows(() -> new DefaultGroovyCompilerFactory((CompilerConfiguration)null),
-                NullPointerException.class,
+        assertThrows(NullPointerException.class,
+                () -> new DefaultGroovyCompilerFactory((CompilerConfiguration)null),
                 "Compiler configuration is null.");
     }
 
