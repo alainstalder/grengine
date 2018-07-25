@@ -81,7 +81,7 @@ class DefaultFileSourceTest {
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws Exception {
 
         // given
 

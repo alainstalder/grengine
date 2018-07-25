@@ -20,18 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TestUtil {
@@ -44,17 +40,31 @@ public class TestUtil {
         @Override public File getAbsoluteFile() { return this; }
     }
 
+    public static File createTestDir() throws IOException {
+        final File testDir = Files.createTempDirectory("gren").toFile();
+        FileUtils.forceDeleteOnExit(testDir);
+        return testDir;
+    }
+
+    public static void setFileText(final File file, final String text) throws IOException {
+        FileUtils.writeStringToFile(file, text, StandardCharsets.UTF_8);
+    }
+
+    public static String getFileText(final File file) throws IOException {
+        return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+    }
+
     /**
      * Asserts that the given code throws the expected throwable
      * and that its message contains the expected text.
      *
      * @param expectedType expected throwable class
-     * @param executable Code to run that is expected to throw
+     * @param executable code to run that is expected to throw
      * @param expectedMessagePart text expected to be contained in throwable message
      */
     public static <T extends Throwable> void assertThrowsContains(
             final Class<T> expectedType, final Executable executable, final String expectedMessagePart) {
-        Throwable t = assertThrows(expectedType, executable);
+        final Throwable t = assertThrows(expectedType, executable);
         assertThat(t.getMessage(), containsString(expectedMessagePart));
     }
 
@@ -63,58 +73,28 @@ public class TestUtil {
      * and that its message starts with the expected text.
      *
      * @param expectedType expected throwable class
-     * @param executable Code to run that is expected to throw
+     * @param executable code to run that is expected to throw
      * @param expectedMessageStart text expected to start the throwable message
      */
     public static <T extends Throwable> void assertThrowsStartsWith(
             final Class<T> expectedType, final Executable executable, final String expectedMessageStart) {
-        Throwable t = assertThrows(expectedType, executable);
+        final Throwable t = assertThrows(expectedType, executable);
         assertThat(t.getMessage(), startsWith(expectedMessageStart));
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K,V> Map<K,V> argsToMap(final Object... args) {
-        assertThat(args.length % 2 == 0, is(true));
-        final Map<K,V> map = new HashMap<>();
-        boolean isKey = true;
-        K key = null;
-        for (Object arg : args) {
-            if (isKey) {
-                key = (K)arg;
-            } else {
-                map.put(key, (V)arg);
-            }
-            isKey = !isKey;
-        }
-        return map;
-    }
-    
-    public static String multiply(final String s, final int nTimes) {
+    /**
+     * Repeats the given string n times.
+     *
+     * @param s string to repeat
+     * @param n number of times to repeat
+     * @return string repeated n times
+     */
+    public static String multiply(final String s, final int n) {
         final StringBuilder out = new StringBuilder();
-        for (int i=0; i<nTimes; i++) {
+        for (int i=0; i<n; i++) {
             out.append(s);
         }
         return out.toString();
-    }
-    
-    public static void setFileText(final File file, final String text) throws IOException {
-        FileUtils.writeStringToFile(file, text, StandardCharsets.UTF_8);
-    }
-    
-    public static String getFileText(final File file) throws IOException {
-        return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-    }
-
-    public static File createTestDir() {
-        File testDir;
-        try {
-            testDir = Files.createTempDirectory("gren").toFile();
-            FileUtils.forceDeleteOnExit(testDir);
-        } catch (IOException e) {
-            testDir = null;
-            fail("could not create test dir");
-        }
-        return testDir;
     }
 
 }

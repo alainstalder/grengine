@@ -141,7 +141,7 @@ class DirBasedSourcesTest {
     }
     
     @Test
-    void testModifyBuilderAfterUse() {
+    void testModifyBuilderAfterUse() throws Exception {
 
         // given
 
@@ -276,7 +276,7 @@ class DirBasedSourcesTest {
     }
 
     @Test
-    void testGetSourcesNonExistentDir() {
+    void testGetSourcesNonExistentDir() throws Exception {
 
         // given
 

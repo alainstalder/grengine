@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,7 +131,9 @@ class SourceUtilTest {
         final String text2 = "println 2";
         final String name1 = "Script1";
         final String name2 = "Script2";
-        final Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
+        final Map<String,String> texts = new HashMap<>();
+        texts.put(name1, text1);
+        texts.put(name2, text2);
 
         // when
 
@@ -152,7 +155,9 @@ class SourceUtilTest {
         final String text2 = "println 2";
         final String name1 = "Script1";
         final String name2 = "Script2";
-        final Map<String,String> texts = TestUtil.argsToMap(name1, text1, name2, text2);
+        final Map<String,String> texts = new HashMap<>();
+        texts.put(name1, text1);
+        texts.put(name2, text2);
 
         // when
 
