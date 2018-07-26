@@ -232,14 +232,16 @@ class LayeredClassLoaderMatrixTest {
                     return "methodLayer1";
                 }
             }
-        } else if (ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST) {
-            if (ctx.parentClassLoaderType == PARENT_IS_SOURCE_CLASS_LOADER) {
-                return "methodParent";
-            } else {
-                return "methodLayer0";
-            }
         } else {
-            return "methodLayer1";
+            if (ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST) {
+                if (ctx.parentClassLoaderType == PARENT_IS_SOURCE_CLASS_LOADER) {
+                    return "methodParent";
+                } else {
+                    return "methodLayer0";
+                }
+            } else {
+                return "methodLayer1";
+            }
         }
     }
 
@@ -249,7 +251,7 @@ class LayeredClassLoaderMatrixTest {
 
         final LayeredClassLoader loader = ctx.builder.buildFromCodeLayers();
 
-        final boolean expectSameByteCodeClassLoader =
+        final boolean expectParentClassLoader =
                 ctx.parentClassLoaderType == PARENT_IS_SOURCE_CLASS_LOADER &&
                 ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST;
 
@@ -260,7 +262,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(loaderFound, is(notNullValue()));
-        if (expectSameByteCodeClassLoader) {
+        if (expectParentClassLoader) {
             assertThat(loaderFound, sameInstance(ctx.parent));
         } else {
             assertThat(loaderFound, not(sameInstance(ctx.parent)));
@@ -273,7 +275,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(loaderFound, is(notNullValue()));
-        if (expectSameByteCodeClassLoader) {
+        if (expectParentClassLoader) {
             assertThat(loaderFound, sameInstance(ctx.parent));
         } else {
             assertThat(loaderFound, not(sameInstance(ctx.parent)));
@@ -415,9 +417,11 @@ class LayeredClassLoaderMatrixTest {
 
         final LayeredClassLoader loader = ctx.builder.buildFromCodeLayers();
         final String expectedMethod = getExpectedMethod(ctx, false);
-        final boolean expectedLoadJUnitExpando =
+        final boolean expectedLoadGroovyUtilExpando =
                 ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST
                 && ctx.parentClassLoaderType == PARENT_IS_REGULAR_CLASS_LOADER;
+        final String expectedExpandoMethod = expectedLoadGroovyUtilExpando ?
+                "createMap" : expectedMethod;
 
 
         // when
@@ -444,12 +448,7 @@ class LayeredClassLoaderMatrixTest {
 
         // then
 
-        if (expectedLoadJUnitExpando) {
-            clazz.getDeclaredMethod("createMap");
-        } else {
-            clazz.getDeclaredMethod(expectedMethod);
-        }
-
+        clazz.getDeclaredMethod(expectedExpandoMethod);
 
         // when/then
 

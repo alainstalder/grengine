@@ -21,6 +21,7 @@ import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.SingleSourceCode;
 import ch.grengine.engine.LayeredEngine;
 import ch.grengine.except.CompileException;
+import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
@@ -119,11 +120,11 @@ public class LayeredClassLoader extends SourceClassLoader {
     
     private void createLoadersFromSourcesLayers() {
         staticTopLoader = builder.getParent();
-        List<Sources> sourcesLayers = builder.getSourcesLayers();
+        final List<Sources> sourcesLayers = builder.getSourcesLayers();
         codeLayers = new LinkedList<>();
         for (Sources sources : sourcesLayers) {
-            CompilerFactory compilerFactory = sources.getCompilerFactory();
-            Code code = compilerFactory.newCompiler(staticTopLoader).compile(sources);
+            final CompilerFactory compilerFactory = sources.getCompilerFactory();
+            final Code code = compilerFactory.newCompiler(staticTopLoader).compile(sources);
             codeLayers.add(code);
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
             classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
@@ -150,13 +151,36 @@ public class LayeredClassLoader extends SourceClassLoader {
     @Override
     protected Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
         // can only be done statically...
-        Class<?> clazz = staticTopLoader.loadClass(name);
+        final Class<?> clazz = staticTopLoader.loadClass(name);
         if (resolve) {
             resolveClass(clazz);
         }
         return clazz;
     }
-    
+
+    /**
+     * loads the main class of the given source.
+     * <p>
+     * First searches for the source, then loads the main class that resulted
+     * from compiling the source.
+     * <p>
+     * Specifically for {@link LayeredClassLoader}, the source is eventually
+     * compiled on-the-fly from the given source if top code cache is on.
+     * First, the class corresponding to the source is searched in static layers
+     * using {@link LayeredClassLoader#findBytecodeClassLoaderBySource(Source)}.
+     * If not found, uses the source of the top code cache (compiling it, if necessary).
+     * If found, uses the source of the top code cache (compiling it, if necessary)
+     * if the source had changed since compiled in static layers (or top code cache)
+     * and if top load mode is current first.
+     *
+     * @param source source
+     *
+     * @return main class
+     * @throws CompileException if compilation was necessary to load the class and failed
+     * @throws LoadException if loading failed, including if the class was not found
+     *
+     * @since 1.0
+     */
     @Override
     public Class<?> loadMainClass(final Source source) {
         
@@ -166,16 +190,16 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
         
         // code layers version available and is up-to-date or parent first?
-        BytecodeClassLoader staticLoader = findBytecodeClassLoaderBySource(source);
+        final BytecodeClassLoader staticLoader = findBytecodeClassLoaderBySource(source);
         if (staticLoader != null) {
-            long lastModifiedAtCompileTime = staticLoader.getCode().getLastModifiedAtCompileTime(source);
+            final long lastModifiedAtCompileTime = staticLoader.getCode().getLastModifiedAtCompileTime(source);
             if (topLoadMode == LoadMode.PARENT_FIRST || lastModifiedAtCompileTime == source.getLastModified()) {
                 return BytecodeClassLoader.loadMainClassBySource(staticTopLoader, source);
             }
         }
 
         // load from top code cache
-        SingleSourceCode code = topCodeCache.getUpToDateCode(source);
+        final SingleSourceCode code = topCodeCache.getUpToDateCode(source);
         BytecodeClassLoader topLoader = topLoaders.get(source);
         if (topLoader == null || ((SingleSourceCode)topLoader.getCode()).getLastModifiedAtCompileTime() 
                 != code.getLastModifiedAtCompileTime()) {
@@ -186,6 +210,30 @@ public class LayeredClassLoader extends SourceClassLoader {
         return topLoader.loadMainClass(source);
     }
 
+    /**
+     * loads a class with the given name and from the given source.
+     * <p>
+     * First searches for the source, only then for the class with given name
+     * as part of the classes that resulted from compiling the source.
+     * <p>
+     * Specifically for {@link LayeredClassLoader}, the source is eventually
+     * compiled on-the-fly from the given source if top code cache is on.
+     * First, the class corresponding to the source is searched in static layers
+     * using {@link LayeredClassLoader#findBytecodeClassLoaderBySource(Source)}.
+     * If not found, uses the source of the top code cache (compiling it, if necessary).
+     * If found, uses the source of the top code cache (compiling it, if necessary)
+     * if the source had changed since compiled in static layers (or top code cache)
+     * and if top load mode is current first.
+     *
+     * @param source source
+     * @param name class name
+     *
+     * @return class
+     * @throws CompileException if compilation was necessary to load the class and failed
+     * @throws LoadException if loading failed, including if the class was not found
+     *
+     * @since 1.0
+     */
     @Override
     public Class<?> loadClass(final Source source, final String name) {
         
@@ -195,16 +243,16 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
 
         // code layers version available and is up-to-date or parent first?
-        BytecodeClassLoader staticLoader = findBytecodeClassLoaderBySource(source);
+        final BytecodeClassLoader staticLoader = findBytecodeClassLoaderBySource(source);
         if (staticLoader != null) {
-            long lastModifiedAtCompileTime = staticLoader.getCode().getLastModifiedAtCompileTime(source);
+            final long lastModifiedAtCompileTime = staticLoader.getCode().getLastModifiedAtCompileTime(source);
             if (topLoadMode == LoadMode.PARENT_FIRST || lastModifiedAtCompileTime == source.getLastModified()) {
                 return BytecodeClassLoader.loadClassBySourceAndName(staticTopLoader, source, name);
             }
         }
 
         // load from top code cache
-        SingleSourceCode code = topCodeCache.getUpToDateCode(source);
+        final SingleSourceCode code = topCodeCache.getUpToDateCode(source);
         BytecodeClassLoader topLoader = topLoaders.get(source);
         if (topLoader == null || ((SingleSourceCode)topLoader.getCode()).getLastModifiedAtCompileTime()
                 != code.getLastModifiedAtCompileTime()) {
@@ -214,7 +262,20 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
         return topLoader.loadClass(source, name);
     }
-    
+
+    /**
+     * tries to find the bytecode class loader that can load classes that were created
+     * by compiling the given source.
+     * <p>
+     * Specifically for {@link LayeredClassLoader}, top code cache is not involved;
+     * the search is limited to static code layers and the parent class loader.
+     *
+     * @param source source
+     *
+     * @return bytecode class loader if found, null otherwise
+     *
+     * @since 1.0
+     */
     @Override
     public BytecodeClassLoader findBytecodeClassLoaderBySource(final Source source) {
         BytecodeClassLoader loader = null;
@@ -260,7 +321,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         do {
             ref = classLoaderQueue.poll();
             if (ref != null) {
-                BytecodeClassLoader loader = ref.get();
+                final BytecodeClassLoader loader = ref.get();
                 if (loader != null) {
                     loader.releaseClasses(releaser);
                 }
@@ -281,7 +342,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         if (!isWithTopCodeCache) {
             return clone();
         }
-        LayeredClassLoader detachedClone = builder.buildFromCodeLayers();
+        final LayeredClassLoader detachedClone = builder.buildFromCodeLayers();
         detachedClone.topCodeCache = topCodeCache.clone();
         detachedClone.builder.setTopCodeCacheAfterCreating(detachedClone.topCodeCache);
         return detachedClone;
@@ -593,7 +654,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public LayeredClassLoader buildFromCodeLayers() {
             commit();
             return new LayeredClassLoader(this);
-       }
+        }
         
         /**
          * builds a new instance of {@link LayeredClassLoader}
