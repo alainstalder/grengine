@@ -81,7 +81,7 @@ public class DefaultGroovyCompiler implements Compiler {
         this.builder = builder.commit();
         parent = builder.getParent();
         config = builder.getCompilerConfiguration();
-        GroovyClassLoader loader = GrapeCompilationCustomizer.getLoaderIfConfigured(parent, config);
+        final GroovyClassLoader loader = GrapeCompilationCustomizer.getLoaderIfConfigured(parent, config);
         groovyClassLoader = (loader == null) ? new GroovyClassLoader(parent, config) : loader;
     }
     
@@ -222,31 +222,31 @@ public class DefaultGroovyCompiler implements Compiler {
     public Code compile(final Sources sources) {
         requireNonNull(sources, "Sources are null.");
         try {
-            CompilationUnit cu = new CompilationUnit(config, null, groovyClassLoader);
-            Map<Source,SourceUnit> sourceUnitMap = sources.getSourceSet().stream()
+            final CompilationUnit cu = new CompilationUnit(config, null, groovyClassLoader);
+            final Map<Source,SourceUnit> sourceUnitMap = sources.getSourceSet().stream()
                     .collect(Collectors.toMap(source -> source, source -> addToCompilationUnit(cu, source, sources)));
 
-            int phase = (config.getTargetDirectory() == null) ? Phases.CLASS_GENERATION : Phases.OUTPUT;
+            final int phase = (config.getTargetDirectory() == null) ? Phases.CLASS_GENERATION : Phases.OUTPUT;
             cu.compile(phase);
 
-            Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<>();
+            final Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<>();
             for (Entry<Source, SourceUnit> entry : sourceUnitMap.entrySet()) {
-                Source source = entry.getKey();
-                SourceUnit su = entry.getValue();
-                Set<String> classNames = su.getAST().getClasses().stream()
+                final Source source = entry.getKey();
+                final SourceUnit su = entry.getValue();
+                final Set<String> classNames = su.getAST().getClasses().stream()
                         .map(ClassNode::getName)
                         .collect(Collectors.toSet());
-                CompiledSourceInfo compiledSourceInfo = new CompiledSourceInfo(source,
+                final CompiledSourceInfo compiledSourceInfo = new CompiledSourceInfo(source,
                         su.getAST().getMainClassName(), classNames, source.getLastModified());
                 //System.out.println("SU MainClassName: " + su.getAST().getMainClassName());
                 compiledSourceInfoMap.put(source, compiledSourceInfo);
             }
 
             @SuppressWarnings("unchecked")
-            Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cu.getClasses()).stream()
+            final Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cu.getClasses()).stream()
                     .collect(Collectors.toMap(GroovyClass::getName, c -> new Bytecode(c.getName(), c.getBytes())));
 
-            Code code;
+            final Code code;
             if (sources.getSourceSet().size() == 1) {
                 code = new DefaultSingleSourceCode(sources.getName(), compiledSourceInfoMap, bytecodeMap);
             } else {
@@ -277,13 +277,13 @@ public class DefaultGroovyCompiler implements Compiler {
      */
     protected SourceUnit addToCompilationUnit(final CompilationUnit cu, final Source source, final Sources sources) {
         if (source instanceof TextSource) {
-            TextSource textSource = (TextSource)source;
+            final TextSource textSource = (TextSource)source;
             return cu.addSource(textSource.getId(), textSource.getText());
         } else if (source instanceof FileSource) {
-            FileSource fileSource = (FileSource)source;
+            final FileSource fileSource = (FileSource)source;
             return cu.addSource(fileSource.getFile());
         } else if (source instanceof UrlSource) {
-            UrlSource urlSource = (UrlSource)source;
+            final UrlSource urlSource = (UrlSource)source;
             return cu.addSource(urlSource.getUrl());
         } else {
             throw new CompileException("Don't know how to compile source " + source + ".", sources);
@@ -522,13 +522,13 @@ public class DefaultGroovyCompiler implements Compiler {
                 }
 
                 // verify preconditions and get GrapeIvy DEFAULT_DEPTH via reflection
-                Class<?> grapeEngineClass = Grape.getInstance().getClass();
+                final Class<?> grapeEngineClass = Grape.getInstance().getClass();
                 if (!grapeEngineClass.getName().equals("groovy.grape.GrapeIvy")) {
                     throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
                             "(current GrapeEngine is " + grapeEngineClass.getName() +
                             ", supported is groovy.grape.GrapeIvy).");
                 }
-                Field defaultDepthField;
+                final Field defaultDepthField;
                 try {
                     defaultDepthField = grapeEngineClass.getDeclaredField("DEFAULT_DEPTH");
                 } catch (NoSuchFieldException e) {

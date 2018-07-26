@@ -85,7 +85,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
      */
 
     private Class<?> loadClassFromBytecode(final String name) {
-        Bytecode bc = code.getBytecode(name);
+        final Bytecode bc = code.getBytecode(name);
         if (bc == null) {
             return null;
         }
@@ -93,7 +93,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         byte[] bytes = bc.getBytes();
         Class<?> clazz;
 
-        String packageName;
+        final String packageName;
         Object packageNameLock;
         Object nameLock;
         synchronized(locks) {
@@ -146,7 +146,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
     }
 
     private String getPackageName(final String className) {
-        int i = className.lastIndexOf('.');
+        final int i = className.lastIndexOf('.');
         if (i >= 0) {
             return className.substring(0, i);
         } else {
@@ -167,8 +167,8 @@ public class BytecodeClassLoader extends SourceClassLoader {
 
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
-        
-        Class<?> clazz;
+
+        final Class<?> clazz;
         if ((clazz = loadClassFromBytecode(name)) != null) {
             return clazz;
         }
@@ -184,7 +184,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         if (loadMode != LoadMode.CURRENT_FIRST) {
             return super.loadClass(name, resolve);
         }
-        
+
         Class<?> clazz;
         if ((clazz = loadClassFromBytecode(name)) == null) {
             if ((clazz = findLoadedClass(name)) == null) {
@@ -252,8 +252,8 @@ public class BytecodeClassLoader extends SourceClassLoader {
         if (loader == null) {
             throw new LoadException("Source not found: " + source);
         }
-        String name = loader.code.getMainClassName(source);
-        Class<?> clazz = loader.loadClassFromBytecode(name);
+        final String name = loader.code.getMainClassName(source);
+        final Class<?> clazz = loader.loadClassFromBytecode(name);
         if (clazz == null) {
             throw new LoadException("Inconsistent code: " + loader.code +
                     ". Main class '" + name + "' not found for source. Source: " + source);
@@ -286,7 +286,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         if (!loader.code.getClassNames(source).contains(name)) {
             throw new LoadException("Class '" + name + "' not found for source. Source: " + source);
         }
-        Class<?> clazz = loader.loadClassFromBytecode(name);
+        final Class<?> clazz = loader.loadClassFromBytecode(name);
         if (clazz == null) {
             throw new LoadException("Inconsistent code: " + loader.code +
                     ". Class '" + name + "' not found for source. Source: " + source);

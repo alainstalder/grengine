@@ -109,14 +109,14 @@ public class SourceSetState {
      */
     public SourceSetState update(final Set<Source> sourceSetNew) {
         requireNonNull(sourceSetNew, "New source set is null.");
-        Map<Source,Long> lastModifiedMapNew = getLastModifiedMap(sourceSetNew);
+        final Map<Source,Long> lastModifiedMapNew = getLastModifiedMap(sourceSetNew);
         boolean hasChanged = true;
         if (sourceSetNew.equals(sourceSet)) {
             hasChanged = sourceSetNew.stream()
                     .anyMatch(source -> lastModifiedMap.get(source).longValue() != lastModifiedMapNew.get(source));
         }
-        long lastCheckedNew = System.currentTimeMillis();
-        long lastModifiedNew = hasChanged ? lastCheckedNew : lastModified;
+        final long lastCheckedNew = System.currentTimeMillis();
+        final long lastModifiedNew = hasChanged ? lastCheckedNew : lastModified;
         return new SourceSetState(sourceSetNew, lastModifiedMapNew, lastCheckedNew, lastModifiedNew);
     }
     

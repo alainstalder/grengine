@@ -84,7 +84,7 @@ public class DirBasedSources extends BaseSources {
      */
     @Override
     protected Set<Source> getSourceSetNew() {
-        Set<Source> sourceSet = new HashSet<>();
+        final Set<Source> sourceSet = new HashSet<>();
         fromDirectoryAddRecursively(sourceSet, dir, true);
         return sourceSet;
     }
@@ -140,7 +140,7 @@ public class DirBasedSources extends BaseSources {
         }
         if (file.isDirectory()) {
             if (firstDir || dirMode==DirMode.WITH_SUBDIRS_RECURSIVE) {
-                File[] listedFiles = file.listFiles();
+                final File[] listedFiles = file.listFiles();
                 if (listedFiles != null) {
                     for (File listedFile : listedFiles) {
                         fromDirectoryAddRecursively(sources, listedFile, false);
@@ -148,8 +148,8 @@ public class DirBasedSources extends BaseSources {
                 }
             }
         } else if (file.isFile()) {
-            String name = file.getName();
-            int i = name.lastIndexOf('.');
+            final String name = file.getName();
+            final int i = name.lastIndexOf('.');
             if (i>=0) {
                 String ext = name.substring(i+1);
                 if (scriptExtensions.contains(ext)) {

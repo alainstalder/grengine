@@ -95,7 +95,7 @@ public class LayeredEngine implements Engine {
         } else {
             topCodeCache = null;
         }
-        LayeredClassLoader layeredClassLoader = newLayeredClassLoaderFromCodeLayers(new LinkedList<>());
+        final LayeredClassLoader layeredClassLoader = newLayeredClassLoaderFromCodeLayers(new LinkedList<>());
         if (isWithTopCodeCache) {
             topCodeCache.setParent(layeredClassLoader);
         }
@@ -103,8 +103,8 @@ public class LayeredEngine implements Engine {
         nextLoaderNumber = 0;
         loader = new Loader(engineId, nextLoaderNumber++, true, builder.getClassReleaser(), layeredClassLoader);
         attachedLoaders.put(loader, engineId);
-        
-        ReadWriteLock lock = new ReentrantReadWriteLock();
+
+        final ReadWriteLock lock = new ReentrantReadWriteLock();
         read = lock.readLock();
         write = lock.writeLock();
     }
@@ -146,7 +146,7 @@ public class LayeredEngine implements Engine {
     public Loader newAttachedLoader() {
         write.lock();
         try {
-            Loader newLoader = new Loader(engineId, nextLoaderNumber++, true,
+            final Loader newLoader = new Loader(engineId, nextLoaderNumber++, true,
                     builder.getClassReleaser(), loader.getSourceClassLoader(engineId).clone());
             attachedLoaders.put(newLoader, engineId);
             return newLoader;
@@ -173,8 +173,8 @@ public class LayeredEngine implements Engine {
     public Loader newDetachedLoader() {
         write.lock();
         try {
-            LayeredClassLoader layeredClassLoader = ((LayeredClassLoader)loader.getSourceClassLoader(engineId));
-            Loader newLoader = new Loader(engineId, nextLoaderNumber++, false,
+            final LayeredClassLoader layeredClassLoader = ((LayeredClassLoader)loader.getSourceClassLoader(engineId));
+            final Loader newLoader = new Loader(engineId, nextLoaderNumber++, false,
                     builder.getClassReleaser(), layeredClassLoader.cloneWithSeparateTopCodeCache());
             detachedLoaders.put(newLoader, engineId);
             return newLoader;
@@ -215,7 +215,7 @@ public class LayeredEngine implements Engine {
     @Override
     public void setCodeLayers(final List<Code> codeLayers) {
         requireNonNull(codeLayers, "Code layers are null.");
-        
+
         int nConflicts = 0;
         Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap = null;
         if (!builder.isAllowSameClassNamesInMultipleCodeLayers()) {
@@ -236,7 +236,7 @@ public class LayeredEngine implements Engine {
         
         write.lock();
         try {
-            Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<>(attachedLoaders);
+            final Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<>(attachedLoaders);
             for (Loader attachedLoader : attachedLoadersNonWeak.keySet()) {
                 attachedLoader.setSourceClassLoader(engineId, newLayeredClassLoaderFromCodeLayers(codeLayers));
             }
@@ -258,7 +258,7 @@ public class LayeredEngine implements Engine {
     public void close() {
         write.lock();
         try {
-            Set<Loader> loaders = new HashSet<>();
+            final Set<Loader> loaders = new HashSet<>();
             loaders.addAll(attachedLoaders.keySet());
             loaders.addAll(detachedLoaders.keySet());
             for (Loader loader : loaders) {

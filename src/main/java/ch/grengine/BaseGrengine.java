@@ -732,7 +732,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Script create(final Loader loader, final Source source) {
-        Class<?> clazz = load(loader, source);
+        final Class<?> clazz = load(loader, source);
         try {
             return (Script)clazz.getConstructor().newInstance();
         } catch (Throwable t) {
@@ -766,7 +766,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Binding binding(final String key, final Object value) {
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         map.put(key, value);
         return new Binding(map);
     }
@@ -784,7 +784,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2) {
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         return new Binding(map);
@@ -806,7 +806,7 @@ public abstract class BaseGrengine implements Closeable {
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
             final String key3, final Object value3) {
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);
@@ -831,7 +831,7 @@ public abstract class BaseGrengine implements Closeable {
      */
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
             final String key3, final Object value3, final String key4, final Object value4) {
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);
@@ -869,7 +869,7 @@ public abstract class BaseGrengine implements Closeable {
         if (n % 2 != 0) {
             throw new IllegalArgumentException("Odd number of arguments.");
         }
-        Map<String,Object> map = new HashMap<>();
+        final Map<String,Object> map = new HashMap<>();
         map.put(key1, value1);
         map.put(key2, value2);
         map.put(key3, value3);
@@ -1522,7 +1522,7 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     public Object run(final Loader loader, final Source source, final Binding binding) {
-        Script script = create(loader, source);
+        final Script script = create(loader, source);
         script.setBinding(binding);
         return script.run();
     }

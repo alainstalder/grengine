@@ -63,7 +63,7 @@ public class CompositeSources extends BaseSources {
     
     @Override
     protected Set<Source> getSourceSetNew() {
-        Set<Source> sourceSet = new HashSet<>();
+        final Set<Source> sourceSet = new HashSet<>();
         for (Sources sources : sourcesList) {
             sourceSet.addAll(sources.getSourceSet());
         }

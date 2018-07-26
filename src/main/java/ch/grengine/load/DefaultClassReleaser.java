@@ -65,7 +65,7 @@ public class DefaultClassReleaser implements ClassReleaser {
         // ClassInfo#globalClassSet has been in Groovy since at least 1.7.5,
         // but only contains a remove(Object clazz) method before 2.4.0
         try {
-            Field globalClassSetField = ClassInfo.class.getDeclaredField("globalClassSet");
+            final Field globalClassSetField = ClassInfo.class.getDeclaredField("globalClassSet");
             globalClassSetField.setAccessible(true);
             globalClassSet = globalClassSetField.get(ClassInfo.class);
             globalClassSetRemoveMethod = globalClassSet.getClass().getMethod("remove", Object.class);
@@ -76,7 +76,7 @@ public class DefaultClassReleaser implements ClassReleaser {
 
         // ClassInfo#globalClassValue has been added to Groovy in 2.4.0
         try {
-            Field globalClassValueField = ClassInfo.class.getDeclaredField("globalClassValue");
+            final Field globalClassValueField = ClassInfo.class.getDeclaredField("globalClassValue");
             globalClassValueField.setAccessible(true);
             globalClassValue = globalClassValueField.get(ClassInfo.class);
             globalClassValueRemoveMethod = globalClassValue.getClass().getMethod("remove", Class.class);

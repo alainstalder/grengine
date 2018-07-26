@@ -311,7 +311,7 @@ public class SourceUtil {
      * @since 1.0
      */
     public static String hash(final String text, final String algorithm) {
-        MessageDigest hash;
+        final MessageDigest hash;
         try {
             hash = MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
@@ -388,18 +388,18 @@ public class SourceUtil {
      * @since 1.0
      */
     public static String readUrlText(final URL url, final String encoding) throws IOException {
-        InputStream in;
+        final InputStream in;
         try {
             in = url.openStream();
         } catch (IOException e) {
             throw new IOException("Could not open stream for URL '" + url + "': " + e, e);
         }
 
-        Scanner scanner = new Scanner(in, encoding);
+        final Scanner scanner = new Scanner(in, encoding);
         scanner.useDelimiter("\\A");
-        String text = scanner.hasNext() ? scanner.next() : "";
+        final String text = scanner.hasNext() ? scanner.next() : "";
         scanner.close();
-        IOException e = scanner.ioException();
+        final IOException e = scanner.ioException();
         if (e != null) {
             throw new IOException("Could not read from URL '" + url + "': " + e, e);
         }
@@ -429,7 +429,7 @@ public class SourceUtil {
 
     // converts given bytes to a hex string with upper case letters
     private static String bytesToHex(byte[] bytes) {
-        StringBuilder builder = new StringBuilder(32);
+        final StringBuilder builder = new StringBuilder(32);
         int digit;
         for (byte b : bytes) {
             digit = (b >> 4) & 0xF;

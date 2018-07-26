@@ -72,7 +72,7 @@ public class DefaultCode implements Code {
     
     @Override
     public String getMainClassName(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
+        final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }
@@ -81,7 +81,7 @@ public class DefaultCode implements Code {
     
     @Override
     public Set<String> getClassNames(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
+        final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }
@@ -90,7 +90,7 @@ public class DefaultCode implements Code {
 
     @Override
     public long getLastModifiedAtCompileTime(final Source source) {
-        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
+        final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         if (info == null) {
             throw new IllegalArgumentException("Source is not for this code. Source: " + source);
         }

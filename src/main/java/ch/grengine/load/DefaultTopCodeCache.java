@@ -63,8 +63,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
     @Override
     public SingleSourceCode getUpToDateCode(final Source source) {
 
-        State stateNow = state;
-        
+        final State stateNow = state;
+
         SingleSourceCode code = stateNow.cache.get(source);
         if (code != null && code.getLastModifiedAtCompileTime() == source.getLastModified()) {
             return code;
@@ -76,7 +76,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
             if (code != null && code.getLastModifiedAtCompileTime() == source.getLastModified()) {
                 return code;
             }
-            Compiler compiler = compilerFactory.newCompiler(stateNow.parent);
+            final Compiler compiler = compilerFactory.newCompiler(stateNow.parent);
             code = (SingleSourceCode)compiler.compile(SourcesUtil.sourceToSources(source, compilerFactory));
             stateNow.cache.put(source, code);
             return code;
@@ -101,8 +101,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
 
     @Override
     public DefaultTopCodeCache clone() {
-        State stateNow = state;
-        DefaultTopCodeCache topCodeCache =
+        final State stateNow = state;
+        final DefaultTopCodeCache topCodeCache =
                 new DefaultTopCodeCache.Builder(stateNow.parent).setCompilerFactory(compilerFactory).build();
         topCodeCache.state.cache.putAll(stateNow.cache);
         return topCodeCache;

@@ -67,7 +67,7 @@ public class DefaultSingleSourceCode implements SingleSourceCode {
         this.sourcesName = sourcesName;
         sourceSet = compiledSourceInfoMap.keySet();
         source = sourceSet.iterator().next();
-        CompiledSourceInfo info = compiledSourceInfoMap.get(source);
+        final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
         mainClassName = info.getMainClassName();
         classNames =  info.getClassNames();
         lastModifiedAtCompileTime = info.getLastModifiedAtCompileTime();

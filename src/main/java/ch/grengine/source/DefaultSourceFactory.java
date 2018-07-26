@@ -197,7 +197,7 @@ public class DefaultSourceFactory implements SourceFactory {
             return lastMod;
         }
         // check both boundaries of the interval to exclude problems with leap seconds etc.
-        long diff = System.currentTimeMillis() - fileLastModifiedLastChecked;
+        final long diff = System.currentTimeMillis() - fileLastModifiedLastChecked;
         if (fileLastModifiedLastChecked != 0 && diff >= 0 && diff < fileLastModifiedLatencyMs) {
             return lastMod;
         }
@@ -251,14 +251,14 @@ public class DefaultSourceFactory implements SourceFactory {
                 // prevent multiple updates
                 info = urlContentTrackingMap.get(this);
                 if (info != null) {
-                    long diff = System.currentTimeMillis() - info.lastChecked;
+                    final long diff = System.currentTimeMillis() - info.lastChecked;
                     if (diff >= 0 && diff < urlTrackingLatencyMs) {
                         return info.lastModified;
                     }
                 }
-                
-                String textHashNew = getTextHash();
-                long now = System.currentTimeMillis();
+
+                final String textHashNew = getTextHash();
+                final long now = System.currentTimeMillis();
                 if (info != null && info.textHash.equals(textHashNew)) {
                     urlContentTrackingMap.put(this, new TrackingInfo(now, info.lastModified, info.textHash));
                     return info.lastModified;

@@ -135,7 +135,7 @@ public class Grengine extends BaseGrengine {
 
         // initialize such that sources layers will be loaded at first update
         // further below, even if sources are immutable or latency is infinite
-        int n = sourcesLayers.size();
+        final int n = sourcesLayers.size();
         lastModifiedList = new ArrayList<>(n);
         for (int i=0; i<n; i++) {
             lastModifiedList.add(-1L);
@@ -525,11 +525,11 @@ public class Grengine extends BaseGrengine {
         if (!allowConfigNull) {
             requireNonNull(config, "Compiler configuration is null.");
         }
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
                 .build();
-        TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder()
+        final TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
+        final Engine engine = new LayeredEngine.Builder()
                 .setParent(parent)
                 .setTopCodeCacheFactory(topCodeCacheFactory)
                 .build();
@@ -547,15 +547,15 @@ public class Grengine extends BaseGrengine {
         }
         requireNonNull(dir, "Directory is null.");
         requireNonNull(dirMode, "Dir mode is null.");
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
                 .build();
-        TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder()
+        final TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
+        final Engine engine = new LayeredEngine.Builder()
                 .setParent(parent)
                 .setTopCodeCacheFactory(topCodeCacheFactory)
                 .build();
-        Sources sources = new DirBasedSources.Builder(dir)
+        final Sources sources = new DirBasedSources.Builder(dir)
                 .setScriptExtensions(config == null ? null : config.getScriptExtensions())
                 .setCompilerFactory(compilerFactory)
                 .setDirMode(dirMode)
@@ -575,17 +575,17 @@ public class Grengine extends BaseGrengine {
             requireNonNull(config, "Compiler configuration is null.");
         }
         requireNonNull(urls, "URL collection is null.");
-        CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
+        final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory.Builder()
                 .setCompilerConfiguration(config)
                 .build();
-        TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
-        Engine engine = new LayeredEngine.Builder()
+        final TopCodeCacheFactory topCodeCacheFactory = new DefaultTopCodeCacheFactory(compilerFactory);
+        final Engine engine = new LayeredEngine.Builder()
                 .setParent(parent)
                 .setTopCodeCacheFactory(topCodeCacheFactory)
                 .build();
-        SourceFactory sourceFactory = new DefaultSourceFactory.Builder().setTrackUrlContent(true).build();
-        Set<Source> sourceSet = SourceUtil.urlsToSourceSet(sourceFactory, urls);
-        Sources sources = new FixedSetSources.Builder(sourceSet)
+        final SourceFactory sourceFactory = new DefaultSourceFactory.Builder().setTrackUrlContent(true).build();
+        final Set<Source> sourceSet = SourceUtil.urlsToSourceSet(sourceFactory, urls);
+        final Sources sources = new FixedSetSources.Builder(sourceSet)
                 .setName("URL Sources")
                 .setCompilerFactory(compilerFactory)
                 .build();
@@ -634,9 +634,9 @@ public class Grengine extends BaseGrengine {
         }
 
         // check layers for changes
-        
-        int n = sourcesLayers.size();
-        List<Long> lastModifiedListNew = new ArrayList<>(n);
+
+        final int n = sourcesLayers.size();
+        final List<Long> lastModifiedListNew = new ArrayList<>(n);
         for (Sources sources : sourcesLayers) {
             lastModifiedListNew.add(sources.getLastModified());
         }

@@ -52,11 +52,11 @@ public class ClassNameConflictAnalyzer {
      */
     public static Map<String,List<Code>> getAllClassNamesMap(final List<Code> codeLayers) {
         requireNonNull(codeLayers, "Code layers are null.");
-        Map<String,List<Code>> origins = new HashMap<>();
+        final Map<String,List<Code>> origins = new HashMap<>();
         for (Code code : codeLayers) {
-            Set<String> classNameSet = code.getClassNameSet();
+            final Set<String> classNameSet = code.getClassNameSet();
             for (String className : classNameSet) {
-                List<Code> codeList = origins.computeIfAbsent(className, k -> new LinkedList<>());
+                final List<Code> codeList = origins.computeIfAbsent(className, k -> new LinkedList<>());
                 codeList.add(code);
             }
         }
@@ -77,11 +77,11 @@ public class ClassNameConflictAnalyzer {
      */
     public static Map<String,List<Code>> getSameClassNamesInMultipleCodeLayersMap(final List<Code> codeLayers) {
         requireNonNull(codeLayers, "Code layers are null.");
-        Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
-        Map<String,List<Code>> originsWithDuplicates = new HashMap<>();
+        final Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
+        final Map<String,List<Code>> originsWithDuplicates = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {
-            String name = entry.getKey();
-            List<Code> codeList = entry.getValue();
+            final String name = entry.getKey();
+            final List<Code> codeList = entry.getValue();
             if (codeList.size() > 1) {
                 originsWithDuplicates.put(name, codeList);
             }
@@ -109,11 +109,11 @@ public class ClassNameConflictAnalyzer {
             final ClassLoader parent, final List<Code> codeLayers) {
         requireNonNull(parent, "Parent class loader is null.");
         requireNonNull(codeLayers, "Code layers are null.");
-        Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
-        Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<>();
+        final Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
+        final Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<>();
         for (Entry<String, List<Code>> entry : origins.entrySet()) {
-            String name = entry.getKey();
-            List<Code> codeList = entry.getValue();
+            final String name = entry.getKey();
+            final List<Code> codeList = entry.getValue();
             try {
                 parent.loadClass(name);
                 originsWithDuplicateInParent.put(name, codeList);
