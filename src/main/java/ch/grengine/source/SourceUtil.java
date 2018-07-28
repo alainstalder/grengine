@@ -30,7 +30,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 
 /**
@@ -85,7 +86,7 @@ public class SourceUtil {
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Collection<String> texts) {
         return texts.stream()
                 .map(sourceFactory::fromText)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(toSet());
     }
     
     /**
@@ -131,7 +132,7 @@ public class SourceUtil {
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final Map<String,String> texts) {
         return texts.entrySet().stream()
                 .map(entry -> sourceFactory.fromText(entry.getValue(), entry.getKey()))
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(toSet());
     }
 
     
@@ -177,7 +178,7 @@ public class SourceUtil {
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final Collection<File> files) {
         return files.stream()
                 .map(sourceFactory::fromFile)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(toSet());
     }
     
     /**
@@ -238,7 +239,7 @@ public class SourceUtil {
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final Collection<URL> urls) {
         return urls.stream()
                 .map(sourceFactory::fromUrl)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(toSet());
     }
     
     /**

@@ -40,8 +40,7 @@ import static java.util.Objects.requireNonNull;
  * The implementation is basic, but may still be good enough for many
  * use cases in practice: Invisible files, as well as invisible or
  * unlistable directories, are ignored; no attempts are made to detect
- * symlinks. Note e.g. that detecting symlinks for sure is not possible
- * before Java 7, unless the native system is queried in some way.
+ * symlinks.
  * 
  * @since 1.0
  * 

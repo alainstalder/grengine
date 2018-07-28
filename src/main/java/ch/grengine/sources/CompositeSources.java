@@ -22,13 +22,12 @@ import ch.grengine.source.Source;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
 
 
 /**
@@ -67,7 +66,7 @@ public class CompositeSources extends BaseSources {
         return sourcesList.stream()
                 .map(Sources::getSourceSet)
                 .flatMap(Set::stream)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(toSet());
     }
         
     /**

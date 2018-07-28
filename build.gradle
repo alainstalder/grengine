@@ -62,6 +62,11 @@
     classifier = 'javadoc'
     from javadoc.destinationDir
   }
+
+  tasks.withType(JavaCompile) {
+    // treat warnings as errors
+    options.compilerArgs << "-Xlint:all" << "-Werror"
+  }
   
   test {
     testLogging.showStandardStreams = true

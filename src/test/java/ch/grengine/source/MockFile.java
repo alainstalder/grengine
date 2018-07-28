@@ -26,10 +26,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 // so far, mocks only last modified
+@SuppressWarnings("serial")
 public class MockFile extends File {
-    
-    private static final long serialVersionUID = -1009288987865961842L;
-    
+
     private final File lastModifiedFile;
     
     public MockFile(final String pathname) {

@@ -37,14 +37,12 @@ import ch.grengine.sources.Sources;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import groovy.lang.Binding;
@@ -53,6 +51,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -139,7 +138,7 @@ public class Grengine extends BaseGrengine {
         // initialize such that sources layers will be loaded at first update
         // further below, even if sources are immutable or latency is infinite
         final int n = sourcesLayers.size();
-        lastModifiedList = new ArrayList<>(Collections.nCopies(n, -1L));
+        lastModifiedList = Collections.nCopies(n, -1L);
         lastChecked = 0;
         lastUpdateException = null;
         updateExceptionNotifier = builder.getUpdateExceptionNotifier();
@@ -637,7 +636,7 @@ public class Grengine extends BaseGrengine {
 
         final List<Long> lastModifiedListNew = sourcesLayers.stream()
                 .map(Sources::getLastModified)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(toList());
         final boolean hasChanged = IntStream.range(0, sourcesLayers.size())
                 .filter(i -> (long)lastModifiedList.get(i) != (long)lastModifiedListNew.get(i))
                 .findAny()

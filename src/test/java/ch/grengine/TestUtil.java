@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TestUtil {
-        
+
+    @SuppressWarnings("serial")
     public static class FileThatThrowsInGetCanonicalFile extends File {
-        private static final long serialVersionUID = -3224104992041563195L;
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }
         @Override public File getCanonicalFile() throws IOException { throw new IOException(); }
