@@ -218,31 +218,22 @@ class LayeredClassLoaderMatrixTest {
 
     private static String getExpectedMethod(final TestContext ctx, final boolean loadBySource) {
         if (ctx.topCodeCacheType == TOP_CODE_CACHE_CURRENT_FIRST
-                && ctx.sourcesChangedState == SOURCES_CHANGED) {
-            if (loadBySource) {
-                return "methodTop";
-            } else {
-                if (ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST) {
-                    if (ctx.parentClassLoaderType == PARENT_IS_SOURCE_CLASS_LOADER) {
-                        return "methodParent";
-                    } else {
-                        return "methodLayer0";
-                    }
-                } else {
-                    return "methodLayer1";
-                }
-            }
-        } else {
-            if (ctx.codeLayersType == CODE_LAYERS_PARENT_FIRST) {
-                if (ctx.parentClassLoaderType == PARENT_IS_SOURCE_CLASS_LOADER) {
-                    return "methodParent";
-                } else {
-                    return "methodLayer0";
-                }
-            } else {
-                return "methodLayer1";
-            }
+                && ctx.sourcesChangedState == SOURCES_CHANGED
+                && loadBySource) {
+            return "methodTop";
         }
+        switch (ctx.codeLayersType) {
+            case CODE_LAYERS_CURRENT_FIRST:
+                return "methodLayer1";
+            case CODE_LAYERS_PARENT_FIRST:
+                switch (ctx.parentClassLoaderType) {
+                    case PARENT_IS_REGULAR_CLASS_LOADER:
+                        return "methodLayer0";
+                    case PARENT_IS_SOURCE_CLASS_LOADER:
+                        return "methodParent";
+                }
+        }
+        throw new RuntimeException("never gets here");
     }
 
     private void testFindBytecodeClassLoaderBySource(final TestContext ctx) {

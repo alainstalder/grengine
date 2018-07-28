@@ -863,9 +863,9 @@ public abstract class BaseGrengine implements Closeable {
     public Binding binding(final String key1, final Object value1, final String key2, final Object value2,
             final String key3, final Object value3, final String key4, final Object value4,
             final String key5, final Object value5, final Object... moreKeyValuePairs) {
-        int nFixed = 10;
-        int nMore = moreKeyValuePairs.length;
-        int n = nFixed + nMore;
+        final int nFixed = 10;
+        final int nMore = moreKeyValuePairs.length;
+        final int n = nFixed + nMore;
         if (n % 2 != 0) {
             throw new IllegalArgumentException("Odd number of arguments.");
         }
@@ -875,8 +875,8 @@ public abstract class BaseGrengine implements Closeable {
         map.put(key3, value3);
         map.put(key4, value4);
         map.put(key5, value5);
-        for (int i=0; i<nMore; i+=2) {
-            Object keyObj = moreKeyValuePairs[i];
+        for (int i = 0; i < nMore; i += 2) {
+            final Object keyObj = moreKeyValuePairs[i];
             if (!(keyObj instanceof String)) {
                 throw new IllegalArgumentException("Argument " + (nFixed + i + 1) + " is not a string.");
             }

@@ -20,10 +20,13 @@ import ch.grengine.source.DefaultSourceFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.junit.jupiter.api.Test;
 
 /**
  * Command line visual performance test.
@@ -35,7 +38,12 @@ public class GrengineVisualPerformanceTest {
 
     private static final long RUN_DURATION_NS = 1000L * 1000L * 1000L;
     private static final int N_RUNS = 4;
-    private static final long N_INNER = 100;
+    private static final int N_INNER = 100;
+
+    @Test
+    public void testMain() throws Exception {
+        //main();
+    }
 
     public static void main(final String... args) throws Exception {
 
@@ -70,15 +78,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles at each evaluation.");
 
         final GroovyShell shell = new GroovyShell();
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    shell.evaluate("return 2");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> shell.evaluate("return 2"));
         printRunInfo(runForDuration(runner));
 
         System.out.println();
@@ -111,15 +111,7 @@ public class GrengineVisualPerformanceTest {
                 .build())    
             .build();
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    gren.run("return 2");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run("return 2"));
         printRunInfo(runForDuration(runner));
         
         System.out.println();
@@ -128,15 +120,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calculates MD5 hash only once during the first run.");
 
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    grenOptimized.run("return 2");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> grenOptimized.run("return 2"));
         printRunInfo(runForDuration(runner));
         
         System.out.println();
@@ -149,15 +133,7 @@ public class GrengineVisualPerformanceTest {
         final File scriptFile = new File(scriptDir, "Return.groovy");
         TestUtil.setFileText(scriptFile, "return 2");
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    gren.run(scriptFile);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(scriptFile));
         printRunInfo(runForDuration(runner));
 
         System.out.println();
@@ -166,15 +142,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calls scriptFile.lastModified() only during the first run.");
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    grenOptimized.run(scriptFile);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> grenOptimized.run(scriptFile));
         printRunInfo(runForDuration(runner));
 
         System.out.println();
@@ -186,15 +154,7 @@ public class GrengineVisualPerformanceTest {
         
         final URL scriptUrl = scriptFile.toURI().toURL();
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    gren.run(scriptUrl);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(scriptUrl));
         printRunInfo(runForDuration(runner));
         
         System.out.println();
@@ -206,15 +166,7 @@ public class GrengineVisualPerformanceTest {
 
         final Class<?> scriptClass = gren.load("return 2");
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    gren.run(gren.create(scriptClass));
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(gren.create(scriptClass)));
         printRunInfo(runForDuration(runner));
 
         System.out.println();
@@ -226,46 +178,34 @@ public class GrengineVisualPerformanceTest {
 
         final Script script = gren.create(scriptClass);
         
-        runner = () -> {
-            try {
-                for (int i=0; i<N_INNER; i++) {
-                    gren.run(script);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+        runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(script));
         printRunInfo(runForDuration(runner));
     }
 
     private static long[] runForDuration(final Runnable runner) {
         final long[] timesPerRunNs = new long[N_RUNS];
-        for (int j=0; j<N_RUNS; j++) {
+        IntStream.range(0, N_RUNS).forEach(j -> {
             final long t0 = System.nanoTime();
             long t1;
             int n = 0;
             do {
                 runner.run();
                 t1 = System.nanoTime();
-                n+= N_INNER;
-            } while (t1-t0 < RUN_DURATION_NS);
-            final long timePerRunNs = (t1-t0) / n;
+                n += N_INNER;
+            } while (t1 - t0 < RUN_DURATION_NS);
+            final long timePerRunNs = (t1 - t0) / n;
             timesPerRunNs[j] = timePerRunNs;
-        }
+        });
         return timesPerRunNs;
     }
 
     private static void printRunInfo(final long[] timesPerRunNs) {
         System.out.println();
         System.out.print("  Run: ");
-        for (int i=0; i<N_RUNS; i++) {
-            System.out.printf("%9d      ", i+1);
-        }
+        IntStream.range(0, N_RUNS).forEach(i -> System.out.printf("%9d      ", i + 1));
         System.out.println();
         System.out.print("       ");
-        for (long timeNs : timesPerRunNs) {
-            System.out.printf("%9d ns   ", timeNs);
-        }
+        Arrays.stream(timesPerRunNs).forEach(timeNs -> System.out.printf("%9d ns   ", timeNs));
         System.out.println("  (average time per script run)");
     }
 

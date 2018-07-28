@@ -16,9 +16,9 @@
 
 package ch.grengine.engine;
 
-import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
+import ch.grengine.engine.EngineConcurrencyTestFrame.ConcurrencyTestContext;
 import ch.grengine.load.LoadMode;
 import ch.grengine.source.MockTextSource;
 import ch.grengine.source.SourceUtil;
@@ -26,171 +26,88 @@ import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import groovy.lang.Script;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 
 class LayeredEngineConcurrencyTest {
 
-    private static final int N_THREADS = 4;
-    private static final int N_CODE_CHANGES = 5;
-    private static final long DELAY_BETWEEN_CODE_CHANGES_MS = 500;
-    private static final long MINI_DELAY_MS = 5;
-    private static final int MAX_DIGITS = 8;
+    private final EngineConcurrencyTestFrame frame = new EngineConcurrencyTestFrame();
 
-    private volatile boolean failed;
-    private void setFailed(final boolean failed) {
-        this.failed = failed;
-    }
-    
-    private String mapToString(final Map<Integer,Integer> map) {
-        final StringBuilder out = new StringBuilder();
-        for (int i = 0; i< N_CODE_CHANGES; i++) {
-            final Integer value = map.get(i);
-            final String s = (value == null) ? "" : Integer.toString(value);
-            out.append(TestUtil.multiply(" ", MAX_DIGITS - s.length()));
-            out.append(s);
-        }
-        return out.toString();
-    }
+    private static class LayeredEngineConcurrencyTestContext implements ConcurrencyTestContext {
 
-    private void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+        private final LayeredEngine engine;
+        private final Map<Integer,Loader> loaderMap = new ConcurrentHashMap<>();
+        private MockTextSource source;
+        private int lastModified;
+        private Sources sources;
 
-        // given
-
-        setFailed(false);
-
-        final MockTextSource s1 = new MockTextSource("return 0");
-        final Sources sources = SourcesUtil.sourceSetToSources(SourceUtil.sourceArrayToSourceSet(s1), "concurrent");
-
-        final Code code = new DefaultGroovyCompiler().compile(sources);
-        final List<Code> codeLayers = Collections.singletonList(code);
-        
-        engine.setCodeLayers(codeLayers);
-
-        final Map<Integer,Integer> totalMap = new HashMap<>();
-
-        System.out.println(info);
-
-        final long t0 = System.currentTimeMillis();
-
-        final Thread[] threads = new Thread[N_THREADS +1];
-        for (int i = 0; i< N_THREADS +1; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    for (int j = 1; j <= N_CODE_CHANGES; j++) {
-                        if (x == 0) {
-                            Thread.sleep(DELAY_BETWEEN_CODE_CHANGES_MS);
-                            s1.setText("return " + j);
-                            s1.setLastModified(j);
-                            final Code code1 = new DefaultGroovyCompiler().compile(sources);
-                            final List<Code> codeLayers1 = Collections.singletonList(code1);
-                            engine.setCodeLayers(codeLayers1);
-                            //System.out.println(j);
-                        } else {
-                            final Loader attachedLoader = engine.newAttachedLoader();
-                            final Map<Integer, Integer> rcMap = new TreeMap<>();
-                            int rc = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
-                                    .getConstructor().newInstance()).run();
-                            int count = 1;
-                            do {
-                                int rc2 = (Integer) ((Script) engine.loadMainClass(attachedLoader, s1)
-                                        .getConstructor().newInstance()).run();
-                                if (rc2 == rc) {
-                                    count++;
-                                } else {
-                                    rc = rc2;
-                                    rcMap.put(rc - 1, count);
-                                    count = 1;
-                                    Thread.sleep(x * MINI_DELAY_MS);
-                                    if (rc == N_CODE_CHANGES) {
-                                        System.out.printf("Thread %2d %2d: %s%n", x, rcMap.size(),
-                                                mapToString(rcMap));
-                                        synchronized (totalMap) {
-                                            for (Entry<Integer, Integer> entry : rcMap.entrySet()) {
-                                                int i1 = entry.getKey();
-                                                int val = entry.getValue();
-                                                Integer valOldInteger = totalMap.get(i1);
-                                                int valOld = (valOldInteger == null) ? 0 : valOldInteger;
-                                                totalMap.put(i1, valOld + val);
-                                            }
-                                        }
-                                        return;
-                                    }
-                                    Thread.sleep(x * MINI_DELAY_MS);
-                                }
-                            } while (true);
-                        }
-                    }
-                } catch (Exception e) {
-                    System.out.println("x=" + x + ": " + e);
-                    e.printStackTrace();
-                    setFailed(true);
-                }
-            });
+        LayeredEngineConcurrencyTestContext(final LayeredEngine engine) {
+            this.engine = engine;
         }
 
-        // when
-        
-        for (Thread t : threads) {
-            t.start();
-        }
-        
-        for (Thread t : threads) {
-            t.join();
+        private void setCodeLayers() {
+            final Code code = new DefaultGroovyCompiler().compile(sources);
+            final List<Code> codeLayers = Collections.singletonList(code);
+            engine.setCodeLayers(codeLayers);
         }
 
-        // then
+        @Override
+        public void initSource(String scriptText) {
+            source = new MockTextSource(scriptText);
+            lastModified = 0;
+            sources = SourcesUtil.sourceSetToSources(
+                    SourceUtil.sourceArrayToSourceSet(source), "concurrent");
+            setCodeLayers();
+        }
 
-        final int n = totalMap.size();
-        System.out.printf("TOTAL  %s %2d: %s%n", n == N_CODE_CHANGES ? "OK" : "--", totalMap.size(),
-                mapToString(totalMap));
-        final int totalRuns = totalMap.values().stream()
-                .mapToInt(Integer::intValue)
-                .sum();
-        System.out.println("Script runs: " + totalRuns);
-        final long t1 = System.currentTimeMillis();
-        System.out.println("Duration: " + (t1 - t0) + " ms");
-        System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
-        assertThat(N_CODE_CHANGES, is(n));
+        @Override
+        public void updateSource(String scriptText) {
+            lastModified++;
+            source.setText(scriptText);
+            source.setLastModified(lastModified);
+            setCodeLayers();
+        }
 
-        assertThat(failed, is(false));
+        @Override
+        public Object runScript(int iThread) throws Exception {
+            Loader loader = loaderMap.computeIfAbsent(iThread, i -> engine.newAttachedLoader());
+            return ((Script) engine.loadMainClass(loader, source)
+                    .getConstructor().newInstance()).run();
+        }
     }
 
     @Test
-    void testConcurrentNoTopCodeCache() throws Exception {
+    void testConcurrentNoTopCodeCache() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
                 .build();
-        testConcurrent(engine, "TEST LayeredEngine concurrent - no top code cache");
+        frame.testConcurrent("TEST LayeredEngine concurrent - no top code cache",
+                new LayeredEngineConcurrencyTestContext(engine));
     }
 
     @Test
-    void testConcurrentTopCodeCacheParentFirst() throws Exception {
+    void testConcurrentTopCodeCacheParentFirst() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.PARENT_FIRST)
                 .build();
-        testConcurrent(engine, "TEST LayeredEngine concurrent - top code cache - parent first");
+        frame.testConcurrent("TEST LayeredEngine concurrent - top code cache - parent first",
+                new LayeredEngineConcurrencyTestContext(engine));
     }
 
     @Test
-    void testConcurrentTopCodeCacheCurrentFirst() throws Exception {
+    void testConcurrentTopCodeCacheCurrentFirst() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.CURRENT_FIRST)
                 .build();
-        testConcurrent(engine, "TEST LayeredEngine concurrent - top code cache - current first");
+        frame.testConcurrent("TEST LayeredEngine concurrent - top code cache - current first",
+                new LayeredEngineConcurrencyTestContext(engine));
     }
 
 }

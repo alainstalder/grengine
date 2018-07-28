@@ -40,9 +40,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
@@ -136,10 +139,7 @@ public class Grengine extends BaseGrengine {
         // initialize such that sources layers will be loaded at first update
         // further below, even if sources are immutable or latency is infinite
         final int n = sourcesLayers.size();
-        lastModifiedList = new ArrayList<>(n);
-        for (int i=0; i<n; i++) {
-            lastModifiedList.add(-1L);
-        }
+        lastModifiedList = new ArrayList<>(Collections.nCopies(n, -1L));
         lastChecked = 0;
         lastUpdateException = null;
         updateExceptionNotifier = builder.getUpdateExceptionNotifier();
@@ -635,20 +635,14 @@ public class Grengine extends BaseGrengine {
 
         // check layers for changes
 
-        final int n = sourcesLayers.size();
-        final List<Long> lastModifiedListNew = new ArrayList<>(n);
-        for (Sources sources : sourcesLayers) {
-            lastModifiedListNew.add(sources.getLastModified());
-        }
-        
-        boolean hasChanged = false;
-        for (int i=0; i<n; i++) {
-            if ((long)lastModifiedList.get(i) != (long)lastModifiedListNew.get(i)) {
-                hasChanged = true;
-                break;
-            }
-        }
-        
+        final List<Long> lastModifiedListNew = sourcesLayers.stream()
+                .map(Sources::getLastModified)
+                .collect(Collectors.toCollection(ArrayList::new));
+        final boolean hasChanged = IntStream.range(0, sourcesLayers.size())
+                .filter(i -> (long)lastModifiedList.get(i) != (long)lastModifiedListNew.get(i))
+                .findAny()
+                .isPresent();
+
         if (!hasChanged) {
             lastChecked = System.currentTimeMillis();
             return;

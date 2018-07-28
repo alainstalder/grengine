@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -79,14 +78,12 @@ public class ClassNameConflictAnalyzer {
         requireNonNull(codeLayers, "Code layers are null.");
         final Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
         final Map<String,List<Code>> originsWithDuplicates = new HashMap<>();
-        for (Entry<String, List<Code>> entry : origins.entrySet()) {
-            final String name = entry.getKey();
-            final List<Code> codeList = entry.getValue();
+        origins.forEach((name, codeList) -> {
             if (codeList.size() > 1) {
                 originsWithDuplicates.put(name, codeList);
             }
-        }
-        return originsWithDuplicates;        
+        });
+        return originsWithDuplicates;
     }
     
     /**
@@ -111,16 +108,13 @@ public class ClassNameConflictAnalyzer {
         requireNonNull(codeLayers, "Code layers are null.");
         final Map<String,List<Code>> origins = getAllClassNamesMap(codeLayers);
         final Map<String,List<Code>> originsWithDuplicateInParent = new HashMap<>();
-        for (Entry<String, List<Code>> entry : origins.entrySet()) {
-            final String name = entry.getKey();
-            final List<Code> codeList = entry.getValue();
+        origins.forEach((name, codeList) -> {
             try {
                 parent.loadClass(name);
                 originsWithDuplicateInParent.put(name, codeList);
-            } catch (Throwable t) {
-                // ignore
+            } catch (Throwable ignore) {
             }
-        }
+        });
         return originsWithDuplicateInParent;        
     }
 

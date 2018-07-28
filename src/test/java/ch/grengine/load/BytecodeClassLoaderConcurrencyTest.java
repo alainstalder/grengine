@@ -28,9 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.toRuntimeException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -98,7 +100,7 @@ class BytecodeClassLoaderConcurrencyTest {
         this.failed = failed;
     }
 
-    private void testGeneric(final String packageName, final String... classNames) throws Exception {
+    private void testGeneric(final String packageName, final String... classNames) {
 
         // given
 
@@ -136,34 +138,26 @@ class BytecodeClassLoaderConcurrencyTest {
         final int nClassNamesToLoad = classNamesToLoad.size();
 
         final int nThreads = 10;
-
-        final Thread[] threads = new Thread[nThreads];
-        for (int i = 0; i < nThreads; i++) {
-            final int x = i;
-            threads[i] = new Thread(() -> {
-                try {
-                    final String threadName = "Thread-" + x;
-                    Thread.currentThread().setName(threadName);
-                    System.out.println(threadName + " about to load...");
-                    int index = (x % nClassNamesToLoad);
-                    slowLoader.loadClass(classNamesToLoad.get(index));
-                    System.out.println(threadName + " loaded.");
-                } catch (Throwable t) {
-                    setFailed(true);
-                }
-            });
-        }
+        List<Thread> threads = IntStream.range(0, nThreads)
+                .boxed()
+                .map(i -> new Thread(() -> {
+                    try {
+                        final String threadName = "Thread-" + i;
+                        Thread.currentThread().setName(threadName);
+                        System.out.println(threadName + " about to load...");
+                        int index = (i % nClassNamesToLoad);
+                        slowLoader.loadClass(classNamesToLoad.get(index));
+                        System.out.println(threadName + " loaded.");
+                    } catch (Throwable t) {
+                        setFailed(true);
+                    }
+                }))
+                .collect(Collectors.toList());
 
         // when
 
-
-        for (Thread t : threads) {
-            t.start();
-        }
-
-        for (Thread t : threads) {
-            t.join();
-        }
+        threads.forEach(Thread::start);
+        threads.forEach(t -> toRuntimeException(t::join));
 
         // then
 
@@ -172,19 +166,19 @@ class BytecodeClassLoaderConcurrencyTest {
 
 
     @Test
-    void testConcurrentSingleClassNoPackage() throws Exception {
+    void testConcurrentSingleClassNoPackage() {
         testGeneric("", "Class1");
     }
     @Test
-    void testConcurrentSingleClassWithPackage() throws Exception {
+    void testConcurrentSingleClassWithPackage() {
         testGeneric("a.b.c", "Class1");
     }
     @Test
-    void testConcurrentMultiClassNoPackage() throws Exception {
+    void testConcurrentMultiClassNoPackage() {
         testGeneric("", "Class1", "Class2");
     }
     @Test
-    void testConcurrentMultiClassWithPackage() throws Exception {
+    void testConcurrentMultiClassWithPackage() {
         testGeneric("a.b.c", "Class1", "Class2");
     }
 

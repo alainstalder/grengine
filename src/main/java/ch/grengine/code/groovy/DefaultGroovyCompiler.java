@@ -34,7 +34,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -230,9 +229,7 @@ public class DefaultGroovyCompiler implements Compiler {
             cu.compile(phase);
 
             final Map<Source,CompiledSourceInfo> compiledSourceInfoMap = new HashMap<>();
-            for (Entry<Source, SourceUnit> entry : sourceUnitMap.entrySet()) {
-                final Source source = entry.getKey();
-                final SourceUnit su = entry.getValue();
+            sourceUnitMap.forEach((source, su) -> {
                 final Set<String> classNames = su.getAST().getClasses().stream()
                         .map(ClassNode::getName)
                         .collect(Collectors.toSet());
@@ -240,7 +237,7 @@ public class DefaultGroovyCompiler implements Compiler {
                         su.getAST().getMainClassName(), classNames, source.getLastModified());
                 //System.out.println("SU MainClassName: " + su.getAST().getMainClassName());
                 compiledSourceInfoMap.put(source, compiledSourceInfo);
-            }
+            });
 
             @SuppressWarnings("unchecked")
             final Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cu.getClasses()).stream()

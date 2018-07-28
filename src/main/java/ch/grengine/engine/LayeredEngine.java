@@ -237,9 +237,9 @@ public class LayeredEngine implements Engine {
         write.lock();
         try {
             final Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<>(attachedLoaders);
-            for (Loader attachedLoader : attachedLoadersNonWeak.keySet()) {
-                attachedLoader.setSourceClassLoader(engineId, newLayeredClassLoaderFromCodeLayers(codeLayers));
-            }
+            attachedLoadersNonWeak.keySet().forEach(loader ->
+                    loader.setSourceClassLoader(engineId, newLayeredClassLoaderFromCodeLayers(codeLayers)
+            ));
             if (isWithTopCodeCache) {
                 topCodeCache.setParent(loader.getSourceClassLoader(engineId));
             }
@@ -261,9 +261,7 @@ public class LayeredEngine implements Engine {
             final Set<Loader> loaders = new HashSet<>();
             loaders.addAll(attachedLoaders.keySet());
             loaders.addAll(detachedLoaders.keySet());
-            for (Loader loader : loaders) {
-                loader.close();
-            }
+            loaders.forEach(Loader::close);
         } finally {
             write.unlock();
         }

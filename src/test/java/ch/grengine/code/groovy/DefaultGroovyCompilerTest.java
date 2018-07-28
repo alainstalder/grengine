@@ -36,10 +36,10 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import groovy.grape.Grape;
 import groovy.grape.GrapeEngine;
@@ -49,6 +49,8 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.createTestDir;
+import static ch.grengine.TestUtil.toRuntimeException;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -963,6 +965,8 @@ class DefaultGroovyCompilerTest {
 
             // given
 
+            failed = false;
+
             DefaultGroovyCompiler.enableGrapeSupport();
 
             final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
@@ -976,31 +980,25 @@ class DefaultGroovyCompilerTest {
             final GrapeEngine engine = Grape.getInstance();
 
             final int n = 50;
-            failed = false;
-            final List<Thread> threads = new LinkedList<>();
-            for (int i = 0; i < n; i++) {
-                Thread thread = new Thread(() -> {
-                    try {
-                        final Map<String, Object> args = getDefaultArgs();
-                        final Map<String, Object> dependency = getGuavaDependency();
-                        args.put("classLoader", compileTimeLoader);
-                        engine.grab(args, dependency);
-                    } catch (Throwable t) {
-                        System.out.println("Thread failed: " + t);
-                        failed = true;
-                    }
-                });
-                threads.add(thread);
-            }
+            final List<Thread> threads = IntStream.range(0, n)
+                    .boxed()
+                    .map(i -> new Thread(() -> {
+                        try {
+                            final Map<String, Object> args = getDefaultArgs();
+                            final Map<String, Object> dependency = getGuavaDependency();
+                            args.put("classLoader", compileTimeLoader);
+                            engine.grab(args, dependency);
+                        } catch (Throwable t) {
+                            System.out.println("Thread failed: " + t);
+                            failed = true;
+                        }
+                    }))
+                    .collect(toList());
 
             // when
 
-            for (Thread thread : threads) {
-                thread.start();
-            }
-            for (Thread thread : threads) {
-                thread.join();
-            }
+            threads.forEach(Thread::start);
+            threads.forEach(t -> toRuntimeException(t::join));
 
             // then
 

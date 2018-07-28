@@ -16,6 +16,8 @@
 
 package ch.grengine;
 
+import ch.grengine.engine.EngineConcurrencyTestFrame;
+import ch.grengine.engine.EngineConcurrencyTestFrame.ConcurrencyTestContext;
 import ch.grengine.engine.LayeredEngine;
 import ch.grengine.engine.Loader;
 import ch.grengine.load.LoadMode;
@@ -26,173 +28,88 @@ import ch.grengine.sources.FixedSetSources;
 import ch.grengine.sources.Sources;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 class GrengineConcurrencyTest {
 
-    private static final int N_THREADS = 4;
-    private static final int N_CODE_CHANGES = 5;
-    private static final long DELAY_BETWEEN_CODE_CHANGES_MS = 500;
-    private static final long MINI_DELAY_MS = 5;
-    private static final int MAX_DIGITS = 8;
+    private final EngineConcurrencyTestFrame frame = new EngineConcurrencyTestFrame();
 
-    private volatile boolean failed;
-    private void setFailed(final boolean failed) {
-        this.failed = failed;
-    }
-    
-    private static String mapToString(final Map<Integer,Integer> map) {
-        final StringBuilder out = new StringBuilder();
-        for (int i = 0; i< N_CODE_CHANGES; i++) {
-            final Integer value = map.get(i);
-            final String s = (value == null) ? "" : Integer.toString(value);
-            out.append(TestUtil.multiply(" ", MAX_DIGITS - s.length()));
-            out.append(s);
-        }
-        return out.toString();
-    }
+    private static class GrengineConcurrencyTestContext implements ConcurrencyTestContext {
 
-    private void testConcurrent(final LayeredEngine engine, final String info) throws Exception {
+        private final LayeredEngine engine;
+        private final Map<Integer, Loader> loaderMap = new ConcurrentHashMap<>();
+        private MockTextSource source;
+        private int lastModified;
+        private Grengine gren;
 
-        // given
-
-        setFailed(false);
-
-        final MockTextSource s1 = new MockTextSource("return 0");
-        final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(s1);
-        final Sources sources = new FixedSetSources.Builder(sourceSet)
-                .setLatencyMs(10)
-                .setName("concurrent")
-                .build();
-        final List<Sources> sourcesLayers = Collections.singletonList(sources);
-        
-        final Grengine gren = new Grengine.Builder()
-                .setEngine(engine)
-                .setSourcesLayers(sourcesLayers)
-                .setLatencyMs(30)
-                .build();
-        
-        final Map<Integer,Integer> totalMap = new HashMap<>();
-        
-        System.out.println(info);
-
-        final long t0 = System.currentTimeMillis();
-
-        Thread[] threads = new Thread[N_THREADS +1];
-        for (int i = 0; i< N_THREADS +1; i++) {
-            final int x = i;
-            threads[i] = new Thread(
-                    () -> {
-                        try {
-                            for (int j = 1; j<= N_CODE_CHANGES; j++) {
-                                if (x == 0) {
-                                    Thread.sleep(DELAY_BETWEEN_CODE_CHANGES_MS);
-                                    s1.setText("return " + j);
-                                    s1.setLastModified(j);
-                                    //System.out.println(j);
-                                } else {
-                                    Loader attachedLoader = gren.newAttachedLoader();
-                                    Map<Integer,Integer> rcMap = new TreeMap<>();
-                                    int rc = (Integer)(gren.run(attachedLoader, s1));
-                                    int count = 1;
-                                    do {
-                                        int rc2 = (Integer)(gren.run(attachedLoader, s1));
-                                        if (rc2 == rc) {
-                                            count++;
-                                        } else {
-                                            rc = rc2;
-                                            rcMap.put(rc-1, count);
-                                            count = 1;
-                                            Thread.sleep(x * MINI_DELAY_MS);
-                                            if (rc == N_CODE_CHANGES) {
-                                                System.out.printf("Thread %2d %2d: %s%n", x, rcMap.size(),
-                                                        mapToString(rcMap));
-                                                synchronized(totalMap) {
-                                                    for (Entry<Integer, Integer> entry : rcMap.entrySet()) {
-                                                        int i1 = entry.getKey();
-                                                        int val = entry.getValue();
-                                                        Integer valOldInteger = totalMap.get(i1);
-                                                        int valOld = (valOldInteger == null) ? 0 : valOldInteger;
-                                                        totalMap.put(i1, valOld + val);
-                                                    }
-                                                }
-                                                return;
-                                            }
-                                            Thread.sleep(x * MINI_DELAY_MS);
-                                        }
-                                    } while (true);
-                                }
-                            }
-                        } catch (Exception e) {
-                            System.out.println("x=" + x + ": " + e);
-                            e.printStackTrace();
-                            setFailed(true);
-                        }
-                    });
+        GrengineConcurrencyTestContext(final LayeredEngine engine) {
+            this.engine = engine;
         }
 
-        // when
-        
-        for (Thread t : threads) {
-            t.start();
+        @Override
+        public void initSource(String scriptText) {
+            source = new MockTextSource(scriptText);
+            lastModified = 0;
+            final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(source);
+            final Sources sources = new FixedSetSources.Builder(sourceSet)
+                    .setLatencyMs(10)
+                    .setName("concurrent")
+                    .build();
+            final List<Sources> sourcesLayers = Collections.singletonList(sources);
+            gren = new Grengine.Builder()
+                    .setEngine(engine)
+                    .setSourcesLayers(sourcesLayers)
+                    .setLatencyMs(30)
+                    .build();
         }
-        
-        for (Thread t : threads) {
-            t.join();
+
+        @Override
+        public void updateSource(String scriptText) {
+            lastModified++;
+            source.setText(scriptText);
+            source.setLastModified(lastModified);
         }
 
-        // then
-
-        final int n = totalMap.size();
-        System.out.printf("TOTAL  %s %2d: %s%n", n == N_CODE_CHANGES ? "OK" : "--", totalMap.size(),
-                mapToString(totalMap));
-        final int totalRuns = totalMap.values().stream()
-                .mapToInt(Integer::intValue)
-                .sum();
-        System.out.println("Script runs: " + totalRuns);
-        final long t1 = System.currentTimeMillis();
-        System.out.println("Duration: " + (t1 - t0) + " ms");
-        System.out.println("Average time per script run: " + (t1 - t0)*1000000L / totalRuns + " ns");
-        assertThat(N_CODE_CHANGES, is(n));
-
-        assertThat(failed, is(false));
+        @Override
+        public Object runScript(int iThread) {
+            Loader loader = loaderMap.computeIfAbsent(iThread, i -> gren.newAttachedLoader());
+            return gren.run(loader, source);
+        }
     }
 
     @Test
-    void testConcurrentNoTopCodeCache() throws Exception {
+    void testConcurrentNoTopCodeCache() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
                 .build();
-        testConcurrent(engine, "TEST Grengine concurrent - no top code cache");
+        frame.testConcurrent("TEST Grengine concurrent - no top code cache",
+                new GrengineConcurrencyTestContext(engine));
     }
 
     @Test
-    void testConcurrentTopCodeCacheParentFirst() throws Exception {
+    void testConcurrentTopCodeCacheParentFirst() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.PARENT_FIRST)
                 .build();
-        testConcurrent(engine, "TEST Grengine concurrent - top code cache - parent first");
+        frame.testConcurrent("TEST Grengine concurrent - top code cache - parent first",
+                new GrengineConcurrencyTestContext(engine));
     }
 
     @Test
-    void testConcurrentTopCodeCacheCurrentFirst() throws Exception {
+    void testConcurrentTopCodeCacheCurrentFirst() {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.CURRENT_FIRST)
                 .build();
-        testConcurrent(engine, "TEST Grengine concurrent - top code cache - current first");
+        frame.testConcurrent("TEST Grengine concurrent - top code cache - current first",
+                new GrengineConcurrencyTestContext(engine));
     }
 
 }
-

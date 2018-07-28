@@ -369,7 +369,7 @@ public class SourceUtil {
         if (out.length() > maxLen) {
             out = out.substring(0, maxLen + 1);
         }
-        out = out.replaceAll("\r\n", "%n").replaceAll("\r", "%n").replaceAll("\n", "%n");
+        out = out.replace("\r\n", "%n").replace("\r", "%n").replace("\n", "%n");
         if (out.length() <= maxLen) {
             return out;
         }

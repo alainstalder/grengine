@@ -103,7 +103,7 @@ class DefaultTextSourceTest {
 
         // given
 
-        final String text = "println " + TestUtil.multiply("1", 300);
+        final String text = "println " + TestUtil.repeatString("1", 300);
 
         // when
 
@@ -114,7 +114,7 @@ class DefaultTextSourceTest {
         assertThat(s.getId(), is("/groovy/script/Script" + SourceUtil.md5(text)));
         assertThat(s.getLastModified(), is(0L));
         assertThat(s.getText(), is(text));
-        final String expectedText = "println " + TestUtil.multiply("1", 188) + "[..]";
+        final String expectedText = "println " + TestUtil.repeatString("1", 188) + "[..]";
         assertThat(s.toString(), is("DefaultTextSource[ID=" + s.getId() + ", text='" + expectedText + "']"));
     }
 

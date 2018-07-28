@@ -40,16 +40,39 @@ public class TestUtil {
         @Override public File getAbsoluteFile() { return this; }
     }
 
+    /**
+     * Create empty test directory, which will be automatically deleted when the JVM exits.
+     *
+     * @return directory, never null
+     *
+     * @throws IOException if failed to create directory
+     */
     public static File createTestDir() throws IOException {
         final File testDir = Files.createTempDirectory("gren").toFile();
         FileUtils.forceDeleteOnExit(testDir);
         return testDir;
     }
 
+    /**
+     * Set file text, using UTF-8 charset.
+     *
+     * @param file file
+     * @param text text
+     *
+     * @throws IOException if failed to write to the file
+     */
     public static void setFileText(final File file, final String text) throws IOException {
         FileUtils.writeStringToFile(file, text, StandardCharsets.UTF_8);
     }
 
+    /**
+     * Get file text, using UTF-8 charset.
+     *
+     * @param file file
+     * @return file text, never null
+     *
+     * @throws IOException if failed to read from the file
+     */
     public static String getFileText(final File file) throws IOException {
         return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
     }
@@ -89,12 +112,20 @@ public class TestUtil {
      * @param n number of times to repeat
      * @return string repeated n times
      */
-    public static String multiply(final String s, final int n) {
-        final StringBuilder out = new StringBuilder();
-        for (int i=0; i<n; i++) {
-            out.append(s);
+    public static String repeatString(final String s, final int n) {
+        return new String(new char[n]).replace("\0", s);
+    }
+
+    public interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+
+    public static void toRuntimeException(ThrowingRunnable run) {
+        try {
+            run.run();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return out.toString();
     }
 
 }

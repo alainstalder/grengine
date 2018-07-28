@@ -112,23 +112,23 @@ public class LayeredClassLoader extends SourceClassLoader {
     private void createLoadersFromCodeLayers() {
         staticTopLoader = builder.getParent();
         codeLayers = builder.getCodeLayers();
-        for (Code code : codeLayers) {
+        codeLayers.forEach(code -> {
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
             classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
-        }
+        });
     }
     
     private void createLoadersFromSourcesLayers() {
         staticTopLoader = builder.getParent();
         final List<Sources> sourcesLayers = builder.getSourcesLayers();
         codeLayers = new LinkedList<>();
-        for (Sources sources : sourcesLayers) {
+        sourcesLayers.forEach(sources ->  {
             final CompilerFactory compilerFactory = sources.getCompilerFactory();
             final Code code = compilerFactory.newCompiler(staticTopLoader).compile(sources);
             codeLayers.add(code);
             staticTopLoader = new BytecodeClassLoader(staticTopLoader, builder.getLoadMode(), code);
             classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
-        }
+        });
         // set code layers in builder so that the builder
         // can be reused without recompiling (e.g. for clone())
         builder.setCodeLayersAfterCreating(codeLayers);

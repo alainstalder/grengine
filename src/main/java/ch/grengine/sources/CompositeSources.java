@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -63,11 +64,10 @@ public class CompositeSources extends BaseSources {
     
     @Override
     protected Set<Source> getSourceSetNew() {
-        final Set<Source> sourceSet = new HashSet<>();
-        for (Sources sources : sourcesList) {
-            sourceSet.addAll(sources.getSourceSet());
-        }
-        return sourceSet;
+        return sourcesList.stream()
+                .map(Sources::getSourceSet)
+                .flatMap(Set::stream)
+                .collect(Collectors.toCollection(HashSet::new));
     }
         
     /**
