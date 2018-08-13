@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SourceSetStateTest {
 
@@ -118,7 +118,7 @@ class SourceSetStateTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new SourceSetState(null),
                 "Source set is null.");
     }
@@ -128,7 +128,7 @@ class SourceSetStateTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new SourceSetState(new HashSet<>()).update(null),
                 "New source set is null.");
     }

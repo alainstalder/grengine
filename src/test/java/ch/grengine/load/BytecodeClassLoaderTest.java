@@ -38,13 +38,13 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BytecodeClassLoaderTest {
     
@@ -78,7 +78,7 @@ class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code),
                 "Parent class loader is null.");
     }
@@ -94,7 +94,7 @@ class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new BytecodeClassLoader(parent, null, code),
                 "Load mode is null.");
     }
@@ -108,7 +108,7 @@ class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new BytecodeClassLoader(parent, LoadMode.CURRENT_FIRST, null),
                 "Code is null.");
     }
@@ -151,7 +151,7 @@ class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("Class1"));
         clazz = loader1.loadMainClass(s2);
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader1.loadMainClass(s3),
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
@@ -171,7 +171,7 @@ class BytecodeClassLoaderTest {
         clazz = loader2.loadClass(s1, "Side");
         assertThat(clazz.getName(), is("Side"));
         // wrong source, not found
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader2.loadClass(s1, "groovy.util.Expando"),
                 "Class 'groovy.util.Expando' not found for source. Source: " + s1.toString());
         clazz = loader2.loadClass(s4, "groovy.util.Expando");
@@ -184,7 +184,7 @@ class BytecodeClassLoaderTest {
         // new loader instance, else already loaded classes cannot be loaded differently
         final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader3.loadClass(s3, "Class1"),
                 "Source not found: " + s3.toString());
 
@@ -271,7 +271,7 @@ class BytecodeClassLoaderTest {
         assertThat(clazz.getName(), is("Class1"));
         clazz = loader1.loadMainClass(s2);
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader1.loadMainClass(s3),
                 "Source not found: " + s3.toString());
         clazz = loader1.loadMainClass(s4);
@@ -287,7 +287,7 @@ class BytecodeClassLoaderTest {
         clazz = loader2.loadClass(s1, "Class1");
         assertThat(clazz.getName(), is("Class1"));
         // wrong source, not found
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader2.loadClass(s1, "groovy.util.Expando"),
                 "Class 'groovy.util.Expando' not found for source. Source: " + s1.toString());
         clazz = loader2.loadClass(s4, "groovy.util.Expando");
@@ -301,7 +301,7 @@ class BytecodeClassLoaderTest {
         // new loader instance, else already loaded classes cannot be loaded differently
         final BytecodeClassLoader loader3 = new BytecodeClassLoader(parent, loadMode, code);
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> loader3.loadClass(s3, "Class1"),
                 "Source not found: " + s3.toString());
 
@@ -372,7 +372,7 @@ class BytecodeClassLoaderTest {
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadMainClassBySource(parent, s1),
                 "Source not found: " + s1.toString());
 
@@ -395,7 +395,7 @@ class BytecodeClassLoaderTest {
 
         final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadMainClassBySource(loader, s1),
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Main class 'Class1' not found for source. Source: " + s1.toString());
@@ -413,7 +413,7 @@ class BytecodeClassLoaderTest {
 
         // when/then (case of loading where parent class loader is not a SourceClassLoader)
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadClassBySourceAndName(parent, s1, "Class1"),
                 "Source not found: " + s1.toString());
 
@@ -436,7 +436,7 @@ class BytecodeClassLoaderTest {
 
         final BytecodeClassLoader loader = new BytecodeClassLoader(parent, loadMode, inconsistentCode);
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadClassBySourceAndName(loader, s1, "Class33NoBytecode"),
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Class 'Class33NoBytecode' not found for source. Source: " + s1.toString());
@@ -554,7 +554,7 @@ class BytecodeClassLoaderTest {
 
         // when/then
 
-        assertThrows(RuntimeException.class,
+        assertThrowsMessageIs(RuntimeException.class,
                 () -> throwingLoader.loadClass("Class1"),
                 "unit test");
     }

@@ -21,12 +21,12 @@ import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class DefaultTopCodeCacheTest {
@@ -99,7 +99,7 @@ class DefaultTopCodeCacheTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setCompilerFactory(new DefaultGroovyCompilerFactory()),
                 "Builder already used.");
     }
@@ -114,7 +114,7 @@ class DefaultTopCodeCacheTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> c.setParent(null),
                 "Parent class loader is null.");
     }

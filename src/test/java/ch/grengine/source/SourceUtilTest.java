@@ -29,12 +29,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrowsStartsWith;
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
+import static ch.grengine.TestUtil.assertThrowsMessageStartsWith;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class SourceUtilTest {
@@ -413,7 +413,7 @@ class SourceUtilTest {
 
         // when/then
 
-        assertThrows(UnsupportedOperationException.class,
+        assertThrowsMessageIs(UnsupportedOperationException.class,
                 () -> SourceUtil.hash("abc", "BatHash"),
                 "No message digest BatHash.");
     }
@@ -431,7 +431,7 @@ class SourceUtilTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> SourceUtil.getTextStartNoLineBreaks("hello", -1),
                 "Max len (-1) is negative.");
     }
@@ -441,7 +441,7 @@ class SourceUtilTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> SourceUtil.getTextStartNoLineBreaks("hello", 9),
                 "Max len (9) must be at least 10.");
     }
@@ -518,7 +518,7 @@ class SourceUtilTest {
 
         // when/then
 
-        assertThrowsStartsWith(IOException.class,
+        assertThrowsMessageStartsWith(IOException.class,
                 () -> SourceUtil.readUrlText(url, "UTF-8"),
                 "Could not open stream for URL '" + url + "':");
     }

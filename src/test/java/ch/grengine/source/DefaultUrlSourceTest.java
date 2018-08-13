@@ -23,10 +23,10 @@ import java.net.URL;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class DefaultUrlSourceTest {
@@ -59,7 +59,7 @@ class DefaultUrlSourceTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultUrlSource(null),
                 "URL is null.");
     }

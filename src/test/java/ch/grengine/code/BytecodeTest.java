@@ -18,9 +18,9 @@ package ch.grengine.code;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BytecodeTest {
 
@@ -70,7 +70,7 @@ class BytecodeTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Bytecode(null, bytes),
                 "Class name is null.");
     }
@@ -84,7 +84,7 @@ class BytecodeTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Bytecode(className, null),
                 "Bytes are null.");
     }

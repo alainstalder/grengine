@@ -26,11 +26,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class FixedSetSourcesTest {
@@ -102,7 +102,7 @@ class FixedSetSourcesTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new FixedSetSources.Builder(null),
                 "Source set is null.");
     }
@@ -120,7 +120,7 @@ class FixedSetSourcesTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setName("name"),
                 "Builder already used.");
     }

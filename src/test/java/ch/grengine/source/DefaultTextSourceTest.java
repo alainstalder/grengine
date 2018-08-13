@@ -20,9 +20,9 @@ import ch.grengine.TestUtil;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class DefaultTextSourceTest {
@@ -73,7 +73,7 @@ class DefaultTextSourceTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultTextSource(null),
                 "Text is null.");
     }
@@ -83,7 +83,7 @@ class DefaultTextSourceTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultTextSource(null, "name"),
                 "Text is null.");
     }
@@ -93,7 +93,7 @@ class DefaultTextSourceTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultTextSource("println 33", null),
                 "Desired class name is null.");
     }

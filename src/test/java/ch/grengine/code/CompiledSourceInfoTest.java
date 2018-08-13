@@ -24,9 +24,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class CompiledSourceInfoTest {
@@ -61,7 +61,7 @@ class CompiledSourceInfoTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new CompiledSourceInfo(null, "",
                         new HashSet<>(), 0),
                 "Source is null.");
@@ -73,7 +73,7 @@ class CompiledSourceInfoTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new CompiledSourceInfo(new MockSource("id1"), null,
                         new HashSet<>(), 0),
                 "Main class name is null.");
@@ -85,7 +85,7 @@ class CompiledSourceInfoTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new CompiledSourceInfo(new MockSource("id1"), "",
                         null, 0),
                 "Class names are null.");

@@ -27,6 +27,7 @@ import org.junit.jupiter.api.function.Executable;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -79,13 +80,27 @@ public class TestUtil {
 
     /**
      * Asserts that the given code throws the expected throwable
+     * and that its message is the expected text.
+     *
+     * @param expectedType expected throwable class
+     * @param executable code to run that is expected to throw
+     * @param expectedMessage expected throwable message text
+     */
+    public static <T extends Throwable> void assertThrowsMessageIs(
+            final Class<T> expectedType, final Executable executable, final String expectedMessage) {
+        final Throwable t = assertThrows(expectedType, executable);
+        assertThat(t.getMessage(), is(expectedMessage));
+    }
+
+    /**
+     * Asserts that the given code throws the expected throwable
      * and that its message contains the expected text.
      *
      * @param expectedType expected throwable class
      * @param executable code to run that is expected to throw
      * @param expectedMessagePart text expected to be contained in throwable message
      */
-    public static <T extends Throwable> void assertThrowsContains(
+    public static <T extends Throwable> void assertThrowsMessageContains(
             final Class<T> expectedType, final Executable executable, final String expectedMessagePart) {
         final Throwable t = assertThrows(expectedType, executable);
         assertThat(t.getMessage(), containsString(expectedMessagePart));
@@ -99,7 +114,7 @@ public class TestUtil {
      * @param executable code to run that is expected to throw
      * @param expectedMessageStart text expected to start the throwable message
      */
-    public static <T extends Throwable> void assertThrowsStartsWith(
+    public static <T extends Throwable> void assertThrowsMessageStartsWith(
             final Class<T> expectedType, final Executable executable, final String expectedMessageStart) {
         final Throwable t = assertThrows(expectedType, executable);
         assertThat(t.getMessage(), startsWith(expectedMessageStart));

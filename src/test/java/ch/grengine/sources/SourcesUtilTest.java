@@ -25,11 +25,11 @@ import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class SourcesUtilTest {
@@ -64,7 +64,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceToSources(null),
                 "Source is null.");
     }
@@ -94,7 +94,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory()),
                 "Source is null.");
     }
@@ -104,7 +104,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceToSources(new MockSource("id1"), null),
                 "Compiler factory is null.");
     }
@@ -137,7 +137,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceSetToSources(null, "myName"),
                 "Source set is null.");
     }
@@ -147,7 +147,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceSetToSources(new HashSet<>(), null),
                 "Name is null.");
     }
@@ -180,7 +180,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceSetToSources(null, "myName",
                         new DefaultGroovyCompilerFactory()),
                 "Source set is null.");
@@ -191,7 +191,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceSetToSources(new HashSet<>(), null,
                         new DefaultGroovyCompilerFactory()),
                 "Name is null.");
@@ -202,7 +202,7 @@ class SourcesUtilTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> SourcesUtil.sourceSetToSources(new HashSet<>(), "myName", null),
                 "Compiler factory is null.");
     }

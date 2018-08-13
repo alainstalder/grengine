@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrowsStartsWith;
+import static ch.grengine.TestUtil.assertThrowsMessageStartsWith;
 import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.load.LayeredClassLoaderMatrixTest.CodeLayersType.CODE_LAYERS_CURRENT_FIRST;
 import static ch.grengine.load.LayeredClassLoaderMatrixTest.CodeLayersType.CODE_LAYERS_PARENT_FIRST;
@@ -333,7 +333,7 @@ class LayeredClassLoaderMatrixTest {
         if (expectLoadIfNotInCodeLayers) {
             assertThat(loader.loadMainClass(ctx.sNotInCodeLayers), notNullValue());
         } else {
-            assertThrowsStartsWith(LoadException.class,
+            assertThrowsMessageStartsWith(LoadException.class,
                     () -> loader.loadMainClass(ctx.sNotInCodeLayers),
                     "Source not found: ");
         }
@@ -377,7 +377,7 @@ class LayeredClassLoaderMatrixTest {
 
 
         // when/then (wrong source, not found)
-        assertThrowsStartsWith(LoadException.class,
+        assertThrowsMessageStartsWith(LoadException.class,
                 () -> loader.loadClass(ctx.sMain, "groovy.util.Expando"),
                 "Class 'groovy.util.Expando' not found for source. Source: " + ctx.sMain.toString());
 
@@ -395,7 +395,7 @@ class LayeredClassLoaderMatrixTest {
         if (expectLoadIfNotInCodeLayers) {
             assertThat(loader.loadClass(ctx.sNotInCodeLayers, "NotInCodeLayers"), notNullValue());
         } else {
-            assertThrowsStartsWith(LoadException.class,
+            assertThrowsMessageStartsWith(LoadException.class,
                     () -> loader.loadClass(ctx.sNotInCodeLayers, "NotInCodeLayers"),
                     "Source not found: ");
         }
@@ -443,7 +443,7 @@ class LayeredClassLoaderMatrixTest {
 
         // when/then
 
-        assertThrowsStartsWith(ClassNotFoundException.class,
+        assertThrowsMessageStartsWith(ClassNotFoundException.class,
                 () -> loader.loadClass("NotInCodeLayers"),
                 "NotInCodeLayers");
 

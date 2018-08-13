@@ -62,8 +62,9 @@ import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.assertThrowsContains;
-import static ch.grengine.TestUtil.assertThrowsStartsWith;
+import static ch.grengine.TestUtil.assertThrowsMessageContains;
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
+import static ch.grengine.TestUtil.assertThrowsMessageStartsWith;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -71,7 +72,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class GrengineTest {
@@ -167,7 +167,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setLatencyMs(999),
                 "Builder already used.");
     }
@@ -273,7 +273,7 @@ class GrengineTest {
         assertThat(gren.run(fSub2), is(2));
         // not found because compiled in top code cache and there ScriptSub2 is not visible
         // (has its own separate class loader in the top code cache)
-        assertThrowsContains(CompileException.class,
+        assertThrowsMessageContains(CompileException.class,
                 () -> gren.run(fSub3),
                 "unable to resolve class ScriptSub2");
 
@@ -285,7 +285,7 @@ class GrengineTest {
         gren.loadClass(gren.getLoader(), s1, "Script1");
         // not found because only in top code cache, not in static code layers
         final Source sSub1 = new DefaultFileSource(fSub1);
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass("ScriptSub1"),
                 "Could not load class 'ScriptSub1'. Cause: ");
         // this works, because loading by source from top code cache
@@ -333,7 +333,7 @@ class GrengineTest {
         assertThat(gren.run(fSub2), is(2));
         // not found because compiled in top code cache and there ScriptSub2 is not visible
         // (has its own separate class loader in the top code cache)
-        assertThrowsContains(CompileException.class,
+        assertThrowsMessageContains(CompileException.class,
                 () -> gren.run(fSub3),
                 "unable to resolve class ScriptSub2");
 
@@ -343,7 +343,7 @@ class GrengineTest {
         gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         final Source sSub1 = new DefaultFileSource(fSub1);
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass("ScriptSub1"),
                 "Could not load class 'ScriptSub1'. Cause: ");
         // this works, because loading by source from top code cache
@@ -425,13 +425,13 @@ class GrengineTest {
         assertThat(gren.run(f1), is(1));
         assertThat(gren.run(f2), is(1));
         // all not found because not in static layers and no top code cache
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.run(fSub1),
                 "Source not found: ");
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.run(fSub2),
                 "Source not found: ");
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.run(fSub3),
                 "Source not found: ");
 
@@ -441,11 +441,11 @@ class GrengineTest {
         gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         final Source sSub1 = new DefaultFileSource(fSub1);
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass("ScriptSub1"),
                 "Could not load class 'ScriptSub1'. Cause: ");
         // also not found, because there is no top code cache
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass(sSub1, "ScriptSub1"),
                 "Source not found: ");
     }
@@ -554,7 +554,7 @@ class GrengineTest {
         assertThat(gren.run(fSub2), is(2));
         // not found because compiled in top code cache and there ScriptSub2 is not visible
         // (has its own separate class loader in the top code cache)
-        assertThrowsContains(CompileException.class,
+        assertThrowsMessageContains(CompileException.class,
                 () -> gren.run(fSub3),
                 "unable to resolve class ScriptSub2");
 
@@ -564,7 +564,7 @@ class GrengineTest {
         gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         final Source sSub1 = new DefaultFileSource(fSub1);
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass("ScriptSub1"),
                 "Could not load class 'ScriptSub1'. Cause: ");
         // this works, because loading by source from top code cache
@@ -626,7 +626,7 @@ class GrengineTest {
         assertThat(gren.run(fSub2), is(2));
         // not found because compiled in top code cache and there ScriptSub2 is not visible
         // (has its own separate class loader in the top code cache)
-        assertThrowsContains(CompileException.class,
+        assertThrowsMessageContains(CompileException.class,
                 () -> gren.run(fSub3),
                 "unable to resolve class ScriptSub2");
 
@@ -636,7 +636,7 @@ class GrengineTest {
         gren.loadClass(s1, "Script1");
         // not found because only in top code cache, not in static code layers
         final Source sSub1 = new DefaultFileSource(fSub1);
-        assertThrowsContains(LoadException.class,
+        assertThrowsMessageContains(LoadException.class,
                 () -> gren.loadClass("ScriptSub1"),
                 "Could not load class 'ScriptSub1'. Cause: ");
         // this works, because loading by source from top code cache
@@ -1002,7 +1002,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((CompilerConfiguration)null),
                 "Compiler configuration is null.");
     }
@@ -1012,7 +1012,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((ClassLoader)null),
                 "Parent class loader is null.");
     }
@@ -1022,7 +1022,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((File)null),
                 "Directory is null.");
     }
@@ -1032,7 +1032,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((ClassLoader)null, new File(".")),
                 "Parent class loader is null.");
     }
@@ -1042,7 +1042,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((CompilerConfiguration)null, new File(".")),
                 "Compiler configuration is null.");
     }
@@ -1052,7 +1052,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(null, new CompilerConfiguration(), new File(".")),
                 "Parent class loader is null.");
     }
@@ -1062,7 +1062,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(null, DirMode.NO_SUBDIRS),
                 "Directory is null.");
     }
@@ -1072,7 +1072,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new File("."), null),
                 "Dir mode is null.");
     }
@@ -1082,7 +1082,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((CompilerConfiguration)null, new File("."), DirMode.NO_SUBDIRS),
                 "Compiler configuration is null.");
     }
@@ -1092,7 +1092,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new CompilerConfiguration(), null, DirMode.NO_SUBDIRS),
                 "Directory is null.");
     }
@@ -1102,7 +1102,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new CompilerConfiguration(), new File("."), null),
                 "Dir mode is null.");
     }
@@ -1112,7 +1112,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((ClassLoader)null, new File("."), DirMode.NO_SUBDIRS),
                 "Parent class loader is null.");
     }
@@ -1122,7 +1122,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), null, DirMode.NO_SUBDIRS),
                 "Directory is null.");
     }
@@ -1132,7 +1132,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), new File("."), null),
                 "Dir mode is null.");
     }
@@ -1142,7 +1142,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(null, new CompilerConfiguration(), new File("."),
                         DirMode.NO_SUBDIRS),
                 "Parent class loader is null.");
@@ -1153,7 +1153,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), null, new File("."),
                         DirMode.NO_SUBDIRS),
                 "Compiler configuration is null.");
@@ -1164,7 +1164,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), null,
                         DirMode.NO_SUBDIRS),
                 "Directory is null.");
@@ -1175,7 +1175,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), new File("."),
                         null),
                 "Dir mode is null.");
@@ -1186,7 +1186,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((Collection<URL>)null),
                 "URL collection is null.");
     }
@@ -1196,7 +1196,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((CompilerConfiguration)null, new LinkedList<>()),
                 "Compiler configuration is null.");
     }
@@ -1206,7 +1206,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new CompilerConfiguration(), (Collection<URL>)null),
                 "URL collection is null.");
     }
@@ -1216,7 +1216,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine((ClassLoader)null, new LinkedList<>()),
                 "Parent class loader is null.");
     }
@@ -1226,7 +1226,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), (Collection<URL>)null),
                 "URL collection is null.");
     }
@@ -1236,7 +1236,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(null, new CompilerConfiguration(), new LinkedList<>()),
                 "Parent class loader is null.");
     }
@@ -1246,7 +1246,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), null, new LinkedList<>()),
                 "Compiler configuration is null.");
     }
@@ -1256,7 +1256,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine(new GroovyClassLoader(), new CompilerConfiguration(), (Collection<URL>)null),
                 "URL collection is null.");
     }
@@ -1362,7 +1362,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Grengine().asClassLoader(null),
                 "Loader is null.");
     }
@@ -1372,7 +1372,7 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> new Grengine().asClassLoader(new Grengine().getLoader()),
                 "Engine ID does not match (loader created by a different engine).");
     }
@@ -1520,11 +1520,11 @@ class GrengineTest {
 
         // when/then
 
-        assertThrowsStartsWith(CreateException.class,
+        assertThrowsMessageStartsWith(CreateException.class,
                 () -> gren.create(String.class),
                 "Could not create script for class java.lang.String. " +
                         "Cause: java.lang.ClassCastException: ");
-        assertThrowsStartsWith(CreateException.class,
+        assertThrowsMessageStartsWith(CreateException.class,
                 () -> gren.create(loader, "class NotAScript {}"),
                 "Could not create script for class 'NotAScript' from source ");
     }
@@ -1618,11 +1618,11 @@ class GrengineTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> gren.binding("aa", 11, "bb", 22, "cc", 33,
                         "dd", 44, "ee", 55, "ff"),
                 "Odd number of arguments.");
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> gren.binding("aa", 11, "bb", 22, "cc", 33,
                         "dd", 44, "ee", 55, 7777, 66),
                 "Argument 11 is not a string.");

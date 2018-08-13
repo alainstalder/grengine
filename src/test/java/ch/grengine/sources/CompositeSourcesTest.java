@@ -30,12 +30,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class CompositeSourcesTest {
@@ -124,7 +124,7 @@ class CompositeSourcesTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new CompositeSources.Builder(null),
                 "Sources collection is null.");
     }
@@ -140,7 +140,7 @@ class CompositeSourcesTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setName("name"),
                 "Builder already used.");
     }

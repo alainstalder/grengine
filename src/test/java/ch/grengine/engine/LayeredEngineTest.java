@@ -48,6 +48,7 @@ import java.util.Set;
 import groovy.lang.Script;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -55,7 +56,6 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -131,7 +131,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
                 "Builder already used.");
     }
@@ -376,7 +376,7 @@ class LayeredEngineTest {
 
         // when/then (extra: try to load class that does not exist)
 
-        assertThrows(LoadException.class,
+        assertThrowsMessageIs(LoadException.class,
                 () -> engine.loadClass(loader, "DoesNotExist235134"),
                 "Could not load class 'DoesNotExist235134'. " +
                         "Cause: java.lang.ClassNotFoundException: DoesNotExist235134");
@@ -465,7 +465,7 @@ class LayeredEngineTest {
 
         // then
 
-        assertThrows(ClassNameConflictException.class,
+        assertThrowsMessageIs(ClassNameConflictException.class,
                 () -> engine1.setCodeLayers(codeLayers),
                 "Found 1 class name conflict(s). Duplicate classes in code layers: [Script3], " +
                         "classes in code layers and parent: (not checked)");
@@ -480,7 +480,7 @@ class LayeredEngineTest {
 
         // then
 
-        assertThrows(ClassNameConflictException.class,
+        assertThrowsMessageIs(ClassNameConflictException.class,
                 () -> engine2.setCodeLayers(codeLayers),
                 "Found 1 class name conflict(s). Duplicate classes in code layers: (not checked), " +
                         "classes in code layers and parent: [groovy.util.Expando]");
@@ -495,7 +495,7 @@ class LayeredEngineTest {
 
         // then
 
-        assertThrows(ClassNameConflictException.class,
+        assertThrowsMessageIs(ClassNameConflictException.class,
                 () -> engine3.setCodeLayers(codeLayers),
                 "Found 2 class name conflict(s). Duplicate classes in code layers: [Script3], " +
                         "classes in code layers and parent: [groovy.util.Expando]");
@@ -848,7 +848,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new LayeredEngine.Builder().build().setCodeLayers(null),
                 "Code layers are null.");
     }
@@ -858,7 +858,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new LayeredEngine.Builder().build().setCodeLayersBySource(null),
                 "Sources layers are null.");
     }
@@ -885,7 +885,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(ClassNotFoundException.class,
+        assertThrowsMessageIs(ClassNotFoundException.class,
                 () -> classLoader.loadClass("NoSuchClass"),
                 "NoSuchClass");
     }
@@ -924,7 +924,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new LayeredEngine.Builder().build().asClassLoader(null),
                 "Loader is null.");
     }
@@ -939,7 +939,7 @@ class LayeredEngineTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> new LayeredEngine.Builder().build().asClassLoader(engine2.getLoader()),
                 "Engine ID does not match (loader created by a different engine).");
     }

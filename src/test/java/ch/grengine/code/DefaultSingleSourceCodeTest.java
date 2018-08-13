@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class DefaultSingleSourceCodeTest {
@@ -76,26 +76,26 @@ class DefaultSingleSourceCodeTest {
         assertThat(code.isForSource(null), is(false));
 
         assertThat(code.getMainClassName(m1), is(name1));
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getMainClassName(mNotPartOfCode),
                 "Source is not for this code. Source: " + mNotPartOfCode);
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getMainClassName(null),
                 "Source is not for this code. Source: null");
 
         assertThat(code.getClassNames(m1), is(names1));
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getClassNames(mNotPartOfCode),
                 "Source is not for this code. Source: " + mNotPartOfCode);
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getClassNames(null),
                 "Source is not for this code. Source: null");
 
         assertThat(code.getLastModifiedAtCompileTime(m1), is(11L));
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getLastModifiedAtCompileTime(mNotPartOfCode),
                 "Source is not for this code. Source: " + mNotPartOfCode);
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> code.getLastModifiedAtCompileTime(null),
                 "Source is not for this code. Source: null");
 
@@ -121,7 +121,7 @@ class DefaultSingleSourceCodeTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultSingleSourceCode(null, new HashMap<>(), new HashMap<>()),
                 "Sources name is null.");
     }
@@ -131,7 +131,7 @@ class DefaultSingleSourceCodeTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultSingleSourceCode("name", null, new HashMap<>()),
                 "Compiled source info map is null.");
     }
@@ -141,7 +141,7 @@ class DefaultSingleSourceCodeTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultSingleSourceCode("name", new HashMap<>(), null),
                 "Bytecode map is null.");
     }
@@ -151,7 +151,7 @@ class DefaultSingleSourceCodeTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> new DefaultSingleSourceCode("name", new HashMap<>(), new HashMap<>()),
                 "Not a single source.");
     }

@@ -26,13 +26,13 @@ import java.net.URL;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class DefaultSourceFactoryTest {
@@ -393,7 +393,7 @@ class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> sf.fromText(null),
                 "Text is null.");
     }
@@ -409,7 +409,7 @@ class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> sf.fromText(null, "name"),
                 "Text is null.");
     }
@@ -425,7 +425,7 @@ class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> sf.fromText("println 33", null),
                 "Desired class name is null.");
     }
@@ -441,7 +441,7 @@ class DefaultSourceFactoryTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setTrackUrlContent(false),
                 "Builder already used.");
 

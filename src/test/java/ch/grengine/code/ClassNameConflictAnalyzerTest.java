@@ -32,9 +32,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class ClassNameConflictAnalyzerTest {
@@ -102,7 +102,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> ClassNameConflictAnalyzer.getAllClassNamesMap(null),
                 "Code layers are null.");
     }
@@ -139,7 +139,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null),
                 "Code layers are null.");
     }
@@ -177,7 +177,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
                 null, new LinkedList<>()),
                 "Parent class loader is null.");
@@ -193,7 +193,7 @@ public class ClassNameConflictAnalyzerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(
                 parent, null),
                 "Code layers are null.");

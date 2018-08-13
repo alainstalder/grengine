@@ -35,9 +35,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class LoaderTest {
@@ -70,10 +70,10 @@ class LoaderTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> loader.getSourceClassLoader(engineId2),
                 "Engine ID does not match (loader created by a different engine).");
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> loader.setSourceClassLoader(engineId2, classLoader2),
                 "Engine ID does not match (loader created by a different engine).");
 
@@ -87,7 +87,7 @@ class LoaderTest {
 
         // when/then
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrowsMessageIs(IllegalArgumentException.class,
                 () -> loader.getSourceClassLoader(engineId2),
                 "Engine ID does not match (loader created by a different engine).");
 
@@ -114,7 +114,7 @@ class LoaderTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Loader(null, 0, false, classLoader),
                 "Engine ID is null.");
     }
@@ -124,7 +124,7 @@ class LoaderTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new Loader(new EngineId(), 0, false, null),
                 "Source class loader is null.");
     }

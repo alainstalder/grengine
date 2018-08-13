@@ -48,6 +48,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.TestUtil.toRuntimeException;
 import static java.util.stream.Collectors.toList;
@@ -58,7 +59,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -118,7 +118,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(IllegalStateException.class,
+        assertThrowsMessageIs(IllegalStateException.class,
                 () -> builder.setParent(Thread.currentThread().getContextClassLoader()),
                 "Builder already used.");
     }
@@ -176,7 +176,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultGroovyCompiler((ClassLoader) null),
                 "Parent class loader is null.");
     }
@@ -186,7 +186,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultGroovyCompiler(null, new CompilerConfiguration()),
                 "Parent class loader is null.");
     }
@@ -196,7 +196,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultGroovyCompiler(Thread.currentThread().getContextClassLoader(), null),
                 "Compiler configuration is null.");
     }
@@ -364,7 +364,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> new DefaultGroovyCompiler().compile(null),
                 "Sources are null.");
     }
@@ -485,7 +485,7 @@ class DefaultGroovyCompilerTest {
         final Method method1 = clazz1.getDeclaredMethod("get");
         assertThat(method1.invoke(obj1), is(1));
         loader1.loadClass("Twice$Inner1");
-        assertThrows(ClassNotFoundException.class,
+        assertThrowsMessageIs(ClassNotFoundException.class,
                 () -> loader1.loadClass("Twice$Inner2"),
                 "Twice$Inner2");
 
@@ -552,7 +552,7 @@ class DefaultGroovyCompilerTest {
 
         // when/then
 
-        assertThrows(NullPointerException.class,
+        assertThrowsMessageIs(NullPointerException.class,
                 () -> DefaultGroovyCompiler.withGrape(null, loader),
                 "Compiler configuration is null.");
     }
@@ -733,7 +733,7 @@ class DefaultGroovyCompilerTest {
 
             // when/then
 
-            assertThrows(IllegalStateException.class,
+            assertThrowsMessageIs(IllegalStateException.class,
                     () -> DefaultGroovyCompiler.enableGrapeSupport(new Object()),
                     "Attempt to change lock for wrapped Grape class (unwrap first).");
         } finally {
@@ -747,7 +747,7 @@ class DefaultGroovyCompilerTest {
 
             // when/then
 
-            assertThrows(NullPointerException.class,
+            assertThrowsMessageIs(NullPointerException.class,
                     () -> DefaultGroovyCompiler.enableGrapeSupport(null),
                     "Lock is null.");
         } finally {
@@ -904,7 +904,7 @@ class DefaultGroovyCompilerTest {
 
             // when/then (grab(endorsed) - no idea what could passed and would not throw)
 
-            assertThrows(RuntimeException.class,
+            assertThrowsMessageIs(RuntimeException.class,
                     () -> engine.grab("endorsed"),
                     "No suitable ClassLoader found for grab");
 
@@ -1027,7 +1027,7 @@ class DefaultGroovyCompilerTest {
 
             // when/then
 
-            assertThrows(IllegalStateException.class,
+            assertThrowsMessageIs(IllegalStateException.class,
                     DefaultGroovyCompiler::enableGrapeSupport,
                     "Unable to wrap GrapeEngine in Grape.class " +
                             "(current GrapeEngine is ch.grengine.code.groovy.DefaultGroovyCompiler$GrengineGrapeEngine, " +
