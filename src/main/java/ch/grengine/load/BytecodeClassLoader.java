@@ -245,13 +245,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
      * @since 1.0
      */
     public static Class<?> loadMainClassBySource(final ClassLoader classLoader, final Source source) {
-        BytecodeClassLoader loader = null;
-        if (classLoader instanceof SourceClassLoader) {
-            loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);
-        }
-        if (loader == null) {
-            throw new LoadException("Source not found: " + source);
-        }
+        final BytecodeClassLoader loader = getLoader(classLoader, source);
         final String name = loader.code.getMainClassName(source);
         final Class<?> clazz = loader.loadClassFromBytecode(name);
         if (clazz == null) {
@@ -276,13 +270,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
      */
     public static Class<?> loadClassBySourceAndName(final ClassLoader classLoader, final Source source, 
             final String name) {
-        BytecodeClassLoader loader = null;
-        if (classLoader instanceof SourceClassLoader) {
-            loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);
-        }
-        if (loader == null) {
-            throw new LoadException("Source not found: " + source);
-        }
+        final BytecodeClassLoader loader = getLoader(classLoader, source);
         if (!loader.code.getClassNames(source).contains(name)) {
             throw new LoadException("Class '" + name + "' not found for source. Source: " + source);
         }
@@ -292,6 +280,17 @@ public class BytecodeClassLoader extends SourceClassLoader {
                     ". Class '" + name + "' not found for source. Source: " + source);
         }
         return clazz;
+    }
+
+    private static BytecodeClassLoader getLoader(final ClassLoader classLoader, final Source source) {
+        BytecodeClassLoader loader = null;
+        if (classLoader instanceof SourceClassLoader) {
+            loader = ((SourceClassLoader)classLoader).findBytecodeClassLoaderBySource(source);
+        }
+        if (loader == null) {
+            throw new LoadException("Source not found: " + source);
+        }
+        return loader;
     }
     
     @Override

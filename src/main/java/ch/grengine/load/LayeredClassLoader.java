@@ -199,15 +199,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
 
         // load from top code cache
-        final SingleSourceCode code = topCodeCache.getUpToDateCode(source);
-        BytecodeClassLoader topLoader = topLoaders.get(source);
-        if (topLoader == null || ((SingleSourceCode)topLoader.getCode()).getLastModifiedAtCompileTime() 
-                != code.getLastModifiedAtCompileTime()) {
-            topLoader = new BytecodeClassLoader(this, topLoadMode, code);
-            topLoaders.put(source, topLoader);
-            classLoaderQueue.add(new WeakReference<>(topLoader));
-        }
-        return topLoader.loadMainClass(source);
+        return getTopLoader(source).loadMainClass(source);
     }
 
     /**
@@ -252,6 +244,10 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
 
         // load from top code cache
+        return getTopLoader(source).loadClass(source, name);
+    }
+
+    private BytecodeClassLoader getTopLoader(final Source source) {
         final SingleSourceCode code = topCodeCache.getUpToDateCode(source);
         BytecodeClassLoader topLoader = topLoaders.get(source);
         if (topLoader == null || ((SingleSourceCode)topLoader.getCode()).getLastModifiedAtCompileTime()
@@ -260,7 +256,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             topLoaders.put(source, topLoader);
             classLoaderQueue.add(new WeakReference<>(topLoader));
         }
-        return topLoader.loadClass(source, name);
+        return topLoader;
     }
 
     /**
