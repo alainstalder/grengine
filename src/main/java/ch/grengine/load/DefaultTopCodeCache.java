@@ -226,7 +226,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         public DefaultTopCodeCache build() {
             commit();
             return new DefaultTopCodeCache(this);
-       }
+        }
         
         private void check() {
             if (isCommitted) {

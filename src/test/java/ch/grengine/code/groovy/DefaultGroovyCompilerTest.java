@@ -960,7 +960,7 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testConcurrentGrabs() throws Exception {
+    void testConcurrentGrabs() {
         try {
 
             // given
