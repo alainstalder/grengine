@@ -103,15 +103,9 @@ public class BytecodeClassLoader extends SourceClassLoader {
             packageName = getPackageName(name);
             packageNameLock = null;
             if (packageName != null) {
-                if ((packageNameLock = locks.get(packageName)) == null) {
-                    packageNameLock = new Object();
-                    locks.put(packageName, packageNameLock);
-                }
+                packageNameLock = locks.computeIfAbsent(packageName, l -> new Object());
             }
-            if ((nameLock = locks.get(name)) == null) {
-                nameLock = new Object();
-                locks.put(name, nameLock);
-            }
+            nameLock = locks.computeIfAbsent(name, l -> new Object());
         }
 
         // define package if not already defined
