@@ -22,6 +22,8 @@ import ch.artecat.grengine.except.LoadException;
 import ch.artecat.grengine.source.Source;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -44,6 +46,18 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class BytecodeClassLoader extends SourceClassLoader {
+
+    // available in Java 9 and later
+    private static final Method GET_DEFINED_PACKAGE_METHOD;
+    static {
+        Method method;
+        try {
+            method = BytecodeClassLoader.class.getMethod("getDefinedPackage", String.class);
+        } catch (NoSuchMethodException e) {
+            method = null;
+        }
+        GET_DEFINED_PACKAGE_METHOD = method;
+    }
     
     private final LoadMode loadMode;
     private final Code code;
@@ -111,7 +125,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         // define package if not already defined
         if (packageName != null) {
             synchronized (packageNameLock) {
-                if (getPackage(packageName) == null) {
+                if (getDefinedPackageOrPackage(packageName) == null) {
                     definePackage(packageName);
                 }
             }
@@ -318,6 +332,19 @@ public class BytecodeClassLoader extends SourceClassLoader {
      */
     public Code getCode() {
         return code;
+    }
+
+    // uses getDefinedPackage() for Java 9 and later, with fallback to getPackage()
+    @SuppressWarnings("deprecation")
+    private Package getDefinedPackageOrPackage(String name) {
+        if (GET_DEFINED_PACKAGE_METHOD == null) {
+            return getPackage(name);
+        }
+        try {
+            return (Package)GET_DEFINED_PACKAGE_METHOD.invoke(this, name);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return getPackage(name);
+        }
     }
 
 }
