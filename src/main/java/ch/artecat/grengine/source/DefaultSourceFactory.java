@@ -299,6 +299,12 @@ public class DefaultSourceFactory implements SourceFactory {
          * @since 1.0
          */
         public static final long DEFAULT_URL_TRACKING_LATENCY_MS = 60000L;
+
+        /**
+         * default latency for tracking file last modified (1000ms = 1 second).
+         *
+         * @since 1.0.1
+         */
         public static final long DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS = 1000L;
         
         private boolean isCommitted;

@@ -239,8 +239,10 @@ public class DefaultGroovyCompiler implements Compiler {
                 compiledSourceInfoMap.put(source, compiledSourceInfo);
             });
 
+            // extra object to prevent compiler warning (raw List in Groovy 2, List<GroovyClass> in Groovy 3)
+            Object cuClassesObject = cu.getClasses();
             @SuppressWarnings("unchecked")
-            final Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cu.getClasses()).stream()
+            final Map<String, Bytecode> bytecodeMap = ((List<GroovyClass>)cuClassesObject).stream()
                     .collect(Collectors.toMap(GroovyClass::getName, c -> new Bytecode(c.getName(), c.getBytes())));
 
             final Code code;
@@ -484,6 +486,21 @@ public class DefaultGroovyCompiler implements Compiler {
     // wrapper for GrapeEngine, based on inner details of Groovy sources
     static class GrengineGrapeEngine implements GrapeEngine {
 
+        private static final int DEFAULT_CALLEE_DEPTH;
+        static {
+            int parentDefaultCalleeDepth;
+            Field parentDefaultCalleeDepthField;
+            try {
+                // Groovy 3 and later
+                parentDefaultCalleeDepthField = GrapeEngine.class.getDeclaredField("DEFAULT_CALLEE_DEPTH");
+                parentDefaultCalleeDepth = parentDefaultCalleeDepthField.getInt(GrapeEngine.class);
+            } catch (Exception e) {
+                // earlier Groovy
+                parentDefaultCalleeDepth = 3;
+            }
+            DEFAULT_CALLEE_DEPTH = parentDefaultCalleeDepth + 1;
+        }
+
         // arg keys
         private static final String CALLEE_DEPTH_KEY = "calleeDepth";
         private static final String CLASS_LOADER_KEY = "classLoader";
@@ -503,7 +520,7 @@ public class DefaultGroovyCompiler implements Compiler {
         }
 
         // sets the engine instance in the Grape class (only once, idempotent)
-        static void wrap(Object newLock) {
+        static void wrap(final Object newLock) {
             synchronized (GrengineGrapeEngine.class) {
 
                 // already wrapped?
@@ -518,27 +535,15 @@ public class DefaultGroovyCompiler implements Compiler {
                     }
                 }
 
-                // verify preconditions and get GrapeIvy DEFAULT_DEPTH via reflection
-                final Class<?> grapeEngineClass = Grape.getInstance().getClass();
-                if (!grapeEngineClass.getName().equals("groovy.grape.GrapeIvy")) {
+                // verify preconditions
+                final Class<?> grapeIvyClass = Grape.getInstance().getClass();
+                if (!grapeIvyClass.getName().equals("groovy.grape.GrapeIvy")) {
                     throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
-                            "(current GrapeEngine is " + grapeEngineClass.getName() +
+                            "(current GrapeEngine is " + grapeIvyClass.getName() +
                             ", supported is groovy.grape.GrapeIvy).");
                 }
-                final Field defaultDepthField;
-                try {
-                    defaultDepthField = grapeEngineClass.getDeclaredField("DEFAULT_DEPTH");
-                } catch (NoSuchFieldException e) {
-                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
-                            "(no static field GrapeIvy.DEFAULT_DEPTH)");
-                }
-                defaultDepthField.setAccessible(true);
-                try {
-                    defaultDepth = defaultDepthField.getInt(grapeEngineClass) + 1;
-                } catch (IllegalAccessException e) {
-                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
-                            "(could not read static int field GrapeIvy.DEFAULT_DEPTH: " + e + ")");
-                }
+
+                defaultDepth = DEFAULT_CALLEE_DEPTH;
 
                 // wrap
                 lock = newLock;

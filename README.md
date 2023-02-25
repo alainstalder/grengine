@@ -8,8 +8,8 @@ See [artecat.ch/grengine](https://www.artecat.ch/grengine/) for user manual, jav
 Building
 --------
 
-* Requires Java 8 (or later) and Gradle
-* Build: `./gradlew clean build pom jacoco`
+* Requires Java 8 (or later)
+* Build: `./gradlew clean all`
 
 License
 -------

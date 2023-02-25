@@ -17,7 +17,6 @@
 package ch.artecat.grengine.except;
 
 
-
 /**
  * Exception thrown when loading a class failed.
  * 

@@ -19,7 +19,6 @@ package ch.artecat.grengine.except;
 import ch.artecat.grengine.sources.Sources;
 
 
-
 /**
  * Exception thrown when (Groovy script) compilation failed.
  * 

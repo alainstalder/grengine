@@ -17,7 +17,6 @@
 package ch.artecat.grengine.except;
 
 
-
 /**
  * Exception thrown when creating an instance of {@link groovy.lang.Script} failed.
  * 
