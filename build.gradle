@@ -1,168 +1,168 @@
 
-  plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'jacoco'
+plugins {
+  id 'java'
+  id 'maven-publish'
+  id 'jacoco'
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(8)
   }
+  withSourcesJar()
+  withJavadocJar()
+}
 
-  java {
-    toolchain {
-      languageVersion = JavaLanguageVersion.of(8)
-    }
-    withSourcesJar()
-    withJavadocJar()
+version = '3.0.1'
+
+description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
+
+project.ext {
+  pkg = 'jar'
+}
+
+ext {
+  groovy4GroupId='org.apache.groovy'
+  groovy4Version='4.0.9'
+  groovy3GroupId='org.codehaus.groovy'
+  groovy3Version='3.0.15'
+  groovy2GroupId=groovy3GroupId
+  groovy2Version='2.5.21'
+
+  groovyGroupId=groovy4GroupId
+  groovyVersion=groovy4Version
+  //groovyGroupId=groovy3GroupId
+  //groovyVersion=groovy3Version
+  //groovyGroupId=groovy2GroupId
+  //groovyVersion=groovy2Version
+
+  junitVersion='5.9.2'
+  hamcrestVersion='2.2'
+  ivyVersion='2.5.1'
+  commonsIoVersion='2.11.0'
+}
+
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'grengine', 'Implementation-Version': version, 'provider': 'gradle'
   }
+}
 
-  version = '3.0.1'
-  
-  description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
+dependencies {
+  implementation "$groovyGroupId:groovy:$groovyVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+  testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
+  testImplementation "org.apache.ivy:ivy:$ivyVersion"
+  testImplementation "commons-io:commons-io:$commonsIoVersion"
+}
 
-  project.ext {
-    pkg = 'jar'
+project.group = 'ch.artecat.grengine'
+
+repositories {
+  mavenCentral()
+}
+
+javadoc {
+  configure(options) {
+    windowTitle = "Grengine - $project.version"
+    header = 'Grengine'
+    author = true
+    links = [ 'https://docs.oracle.com/javase/8/docs/api/', 'http://docs.groovy-lang.org/docs/groovy-' + groovyVersion + '/html/api/' ]
+    tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
   }
-  
-  ext {
-    groovy4GroupId='org.apache.groovy'
-    groovy4Version='4.0.9'
-    groovy3GroupId='org.codehaus.groovy'
-    groovy3Version='3.0.15'
-    groovy2GroupId=groovy3GroupId
-    groovy2Version='2.5.21'
+}
 
-    groovyGroupId=groovy4GroupId
-    groovyVersion=groovy4Version
-    //groovyGroupId=groovy3GroupId
-    //groovyVersion=groovy3Version
-    //groovyGroupId=groovy2GroupId
-    //groovyVersion=groovy2Version
+tasks.withType(JavaCompile) {
+  // treat warnings as errors
+  options.compilerArgs << "-Xlint:all" << "-Werror"
+}
 
-    junitVersion='5.9.2'
-    hamcrestVersion='2.2'
-    ivyVersion='2.5.1'
-    commonsIoVersion='2.11.0'
-  }
+test {
+  testLogging.showStandardStreams = true
+  useJUnitPlatform()
+  finalizedBy(jacocoTestReport)
+}
 
-  jar {
-    manifest {
-      attributes 'Implementation-Title': 'grengine', 'Implementation-Version': version, 'provider': 'gradle'
-    }
-  }
+jacocoTestReport {
+  dependsOn(test)
+}
 
-  dependencies {
-    implementation "$groovyGroupId:groovy:$groovyVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
-    testImplementation "org.apache.ivy:ivy:$ivyVersion"
-    testImplementation "commons-io:commons-io:$commonsIoVersion"
-  }
-
-  project.group = 'ch.artecat.grengine'
-
-  repositories {
-    mavenCentral()
-  }
-
-  javadoc {
-    configure(options) {
-      windowTitle = "Grengine - $project.version"
-      header = 'Grengine'
-      author = true
-      links = [ 'https://docs.oracle.com/javase/8/docs/api/', 'http://docs.groovy-lang.org/docs/groovy-' + groovyVersion + '/html/api/' ]
-      tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
-    }
-  }
-
-  tasks.withType(JavaCompile) {
-    // treat warnings as errors
-    options.compilerArgs << "-Xlint:all" << "-Werror"
-  }
-  
-  test {
-    testLogging.showStandardStreams = true
-    useJUnitPlatform()
-    finalizedBy(jacocoTestReport)
-  }
-
-  jacocoTestReport {
-    dependsOn(test)
-  }
-
-  publishing {
-    publications {
-      mavenJava(MavenPublication) {
-        // purposely no dependency to Groovy generated since the group ID depends on the Groovy version...
-        pom {
-          name = 'grengine'
-          description = project.description
-          url = 'https://www.artecat.ch/grengine/'
-          packaging project.ext.pkg
-          licenses {
-            license {
-              name = 'The Apache Software License, Version 2.0'
-              url = 'https://www.apache.org/licenses/LICENSE-2.0'
-              distribution = 'repo'
-            }
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      // purposely no dependency to Groovy generated since the group ID depends on the Groovy version...
+      pom {
+        name = 'grengine'
+        description = project.description
+        url = 'https://www.artecat.ch/grengine/'
+        packaging project.ext.pkg
+        licenses {
+          license {
+            name = 'The Apache Software License, Version 2.0'
+            url = 'https://www.apache.org/licenses/LICENSE-2.0'
+            distribution = 'repo'
           }
-          scm {
-            url = 'https://gitlab.com/jexler/grengine'
-            connection = 'https://gitlab.com/jexler/grengine.git'
-            developerConnection = 'https://gitlab.com/jexler/grengine.git'
-          }
-          developers {
-            developer {
-              id = 'jexler'
-              name = 'Jex Jexler (Alain Stalder)'
-              email = 'jexler@artecat.ch'
-            }
+        }
+        scm {
+          url = 'https://gitlab.com/jexler/grengine'
+          connection = 'https://gitlab.com/jexler/grengine.git'
+          developerConnection = 'https://gitlab.com/jexler/grengine.git'
+        }
+        developers {
+          developer {
+            id = 'jexler'
+            name = 'Jex Jexler (Alain Stalder)'
+            email = 'jexler@artecat.ch'
           }
         }
       }
     }
+  }
 
-    // "publish" locally in build directory
-    repositories {
-      maven {
-        url = layout.buildDirectory.dir('pubs')
-      }
+  // "publish" locally in build directory
+  repositories {
+    maven {
+      url = layout.buildDirectory.dir('pubs')
     }
   }
+}
 
-  task copyPomToLibs(type: Copy) {
-    dependsOn(generatePomFileForMavenJavaPublication)
-    from "$buildDir/publications/mavenJava"
-    into "$buildDir/libs"
-    include 'pom-default.xml'
-    rename 'pom-default.xml', "${project.name}-${project.version}.pom"
-  }
+task copyPomToLibs(type: Copy) {
+  dependsOn(generatePomFileForMavenJavaPublication)
+  from "$buildDir/publications/mavenJava"
+  into "$buildDir/libs"
+  include 'pom-default.xml'
+  rename 'pom-default.xml', "${project.name}-${project.version}.pom"
+}
 
-  task copyJarsAndPomToReleases(type: Copy) {
-    dependsOn(jar)
-    dependsOn(sourcesJar)
-    dependsOn(javadocJar)
-    dependsOn(copyPomToLibs)
-    from "$buildDir/libs"
-    into "$buildDir/releases/${project.version}"
-    include '*.jar'
-    include '*.pom'
-  }
+task copyJarsAndPomToReleases(type: Copy) {
+  dependsOn(jar)
+  dependsOn(sourcesJar)
+  dependsOn(javadocJar)
+  dependsOn(copyPomToLibs)
+  from "$buildDir/libs"
+  into "$buildDir/releases/${project.version}"
+  include '*.jar'
+  include '*.pom'
+}
 
-  task copyJavadocToReleases(type: Copy) {
-    dependsOn(javadoc)
-    from "$buildDir/docs/javadoc"
-    into "$buildDir/releases/${project.version}/javadoc"
-    include '**/*'
-  }
+task copyJavadocToReleases(type: Copy) {
+  dependsOn(javadoc)
+  from "$buildDir/docs/javadoc"
+  into "$buildDir/releases/${project.version}/javadoc"
+  include '**/*'
+}
 
-  task copyJacocoToReleases(type: Copy) {
-    dependsOn(jacocoTestReport)
-    from "$buildDir/reports/jacoco/test/html"
-    into "$buildDir/releases/${project.version}/jacoco"
-    include '**/*'
-  }
+task copyJacocoToReleases(type: Copy) {
+  dependsOn(jacocoTestReport)
+  from "$buildDir/reports/jacoco/test/html"
+  into "$buildDir/releases/${project.version}/jacoco"
+  include '**/*'
+}
 
-  task all {
-    dependsOn(copyJarsAndPomToReleases)
-    dependsOn(copyJavadocToReleases)
-    dependsOn(copyJacocoToReleases)
-  }
+task all {
+  dependsOn(copyJarsAndPomToReleases)
+  dependsOn(copyJavadocToReleases)
+  dependsOn(copyJacocoToReleases)
+}
