@@ -13,7 +13,7 @@ java {
   withJavadocJar()
 }
 
-version = '3.0.1'
+version = '3.0.2'
 
 description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
@@ -31,10 +31,6 @@ ext {
 
   groovyGroupId=groovy4GroupId
   groovyVersion=groovy4Version
-  //groovyGroupId=groovy3GroupId
-  //groovyVersion=groovy3Version
-  //groovyGroupId=groovy2GroupId
-  //groovyVersion=groovy2Version
 
   junitVersion='5.9.2'
   hamcrestVersion='2.2'

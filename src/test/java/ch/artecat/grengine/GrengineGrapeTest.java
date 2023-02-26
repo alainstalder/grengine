@@ -45,10 +45,29 @@ import static org.junit.jupiter.api.Assertions.fail;
 class GrengineGrapeTest {
 
     @Test
-    void testHelloWorldWithGrape() {
+    void testHelloWorldWithGrape_unwrapped() {
+        printVersions();
         Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
                 + "import com.google.common.base.Ascii\n" +
                 "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
+    }
+
+    @Test
+    void testHelloWorldWithGrape_wrapped() {
+        printVersions();
+        try {
+            Grengine.Grape.activate();
+            Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
+                    + "import com.google.common.base.Ascii\n" +
+                    "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
+        } finally {
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    private static void printVersions() {
+        System.out.println("Java: " + System.getProperty("java.version"));
+        System.out.println("Groovy: " + GroovyClassLoader.class.getPackage().getImplementationVersion());
     }
 
     @Test

@@ -64,6 +64,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class DefaultGroovyCompilerTest {
 
+    // so far same value for all Groovy versions up to Groovy 4
+    private static final int GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH = 3;
+
     @Test
     void testConstructDefaults() {
 
@@ -569,8 +572,9 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is((Object) Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -582,8 +586,9 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is((Object) Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -596,7 +601,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
             // when (disable again, must be idempotent, too)
 
@@ -607,7 +612,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
             // when (enable once more)
 
@@ -617,8 +622,9 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is((Object) Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -631,7 +637,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -655,7 +661,8 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -668,7 +675,8 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -681,7 +689,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
             // when (disable again, must be idempotent, too)
 
@@ -692,7 +700,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
             // when (enable once more)
 
@@ -703,7 +711,8 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(4));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
+                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
             assertThat(((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine.getClass().getName(),
                     is("groovy.grape.GrapeIvy"));
 
@@ -716,7 +725,7 @@ class DefaultGroovyCompilerTest {
 
             assertThat(engine.getClass().getName(), is("groovy.grape.GrapeIvy"));
             assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.defaultDepth, is(0));
+            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
 
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();

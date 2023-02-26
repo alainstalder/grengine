@@ -486,21 +486,6 @@ public class DefaultGroovyCompiler implements Compiler {
     // wrapper for GrapeEngine, based on inner details of Groovy sources
     static class GrengineGrapeEngine implements GrapeEngine {
 
-        private static final int DEFAULT_CALLEE_DEPTH;
-        static {
-            int parentDefaultCalleeDepth;
-            Field parentDefaultCalleeDepthField;
-            try {
-                // Groovy 3 and later
-                parentDefaultCalleeDepthField = GrapeEngine.class.getDeclaredField("DEFAULT_CALLEE_DEPTH");
-                parentDefaultCalleeDepth = parentDefaultCalleeDepthField.getInt(GrapeEngine.class);
-            } catch (Exception e) {
-                // earlier Groovy
-                parentDefaultCalleeDepth = 3;
-            }
-            DEFAULT_CALLEE_DEPTH = parentDefaultCalleeDepth + 1;
-        }
-
         // arg keys
         private static final String CALLEE_DEPTH_KEY = "calleeDepth";
         private static final String CLASS_LOADER_KEY = "classLoader";
@@ -508,8 +493,10 @@ public class DefaultGroovyCompiler implements Compiler {
         // the lock for calls to GrapeEngine methods
         static volatile Object lock;
 
-        // default depth of wrapped GrapeEngine plus one
-        static volatile int defaultDepth;
+        // default callee depth of (unwrapped) GrapeEngine instance;
+        // value has been 3 up to at least Groovy 4; since Groovy 3
+        // publicly declared as GrapeEngine.DEFAULT_CALLEE_DEPTH
+        static volatile int grapeInstanceDefaultCalleeDepth;
 
         // the wrapped engine
         final GrapeEngine innerEngine;
@@ -543,7 +530,14 @@ public class DefaultGroovyCompiler implements Compiler {
                             ", supported is groovy.grape.GrapeIvy).");
                 }
 
-                defaultDepth = DEFAULT_CALLEE_DEPTH;
+                try {
+                    // Groovy 3 and later
+                    final Field field = GrapeEngine.class.getDeclaredField("DEFAULT_CALLEE_DEPTH");
+                    grapeInstanceDefaultCalleeDepth = field.getInt(GrapeEngine.class);
+                } catch (Throwable t) {
+                    // earlier Groovy
+                    grapeInstanceDefaultCalleeDepth = 3;
+                }
 
                 // wrap
                 lock = newLock;
@@ -575,7 +569,7 @@ public class DefaultGroovyCompiler implements Compiler {
                     }.unwrap();
                 }
                 lock = null;
-                defaultDepth = 0;
+                grapeInstanceDefaultCalleeDepth = 0;
             }
         }
 
@@ -590,7 +584,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public Object grab(final Map args) {
             synchronized(lock) {
-                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth + 1);
+                adjustCalleeDepth(args);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -609,7 +603,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public Object grab(final Map args, final Map... dependencies) {
             synchronized(lock) {
-                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth);
+                adjustCalleeDepth(args);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -635,7 +629,7 @@ public class DefaultGroovyCompiler implements Compiler {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         public URI[] resolve(final Map args, final Map... dependencies) {
             synchronized(lock) {
-                args.computeIfAbsent(CALLEE_DEPTH_KEY, k -> defaultDepth);
+                adjustCalleeDepth(args);
                 return innerEngine.resolve(args, dependencies);
             }
         }
@@ -661,6 +655,12 @@ public class DefaultGroovyCompiler implements Compiler {
             synchronized(lock) {
                 innerEngine.addResolver(args);
             }
+        }
+
+        private static void adjustCalleeDepth(Map<String, Object> args) {
+            Object calleeDepthObj = args.get(CALLEE_DEPTH_KEY);
+            int calleeDepth = (calleeDepthObj == null) ? grapeInstanceDefaultCalleeDepth : (int)calleeDepthObj;
+            args.put(CALLEE_DEPTH_KEY, calleeDepth + 1);
         }
 
     }
