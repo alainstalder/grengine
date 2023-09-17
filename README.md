@@ -3,7 +3,10 @@ Grengine
 
 Grengine is an engine for running and embedding Groovy in a Java VM.
 
-See [artecat.ch/grengine](https://www.artecat.ch/grengine/) for user manual, javadoc, downloads and more.
+See [artecat.ch/grengine](https://www.artecat.ch/grengine/)
+for [user manual](https://www.artecat.ch/grengine/manual.html),
+[javadoc](https://www.artecat.ch/grengine/javadoc/),
+and more.
 
 Building
 --------
