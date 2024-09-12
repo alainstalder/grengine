@@ -104,21 +104,17 @@ public class BytecodeClassLoader extends SourceClassLoader {
             return null;
         }
 
-        byte[] bytes = bc.getBytes();
         Class<?> clazz;
 
         final String packageName;
-        Object packageNameLock;
-        Object nameLock;
+        final Object packageNameLock;
+        final Object nameLock;
         synchronized(locks) {
             if ((clazz = findLoadedClass(name)) != null) {
                 return clazz;
             }
             packageName = getPackageName(name);
-            packageNameLock = null;
-            if (packageName != null) {
-                packageNameLock = locks.computeIfAbsent(packageName, l -> new Object());
-            }
+            packageNameLock = (packageName == null) ? null : locks.computeIfAbsent(packageName, l -> new Object());
             nameLock = locks.computeIfAbsent(name, l -> new Object());
         }
 
@@ -134,7 +130,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         // define class if not already defined
         synchronized (nameLock) {
             if ((clazz = findLoadedClass(name)) == null) {
-                clazz = defineClass(name, bytes);
+                clazz = defineClass(name, bc.getBytes());
                 classQueue.add(new WeakReference<>(clazz));
             }
         }
@@ -142,7 +138,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         // OK to remove locks from map here, because at this point always
         // both class and package have already been defined, so it does
         // not matter whether other threads lock on these or other locks
-        // for the same class or package names any more.
+        // for the same class or package names anymore.
         synchronized(locks) {
             if (packageNameLock != null) {
                 locks.remove(packageName);
