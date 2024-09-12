@@ -22,20 +22,26 @@ project.ext {
 }
 
 ext {
+  // (requires languageVersion 11 above)
+  groovy5GroupId='org.apache.groovy'
+  groovy5Version='5.0.0-alpha-9'
+
   groovy4GroupId='org.apache.groovy'
-  groovy4Version='4.0.9'
+  groovy4Version='4.0.22'
+
   groovy3GroupId='org.codehaus.groovy'
-  groovy3Version='3.0.15'
-  groovy2GroupId=groovy3GroupId
-  groovy2Version='2.5.21'
+  groovy3Version='3.0.22'
+
+  groovy2GroupId='org.codehaus.groovy'
+  groovy2Version='2.5.23'
 
   groovyGroupId=groovy4GroupId
   groovyVersion=groovy4Version
 
-  junitVersion='5.9.2'
-  hamcrestVersion='2.2'
-  ivyVersion='2.5.1'
-  commonsIoVersion='2.11.0'
+  junitVersion='5.11.0'
+  hamcrestVersion='3.0'
+  ivyVersion='2.5.2'
+  commonsIoVersion='2.16.1'
 }
 
 jar {
