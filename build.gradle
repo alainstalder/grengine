@@ -97,7 +97,7 @@ publishing {
       pom {
         name = 'grengine'
         description = project.description
-        url = 'https://www.artecat.ch/grengine/'
+        url = 'https://grengine.ch/'
         packaging project.ext.pkg
         licenses {
           license {
@@ -107,9 +107,9 @@ publishing {
           }
         }
         scm {
-          url = 'https://gitlab.com/jexler/grengine'
-          connection = 'https://gitlab.com/jexler/grengine.git'
-          developerConnection = 'https://gitlab.com/jexler/grengine.git'
+          url = 'https://github.com/jexler/grengine'
+          connection = 'https://github.com/jexler/grengine.git'
+          developerConnection = 'https://github.com/jexler/grengine.git'
         }
         developers {
           developer {
