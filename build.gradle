@@ -59,7 +59,7 @@ dependencies {
   testImplementation "commons-io:commons-io:$commonsIoVersion"
 }
 
-project.group = 'ch.artecat.grengine'
+project.group = 'ch.grengine'
 
 repositories {
   mavenCentral()
