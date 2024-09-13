@@ -132,8 +132,8 @@ publishing {
 
 task copyPomToLibs(type: Copy) {
   dependsOn(generatePomFileForMavenJavaPublication)
-  from "$buildDir/publications/mavenJava"
-  into "$buildDir/libs"
+  from "$layout.buildDirectory/publications/mavenJava"
+  into "$layout.buildDirectory/libs"
   include 'pom-default.xml'
   rename 'pom-default.xml', "${project.name}-${project.version}.pom"
 }
@@ -143,23 +143,23 @@ task copyJarsAndPomToReleases(type: Copy) {
   dependsOn(sourcesJar)
   dependsOn(javadocJar)
   dependsOn(copyPomToLibs)
-  from "$buildDir/libs"
-  into "$buildDir/releases/${project.version}"
+  from "$layout.buildDirectory/libs"
+  into "$layout.buildDirectory/releases/${project.version}"
   include '*.jar'
   include '*.pom'
 }
 
 task copyJavadocToReleases(type: Copy) {
   dependsOn(javadoc)
-  from "$buildDir/docs/javadoc"
-  into "$buildDir/releases/${project.version}/javadoc"
+  from "$layout.buildDirectory/docs/javadoc"
+  into "$layout.buildDirectory/releases/${project.version}/javadoc"
   include '**/*'
 }
 
 task copyJacocoToReleases(type: Copy) {
   dependsOn(jacocoTestReport)
-  from "$buildDir/reports/jacoco/test/html"
-  into "$buildDir/releases/${project.version}/jacoco"
+  from "$layout.buildDirectory/reports/jacoco/test/html"
+  into "$layout.buildDirectory/releases/${project.version}/jacoco"
   include '**/*'
 }
 
