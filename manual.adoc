@@ -3,7 +3,6 @@ image:grengine.jpg["Grengine", link="https://grengine.ch/"]
 = Grengine User Manual
 
 :last-update-label:
-:toc:
 
 https://grengine.ch/[Grengine] is an engine for running and embedding Groovy in a Java VM.
 
