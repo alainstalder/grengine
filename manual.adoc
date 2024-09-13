@@ -30,7 +30,7 @@ https://grengine.ch/[Grengine] is an engine for running and embedding Groovy in 
   even if the same Groovy scripts are used for all users.
   Note, however, that class loading is a rather expensive operation
   with limited garbage collection, hence this feature does not scale
-  well with larger numbers of user sessions (more details further below).
+  well with larger numbers of sessions (more details further below).
   
 * _Safety_: Grengine works with Java VM 8 or later and works with
   basically any Groovy version that runs on Java 8 or later.
