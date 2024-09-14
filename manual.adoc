@@ -1370,10 +1370,9 @@ to make things with Groovy that are yet unseen!
 
 === Grengine 4
 
-==== 4.0.0 (TODO UPCOMING...)
+==== 4.0.0 (TODO)
 
-* Packages `ch.grengine`.
-* User manual included in source repo.
+* Changed: Packages back to `ch.grengine`.
 
 === Grengine 3
 

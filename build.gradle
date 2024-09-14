@@ -13,7 +13,7 @@ java {
   withJavadocJar()
 }
 
-version = '3.0.2'
+version = '4.0.0-SNAPSHOT'
 
 description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
@@ -132,8 +132,8 @@ publishing {
 
 task copyPomToLibs(type: Copy) {
   dependsOn(generatePomFileForMavenJavaPublication)
-  from "$layout.buildDirectory/publications/mavenJava"
-  into "$layout.buildDirectory/libs"
+  from layout.buildDirectory.dir('publications/mavenJava')
+  into layout.buildDirectory.dir('libs')
   include 'pom-default.xml'
   rename 'pom-default.xml', "${project.name}-${project.version}.pom"
 }
@@ -143,23 +143,23 @@ task copyJarsAndPomToReleases(type: Copy) {
   dependsOn(sourcesJar)
   dependsOn(javadocJar)
   dependsOn(copyPomToLibs)
-  from "$layout.buildDirectory/libs"
-  into "$layout.buildDirectory/releases/${project.version}"
+  from layout.buildDirectory.dir('libs')
+  into layout.buildDirectory.dir("releases/${project.version}")
   include '*.jar'
   include '*.pom'
 }
 
 task copyJavadocToReleases(type: Copy) {
   dependsOn(javadoc)
-  from "$layout.buildDirectory/docs/javadoc"
-  into "$layout.buildDirectory/releases/${project.version}/javadoc"
+  from layout.buildDirectory.dir('docs/javadoc')
+  into layout.buildDirectory.dir("releases/${project.version}/javadoc")
   include '**/*'
 }
 
 task copyJacocoToReleases(type: Copy) {
   dependsOn(jacocoTestReport)
-  from "$layout.buildDirectory/reports/jacoco/test/html"
-  into "$layout.buildDirectory/releases/${project.version}/jacoco"
+  from layout.buildDirectory.dir('reports/jacoco/test/html')
+  into layout.buildDirectory.dir("releases/${project.version}/jacoco")
   include '**/*'
 }
 
