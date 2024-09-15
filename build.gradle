@@ -13,7 +13,7 @@ java {
   withJavadocJar()
 }
 
-version = '4.0.0-SNAPSHOT'
+version = '3.1.0-SNAPSHOT'
 
 description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
