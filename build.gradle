@@ -107,15 +107,15 @@ publishing {
           }
         }
         scm {
-          url = 'https://github.com/jexler/grengine'
-          connection = 'https://github.com/jexler/grengine.git'
-          developerConnection = 'https://github.com/jexler/grengine.git'
+          url = 'https://github.com/alainstalder/grengine'
+          connection = 'https://github.com/alainstalder/grengine.git'
+          developerConnection = 'https://github.com/alainstalder/grengine.git'
         }
         developers {
           developer {
-            id = 'jexler'
-            name = 'Jex Jexler (Alain Stalder)'
-            email = 'jexler@artecat.ch'
+            id = 'alainstalder'
+            name = 'Alain Stalder'
+            email = 'astalder@span.ch'
           }
         }
       }
