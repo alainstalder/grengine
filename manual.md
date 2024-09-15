@@ -1382,7 +1382,21 @@ to lean more towards the side of dynamic scripting.
 I hope you will have fun with Grengine and that it will allow you
 to make things with Groovy that are yet unseen!
 
+&ast; Performance on a Java VM depends on lots of parameters.
+Beyond the order of magnitude not too much attention should be
+given to the informal numbers presented here. Generally, I find it
+best to measure performance as closely as possible to an actually
+deployed situation and to compare the effect of different
+optimization attempts there, simply because there are almost
+always surprises in practice.
+
 ## Release Notes
+
+Required Java versions in a nutshell:
+
+* Grengine 1: Java 6 or later.
+* Grengine 2+3: Java 8 or later.
+* Grengine 4: Not released, yet, presumably Java 11 or later (required for Groovy 5).
 
 ### Grengine 3
 
