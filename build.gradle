@@ -8,6 +8,8 @@ plugins {
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(8)
+    vendor = JvmVendorSpec.ADOPTIUM // Temurin
+    implementation = JvmImplementation.VENDOR_SPECIFIC
   }
   withSourcesJar()
   withJavadocJar()
@@ -39,6 +41,7 @@ ext {
   groovyVersion=groovy4Version
 
   junitVersion='5.11.0'
+  junitPlatformVersion='1.11.0'
   hamcrestVersion='3.0'
   ivyVersion='2.5.2'
   commonsIoVersion='2.16.1'
@@ -52,8 +55,11 @@ jar {
 
 dependencies {
   implementation "$groovyGroupId:groovy:$groovyVersion"
+
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
+
   testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
   testImplementation "org.apache.ivy:ivy:$ivyVersion"
   testImplementation "commons-io:commons-io:$commonsIoVersion"
@@ -167,4 +173,5 @@ task all {
   dependsOn(copyJarsAndPomToReleases)
   dependsOn(copyJavadocToReleases)
   dependsOn(copyJacocoToReleases)
+  dependsOn(publishToMavenLocal)
 }
