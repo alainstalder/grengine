@@ -924,7 +924,7 @@ can be obtained with `gren.getLoader()`.
 Note that the `Loader` class is an opaque wrapper around an actual class
 loader.
 
-==== Alternative Session Separation
+#### Alternative Session Separation
 
 The following code addresses the issue of shared static variables differently,
 namely by not allowing static (non-final) variables in Groovy sources or
@@ -1400,7 +1400,7 @@ Required Java versions in a nutshell:
 
 ### Grengine 3
 
-#### 3.1.0 (TODO)
+#### 3.1.0 (18 September 2024)
 
 * Changed: Packages back to `ch.grengine` and website back to [grengine.ch](https://grengine.ch/).
 
