@@ -99,6 +99,7 @@ jacocoTestReport {
 publishing {
   publications {
     mavenJava(MavenPublication) {
+      from components.java
       // purposely no dependency to Groovy generated since the group ID depends on the Groovy version...
       pom {
         name = 'grengine'
@@ -128,31 +129,42 @@ publishing {
     }
   }
 
-  // "publish" locally in build directory
   repositories {
-    maven {
-      url = layout.buildDirectory.dir('pubs')
-    }
+    mavenLocal()
   }
 }
 
-task copyPomToLibs(type: Copy) {
+task copyMetadataModuleToLibs(type: Copy) {
+  dependsOn(generateMetadataFileForMavenJavaPublication)
   dependsOn(generatePomFileForMavenJavaPublication)
+  dependsOn(publishMavenJavaPublicationToMavenLocal)
+  from layout.buildDirectory.dir('publications/mavenJava')
+  into layout.buildDirectory.dir('libs')
+  include 'module.json'
+  rename 'module.json', "${project.name}-${project.version}.module"
+}
+
+task copyPomToLibs(type: Copy) {
+  dependsOn(generateMetadataFileForMavenJavaPublication)
+  dependsOn(generatePomFileForMavenJavaPublication)
+  dependsOn(publishMavenJavaPublicationToMavenLocal)
   from layout.buildDirectory.dir('publications/mavenJava')
   into layout.buildDirectory.dir('libs')
   include 'pom-default.xml'
   rename 'pom-default.xml', "${project.name}-${project.version}.pom"
 }
 
-task copyJarsAndPomToReleases(type: Copy) {
+task copyJarsAndMetadataModuleAndPomToReleases(type: Copy) {
   dependsOn(jar)
   dependsOn(sourcesJar)
   dependsOn(javadocJar)
+  dependsOn(copyMetadataModuleToLibs)
   dependsOn(copyPomToLibs)
   from layout.buildDirectory.dir('libs')
   into layout.buildDirectory.dir("releases/${project.version}")
   include '*.jar'
   include '*.pom'
+  include '*.module'
 }
 
 task copyJavadocToReleases(type: Copy) {
@@ -170,7 +182,7 @@ task copyJacocoToReleases(type: Copy) {
 }
 
 task all {
-  dependsOn(copyJarsAndPomToReleases)
+  dependsOn(copyJarsAndMetadataModuleAndPomToReleases)
   dependsOn(copyJavadocToReleases)
   dependsOn(copyJacocoToReleases)
   dependsOn(publishToMavenLocal)
