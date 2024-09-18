@@ -24,7 +24,7 @@ project.ext {
 }
 
 ext {
-  // (requires languageVersion 11 above)
+  // (Groovy 5 requires languageVersion 11 above)
   groovy5GroupId='org.apache.groovy'
   groovy5Version='5.0.0-alpha-9'
 
