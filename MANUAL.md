@@ -1420,7 +1420,7 @@ Required Java versions in a nutshell:
 
 * Changed: Packages renamed from `ch.grengine.\*` to
   `ch.artecat.grengine.*` for Grengine's new home at
-  [artecat.ch/grengine](https://www.artecat.ch/grengine/).
+  artecat.ch/grengine.
 * Fix: `ByteCodeClassLoader` internally uses `getDefinedPackage()` if
   available (Java 9 and later), else continues to use `getPackage()`.
 
