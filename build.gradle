@@ -81,7 +81,7 @@ javadoc {
   }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
   // treat warnings as errors
   options.compilerArgs << "-Xlint:all" << "-Werror"
 }
@@ -134,7 +134,7 @@ publishing {
   }
 }
 
-task copyMetadataModuleToLibs(type: Copy) {
+tasks.register('copyMetadataModuleToLibs', Copy) {
   dependsOn(generateMetadataFileForMavenJavaPublication)
   dependsOn(generatePomFileForMavenJavaPublication)
   dependsOn(publishMavenJavaPublicationToMavenLocal)
@@ -144,7 +144,7 @@ task copyMetadataModuleToLibs(type: Copy) {
   rename 'module.json', "${project.name}-${project.version}.module"
 }
 
-task copyPomToLibs(type: Copy) {
+tasks.register('copyPomToLibs', Copy) {
   dependsOn(generateMetadataFileForMavenJavaPublication)
   dependsOn(generatePomFileForMavenJavaPublication)
   dependsOn(publishMavenJavaPublicationToMavenLocal)
@@ -154,7 +154,7 @@ task copyPomToLibs(type: Copy) {
   rename 'pom-default.xml', "${project.name}-${project.version}.pom"
 }
 
-task copyJarsAndMetadataModuleAndPomToReleases(type: Copy) {
+tasks.register('copyJarsAndMetadataModuleAndPomToReleases', Copy) {
   dependsOn(jar)
   dependsOn(sourcesJar)
   dependsOn(javadocJar)
@@ -167,21 +167,21 @@ task copyJarsAndMetadataModuleAndPomToReleases(type: Copy) {
   include '*.module'
 }
 
-task copyJavadocToReleases(type: Copy) {
+tasks.register('copyJavadocToReleases', Copy) {
   dependsOn(javadoc)
   from layout.buildDirectory.dir('docs/javadoc')
   into layout.buildDirectory.dir("releases/${project.version}/javadoc")
   include '**/*'
 }
 
-task copyJacocoToReleases(type: Copy) {
+tasks.register('copyJacocoToReleases', Copy) {
   dependsOn(jacocoTestReport)
   from layout.buildDirectory.dir('reports/jacoco/test/html')
   into layout.buildDirectory.dir("releases/${project.version}/jacoco")
   include '**/*'
 }
 
-task all {
+tasks.register('all') {
   dependsOn(copyJarsAndMetadataModuleAndPomToReleases)
   dependsOn(copyJavadocToReleases)
   dependsOn(copyJacocoToReleases)
