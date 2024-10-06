@@ -96,6 +96,8 @@ jacocoTestReport {
   dependsOn(test)
 }
 
+// IntelliJ shows lots of warnings below, but is just how Gradle documents it (Oct 2024):
+// https://docs.gradle.org/current/userguide/publishing_maven.html#ex-customizing-the-pom-file
 publishing {
   publications {
     mavenJava(MavenPublication) {
