@@ -1008,8 +1008,8 @@ compiler from Java sources _Java classes_.
   make sure you set the system property `groovy.use.classvalue=true` in the
   context of Grengine (or when using the Groovy JDK to compile and run
   scripts). Note that under different circumstances, like the
-  one described in [GROOVY-7591](https://issues.apache.org/jira/browse/GROOVY-7591):
-  Use of ClassValue causes major memory leak] you would instead have had to
+  one described in [GROOVY-7591](https://issues.apache.org/jira/browse/GROOVY-7591)
+  [Use of ClassValue causes major memory leak] you would instead have had to
   set it to false! That Groovy bug is actually in turn due to an issue in
   Oracle/OpenJDK Java VMs regarding garbage collection under some
   circumstances, more precisely a general issue that also affects a new
@@ -1090,7 +1090,7 @@ classes from those dependencies are attempted to be loaded by the Java VM.
 sources that grab dependencies with Grape, see
 [GROOVY-8108](https://issues.apache.org/jira/browse/GROOVY-8108).)
 
-Moreover, there is an open bug in Groovy Grape,
+Moreover, there is an open bug* in Groovy Grape,
 [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407),
 which is hard to fix in full generality. Namely, grabs are only thread-safe
 if they all go through the same GroovyClassLoader.
@@ -1098,12 +1098,18 @@ They are not if you use different GroovyClassLoader instances, and also not
 across different class loaders for the Grape classes or different Java VMs
 ([GROOVY-8097](https://issues.apache.org/jira/browse/GROOVY-8097)).
 
+\* As of January 2025
+[GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+is nominally resolved upstream,
+but the issue(s) in the underlying Ivy are not;
+see the link for details.
+
 Grengine provides easy support for alleviating GROOVY-7407 in practice, except
 across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
 
 Optionally the `GrapeEngine` in the `Grape.class`, which is obtained with
-`Grape.getInstance()` -- and so far is always an instance of a class called
-`GrapeIvy` (using Apache Ivy to resolve dependencies) -- is wrapped with a
+`Grape.getInstance()` – and so far is always an instance of a class called
+`GrapeIvy` (using Apache Ivy to resolve dependencies) – is wrapped with a
 Grengine-specific instance that locks all grabs on `Grape.class` or on a
 freely eligible lock object and passes on all calls to the original
 `GrapeEngine` instance.
@@ -1434,16 +1440,16 @@ Required Java versions in a nutshell:
   Under the hood, the code has been streamlined by using Java 8 features,
   and unit tests have been significantly regularized and streamlined.
 * Changed:
-** `GrengineException` and its subclasses are now `RuntimeExceptions`.
-** Null method arguments now lead to `NullPointerException` instead
+  * `GrengineException` and its subclasses are now `RuntimeExceptions`.
+  * Null method arguments now lead to `NullPointerException` instead
    of `IllegalArgumentException`.
 * Removed:
-** `SourceUtil#CHARSET_UTF_8` => use `StandardCharsets.UTF_8`.
-** `SourceUtil#getTextStartNoLinebreaks()`
+  * `SourceUtil#CHARSET_UTF_8` => use `StandardCharsets.UTF_8`.
+  * `SourceUtil#getTextStartNoLinebreaks()`
    => use `SourceUtil#getTextStartNoLineBreaks()`.
-** `SourcesUtil#sourcesArrayToList()` => use `Arrays.asList()`.
-** `CodeUtil#codeArrayToList()` => use `Arrays.asList()`.
-** `CodeUtil` class (the above was its only method).
+  * `SourcesUtil#sourcesArrayToList()` => use `Arrays.asList()`.
+  * `CodeUtil#codeArrayToList()` => use `Arrays.asList()`.
+  * `CodeUtil` class (the above was its only method).
 
 ### Grengine 1
 
