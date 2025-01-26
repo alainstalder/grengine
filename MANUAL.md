@@ -1100,9 +1100,14 @@ across different class loaders for the Grape classes or different Java VMs
 
 \* As of January 2025
 [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
-is nominally resolved upstream,
-but the issue(s) in the underlying Ivy are not;
-see the link for details.
+has been nominally marked as "resolved" upstream.
+The added default setting for the underlying Ivy is an improvement,
+at least presumably in some cases,
+while the issue(s) in the underlying Ivy are not resolved,
+i.e. the workaround described below is still very helpful in practice,
+at least in cases where there are parallel request to grab
+the same artifact (if using the same loaded "Groovy" classes).
+See JIRA issue for details.
 
 Grengine provides easy support for alleviating GROOVY-7407 in practice, except
 across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
