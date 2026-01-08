@@ -1406,8 +1406,7 @@ always surprises in practice.
 Required Java versions in a nutshell:
 
 * Grengine 1: Java 6 or later.
-* Grengine 2+3: Java 8 or later.
-* Grengine 4: Not released, yet, presumably Java 11 or later (required for Groovy 5).
+* Grengine 2+3: Java 8 or later. (Groovy 5 requires Java 11 or later.)
 
 ### Grengine 3
 
