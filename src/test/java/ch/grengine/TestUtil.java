@@ -36,6 +36,7 @@ public class TestUtil {
 
     public static final int GROOVY_MAJOR = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
 
+    @SuppressWarnings("serial")
     public static class FileThatThrowsInGetCanonicalFile extends File {
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }
