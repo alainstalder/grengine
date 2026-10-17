@@ -34,7 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestUtil {
 
-    public static final int GROOVY_MAJOR = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
+    public static final int JDK_MAJOR_VERSION;
+    static {
+        String v = System.getProperty("java.specification.version");
+        JDK_MAJOR_VERSION = Integer.parseInt(v.startsWith("1.") ? v.substring(2) : v);
+    }
+    public static final int GROOVY_MAJOR_VERSION = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
 
     @SuppressWarnings("serial")
     public static class FileThatThrowsInGetCanonicalFile extends File {
@@ -144,6 +149,20 @@ public class TestUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Groovy 2.5 is end of life. Its ASM cannot load JDK 25 bytecode, which is involved
+     * in some unit tests here if run under JDK 25 (or later). The workaround if you really
+     * still need to run Groovy 2.5 seems to be to turn off ASM resolving, which however
+     * comes at a certain performance cost.
+     *
+     * That this workaround basically works is tested in {@link GrengineTest}.
+     *
+     * @return true if JDK 25 or later and Groovy < 3, else false.
+     */
+    public static boolean isGroovy2xWithJdk25Plus() {
+        return JDK_MAJOR_VERSION >= 25 && GROOVY_MAJOR_VERSION < 3;
     }
 
 }

@@ -1,5 +1,9 @@
 package ch.grengine.manual;
 
+import ch.grengine.Grengine;
+import ch.grengine.source.DefaultSourceFactory;
+import ch.grengine.source.Source;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -9,14 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import ch.grengine.Grengine;
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.Source;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -27,8 +27,7 @@ public class UserManualJavaTest {
     @TempDir
     public File tempDir;
 
-    @Disabled
-    @Test
+    //@Test
     public void testRunningIndividualScripts_Basic() throws Exception {
         //--------------------------------------------
         Grengine gren = new Grengine();

@@ -16,19 +16,19 @@
 
 package ch.grengine.code.groovy;
 
-import ch.grengine.code.DefaultCode;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.DefaultCode;
 import ch.grengine.code.DefaultSingleSourceCode;
 import ch.grengine.except.CompileException;
 import ch.grengine.load.BytecodeClassLoader;
 import ch.grengine.load.LoadMode;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
@@ -49,7 +49,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.GROOVY_MAJOR;
+import static ch.grengine.TestUtil.GROOVY_MAJOR_VERSION;
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.TestUtil.toRuntimeException;
@@ -1041,7 +1041,7 @@ class DefaultGroovyCompilerTest {
     void testWrappingFails_noGrapeEngine() {
 
         // skip test if earlier Groovy where there is always an engine (and no engine could not easily be mocked)
-        assumeTrue(GROOVY_MAJOR >= 6);
+        assumeTrue(GROOVY_MAJOR_VERSION >= 6);
 
         final String grapeImplKey = "groovy.grape.impl";
         final String grapeImplValue = System.getProperty(grapeImplKey);

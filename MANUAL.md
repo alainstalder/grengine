@@ -1410,11 +1410,24 @@ Required Java versions in a nutshell:
 
 * Grengine 1: Java 6 or later.
 * Grengine 2+3: Java 8 or later.
-  (Groovy 5 requires Java 11 or later, Groovy 6 requires Java 17 or later.)
+
+Some more details:
+
+* Tested the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (8 / 11 / 17 / 21 / 25).
+* See testbed/matrix.sh in the git repo for exact versions.
+* Groovy 5 requires Java 11 or later, Groovy 6 requires Java 17 or later.
+* Groovy 2.5 on JDK 25: compiling scripts can fail with
+  "Unsupported class file major version 69", because Groovy 2.5's bundled
+  ASM cannot read JDK 25 class files.
+  Workaround: Turn off ASM resolving in the compiler configuration with
+  `config.getOptimizationOptions().put("asmResolving", false)`,
+  at some cost in compile performance.
+  (Groovy 2.5 may be end of life since 30 Apr 2026, according to some
+  websites, while there seems to be no such announcement from Apache.)
 
 ### Grengine 3
 
-#### 3.x.y (XX Yyyyyyy ZZZZ)
+#### 3.1.1 (XX Yyyyyyy ZZZZ)
 
 * Fix: The workaround for the Grape concurrency issue
   [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
@@ -1424,6 +1437,7 @@ Required Java versions in a nutshell:
   optional Maven dependencies: the Ivy engine from `groovy-grape-ivy`
   as `groovy.grape.ivy.GrapeIvy` and newly also a Maven engine with
   `groovy-grape-maven` as `groovy.grape.maven.GrapeMaven`.)
+* Doc: Documented requirements and test coverage in a bit more detail.
 
 #### 3.1.0 (18 September 2024)
 

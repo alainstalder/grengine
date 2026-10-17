@@ -30,18 +30,18 @@ import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.source.DefaultFileSource;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;
+import ch.grengine.source.FileSource;
 import ch.grengine.source.MockTextSource;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.source.TextSource;
+import ch.grengine.source.UrlSource;
 import ch.grengine.sources.DirBasedSources;
 import ch.grengine.sources.DirMode;
 import ch.grengine.sources.FixedSetSources;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
-import ch.grengine.source.FileSource;
-import ch.grengine.source.UrlSource;
 
 import java.io.File;
 import java.net.URL;
@@ -64,12 +64,14 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.isGroovy2xWithJdk25Plus;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class GrengineTest {
@@ -1316,6 +1318,9 @@ class GrengineTest {
     @Test
     void testAsClassLoaderBasic() throws Exception {
 
+        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
+        assumeFalse(isGroovy2xWithJdk25Plus());
+
         // given
 
         final File dir = TestUtil.createTestDir();
@@ -1323,7 +1328,6 @@ class GrengineTest {
         TestUtil.setFileText(testFile, "class Test { static int get55() { 55 } }");
 
         // when
-
 
         final Grengine gren = new Grengine(dir);
 
@@ -1344,6 +1348,53 @@ class GrengineTest {
         // when
 
         final GroovyShell shell2 = new GroovyShell(gren.asClassLoader(gren.getLoader()));
+
+        // then
+
+        assertThat(shell2.evaluate("Test.get55()"), is(55));
+
+        // make sure can load from parent loaders
+        shell2.evaluate("new StringBuffer().append('x')");
+
+        gren.close();
+    }
+
+    @Test
+    void testAsClassLoaderBasic_asmResolvingOff() throws Exception {
+
+        // this test must also pass with Groovy 2.5 on JDK 25+
+        // with the workaround of turning ASM resolving off
+
+        // given
+
+        final File dir = TestUtil.createTestDir();
+        final File testFile = new File(dir, "Test.groovy");
+        TestUtil.setFileText(testFile, "class Test { static int get55() { 55 } }");
+
+        final CompilerConfiguration nonAsmResolvingConfig = new CompilerConfiguration();
+        nonAsmResolvingConfig.getOptimizationOptions().put("asmResolving", false);
+
+        // when
+
+        final Grengine gren = new Grengine(nonAsmResolvingConfig, dir);
+
+        // then
+
+        assertThat(gren.run("Test.get55()"), is(55));
+        assertThat(gren.run("new StringBuffer().append('x').toString()"), is("x"));
+
+        // when
+
+        final GroovyShell shell1 = new GroovyShell(gren.asClassLoader(), nonAsmResolvingConfig);
+
+        // then
+
+        assertThat(shell1.evaluate("Test.get55()"), is(55));
+
+
+        // when
+
+        final GroovyShell shell2 = new GroovyShell(gren.asClassLoader(gren.getLoader()), nonAsmResolvingConfig);
 
         // then
 

@@ -16,11 +16,11 @@
 
 package ch.grengine;
 
-import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.engine.LayeredEngine;
 import ch.grengine.except.CreateException;
+import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.sources.DirBasedSources;
 import ch.grengine.sources.DirMode;
 import ch.grengine.sources.FixedSetSources;
@@ -35,6 +35,7 @@ import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.isGroovy2xWithJdk25Plus;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -42,26 +43,32 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class GrengineGrapeTest {
 
+    private static final String GRAPE_SCRIPT = "" +
+            "@Grab('com.google.guava:guava:18.0')\n" +
+            "import com.google.common.base.Ascii\n" +
+            "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"";
+
     @Test
     void testHelloWorldWithGrape_unwrapped() {
+        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
+        assumeFalse(isGroovy2xWithJdk25Plus());
         printVersions();
-        Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
-                + "import com.google.common.base.Ascii\n" +
-                "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
+        Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
     }
 
     @Test
     void testHelloWorldWithGrape_wrapped() {
+        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
+        assumeFalse(isGroovy2xWithJdk25Plus());
         printVersions();
         try {
             Grengine.Grape.activate();
-            Grengine.Grape.newGrengine().run("@Grab('com.google.guava:guava:18.0')\n"
-                    + "import com.google.common.base.Ascii\n" +
-                    "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
+            Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
         } finally {
             Grengine.Grape.deactivate();
         }
@@ -74,10 +81,10 @@ class GrengineGrapeTest {
 
     @Test
     void testNoGrapeByDefault() {
+        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25++
+        assumeFalse(isGroovy2xWithJdk25Plus());
         try {
-            new Grengine().run("@Grab('com.google.guava:guava:18.0')\n"
-                    + "import com.google.common.base.Ascii\n" +
-                    "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"");
+            new Grengine().run(GRAPE_SCRIPT);
             fail("must throw");
         } catch (Throwable t) {
             //t.printStackTrace();
