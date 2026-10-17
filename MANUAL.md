@@ -1427,7 +1427,7 @@ Some more details:
 
 ### Grengine 3
 
-#### 3.1.1 (XX Yyyyyyy ZZZZ)
+#### 3.1.1 (17 October 2026)
 
 * Fix: The workaround for the Grape concurrency issue
   [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
