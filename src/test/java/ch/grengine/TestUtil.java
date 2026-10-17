@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
+import groovy.lang.GroovySystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.function.Executable;
 
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestUtil {
 
-    @SuppressWarnings("serial")
+    public static final int GROOVY_MAJOR = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
+
     public static class FileThatThrowsInGetCanonicalFile extends File {
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }

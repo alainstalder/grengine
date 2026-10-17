@@ -523,11 +523,15 @@ public class DefaultGroovyCompiler implements Compiler {
                 }
 
                 // verify preconditions
-                final Class<?> grapeIvyClass = Grape.getInstance().getClass();
-                if (!grapeIvyClass.getName().equals("groovy.grape.GrapeIvy")) {
-                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class " +
-                            "(current GrapeEngine is " + grapeIvyClass.getName() +
-                            ", supported is groovy.grape.GrapeIvy).");
+                final GrapeEngine engine = Grape.getInstance();
+                if (engine == null) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class, " +
+                            "no GrapeEngine available (since Groovy 6 that requires a separate " +
+                            "Maven dependency like groovy-grape-ivy or groovy-grape-maven).");
+                }
+                if (engine.getClass().getName().equals(GrengineGrapeEngine.class.getName())) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class because " +
+                            "it is already wrapped by a Grengine loaded with a different class loader.");
                 }
 
                 try {
@@ -545,14 +549,14 @@ public class DefaultGroovyCompiler implements Compiler {
                     // set GrapeEngine instance in Grape class
                     new Grape() {
                         void wrap() {
-                            Grape.instance = new GrengineGrapeEngine(Grape.getInstance());
+                            Grape.instance = new GrengineGrapeEngine(engine);
                         }
                     }.wrap();
                 }
             }
         }
 
-        // sets the engine instance in the Grape class back to the GrapeIvy instance
+        // sets the engine instance in the Grape class back to the wrapped instance
         static void unwrap() {
             synchronized (GrengineGrapeEngine.class) {
                 // not wrapped?

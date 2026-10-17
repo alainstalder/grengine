@@ -37,6 +37,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -485,7 +487,8 @@ class GrengineGrapeTest {
     void testActivateDeactivate() {
 
         try {
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
 
             // when
 
@@ -509,7 +512,8 @@ class GrengineGrapeTest {
 
             // then
 
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
 
             // when
 
@@ -517,7 +521,8 @@ class GrengineGrapeTest {
 
             // then
 
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
 
         } finally {
             Grengine.Grape.deactivate();
@@ -529,7 +534,8 @@ class GrengineGrapeTest {
     void testActivateDifferentLock() {
 
         try {
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrapeIvy"));
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
 
             // when
 

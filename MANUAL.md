@@ -1076,6 +1076,9 @@ import com.google.common.base.Ascii
 println "Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}"
 ```
 
+(**Note**: Since Groovy 6, you need a separate Maven dependency to a
+`GrapeEngine` implementation, like `groovy-grape-ivy` or `groovy-grape-maven`.)
+
 With Grengine this does not work if you just create e.g. a Grengine instance
 with `new Grengine()`, because Grape only works if there is a `GroovyClassLoader`
 (or a `RootLoader`) somewhere up in the class loader parent hierarchy.
@@ -1113,7 +1116,7 @@ Grengine provides easy support for alleviating GROOVY-7407 in practice, except
 across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
 
 Optionally the `GrapeEngine` in the `Grape.class`, which is obtained with
-`Grape.getInstance()` – and so far is always an instance of a class called
+`Grape.getInstance()` – and before Groovy 6 always an instance of a class called
 `GrapeIvy` (using Apache Ivy to resolve dependencies) – is wrapped with a
 Grengine-specific instance that locks all grabs on `Grape.class` or on a
 freely eligible lock object and passes on all calls to the original
@@ -1406,13 +1409,26 @@ always surprises in practice.
 Required Java versions in a nutshell:
 
 * Grengine 1: Java 6 or later.
-* Grengine 2+3: Java 8 or later. (Groovy 5 requires Java 11 or later.)
+* Grengine 2+3: Java 8 or later.
+  (Groovy 5 requires Java 11 or later, Groovy 6 requires Java 17 or later.)
 
 ### Grengine 3
+
+#### 3.x.y (XX Yyyyyyy ZZZZ)
+
+* Fix: The workaround for the Grape concurrency issue
+  [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+  now also works with Groovy 6.
+  (Previously it assumed the `GrapeEngine` to be an instance of
+  `groovy.grape.GrapeIvy`, but with Groovy 6, GrapeEngines come from
+  optional Maven dependencies: the Ivy engine from `groovy-grape-ivy`
+  as `groovy.grape.ivy.GrapeIvy` and newly also a Maven engine with
+  `groovy-grape-maven` as `groovy.grape.maven.GrapeMaven`.)
 
 #### 3.1.0 (18 September 2024)
 
 * Changed: Packages back to `ch.grengine` and website back to [grengine.ch](https://grengine.ch/).
+  Note: Accordingly also Maven group ID from `ch.artecat.grengine` back to `ch.grengine`.
 
 #### 3.0.2 (26 February 2023)
 
