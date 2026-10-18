@@ -18,8 +18,8 @@
 #
 # JDKs are taken from SDKMAN (~/.sdkman/candidates/java, newest per major,
 # non-fx preferred); override per major with e.g. MATRIX_JAVA_HOME_11=/path.
-# If coursier ('cs') is on the PATH, Groovy 6+ is additionally tested with
-# groovy-grape-maven as the Grape engine.
+# Groovy 6+ is tested once with groovy-grape-ivy and once with
+# groovy-grape-maven as the Grape engine (dependencies resolved with Gradle).
 #
 # Results: testbed/work/results/<cell>.log, JUnit XML in .../<cell>/
 #
@@ -133,6 +133,34 @@ fetch() {
   printf '%s' "$file"
 }
 
+# group:artifact:version -> classpath incl. transitive dependencies (via Gradle)
+resolve() {
+  local coords=$1
+  local file=$gLib/${coords//:/_}.classpath
+  if [[ ! -f $file ]]; then
+    local dir=$gWork/resolve
+    mkdir -p "$dir"
+    echo "rootProject.name = 'matrix-resolve'" > "$dir/settings.gradle"
+    cat > "$dir/build.gradle" <<'EOF'
+repositories { mavenCentral() }
+def cp = configurations.create('cp')
+dependencies { add('cp', providers.gradleProperty('coords').get()) }
+tasks.register('printClasspath') {
+  doLast { println cp.asPath }
+}
+EOF
+    local javaHome='' major
+    for major in 21 17; do
+      javaHome=$(findJavaHome "$major")
+      [[ -n $javaHome ]] && break
+    done
+    JAVA_HOME=${javaHome:-${JAVA_HOME:-}} "$gRoot/gradlew" -q -p "$dir" printClasspath \
+      -Pcoords="$coords" > "$file.part" || { rm -f "$file.part"; die "resolving failed: $coords"; }
+    mv "$file.part" "$file"
+  fi
+  tail -1 "$file"
+}
+
 # "N label" lines from the JUnit console summary
 summaryCount() {
   local log=$1 label=$2
@@ -176,9 +204,6 @@ if [[ -z $gTestRoot ]]; then
   [[ -d build/classes/java/test ]] || die "no compiled tests (use --build)"
   gTestRoot=$gRoot/build/classes/java/test
 fi
-
-gUseCoursier=0
-command -v cs >/dev/null 2>&1 && gUseCoursier=1
 
 mkdir -p "$gLib" "$gResults" "$gWork/grapes"
 
@@ -245,14 +270,10 @@ for javaMajor in "${gJavaMajors[@]}"; do
     [[ $classifier == indy ]] && jvmArgs=(-Dgroovy.target.indy=true)
 
     if (( groovyMajor >= 6 )); then
-      ivyCp="$groovyCp:$(fetch "$group:groovy-grape-ivy:$version"):$(fetch "org.apache.ivy:ivy:2.6.0")"
-      runCell "java$javaMajor-groovy$version-ivy" "$javaHome" "$gCommonCp:$ivyCp"
-      if (( gUseCoursier )); then
-        mavenCp=$(cs fetch --classpath "$group:groovy-grape-maven:$version" 2>/dev/null) \
-          || die "coursier failed for $group:groovy-grape-maven:$version"
-        runCell "java$javaMajor-groovy$version-maven" "$javaHome" "$gCommonCp:$mavenCp" \
-          -Dgroovy.grape.impl=groovy.grape.maven.GrapeMaven
-      fi
+      runCell "java$javaMajor-groovy$version-ivy" "$javaHome" \
+        "$gCommonCp:$(resolve "$group:groovy-grape-ivy:$version")"
+      runCell "java$javaMajor-groovy$version-maven" "$javaHome" \
+        "$gCommonCp:$(resolve "$group:groovy-grape-maven:$version")"
     else
       ivyCp="$groovyCp:$(fetch "org.apache.ivy:ivy:$gIvyVersion")"
       runCell "java$javaMajor-groovy$label" "$javaHome" "$gCommonCp:$ivyCp" ${jvmArgs[@]+"${jvmArgs[@]}"}
