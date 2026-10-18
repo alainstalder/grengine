@@ -34,8 +34,7 @@ public class UserManualJavaTest {
         Grengine gren = new Grengine();
         gren.run("println 'Hello World!'");
         gren.run(new File("MyScript.groovy"));
-        gren.run(new URL("http://somewhere.org/MyScript.groovy"));
-        gren.run(URI.create("http://somewhere.org/MyScript.groovy").toURL());
+        gren.run(URI.create("https://somewhere.org/MyScript.groovy").toURL());
         //--------------------------------------------
     }
     

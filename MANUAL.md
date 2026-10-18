@@ -49,7 +49,7 @@ script file or script URL:
 Grengine gren = new Grengine();
 gren.run("println 'Hello World!'");
 gren.run(new File("MyScript.groovy"));
-gren.run(URI.create("http://somewhere.org/MyScript.groovy").toURL());
+gren.run(URI.create("https://somewhere.org/MyScript.groovy").toURL());
 ```
 
 A binding can optionally be indicated by passing a `Binding`
