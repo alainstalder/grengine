@@ -16,9 +16,6 @@
 
 package ch.grengine;
 
-import ch.grengine.load.DefaultTopCodeCacheFactory;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
@@ -27,9 +24,12 @@ import ch.grengine.engine.LayeredEngine;
 import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.GrengineException;
+import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.TopCodeCacheFactory;
 import ch.grengine.source.DefaultSourceFactory;
+import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.DirBasedSources;
 import ch.grengine.sources.DirMode;
 import ch.grengine.sources.FixedSetSources;
@@ -720,7 +720,7 @@ public class Grengine extends BaseGrengine {
      */
     public static class Builder {
         
-        /** 
+        /**
          * the default latency (5000ms = five seconds).
          * 
          * @since 1.0
