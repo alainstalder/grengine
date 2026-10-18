@@ -70,7 +70,7 @@ import static java.util.stream.Collectors.toList;
  * Examples:
  * <ul>
  * <li>{@code run("println 'hello world!'")}: default loader, text-based source, empty binding
- * <li>{@code run(myLoader, new URL("http://acme.org/myScript.groovy", myBinding))}:
+ * <li>{@code run(myLoader, URI.create("http://acme.org/myScript.groovy", myBinding).toURL())}:
  *     given loader, URL-based source, given binding
  * </ul>
  * <p>
