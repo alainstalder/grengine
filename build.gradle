@@ -58,7 +58,8 @@ jar {
 }
 
 dependencies {
-  implementation "$groovyGroupId:groovy:$groovyVersion"
+  compileOnly "$groovyGroupId:groovy:$groovyVersion"
+  testImplementation "$groovyGroupId:groovy:$groovyVersion"
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

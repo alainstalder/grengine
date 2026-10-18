@@ -1428,6 +1428,11 @@ Some more details (current Grengine 3):
 
 ### Grengine 3
 
+#### 3.1.2 (Xx Yyyyyy ZZZ)
+
+* Fix: The published POM no longer declares a runtime dependency on Groovy.<br>
+  (That had accidentally slipped in with 3.1.0 two years ago.)
+
 #### 3.1.1 (17 October 2026)
 
 * Fix: The workaround for the Grape concurrency issue
