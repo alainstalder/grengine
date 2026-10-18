@@ -65,6 +65,8 @@ javadoc {
     ]
     tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
   }
+  // treat warnings as errors
+  options.addBooleanOption('Werror', true)
 }
 
 tasks.withType(JavaCompile).configureEach {
