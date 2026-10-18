@@ -51,7 +51,7 @@ public class MockFile extends File {
         try {
             return Long.parseLong(TestUtil.getFileText(lastModifiedFile));
         } catch (Exception e) {
-            return fail(e.toString());
+            return fail(e);
         }            
     }
 
@@ -66,7 +66,7 @@ public class MockFile extends File {
             TestUtil.setFileText(lastModifiedFile, Long.toString(lastModified));
             return true;
         } catch (IOException e) {
-            return fail(e.toString());
+            return fail(e);
         }
     }
 

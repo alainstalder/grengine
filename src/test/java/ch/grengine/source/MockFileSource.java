@@ -32,7 +32,7 @@ public class MockFileSource extends DefaultFileSource {
         try {
             mockFile = new MockFile(file.getCanonicalPath());
         } catch (IOException e) {
-            fail(e.toString());
+            fail(e);
         }
     }
     

@@ -163,7 +163,7 @@ public class TestUtil {
             oos.writeObject(obj);
             return Base64.getEncoder().encodeToString(baos.toByteArray());
         } catch (IOException e) {
-            return fail(e.toString());
+            return fail(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class TestUtil {
              final ObjectInputStream ois = new ObjectInputStream(bais)) {
             return ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            return fail(e.toString());
+            return fail(e);
         }
     }
 
