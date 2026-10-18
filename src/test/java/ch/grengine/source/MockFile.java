@@ -19,6 +19,7 @@ package ch.grengine.source;
 import ch.grengine.TestUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,16 +34,16 @@ public class MockFile extends File {
     
     public MockFile(final String pathname) {
         super(pathname);
-        lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
+        lastModifiedFile = new File(new File(pathname).getPath() + ".lastModified");
         if (!lastModifiedFile.exists()) {
-            assertThat(setLastModified(0), is(true));
+            assertThat(setLastModifiedInternal(0), is(true));
         }
     }
 
     public MockFile(final File file, final String name) {
         super(file, name);
-        lastModifiedFile = new File(super.getAbsoluteFile() + ".lastModified");
-        assertThat(setLastModified(0), is(true));
+        lastModifiedFile = new File(new File(file, name).getPath() + ".lastModified");
+        assertThat(setLastModifiedInternal(0), is(true));
     }
 
     @Override
@@ -50,21 +51,22 @@ public class MockFile extends File {
         try {
             return Long.parseLong(TestUtil.getFileText(lastModifiedFile));
         } catch (Exception e) {
-            fail(e.toString());
-            // never gets here...
-            return 0;
+            return fail(e.toString());
         }            
     }
-    
+
+    // only ever returns true or fails
     @Override
     public boolean setLastModified(final long lastModified) {
+        return setLastModifiedInternal(lastModified);
+    }
+
+    private boolean setLastModifiedInternal(final long lastModified) {
         try {
             TestUtil.setFileText(lastModifiedFile, Long.toString(lastModified));
             return true;
-        } catch (Exception e) {
-            fail(e.toString());
-            // never gets here...
-            return false;
+        } catch (IOException e) {
+            return fail(e.toString());
         }
     }
 
