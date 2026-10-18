@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,7 @@ public class UserManualJavaTest {
         gren.run("println 'Hello World!'");
         gren.run(new File("MyScript.groovy"));
         gren.run(new URL("http://somewhere.org/MyScript.groovy"));
+        gren.run(URI.create("http://somewhere.org/MyScript.groovy").toURL());
         //--------------------------------------------
     }
     

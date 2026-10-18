@@ -20,6 +20,7 @@ import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -255,8 +256,8 @@ class SourceUtilTest {
 
         // given
 
-        final URL url1 = new URL("http://foo.bar/Script1.groovy");
-        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = URI.create("http://foo.bar/Script1.groovy").toURL();
+        final URL url2 = URI.create("http://foo.bar/Script2.groovy").toURL();
         final List<URL> urls = Arrays.asList(url1, url2);
 
         // when
@@ -275,8 +276,8 @@ class SourceUtilTest {
 
         // given
 
-        final URL url1 = new URL("http://foo.bar/Script1.groovy");
-        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = URI.create("http://foo.bar/Script1.groovy").toURL();
+        final URL url2 = URI.create("http://foo.bar/Script2.groovy").toURL();
 
         // when
 
@@ -294,8 +295,8 @@ class SourceUtilTest {
 
         // given
 
-        final URL url1 = new URL("http://foo.bar/Script1.groovy");
-        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = URI.create("http://foo.bar/Script1.groovy").toURL();
+        final URL url2 = URI.create("http://foo.bar/Script2.groovy").toURL();
         final List<URL> urls = Arrays.asList(url1, url2);
 
         // when
@@ -314,8 +315,8 @@ class SourceUtilTest {
 
         // given
 
-        final URL url1 = new URL("http://foo.bar/Script1.groovy");
-        final URL url2 = new URL("http://foo.bar/Script2.groovy");
+        final URL url1 = URI.create("http://foo.bar/Script1.groovy").toURL();
+        final URL url2 = URI.create("http://foo.bar/Script2.groovy").toURL();
 
         // when
 
