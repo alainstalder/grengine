@@ -1408,18 +1408,19 @@ always surprises in practice.
 
 Required Java versions in a nutshell:
 
+* Grengine 3+2: Java 8 or later.
 * Grengine 1: Java 6 or later.
-* Grengine 2+3: Java 8 or later.
 
-Some more details:
+Some more details (current Grengine 3):
 
 * Tested the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (8 / 11 / 17 / 21 / 25).
 * See testbed/matrix.sh in the git repo for exact versions.
-* Groovy 5 requires Java 11 or later, Groovy 6 requires Java 17 or later.
-* Groovy 2.5 on JDK 25: compiling scripts can fail with
+* Groovy 5 requires JDK 11 or later, Groovy 6 requires JDK 17 or later.
+* Groovy 2.5 on JDK 25: Compiling scripts can fail with
   "Unsupported class file major version 69", because Groovy 2.5's bundled
-  ASM cannot read JDK 25 class files.
-  Workaround: Turn off ASM resolving in the compiler configuration with
+  ASM cannot read JDK 25 class files. (That is a general issue with that
+  Groovy/JDK combination, it has nothing specifically to do with Grengine.)
+  **Workaround:** Turn off ASM resolving in the compiler configuration with
   `config.getOptimizationOptions().put("asmResolving", false)`,
   at some cost in compile performance.
   (Groovy 2.5 may be end of life since 30 Apr 2026, according to some
