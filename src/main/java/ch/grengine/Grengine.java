@@ -142,7 +142,7 @@ public class Grengine extends BaseGrengine {
         lastChecked = 0;
         lastUpdateException = null;
         updateExceptionNotifier = builder.getUpdateExceptionNotifier();
-        updateEngineIfSourcesLayersModified();
+        updateEngineIfSourcesLayersModifiedInternal();
 
         loader = engine.getLoader();
     }
@@ -624,6 +624,10 @@ public class Grengine extends BaseGrengine {
      * @since 1.0
      */
     protected void updateEngineIfSourcesLayersModified() {
+        updateEngineIfSourcesLayersModifiedInternal();
+    }
+
+    private void updateEngineIfSourcesLayersModifiedInternal() {
         
         // check if lastChecked is 0 to make sure layers are set once if latency is infinite
         // check both boundaries of the interval to exclude problems with leap seconds etc.

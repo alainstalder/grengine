@@ -1446,6 +1446,12 @@ Some more details (current Grengine 3):
 * Changed: Utility classes with only static methods and previously
   an implicit public no-args constructor now have a private constructor:
   `Grengine.Grape`, `SourceUtil`, `SourcesUtil`, `ClassNameConflictAnalyzer`.
+* Changed: Two internal changes that might only make a difference if you
+  have subclassed the respective classes (see source for details):
+  * `Grengine`: Constructors no longer call the protected method
+    `updateEngineIfSourcesLayersModified()`.
+  * `Loader`: Constructors no longer call the public method
+    `setSourceClassLoader()`.
 
 ### Grengine 3
 

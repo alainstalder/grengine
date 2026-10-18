@@ -16,9 +16,9 @@
 
 package ch.grengine.sources;
 
-import ch.grengine.source.Source;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.Source;
 
 import java.util.Set;
 import java.util.UUID;
@@ -47,6 +47,7 @@ public class FixedSetSources extends BaseSources {
      * 
      * @since 1.0
      */
+    @SuppressWarnings("this-escape")
     public FixedSetSources(final Builder builder) {
         this.builder = builder.commit();
         sourceSet = builder.getSourceSet();

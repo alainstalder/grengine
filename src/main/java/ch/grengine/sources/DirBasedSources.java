@@ -16,12 +16,12 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
-import ch.grengine.code.CompilerFactory;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 
 import java.io.File;
 import java.util.Collections;
@@ -63,6 +63,7 @@ public class DirBasedSources extends BaseSources {
      * 
      * @since 1.0
      */
+    @SuppressWarnings("this-escape")
     protected DirBasedSources(final Builder builder) {
         this.builder = builder.commit();
         

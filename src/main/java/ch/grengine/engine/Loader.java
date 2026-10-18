@@ -16,8 +16,8 @@
 
 package ch.grengine.engine;
 
-import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.ClassReleaser;
+import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.SourceClassLoader;
 
 import java.io.Closeable;
@@ -79,7 +79,7 @@ public class Loader implements Closeable {
         this.number = number;
         this.isAttached = isAttached;
         this.classReleaser = classReleaser;
-        setSourceClassLoader(engineId, sourceClassLoader);
+        this.sourceClassLoader = sourceClassLoader;
     }
 
     /**

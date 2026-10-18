@@ -16,9 +16,9 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.Source;
-import ch.grengine.code.CompilerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,6 +54,7 @@ public class CompositeSources extends BaseSources {
      * 
      * @since 1.0
      */
+    @SuppressWarnings("this-escape")
     protected CompositeSources(final Builder builder) {
         this.builder = builder.commit();
         sourcesList = new ArrayList<>();
