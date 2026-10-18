@@ -19,8 +19,8 @@ package ch.grengine.code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
@@ -40,11 +40,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ClassNameConflictAnalyzerTest {
 
-    @Test
-    void testConstruct() {
-        new ClassNameConflictAnalyzer();
-    }
-    
     @Test
     void testGetAllClassOrigins() {
 

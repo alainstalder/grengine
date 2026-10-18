@@ -486,11 +486,6 @@ class GrengineGrapeTest {
 
 
     @Test
-    void testConstructGrape() {
-        new Grengine.Grape();
-    }
-
-    @Test
     void testActivateDeactivate() {
 
         try {

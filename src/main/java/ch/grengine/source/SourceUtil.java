@@ -44,6 +44,9 @@ import static java.util.stream.Collectors.toSet;
  */
 public class SourceUtil {
 
+    // private since 4.0.0 (utility class)
+    private SourceUtil() {}
+
     /**
      * creates a source set from the given collections of script texts,
      * using the default source factory.

@@ -944,6 +944,8 @@ public class Grengine extends BaseGrengine {
      * <p>
      * See the user manual at "Grengine and Grape" and the {@link DefaultGroovyCompiler}
      * class for more information.
+     * <p>
+     * Utility class with only static methods.
      *
      * @since 1.2
      *
@@ -951,6 +953,9 @@ public class Grengine extends BaseGrengine {
      * @author Made in Switzerland.
      */
     public static class Grape {
+
+        // private since 4.0.0 (utility class)
+        private Grape() {}
 
         /**
          * activate Grape.

@@ -16,10 +16,10 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceUtil;
-import ch.grengine.code.CompilerFactory;
 
 import java.util.Set;
 
@@ -35,6 +35,9 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class SourcesUtil {
+
+    // private since 4.0.0 (utility class)
+    private SourcesUtil() {}
     
     /**
      * converts a source to sources with name set to the source ID

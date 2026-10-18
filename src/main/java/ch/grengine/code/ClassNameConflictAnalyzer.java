@@ -37,6 +37,9 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class ClassNameConflictAnalyzer {
+
+    // private since 4.0.0 (utility class)
+    private ClassNameConflictAnalyzer() {}
     
     /**
      * gets a map of class name to a list of all {@link Code} layers

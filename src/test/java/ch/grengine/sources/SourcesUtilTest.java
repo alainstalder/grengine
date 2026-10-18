@@ -16,10 +16,10 @@
 
 package ch.grengine.sources;
 
-import ch.grengine.source.MockSource;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.SourceUtil;
 
 import java.util.HashSet;
 
@@ -33,11 +33,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class SourcesUtilTest {
-
-    @Test
-    void testConstructor() {
-        new SourcesUtil();
-    }
 
     @Test
     void testSourceToSourcesDefaultCompilerFactory() {

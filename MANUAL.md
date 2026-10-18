@@ -1443,6 +1443,9 @@ Some more details (current Grengine 3):
   * `CompileException.getSourcesAsString()`
   * `ClassNameConflictException.getSameClassNamesInMultipleCodeLayersMapAsString()`
   * `ClassNameConflictException.getSameClassNamesInParentAndCodeLayersMapAsString()`
+* Changed: Utility classes with only static methods and previously
+  an implicit public no-args constructor now have a private constructor:
+  `Grengine.Grape`, `SourceUtil`, `SourcesUtil`, `ClassNameConflictAnalyzer`.
 
 ### Grengine 3
 

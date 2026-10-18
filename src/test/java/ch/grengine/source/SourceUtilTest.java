@@ -41,11 +41,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class SourceUtilTest {
 
     @Test
-    void testConstructor() {
-        new SourceUtil();
-    }
-    
-    @Test
     void testTextsToSourceSetNoNamesWithFactoryWithCollection() {
 
         // given
