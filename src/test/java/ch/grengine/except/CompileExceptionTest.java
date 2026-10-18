@@ -22,10 +22,13 @@ import ch.grengine.sources.SourcesUtil;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.deserializeObject;
+import static ch.grengine.TestUtil.serializeObject;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 
 
 class CompileExceptionTest {
@@ -47,6 +50,7 @@ class CompileExceptionTest {
         assertThat(e, instanceOf(GrengineException.class));
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getSources(), is(s));
+        assertThat(e.getSourcesAsString(), is(s.toString()));
         assertThat(e.getCause(), is(nullValue()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
@@ -58,8 +62,8 @@ class CompileExceptionTest {
         // given
 
         final String msg = "Something.";
-        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
         final Throwable cause = new RuntimeException();
+        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
 
         // when
 
@@ -71,6 +75,7 @@ class CompileExceptionTest {
         assertThat(e.getMessage(), is(msg + " Cause: " + cause));
         assertThat(e.getCause(), is(cause));
         assertThat(e.getSources(), is(s));
+        assertThat(e.getSourcesAsString(), is(s.toString()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
@@ -93,8 +98,37 @@ class CompileExceptionTest {
         assertThat(e.getMessage(), is(msg));
         assertThat(e.getCause(), is(nullValue()));
         assertThat(e.getSources(), is(s));
+        assertThat(e.getSourcesAsString(), is(s.toString()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
+    }
+
+    @Test
+    void testSerializeDeserialize() {
+
+        // given
+
+        final String msg = "Something.";
+        final Throwable cause = new RuntimeException("out-of-the-blue");
+        final Sources s = SourcesUtil.sourceToSources(new MockSource("id1"));
+
+        // when
+
+        final CompileException e = new CompileException(msg, cause, s);
+        final String eSerialized = serializeObject(e);
+        final Object eDeserialized = deserializeObject(eSerialized);
+
+        // then
+
+        assertThat(eDeserialized, instanceOf(CompileException.class));
+        CompileException e2 = (CompileException)eDeserialized;
+        assertThat(e2.getMessage(), is(msg + " Cause: " + cause));
+        assertThat(e2.getCause(), instanceOf(RuntimeException.class));
+        assertThat(e2.getCause(), is(not(e.getCause())));
+        assertThat(e2.getCause().getMessage(), is("out-of-the-blue"));
+        assertThat(e2.getSources(), is(nullValue()));
+        assertThat(e2.getSourcesAsString(), is(s.toString()));
+        assertThat(e2.getDateThrown(), is(e.getDateThrown()));
     }
 
 }

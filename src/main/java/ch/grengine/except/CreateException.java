@@ -17,6 +17,8 @@
 package ch.grengine.except;
 
 
+import java.io.Serial;
+
 /**
  * Exception thrown when creating an instance of {@link groovy.lang.Script} failed.
  * 
@@ -27,6 +29,7 @@ package ch.grengine.except;
  */
 public class CreateException extends GrengineException {
 
+    @Serial
     private static final long serialVersionUID = 1910647986466544521L;
 
     /**

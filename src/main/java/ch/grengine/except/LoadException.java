@@ -17,6 +17,8 @@
 package ch.grengine.except;
 
 
+import java.io.Serial;
+
 /**
  * Exception thrown when loading a class failed.
  * 
@@ -27,6 +29,7 @@ package ch.grengine.except;
  */
 public class LoadException extends GrengineException {
 
+    @Serial
     private static final long serialVersionUID = -5845310653276575510L;
 
     /**

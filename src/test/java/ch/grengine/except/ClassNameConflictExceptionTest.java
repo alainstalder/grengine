@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.deserializeObject;
+import static ch.grengine.TestUtil.serializeObject;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -32,7 +34,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class ClassNameConflictExceptionTest {
-    
+
     @Test
     void testConstruct() {
 
@@ -56,10 +58,45 @@ class ClassNameConflictExceptionTest {
         assertThat(e.getMessage(), is("Got 2 conflict(s). " +
                 "Duplicate classes in code layers: [Twice], classes in code layers and parent: [java.io.File]"));
         assertThat(e.getSameClassNamesInMultipleCodeLayersMap(), is(map1));
+        assertThat(e.getSameClassNamesInMultipleCodeLayersMapAsString(), is(map1.toString()));
         assertThat(e.getSameClassNamesInParentAndCodeLayersMap(), is(map2));
+        assertThat(e.getSameClassNamesInParentAndCodeLayersMapAsString(), is(map2.toString()));
         assertThat(e.getCause(), is(nullValue()));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
+    }
+
+    @Test
+    void testSerializeDeserialize() {
+
+        // given
+
+        final ClassLoader parent = Thread.currentThread().getContextClassLoader();
+        final List<Code> codeLayers = ClassNameConflictAnalyzerTest.getTestCodeLayers();
+        final Map<String,List<Code>> map1 =
+                ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(codeLayers);
+        final Map<String,List<Code>> map2 =
+                ClassNameConflictAnalyzer.getSameClassNamesInParentAndCodeLayersMap(parent, codeLayers);
+        final String msg = "Got " + (map1.size() + map2.size()) + " conflict(s).";
+
+        // when
+
+        final ClassNameConflictException e = new ClassNameConflictException(msg, map1, map2);
+        final String eSerialized = serializeObject(e);
+        final Object eDeserialized = deserializeObject(eSerialized);
+
+        // then
+
+        assertThat(eDeserialized, instanceOf(ClassNameConflictException.class));
+        ClassNameConflictException e2 = (ClassNameConflictException)eDeserialized;
+        assertThat(e2.getMessage(), is("Got 2 conflict(s). " +
+                "Duplicate classes in code layers: [Twice], classes in code layers and parent: [java.io.File]"));
+        assertThat(e2.getSameClassNamesInMultipleCodeLayersMap(), is(nullValue()));
+        assertThat(e2.getSameClassNamesInMultipleCodeLayersMapAsString(), is(map1.toString()));
+        assertThat(e2.getSameClassNamesInParentAndCodeLayersMap(), is(nullValue()));
+        assertThat(e2.getSameClassNamesInParentAndCodeLayersMapAsString(), is(map2.toString()));
+        assertThat(e2.getCause(), is(nullValue()));
+        assertThat(e2.getDateThrown(), is(e.getDateThrown()));
     }
 
 }

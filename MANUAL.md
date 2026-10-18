@@ -1431,6 +1431,19 @@ Some more details (current Grengine 3):
   [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458).
   (Once that issue is fixed, it should also work without wrapping.)
 
+### Grengine 4
+
+#### 4.0.0 (XX Yyyyy ZZZZ)
+
+* Fix: `CompileException` and `ClassNameConflictException` can now
+  be serialized.
+* Added: The above two exceptions have new getters that yield
+  "toString()" versions of their non-serializable fields, so that
+  after deserialization some useful information is preserved:
+  * `CompileException.getSourcesAsString()`
+  * `ClassNameConflictException.getSameClassNamesInMultipleCodeLayersMapAsString()`
+  * `ClassNameConflictException.getSameClassNamesInParentAndCodeLayersMapAsString()`
+
 ### Grengine 3
 
 #### 3.1.2 (18 October 2026)

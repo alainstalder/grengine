@@ -16,6 +16,7 @@
 
 package ch.grengine.except;
 
+import java.io.Serial;
 import java.util.Date;
 
 
@@ -29,9 +30,23 @@ import java.util.Date;
  */
 public class GrengineException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 393479472945664906L;
-    
+
+    /**
+     * the exception message given in the constructor,
+     * with the exception message of the causing throwable appended,
+     * if there was one.
+     *
+     * @since 1.0
+     */
     private final String message;
+
+    /**
+     * the date (with time) when the exception was thrown.
+     *
+     * @since 1.0
+     */
     private final Date dateThrown = new Date();
     
     /**

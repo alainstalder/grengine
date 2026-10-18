@@ -18,6 +18,7 @@ package ch.grengine.except;
 
 import ch.grengine.code.Code;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -33,10 +34,46 @@ import java.util.Map;
  */
 public class ClassNameConflictException extends GrengineException {
 
+    @Serial
     private static final long serialVersionUID = -7064452473268097551L;
-    
-    private final Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap;
-    private final Map<String,List<Code>> sameClassNamesInParentAndCodeLayersMap;
+
+    /**
+     * a map of class name to a list of all {@link Code} layers
+     * that contain a class with that name, but only if the class name
+     * occurred more than once in the code layers;
+     * may be null if the corresponding check has not been made
+     * and is always null after exception deserialization.
+     *
+     * @since 1.0
+     */
+    private final transient Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap;
+
+    /**
+     * {@code sameClassNamesInMultipleCodeLayersMap}
+     * converted to a string; survives exception deserialization.
+     *
+     * @since 4.0.0
+     */
+    private final String sameClassNamesInMultipleCodeLayersMapAsString;
+
+    /**
+     * a map of class name to a list of all {@link Code} layers
+     * that contain a class with that name, but only if the class name
+     * occurred also in the parent class loader;
+     * may be null if the corresponding check has not been made
+     * and is always null after exception deserialization.
+     *
+     * @since 1.0
+     */
+    private final transient Map<String,List<Code>> sameClassNamesInParentAndCodeLayersMap;
+
+    /**
+     * {@code sameClassNamesInParentAndCodeLayersMap}
+     * converted to a string; survives exception deserialization.
+     *
+     * @since 4.0.0
+     */
+    private final String sameClassNamesInParentAndCodeLayersMapAsString;
 
     /**
      * constructor from exception message and maps with class conflict information.
@@ -57,7 +94,13 @@ public class ClassNameConflictException extends GrengineException {
                 ", classes in code layers and parent: " +
                 toMessageString(sameClassNamesInParentAndCodeLayersMap));
         this.sameClassNamesInMultipleCodeLayersMap = sameClassNamesInMultipleCodeLayersMap;
+        this.sameClassNamesInMultipleCodeLayersMapAsString =
+                (sameClassNamesInMultipleCodeLayersMap == null) ? ""
+                        : sameClassNamesInMultipleCodeLayersMap.toString();
         this.sameClassNamesInParentAndCodeLayersMap = sameClassNamesInParentAndCodeLayersMap;
+        this.sameClassNamesInParentAndCodeLayersMapAsString =
+                (sameClassNamesInParentAndCodeLayersMap == null) ? ""
+                        : sameClassNamesInParentAndCodeLayersMap.toString();
     }
     
     /**
@@ -66,26 +109,52 @@ public class ClassNameConflictException extends GrengineException {
      * occurred more than once in the code layers.
      * 
      * @return map or null if had not been checked
+     *   or the exception was deserialized
      * 
      * @since 1.0
      */
     public Map<String,List<Code>> getSameClassNamesInMultipleCodeLayersMap() {
         return sameClassNamesInMultipleCodeLayersMap;
     }
-    
+
+    /**
+     * the map of {@link #getSameClassNamesInMultipleCodeLayersMap()}
+     * converted to a string; survives exception deserialization.
+     *
+     * @return map converted to a string or empty if had not been checked
+     *
+     * @since 4.0.0
+     */
+    public String getSameClassNamesInMultipleCodeLayersMapAsString() {
+        return sameClassNamesInMultipleCodeLayersMapAsString;
+    }
+
     /**
      * gets a map of class name to a list of all {@link Code} layers
      * that contain a class with that name, but only if the class name
      * occurred also in the parent class loader.
      * 
      * @return map or null if had not been checked
+     *   or the exception was deserialized
      * 
      * @since 1.0
      */
     public Map<String,List<Code>> getSameClassNamesInParentAndCodeLayersMap() {
         return sameClassNamesInParentAndCodeLayersMap;
     }
-    
+
+    /**
+     * the map of {@link #getSameClassNamesInParentAndCodeLayersMap()}
+     * converted to a string; survives exception deserialization.
+     *
+     * @return map converted to a string or empty if had not been checked
+     *
+     * @since 4.0.0
+     */
+    public String getSameClassNamesInParentAndCodeLayersMapAsString() {
+        return sameClassNamesInParentAndCodeLayersMapAsString;
+    }
+
     private static String toMessageString(final Map<String,List<Code>> map) {
         return map == null ? "(not checked)" : map.keySet().toString();
     }

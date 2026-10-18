@@ -18,6 +18,8 @@ package ch.grengine.except;
 
 import ch.grengine.sources.Sources;
 
+import java.io.Serial;
+
 
 /**
  * Exception thrown when (Groovy script) compilation failed.
@@ -29,9 +31,24 @@ import ch.grengine.sources.Sources;
  */
 public class CompileException extends GrengineException {
 
+    @Serial
     private static final long serialVersionUID = -7064452473268097551L;
-    
-    private final Sources sources;
+
+    /**
+     * the sources for which compilation failed;
+     * null after exception deserialization.
+     *
+     * @since 1.0
+     */
+    private final transient Sources sources;
+
+    /**
+     * the sources for which compilation failed converted to a string;
+     * survives exception deserialization.
+     *
+     * @since 4.0.0
+     */
+    private final String sourcesAsString;
 
     /**
      * constructor from exception message and sources for which compilation failed.
@@ -44,6 +61,7 @@ public class CompileException extends GrengineException {
     public CompileException(final String message, final Sources sources) {
         super(message);
         this.sources = sources;
+        sourcesAsString = (sources == null) ? "" : sources.toString();
     }
 
     /**
@@ -58,17 +76,33 @@ public class CompileException extends GrengineException {
     public CompileException(final String message, final Throwable cause, final Sources sources) {
         super(message, cause);
         this.sources = sources;
+        sourcesAsString = (sources == null) ? "" : sources.toString();
     }
-    
+
     /**
-     * gets sources for which compilation failed.
+     * gets sources for which compilation failed;
+     * null after exception deserialization.
      *
-     * @return sources for which compilation failed
-     * 
+     * @return sources for which compilation failed,
+     *   or null if the exception was deserialized
+     *
      * @since 1.0
      */
     public Sources getSources() {
         return sources;
+    }
+
+    /**
+     * gets the sources for which compilation failed converted to a string;
+     * survives exception deserialization.
+     *
+     * @return sources for which compilation failed converted to a string,
+     *   or empty string if sources were null
+     *
+     * @since 4.0.0
+     */
+    public String getSourcesAsString() {
+        return sourcesAsString;
     }
 
 }

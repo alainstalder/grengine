@@ -16,10 +16,15 @@
 
 package ch.grengine;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Base64;
 
 import groovy.lang.GroovySystem;
 import org.apache.commons.io.FileUtils;
@@ -30,6 +35,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TestUtil {
@@ -148,6 +154,26 @@ public class TestUtil {
             run.run();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String serializeObject(final Object obj) {
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             final ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(obj);
+            return Base64.getEncoder().encodeToString(baos.toByteArray());
+        } catch (IOException e) {
+            return fail(e);
+        }
+    }
+
+    public static Object deserializeObject(final String s) {
+        final byte[] data = Base64.getDecoder().decode(s);
+        try (final ByteArrayInputStream bais = new ByteArrayInputStream(data);
+             final ObjectInputStream ois = new ObjectInputStream(bais)) {
+            return ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return fail(e);
         }
     }
 
