@@ -16,15 +16,15 @@
 
 package ch.grengine.code.groovy;
 
-import ch.grengine.code.DefaultCode;
-import ch.grengine.source.Source;
 import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompiledSourceInfo;
 import ch.grengine.code.Compiler;
+import ch.grengine.code.DefaultCode;
 import ch.grengine.code.DefaultSingleSourceCode;
 import ch.grengine.except.CompileException;
 import ch.grengine.source.FileSource;
+import ch.grengine.source.Source;
 import ch.grengine.source.TextSource;
 import ch.grengine.source.UrlSource;
 import ch.grengine.sources.Sources;
@@ -589,6 +589,7 @@ public class DefaultGroovyCompiler implements Compiler {
         public Object grab(final Map args) {
             synchronized(lock) {
                 adjustCalleeDepth(args);
+                adjustClassLoader(args);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -608,6 +609,7 @@ public class DefaultGroovyCompiler implements Compiler {
         public Object grab(final Map args, final Map... dependencies) {
             synchronized(lock) {
                 adjustCalleeDepth(args);
+                adjustClassLoader(args);
                 // apply grab also to runtime loader, if present
                 final Object obj = args.get(CLASS_LOADER_KEY);
                 if (obj instanceof CompileTimeGroovyClassLoader) {
@@ -634,6 +636,7 @@ public class DefaultGroovyCompiler implements Compiler {
         public URI[] resolve(final Map args, final Map... dependencies) {
             synchronized(lock) {
                 adjustCalleeDepth(args);
+                adjustClassLoader(args);
                 return innerEngine.resolve(args, dependencies);
             }
         }
@@ -665,6 +668,34 @@ public class DefaultGroovyCompiler implements Compiler {
             Object calleeDepthObj = args.get(CALLEE_DEPTH_KEY);
             int calleeDepth = (calleeDepthObj == null) ? grapeInstanceDefaultCalleeDepth : (int)calleeDepthObj;
             args.put(CALLEE_DEPTH_KEY, calleeDepth + 1);
+        }
+
+        // since Groovy 6, the runtime grab of a script passes the class loader of the script class,
+        // which in Grengine is not a GroovyClassLoader, but grape engines require that as target
+        // (GrapeIvy finds it via stack walk fallbacks, GrapeMaven fails),
+        // so this wrapping engine takes the closest valid parent
+        private static void adjustClassLoader(Map<String, Object> args) {
+            final Object obj = args.get(CLASS_LOADER_KEY);
+            if (!(obj instanceof ClassLoader) || isValidTargetClassLoader((ClassLoader)obj)) {
+                return;
+            }
+            ClassLoader loader = ((ClassLoader)obj).getParent();
+            while (loader != null && !isValidTargetClassLoader(loader)) {
+                loader = loader.getParent();
+            }
+            if (loader != null) {
+                args.put(CLASS_LOADER_KEY, loader);
+            }
+        }
+
+        private static boolean isValidTargetClassLoader(ClassLoader loader) {
+            return isValidTargetClassLoaderClass(loader.getClass());
+        }
+
+        private static boolean isValidTargetClassLoaderClass(Class<?> clazz) {
+            return clazz != null && (clazz.getName().equals("groovy.lang.GroovyClassLoader")
+                    || clazz.getName().equals("org.codehaus.groovy.tools.RootLoader")
+                    || isValidTargetClassLoaderClass(clazz.getSuperclass()));
         }
 
     }
