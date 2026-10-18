@@ -1408,14 +1408,14 @@ always surprises in practice.
 
 Required Java versions in a nutshell:
 
+* Grengine 4: Java 17 or later.
 * Grengine 3+2: Java 8 or later.
 * Grengine 1: Java 6 or later.
 
-Some more details (current Grengine 3):
+Some more details (current Grengine 4):
 
-* Tested the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (8 / 11 / 17 / 21 / 25).
+* Tested with the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (17 / 21 / 25).
 * See testbed/matrix.sh in the git repo for exact versions.
-* Groovy 5 requires JDK 11 or later, Groovy 6 requires JDK 17 or later.
 * Groovy 2.5 on JDK 25: Compiling scripts can fail with
   "Unsupported class file major version 69", because Groovy 2.5's bundled
   ASM cannot read JDK 25 class files. (That is a general issue with that
@@ -1454,6 +1454,9 @@ Some more details (current Grengine 3):
     `setSourceClassLoader()`.
 
 ### Grengine 3
+
+Since 3.1.1, tested with the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (8 / 11 / 17 / 21 / 25).<br>
+(Groovy 5 requires JDK 11 or later, Groovy 6 requires JDK 17 or later.)
 
 #### 3.1.2 (18 October 2026)
 
