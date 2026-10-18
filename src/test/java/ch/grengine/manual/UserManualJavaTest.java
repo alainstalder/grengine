@@ -77,9 +77,8 @@ public class UserManualJavaTest {
         map.put("y", 2);
         Binding binding = new Binding(map);
         
-        
         //--------------------------------------------
-        Script script = (Script)clazz.newInstance();
+        Script script = (Script)clazz.getConstructor().newInstance();
         script.setBinding(binding);
         Object obj = script.run();
         //--------------------------------------------
@@ -88,6 +87,7 @@ public class UserManualJavaTest {
     }
     
     @Test
+    @SuppressWarnings("unchecked")
     public void testRunningIndividualScripts_BehindTheScenes_TextBasedScripts_ClassNames() throws Exception {
 
         //--------------------------------------------
@@ -96,8 +96,8 @@ public class UserManualJavaTest {
         shell.evaluate(scriptText);
         shell.evaluate(scriptText);
         GroovyClassLoader gcl = new GroovyClassLoader();
-        ((Script)gcl.parseClass(scriptText).newInstance()).run();
-        ((Script)gcl.parseClass(scriptText).newInstance()).run();
+        ((Script)gcl.parseClass(scriptText).getConstructor().newInstance()).run();
+        ((Script)gcl.parseClass(scriptText).getConstructor().newInstance()).run();
         Grengine gren = new Grengine();
         gren.run(scriptText);
         gren.run(scriptText);

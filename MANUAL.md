@@ -124,7 +124,7 @@ Once a class is loaded, an instance can be created and the script
 can be run, optionally with a specific binding:
 
 ```java
-Script script = (Script)clazz.newInstance();
+Script script = (Script)clazz.getConstructor().newInstance();
 script.setBinding(binding);
 Object obj = script.run();
 ```
@@ -140,8 +140,8 @@ GroovyShell shell = new GroovyShell();
 shell.evaluate(scriptText);
 shell.evaluate(scriptText);
 GroovyClassLoader gcl = new GroovyClassLoader();
-((Script)gcl.parseClass(scriptText).newInstance()).run();
-((Script)gcl.parseClass(scriptText).newInstance()).run();
+((Script)gcl.parseClass(scriptText).getConstructor().newInstance()).run();
+((Script)gcl.parseClass(scriptText).getConstructor().newInstance()).run();
 Grengine gren = new Grengine();
 gren.run(scriptText);
 gren.run(scriptText);
