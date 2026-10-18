@@ -1425,6 +1425,11 @@ Some more details (current Grengine 3):
   at some cost in compile performance.
   (Groovy 2.5 may be end of life since 30 Apr 2026, according to some
   websites, while there seems to be no such announcement from Apache.)
+* Groovy 6.0.0 with the Maven Grape engine (but not the Ivy engine):
+  `@Grab` in scripts only works if the Grape engine has been wrapped
+  with `Grengine.Grape.activate()`; for details see
+  [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458).
+  (Once that issue is fixed, it should also work without wrapping.)
 
 ### Grengine 3
 
@@ -1432,6 +1437,9 @@ Some more details (current Grengine 3):
 
 * Fix: The published POM no longer declares a runtime dependency on Groovy.<br>
   (That had accidentally slipped in with 3.1.0 two years ago.)
+* Fix: Workaround for
+  [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458)
+  (`@Grab` with the Maven Grape engine of Groovy 6).
 
 #### 3.1.1 (17 October 2026)
 
