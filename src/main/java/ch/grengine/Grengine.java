@@ -359,7 +359,7 @@ public class Grengine extends BaseGrengine {
      *
      * @since 1.0.3
      */
-    public Grengine(ClassLoader parent, final File dir, final DirMode dirMode) {
+    public Grengine(final ClassLoader parent, final File dir, final DirMode dirMode) {
         this(builderFromDir(parent, false, null, true, dir, dirMode));
     }
 
