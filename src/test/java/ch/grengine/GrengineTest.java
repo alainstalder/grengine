@@ -65,7 +65,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467;
+import static ch.grengine.TestUtil.hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -1354,9 +1354,9 @@ class GrengineTest {
         try {
             // make sure can load from parent loaders
             shell2.evaluate("new StringBuffer().append('x')");
-            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467(), is(false));
+            assertThat(hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus(), is(false));
         } catch (GroovyBugError e) {
-            if (!hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467()) { throw e; }
+            if (!hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus()) { throw e; }
             assertThat(e.getMessage(), containsString("Unsupported class file major version"));
         }
 

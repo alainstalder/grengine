@@ -36,8 +36,8 @@ import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467;
-import static ch.grengine.TestUtil.hasMavenGrapeEngineIssue12458;
+import static ch.grengine.TestUtil.hasIssue12458MavenGrapeEngine;
+import static ch.grengine.TestUtil.hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -61,13 +61,13 @@ class GrengineGrapeTest {
         printVersions();
         try {
             Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
-            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467(), is(false));
-            assertThat(hasMavenGrapeEngineIssue12458(), is(false));
+            assertThat(hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus(), is(false));
+            assertThat(hasIssue12458MavenGrapeEngine(), is(false));
         } catch (CompileException e) {
-            if (!hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467()) { throw e; }
+            if (!hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus()) { throw e; }
             assertThat(e.getMessage(), containsString("Unsupported class file major version"));
         } catch (CreateException e) {
-            if (!hasMavenGrapeEngineIssue12458()) { throw e; }
+            if (!hasIssue12458MavenGrapeEngine()) { throw e; }
             final Throwable c = e.getCause();
             assertThat(c, instanceOf(ExceptionInInitializerError.class));
             final Throwable cc = c.getCause();
@@ -83,9 +83,9 @@ class GrengineGrapeTest {
         try {
             Grengine.Grape.activate();
             Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
-            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467(), is(false));
+            assertThat(hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus(), is(false));
         } catch (CompileException e) {
-            if (!hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467()) { throw e; }
+            if (!hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus()) { throw e; }
             assertThat(e.getMessage(), containsString("Unsupported class file major version"));
         } finally {
             Grengine.Grape.deactivate();
@@ -104,7 +104,7 @@ class GrengineGrapeTest {
             fail("must throw");
         } catch (CreateException | CompileException e) {
             //e.printStackTrace();
-            if (hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467()) {
+            if (hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus()) {
                 assertThat(e, instanceOf(CompileException.class));
                 assertThat(e.getMessage(), containsString("Unsupported class file major version"));
             } else {

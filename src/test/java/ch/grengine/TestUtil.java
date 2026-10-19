@@ -186,7 +186,7 @@ public class TestUtil {
      *
      * @return true if JDK 25 or later and Groovy < 3, else false.
      */
-    public static boolean hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467() {
+    public static boolean hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus() {
         return JDK_MAJOR_VERSION >= 25 && GROOVY_MAJOR_VERSION < 3;
     }
 
@@ -195,7 +195,7 @@ public class TestUtil {
      *
      * @return true if Groovy >= 6
      */
-    public static boolean hasGrapeAsOptionalDependency() {
+    public static boolean hasGrapeAsOptionalDependencyWhichIsSinceGroovy6() {
         return GROOVY_MAJOR_VERSION >= 6;
     }
 
@@ -205,7 +205,7 @@ public class TestUtil {
      *
      * @return true if the current GrapeEngine is the Maven one
      */
-    public static boolean hasMavenGrapeEngineIssue12458() {
+    public static boolean hasIssue12458MavenGrapeEngine() {
         return "groovy.grape.maven.GrapeMaven".equals(Grape.getInstance().getClass().getName());
     }
 

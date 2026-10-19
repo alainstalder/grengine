@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
-import static ch.grengine.TestUtil.hasGrapeAsOptionalDependency;
+import static ch.grengine.TestUtil.hasGrapeAsOptionalDependencyWhichIsSinceGroovy6;
 import static ch.grengine.TestUtil.toRuntimeException;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -1039,7 +1039,7 @@ class DefaultGroovyCompilerTest {
     @Test
     void testWrappingFails_noGrapeEngine() {
 
-        if (!hasGrapeAsOptionalDependency()) {
+        if (!hasGrapeAsOptionalDependencyWhichIsSinceGroovy6()) {
             return;
         }
 
