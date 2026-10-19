@@ -1425,6 +1425,8 @@ Some more details (current Grengine 4):
   at some cost in compile performance.
   (Groovy 2.5 may be end of life since 30 Apr 2026, according to some
   websites, while there seems to be no such announcement from Apache.)
+  * PS: I opened an issue for this, might also clarify prospects:
+    [GROOVY-12467](https://issues.apache.org/jira/browse/GROOVY-12467)
 * Groovy 6.0.0 with the Maven Grape engine (but not the Ivy engine):
   `@Grab` in scripts only works if the Grape engine has been wrapped
   with `Grengine.Grape.activate()`; for details see

@@ -185,7 +185,7 @@ public class TestUtil {
      *
      * @return true if JDK 25 or later and Groovy < 3, else false.
      */
-    public static boolean hasAsmResolvingIssueOfGroovy2WithJdk25Plus() {
+    public static boolean hasAsmResolvingIssueOfGroovy2WithJdk25PlusIssue12467() {
         return JDK_MAJOR_VERSION >= 25 && GROOVY_MAJOR_VERSION < 3;
     }
 
