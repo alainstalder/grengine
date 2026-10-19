@@ -1433,7 +1433,7 @@ Some more details (current Grengine 4):
 
 ### Grengine 4
 
-#### 4.0.0 (XX Yyyyy ZZZZ)
+#### 4.0.0 (19 October 2026)
 
 * Fix: `CompileException` and `ClassNameConflictException` can now
   be serialized.
