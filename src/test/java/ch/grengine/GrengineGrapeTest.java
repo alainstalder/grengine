@@ -37,6 +37,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.hasAsmResolvingIssueOfGroovy2WithJdk25Plus;
+import static ch.grengine.TestUtil.hasMavenGrapeEngineIssue12458;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -61,10 +62,17 @@ class GrengineGrapeTest {
         try {
             Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
             assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25Plus(), is(false));
-        } catch (Exception e) {
+            assertThat(hasMavenGrapeEngineIssue12458(), is(false));
+        } catch (CompileException e) {
             if (!hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) { throw e; }
-            assertThat(e, instanceOf(CompileException.class));
             assertThat(e.getMessage(), containsString("Unsupported class file major version"));
+        } catch (CreateException e) {
+            if (!hasMavenGrapeEngineIssue12458()) { throw e; }
+            final Throwable c = e.getCause();
+            assertThat(c, instanceOf(ExceptionInInitializerError.class));
+            final Throwable cc = c.getCause();
+            assertThat(cc, instanceOf(RuntimeException.class));
+            assertThat(cc.getMessage(), is("No suitable ClassLoader found for grab"));
         }
     }
 
@@ -76,9 +84,8 @@ class GrengineGrapeTest {
             Grengine.Grape.activate();
             Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
             assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25Plus(), is(false));
-        } catch (Exception e) {
+        } catch (CompileException e) {
             if (!hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) { throw e; }
-            assertThat(e, instanceOf(CompileException.class));
             assertThat(e.getMessage(), containsString("Unsupported class file major version"));
         } finally {
             Grengine.Grape.deactivate();

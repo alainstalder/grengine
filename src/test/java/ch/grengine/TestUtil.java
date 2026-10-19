@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
+import groovy.grape.Grape;
 import groovy.lang.GroovySystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.function.Executable;
@@ -195,6 +196,16 @@ public class TestUtil {
      */
     public static boolean hasGrapeAsOptionalDependency() {
         return GROOVY_MAJOR_VERSION >= 6;
+    }
+
+    /**
+     * The Maven GrapeEngine from groovy-grape-maven has a reported bug
+     * https://issues.apache.org/jira/browse/GROOVY-12458 as of Groovy 6.0.0.
+     *
+     * @return true if the current GrapeEngine is the Maven one
+     */
+    public static boolean hasMavenGrapeEngineIssue12458() {
+        return "groovy.grape.maven.GrapeMaven".equals(Grape.getInstance().getClass().getName());
     }
 
 }

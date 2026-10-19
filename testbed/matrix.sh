@@ -237,7 +237,13 @@ runCell() {
   aborted=$(summaryCount "$log" 'tests aborted')
   local result
   if (( status == 0 )); then
-    result="OK      ${succeeded:-?}/${found:-?} passed, ${skipped:-0} skipped, ${aborted:-0} n/a"
+    result="OK      ${succeeded:-?}/${found:-?} passed"
+    if (( ${skipped:-0} > 0 )); then
+      result+=", $skipped skipped"
+    fi
+    if (( ${aborted:-0} > 0 )); then
+      result+=", $aborted n/a"
+    fi
   else
     result="FAILED  ${failed:-?}/${found:-?} failed (exit $status), see $log"
     gFailedCells=$((gFailedCells + 1))
