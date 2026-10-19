@@ -182,6 +182,7 @@ public class TestUtil {
      * ASM of Groovy 2.5 cannot load JDK 25 bytecode, which is involved in some unit tests
      * here if run under JDK 25 (or later). The workaround is to turn off ASM resolving,
      * which however comes at a certain performance cost.
+     * https://issues.apache.org/jira/browse/GROOVY-12467
      *
      * @return true if JDK 25 or later and Groovy < 3, else false.
      */
