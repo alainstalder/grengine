@@ -47,7 +47,7 @@ gGroovys=(
 gIvyVersion=2.5.3
 gHamcrestVersion=3.0
 gCommonsIoVersion=2.22.0
-gJunitConsoleVersion=1.14.4
+gJunitConsoleVersion=6.1.3
 
 usage() {
   awk 'NR < 3 { next } /^#/ { sub(/^# ?/, ""); print; next } { exit }' "$0"
