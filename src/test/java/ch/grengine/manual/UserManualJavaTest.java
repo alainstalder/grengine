@@ -45,9 +45,7 @@ public class UserManualJavaTest {
         setFileText(scriptFile, "println x+y");
         
         //--------------------------------------------
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("x", 5);
-        map.put("y", 2);
+        Map<String,Object> map = new HashMap<>(Map.of("x", 5, "y", 2));
         Binding binding = new Binding(map);
         gren.run("println x+y", binding);
         gren.run(scriptFile, map);
@@ -62,7 +60,20 @@ public class UserManualJavaTest {
         gren.run("println x+y", gren.binding("x", 5, "y", 2));
         //--------------------------------------------
     }
-    
+
+    @Test
+    public void testRunningIndividualScripts_ClassReuseSpeed() throws Exception {
+        Grengine gren = new Grengine();
+        // now, that is what I call long and complex!
+        String longAndComplexScript = "1";
+        String sameLongAndComplexScript = "1";
+
+        //--------------------------------------------
+        gren.run(longAndComplexScript);
+        // ... later or by someone else:
+        gren.run(sameLongAndComplexScript);
+        //--------------------------------------------
+    }
     
     @Test
     public void testRunningIndividualScripts_BehindTheScenes_Compile() throws Exception {
@@ -73,9 +84,7 @@ public class UserManualJavaTest {
     public void testRunningIndividualScripts_BehindTheScenes_CreateAndRun() throws Exception {
         Grengine gren = new Grengine();
         Class<?> clazz = gren.load("println x+y");
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("x", 5);
-        map.put("y", 2);
+        Map<String,Object> map = Map.of("x", 5, "y", 2);
         Binding binding = new Binding(map);
         
         //--------------------------------------------
@@ -160,9 +169,7 @@ public class UserManualJavaTest {
         File scriptFile = new File(tempDir, "MyScript.groovy");
         setFileText(scriptFile, "return 2");
         URL scriptUrl = scriptFile.toURI().toURL();
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("x", 5);
-        map.put("y", 2);
+        Map<String,Object> map = Map.of("x", 5, "y", 2);
         Binding binding = new Binding(map);
 
         //--------------------------------------------

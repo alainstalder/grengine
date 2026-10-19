@@ -56,9 +56,7 @@ A binding can optionally be indicated by passing a `Binding`
 object or a `Map<String,Object>`.
 
 ```java
-Map<String,Object> map = new HashMap<String,Object>();
-map.put("x", 5);
-map.put("y", 2);
+Map<String,Object> map = new HashMap<>(Map.of("x", 5, "y", 2));
 Binding binding = new Binding(map);
 gren.run("println x+y", binding);
 gren.run(scriptFile, map);
@@ -77,6 +75,31 @@ parameters in pairs:
 ```java
 gren.run("println x+y", gren.binding("x", 5, "y", 2));
 ```
+
+#### Speed!
+
+Probably the most immediately useful feature of Grengine
+is the following **speed** advantage:
+
+```java
+gren.run(longAndComplexScript);
+// ... later or by someone else:
+gren.run(sameLongAndComplexScript);
+```
+
+In this use case, the second call does not have to compile the
+script a second time, but instead creates a new instance based
+on the already compiled class, which is much faster.
+
+#### There is way more!
+
+This only scratches the surface of the capabilities of Grengine,
+which can even **cache the bytecode** of compiled classes for more
+performant reuse in more general cases.
+
+The following gives first an introduction to the basics of what
+happens when you run a Groovy script and then gradually approaches
+more sophisticated use cases with Grengine.
 
 ### Behind the Scenes and Performance
 
