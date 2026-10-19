@@ -59,19 +59,20 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.codehaus.groovy.GroovyBugError;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.isGroovy2xWithJdk25Plus;
+import static ch.grengine.TestUtil.hasAsmResolvingIssueOfGroovy2WithJdk25Plus;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class GrengineTest {
@@ -1318,9 +1319,6 @@ class GrengineTest {
     @Test
     void testAsClassLoaderBasic() throws Exception {
 
-        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
-        assumeFalse(isGroovy2xWithJdk25Plus());
-
         // given
 
         final File dir = TestUtil.createTestDir();
@@ -1353,8 +1351,14 @@ class GrengineTest {
 
         assertThat(shell2.evaluate("Test.get55()"), is(55));
 
-        // make sure can load from parent loaders
-        shell2.evaluate("new StringBuffer().append('x')");
+        try {
+            // make sure can load from parent loaders
+            shell2.evaluate("new StringBuffer().append('x')");
+            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25Plus(), is(false));
+        } catch (GroovyBugError e) {
+            if (!hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) { throw e; }
+            assertThat(e.getMessage(), containsString("Unsupported class file major version"));
+        }
 
         gren.close();
     }

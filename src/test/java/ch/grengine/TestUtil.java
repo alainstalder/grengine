@@ -178,17 +178,23 @@ public class TestUtil {
     }
 
     /**
-     * Groovy 2.5 is end of life. Its ASM cannot load JDK 25 bytecode, which is involved
-     * in some unit tests here if run under JDK 25 (or later). The workaround if you really
-     * still need to run Groovy 2.5 seems to be to turn off ASM resolving, which however
-     * comes at a certain performance cost.
-     *
-     * That this workaround basically works is tested in {@link GrengineTest}.
+     * ASM of Groovy 2.5 cannot load JDK 25 bytecode, which is involved in some unit tests
+     * here if run under JDK 25 (or later). The workaround is to turn off ASM resolving,
+     * which however comes at a certain performance cost.
      *
      * @return true if JDK 25 or later and Groovy < 3, else false.
      */
-    public static boolean isGroovy2xWithJdk25Plus() {
+    public static boolean hasAsmResolvingIssueOfGroovy2WithJdk25Plus() {
         return JDK_MAJOR_VERSION >= 25 && GROOVY_MAJOR_VERSION < 3;
+    }
+
+    /**
+     * Since Groovy 6, Grape engines are an optional Maven dependency.
+     *
+     * @return true if Groovy >= 6
+     */
+    public static boolean hasGrapeAsOptionalDependency() {
+        return GROOVY_MAJOR_VERSION >= 6;
     }
 
 }

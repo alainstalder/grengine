@@ -49,9 +49,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.GROOVY_MAJOR_VERSION;
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
+import static ch.grengine.TestUtil.hasGrapeAsOptionalDependency;
 import static ch.grengine.TestUtil.toRuntimeException;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -63,7 +63,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 class DefaultGroovyCompilerTest {
@@ -1040,8 +1039,9 @@ class DefaultGroovyCompilerTest {
     @Test
     void testWrappingFails_noGrapeEngine() {
 
-        // skip test if earlier Groovy where there is always an engine (and no engine could not easily be mocked)
-        assumeTrue(GROOVY_MAJOR_VERSION >= 6);
+        if (!hasGrapeAsOptionalDependency()) {
+            return;
+        }
 
         final String grapeImplKey = "groovy.grape.impl";
         final String grapeImplValue = System.getProperty(grapeImplKey);

@@ -19,6 +19,7 @@ package ch.grengine;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.engine.LayeredEngine;
+import ch.grengine.except.CompileException;
 import ch.grengine.except.CreateException;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.sources.DirBasedSources;
@@ -35,7 +36,8 @@ import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static ch.grengine.TestUtil.isGroovy2xWithJdk25Plus;
+import static ch.grengine.TestUtil.hasAsmResolvingIssueOfGroovy2WithJdk25Plus;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -43,7 +45,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class GrengineGrapeTest {
@@ -55,20 +56,30 @@ class GrengineGrapeTest {
 
     @Test
     void testHelloWorldWithGrape_unwrapped() {
-        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
-        assumeFalse(isGroovy2xWithJdk25Plus());
+
         printVersions();
-        Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
+        try {
+            Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
+            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25Plus(), is(false));
+        } catch (Exception e) {
+            if (!hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) { throw e; }
+            assertThat(e, instanceOf(CompileException.class));
+            assertThat(e.getMessage(), containsString("Unsupported class file major version"));
+        }
     }
 
     @Test
     void testHelloWorldWithGrape_wrapped() {
-        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25+
-        assumeFalse(isGroovy2xWithJdk25Plus());
+
         printVersions();
         try {
             Grengine.Grape.activate();
             Grengine.Grape.newGrengine().run(GRAPE_SCRIPT);
+            assertThat(hasAsmResolvingIssueOfGroovy2WithJdk25Plus(), is(false));
+        } catch (Exception e) {
+            if (!hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) { throw e; }
+            assertThat(e, instanceOf(CompileException.class));
+            assertThat(e.getMessage(), containsString("Unsupported class file major version"));
         } finally {
             Grengine.Grape.deactivate();
         }
@@ -81,19 +92,22 @@ class GrengineGrapeTest {
 
     @Test
     void testNoGrapeByDefault() {
-        // would fail due to an ASM resolving issue with Groovy 2.5 on JDK 25++
-        assumeFalse(isGroovy2xWithJdk25Plus());
         try {
             new Grengine().run(GRAPE_SCRIPT);
             fail("must throw");
-        } catch (Throwable t) {
-            //t.printStackTrace();
-            assertThat(t, instanceOf(CreateException.class));
-            t = t.getCause();
-            assertThat(t, instanceOf(ExceptionInInitializerError.class));
-            t = t.getCause();
-            assertThat(t.getClass().getCanonicalName(), is(RuntimeException.class.getCanonicalName()));
-            assertThat(t.getMessage(), is("No suitable ClassLoader found for grab"));
+        } catch (CreateException | CompileException e) {
+            //e.printStackTrace();
+            if (hasAsmResolvingIssueOfGroovy2WithJdk25Plus()) {
+                assertThat(e, instanceOf(CompileException.class));
+                assertThat(e.getMessage(), containsString("Unsupported class file major version"));
+            } else {
+                assertThat(e, instanceOf(CreateException.class));
+                final Throwable c = e.getCause();
+                assertThat(c, instanceOf(ExceptionInInitializerError.class));
+                final Throwable cc = c.getCause();
+                assertThat(cc.getClass().getCanonicalName(), is(RuntimeException.class.getCanonicalName()));
+                assertThat(cc.getMessage(), is("No suitable ClassLoader found for grab"));
+            }
         }
     }
 
