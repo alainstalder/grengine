@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.util.Base64;
 
 import groovy.grape.Grape;
+import groovy.grape.GrapeEngine;
 import groovy.lang.GroovySystem;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.function.Executable;
@@ -206,7 +207,8 @@ public class TestUtil {
      * @return true if the current GrapeEngine is the Maven one
      */
     public static boolean hasIssue12458MavenGrapeEngine() {
-        return "groovy.grape.maven.GrapeMaven".equals(Grape.getInstance().getClass().getName());
+        final GrapeEngine engine = Grape.getInstance();
+        return engine != null && "groovy.grape.maven.GrapeMaven".equals(engine.getClass().getName());
     }
 
 }
