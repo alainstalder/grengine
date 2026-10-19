@@ -992,6 +992,12 @@ public class Grengine extends BaseGrengine {
          * <p>
          * See {@link DefaultGroovyCompiler#disableGrapeSupport()} and the user
          * manual for more information.
+         * <p>
+         * Do not call while there is still anything running that might {@code @Grab}
+         * a dependency via {@code groovy.grape.Grape.getInstance()} with the
+         * {@code groovy.grape.Grape} class instance of this classloader.
+         * Calling this method in such a situation can lead to NullPointerExceptions
+         * in the calling code or other unexpected results.
          *
          * @since 1.2
          */
