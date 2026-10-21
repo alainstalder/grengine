@@ -34,17 +34,11 @@ public class CompileException extends GrengineException {
     @Serial
     private static final long serialVersionUID = -7064452473268097551L;
 
-    /**
-     * the sources for which compilation failed;
-     * null after exception deserialization.
-     *
-     * @since 1.0
-     */
+    // since 1.0, transient since 4.0.0
     private final transient Sources sources;
 
     /**
-     * the sources for which compilation failed converted to a string;
-     * survives exception deserialization.
+     * the sources for which compilation failed - converted to a string.
      *
      * @since 4.0.0
      */
@@ -93,7 +87,7 @@ public class CompileException extends GrengineException {
     }
 
     /**
-     * gets the sources for which compilation failed converted to a string;
+     * gets the sources for which compilation failed - converted to a string;
      * survives exception deserialization.
      *
      * @return sources for which compilation failed converted to a string,

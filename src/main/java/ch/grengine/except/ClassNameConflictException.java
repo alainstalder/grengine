@@ -37,39 +37,31 @@ public class ClassNameConflictException extends GrengineException {
     @Serial
     private static final long serialVersionUID = -7064452473268097551L;
 
-    /**
-     * a map of class name to a list of all {@link Code} layers
-     * that contain a class with that name, but only if the class name
-     * occurred more than once in the code layers;
-     * may be null if the corresponding check has not been made
-     * and is always null after exception deserialization.
-     *
-     * @since 1.0
-     */
+    // since 1.0, transient since 4.0.0
     private final transient Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap;
 
     /**
-     * {@code sameClassNamesInMultipleCodeLayersMap}
-     * converted to a string; survives exception deserialization.
+     * gets a map of class name to a list of all {@link Code} layers
+     * that contain a class with that name, but only if the class name
+     * occurred more than once in the code layers
+     * - converted to a string.
+     * <p>
+     * Empty if had not been checked.
      *
      * @since 4.0.0
      */
     private final String sameClassNamesInMultipleCodeLayersMapAsString;
 
-    /**
-     * a map of class name to a list of all {@link Code} layers
-     * that contain a class with that name, but only if the class name
-     * occurred also in the parent class loader;
-     * may be null if the corresponding check has not been made
-     * and is always null after exception deserialization.
-     *
-     * @since 1.0
-     */
+    // since 1.0, transient since 4.0.0
     private final transient Map<String,List<Code>> sameClassNamesInParentAndCodeLayersMap;
 
     /**
-     * {@code sameClassNamesInParentAndCodeLayersMap}
-     * converted to a string; survives exception deserialization.
+     * a map of class name to a list of all {@link Code} layers
+     * that contain a class with that name, but only if the class name
+     * occurred also in the parent class loader
+     * - converted to a string.
+     *
+     * Empty if had not been checked.
      *
      * @since 4.0.0
      */
