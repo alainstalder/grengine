@@ -6,10 +6,11 @@ import ch.grengine.source.Source;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -269,9 +270,10 @@ public class UserManualJavaTest {
     @Test
     public void testInterdependentScripts_DirBasedGrengine_Basic() throws Exception {
 
-        String utilScriptText = "class Util {\n"
-                + "  def concat(String a, String b) { return \"$a:$b\" }\n"
-                + "}";
+        String utilScriptText = """
+                class Util {
+                  def concat(String a, String b) { return "$a:$b" }
+                }""";
         String scriptText = "println new Util().concat('xx', 'yy')";
         File scriptDir = tempDir;
         setFileText(new File(scriptDir, "Util.groovy"), utilScriptText);
@@ -303,19 +305,16 @@ public class UserManualJavaTest {
     }
     
     public static void setFileText(File file, String text)
-            throws FileNotFoundException, UnsupportedEncodingException {
-        PrintWriter writer = new PrintWriter(file, "UTF-8");
+            throws IOException {
+        PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
         writer.write(text);
         writer.close();
     }
     
     public static String getFileText(File file) throws FileNotFoundException {
-        Scanner scan = new Scanner(file);
-        try {
+        try (Scanner scan = new Scanner(file)) {
             scan.useDelimiter("\\A");
             return scan.hasNext() ? scan.next() : "";
-        } finally {
-            scan.close();
         }
     }
 

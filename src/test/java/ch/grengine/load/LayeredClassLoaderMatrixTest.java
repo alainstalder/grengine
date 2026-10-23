@@ -220,18 +220,13 @@ class LayeredClassLoaderMatrixTest {
                 && loadBySource) {
             return "methodTop";
         }
-        switch (ctx.codeLayersType) {
-            case CODE_LAYERS_CURRENT_FIRST:
-                return "methodLayer1";
-            case CODE_LAYERS_PARENT_FIRST:
-                switch (ctx.parentClassLoaderType) {
-                    case PARENT_IS_REGULAR_CLASS_LOADER:
-                        return "methodLayer0";
-                    case PARENT_IS_SOURCE_CLASS_LOADER:
-                        return "methodParent";
-                }
-        }
-        throw new RuntimeException("never gets here");
+        return switch (ctx.codeLayersType) {
+            case CODE_LAYERS_CURRENT_FIRST -> "methodLayer1";
+            case CODE_LAYERS_PARENT_FIRST -> switch (ctx.parentClassLoaderType) {
+                case PARENT_IS_REGULAR_CLASS_LOADER -> "methodLayer0";
+                case PARENT_IS_SOURCE_CLASS_LOADER -> "methodParent";
+            };
+        };
     }
 
     private void testFindBytecodeClassLoaderBySource(final TestContext ctx) {
@@ -294,7 +289,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -303,7 +298,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -315,7 +310,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -324,7 +319,7 @@ class LayeredClassLoaderMatrixTest {
         // when
 
         assertThat(clazz.getName(), is("groovy.util.Expando"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when/then
 
@@ -353,7 +348,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -362,7 +357,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -371,7 +366,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Side"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
 
         // when/then (wrong source, not found)
@@ -386,7 +381,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("groovy.util.Expando"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when/then
 
@@ -420,7 +415,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -429,7 +424,7 @@ class LayeredClassLoaderMatrixTest {
         // then
 
         assertThat(clazz.getName(), is("Side"));
-        clazz.getDeclaredMethod(expectedMethod);
+        assertThat(clazz.getDeclaredMethod(expectedMethod), is(notNullValue()));
 
         // when
 
@@ -437,7 +432,7 @@ class LayeredClassLoaderMatrixTest {
 
         // then
 
-        clazz.getDeclaredMethod(expectedExpandoMethod);
+        assertThat(clazz.getDeclaredMethod(expectedExpandoMethod), is(notNullValue()));
 
         // when/then
 
@@ -634,13 +629,13 @@ class LayeredClassLoaderMatrixTest {
 
         Class<?> clazz = loader1.loadMainClass(ctx.sMain);
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod("methodTop");
+        assertThat(clazz.getDeclaredMethod("methodTop"), is(notNullValue()));
 
         assertThat(ctx.fMain.setLastModified(55555), is(true));
 
         clazz = loader1.loadMainClass(ctx.sMain);
         assertThat(clazz.getName(), is("Main"));
-        clazz.getDeclaredMethod("methodTop");
+        assertThat(clazz.getDeclaredMethod("methodTop"), is(notNullValue()));
 
         // when/then (loadClass(source, name))
 
@@ -648,13 +643,13 @@ class LayeredClassLoaderMatrixTest {
 
         clazz = loader2.loadClass(ctx.sMain, "Side");
         assertThat(clazz.getName(), is("Side"));
-        clazz.getDeclaredMethod("methodTop");
+        assertThat(clazz.getDeclaredMethod("methodTop"), is(notNullValue()));
 
         assertThat(ctx.fMain.setLastModified(77777), is(true));
 
         clazz = loader2.loadClass(ctx.sMain, "Side");
         assertThat(clazz.getName(), is("Side"));
-        clazz.getDeclaredMethod("methodTop");
+        assertThat(clazz.getDeclaredMethod("methodTop"), is(notNullValue()));
     }
 
 }

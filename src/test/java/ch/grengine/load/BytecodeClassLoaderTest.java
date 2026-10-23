@@ -16,19 +16,19 @@
 
 package ch.grengine.load;
 
+import ch.grengine.TestUtil;
+import ch.grengine.code.Bytecode;
+import ch.grengine.code.Code;
+import ch.grengine.code.CompiledSourceInfo;
 import ch.grengine.code.DefaultCode;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
-import ch.grengine.TestUtil;
-import ch.grengine.code.Bytecode;
-import ch.grengine.code.Code;
-import ch.grengine.code.CompiledSourceInfo;
-import ch.grengine.source.SourceFactory;
 
 import java.io.File;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -123,9 +124,10 @@ class BytecodeClassLoaderTest {
 
         final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
         final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("class Class1 {\n" +
-                "static class Sub {} }\n" +
-                "class Side {}");
+        final Source s1 = f.fromText("""
+                class Class1 {
+                static class Sub {} }
+                class Side {}""");
         final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
         final Source s3 = f.fromText("class Class3 {}");
         final Source s4 = f.fromText("package groovy.util\nclass Expando { def marker12345() { return 1 } }");
@@ -158,7 +160,7 @@ class BytecodeClassLoaderTest {
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
-        clazz.getDeclaredMethod("marker12345");
+        assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
 
         // when/then (loadClass(source, name))
 
@@ -177,7 +179,7 @@ class BytecodeClassLoaderTest {
                 "Class 'groovy.util.Expando' not found for source. Source: " + s1.toString());
         clazz = loader2.loadClass(s4, "groovy.util.Expando");
         // make sure the Groovy version of the class was loaded
-        clazz.getDeclaredMethod("marker12345");
+        assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
 
         clazz = loader2.loadClass(s2, "ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
@@ -187,7 +189,7 @@ class BytecodeClassLoaderTest {
 
         assertThrowsMessageIs(LoadException.class,
                 () -> loader3.loadClass(s3, "Class1"),
-                "Source not found: " + s3.toString());
+                "Source not found: " + s3);
 
         // when/then (loadClass(name))
 
@@ -206,10 +208,10 @@ class BytecodeClassLoaderTest {
 
         if (loadMode == LoadMode.PARENT_FIRST) {
             // make sure the Java version of the class was loaded
-            clazz.getDeclaredMethod("createMap");
+            assertThat(clazz.getDeclaredMethod("createMap"), is(notNullValue()));
         } else {
             // make sure the Groovy version of the class was loaded
-            clazz.getDeclaredMethod("marker12345");
+            assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
         }
     }
 
@@ -278,7 +280,7 @@ class BytecodeClassLoaderTest {
         clazz = loader1.loadMainClass(s4);
         assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
-        clazz.getDeclaredMethod("marker12345");
+        assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
 
         // when/then (loadClass(source, name))
 
@@ -294,7 +296,7 @@ class BytecodeClassLoaderTest {
         clazz = loader2.loadClass(s4, "groovy.util.Expando");
         assertThat(clazz.getName(), is("groovy.util.Expando"));
         // make sure the Groovy version of the class was loaded
-        clazz.getDeclaredMethod("marker12345");
+        assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
 
         clazz = loader2.loadClass(s2, "ch.grengine.test.Class2");
         assertThat(clazz.getName(), is("ch.grengine.test.Class2"));
@@ -304,7 +306,7 @@ class BytecodeClassLoaderTest {
 
         assertThrowsMessageIs(LoadException.class,
                 () -> loader3.loadClass(s3, "Class1"),
-                "Source not found: " + s3.toString());
+                "Source not found: " + s3);
 
         // when/then (loadClass(name))
 
@@ -319,10 +321,10 @@ class BytecodeClassLoaderTest {
         clazz = loader4.loadClass("groovy.util.Expando");
         if (loadMode == LoadMode.PARENT_FIRST) {
             // make sure the Java version of the class was loaded
-            clazz.getDeclaredMethod("createMap");
+            assertThat(clazz.getDeclaredMethod("createMap"), is(notNullValue()));
         } else {
             // make sure the Groovy version of the class was loaded
-            clazz.getDeclaredMethod("marker12345");
+            assertThat(clazz.getDeclaredMethod("marker12345"), is(notNullValue()));
         }
     }
 
@@ -399,7 +401,7 @@ class BytecodeClassLoaderTest {
         assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadMainClassBySource(loader, s1),
                 "Inconsistent code: " + inconsistentCode + "." +
-                        " Main class 'Class1' not found for source. Source: " + s1.toString());
+                        " Main class 'Class1' not found for source. Source: " + s1);
     }
     
     @Test
@@ -440,7 +442,7 @@ class BytecodeClassLoaderTest {
         assertThrowsMessageIs(LoadException.class,
                 () -> BytecodeClassLoader.loadClassBySourceAndName(loader, s1, "Class33NoBytecode"),
                 "Inconsistent code: " + inconsistentCode + "." +
-                        " Class 'Class33NoBytecode' not found for source. Source: " + s1.toString());
+                        " Class 'Class33NoBytecode' not found for source. Source: " + s1);
     }
     
     @Test

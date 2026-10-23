@@ -15,7 +15,7 @@ class UserManualGroovyTest {
     
     @Test
     void testRunningIndividualScripts_BindingWithGroovy() throws Exception {
-        Grengine gren = new Grengine();
+        Grengine gren = new Grengine()
         
         //--------------------------------------------
         gren.run('println x+y', [ 'x' : 5, 'y' : 2 ])
@@ -25,12 +25,12 @@ class UserManualGroovyTest {
     @Test
     void testInterdependentScripts_DirBasedGrengine_DirChanges() throws Exception {
 
-        String utilScriptText = 'class Util { def concat(String a, String b) { return "$a:$b" } }';
-        String scriptText = "println new Util().concat('xx', 'yy')";
-        File scriptDir = tempFolder.getRoot();
-        new File(scriptDir, "Util.groovy").setText(utilScriptText);
-        new File(scriptDir, "Test.groovy").setText(scriptText);
-        Grengine gren = new Grengine(scriptDir);
+        String utilScriptText = 'class Util { def concat(String a, String b) { return "$a:$b" } }'
+        String scriptText = "println new Util().concat('xx', 'yy')"
+        File scriptDir = tempFolder.getRoot()
+        new File(scriptDir, "Util.groovy").setText(utilScriptText)
+        new File(scriptDir, "Test.groovy").setText(scriptText)
+        Grengine gren = new Grengine(scriptDir)
         
         //--------------------------------------------
         def utilFile = new File(scriptDir, 'Util.groovy')
@@ -49,11 +49,11 @@ class UserManualGroovyTest {
     @Test
     void testInterdependentScripts_DirBasedGrengine_Options() throws Exception {
 
-        String utilScriptText = 'class Util { def concat(String a, String b) { return "$a:$b" } }';
-        String scriptText = "println new Util().concat('xx', 'yy')";
-        File scriptDir = tempFolder.getRoot();
-        new File(scriptDir, "Util.groovy").setText(utilScriptText);
-        new File(scriptDir, "Test.groovy").setText(scriptText);
+        String utilScriptText = 'class Util { def concat(String a, String b) { return "$a:$b" } }'
+        String scriptText = "println new Util().concat('xx', 'yy')"
+        File scriptDir = tempFolder.getRoot()
+        new File(scriptDir, "Util.groovy").setText(utilScriptText)
+        new File(scriptDir, "Test.groovy").setText(scriptText)
         
         //--------------------------------------------
         def config = new CompilerConfiguration()

@@ -17,13 +17,13 @@
 package ch.grengine.load;
 
 import ch.grengine.TestUtil;
+import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
-import ch.grengine.code.Code;
 
 import java.util.Arrays;
 import java.util.List;
@@ -134,7 +134,7 @@ class BytecodeClassLoaderConcurrencyTest {
         final String packageLoadPrefix = packageName.isEmpty() ? "" : packageName + ".";
         final List<String> classNamesToLoad = Arrays.stream(classNames)
                 .map(className -> packageLoadPrefix + className)
-                .collect(Collectors.toList());
+                .toList();
         final int nClassNamesToLoad = classNamesToLoad.size();
 
         final int nThreads = 10;
@@ -152,7 +152,7 @@ class BytecodeClassLoaderConcurrencyTest {
                         setFailed(true);
                     }
                 }))
-                .collect(Collectors.toList());
+                .toList();
 
         // when
 
