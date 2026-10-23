@@ -1470,7 +1470,7 @@ Required Java versions in a nutshell:
 
 Some more details (current Grengine 4):
 
-* Tested with the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (17 / 21 / 25).
+* Tested with the matrix Groovy (6 / 5 / 4 / 3 / 2.5) x JDK (25 / 21 / 17).
 * See testbed/matrix.sh in the git repo for exact versions.
 * Groovy 2.5 on JDK 25: Compiling scripts can fail with
   "Unsupported class file major version 69", because Groovy 2.5's bundled
