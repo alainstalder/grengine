@@ -1141,20 +1141,21 @@ across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
 Optionally the `GrapeEngine` in the `Grape.class`, which is obtained with
 `Grape.getInstance()` – and before Groovy 6 always an instance of a class called
 `GrapeIvy` (using Apache Ivy to resolve dependencies) – is wrapped with a
-Grengine-specific instance that locks all grabs on `Grape.class` or on a
-freely eligible lock object and passes on all calls to the original
-`GrapeEngine` instance.
+Grengine-specific instance that locks all grabs on the wrapping engine
+as the lock or on a freely chosen lock object and passes on all calls to
+the original `GrapeEngine` instance.
 For example, if you wanted to safely use Grape across different webapps in a
-Tomcat, the webapps might lock on some rather unusual class in the Java JDK,
-instead of on `Grape.class`, which would typically be separately loaded classes
-if the Groovy JAR is part of each webapp and not installed at the Tomcat level.
+Tomcat, the webapps might all lock on the same, rather unusual class from the
+Java JDK, because the Groovy classes (and thus the default locks) would
+typically be loaded separately per webapp if the Groovy JAR is part of each
+webapp and not installed at the Tomcat level.
 Also part of the wrapper is a mechanism where you can optionally pass the runtime
 GroovyClassLoader while compiling via a `CompilationCustomizer`, with the effect
 that grabs are made on both the runtime class loader and the compile time class
 loader, thus eliminating GROOVY-8108.
 
 In practice, things are quite easy to use.
-For a Grengine that uses Grape and is based of sources in a given directory,
+For a Grengine that uses Grape and is based on sources in a given directory,
 instead of
 
 ```java
@@ -1165,12 +1166,12 @@ you would do this:
 
 ```java
 Grengine.Grape.activate();
-Grengine gren = Grengine.Grape.newGrengine(dir)
+Grengine gren = Grengine.Grape.newGrengine(dir);
 ```
 
 The first call wraps the `GrapeEngine` in the `Grape` class, which has a
 "global" impact on all Groovy scripts and classes that grab dependencies,
-but this does no harm to others, in fact it has no effect except on them
+but this does no harm to others, in fact it has no effect on them,
 except that it eliminates the GROOVY-7407 issue within the scope of the
 loaded `Grape.class`.
 (With the exception of performance: If one grab takes a few seconds because
@@ -1181,11 +1182,6 @@ grabbing would not work any more until exiting the Java VM.)
 
 The above shortcut works with all convenience Grengine constructors, the
 ones from directories, a collection of URLs or without any sources layers.
-To deactivate wrapping again, simply call:
-
-```java
-Grengine.Grape.deactivate();
-```
 
 If you want to use a different lock, use:
 
@@ -1193,11 +1189,52 @@ If you want to use a different lock, use:
 Grengine.Grape.activate(myLock);
 ```
 
+Passing null as the lock means the same as calling the method without
+argument, namely lock on the wrapping engine.
+
+Calls of activate are idempotent if the passed locks are "compatible":
+
+* Existing lock default, new lock default: **OK**
+  * The wrapper is not replaced, the second call returns without
+    changing anything.
+* Existing lock custom, new lock default: **IllegalStateException**
+* Existing lock default, new lock custom: **IllegalStateException**
+* Existing lock custom, new lock custom and same instance: **OK**
+  * The wrapper is not replaced, the second call returns without
+    changing anything.
+* Existing lock custom, new lock custom but different instance: **IllegalStateException**
+
+Note that the above is also true when the Grengine JAR is loaded
+multiple times (multiple classloaders) and they all use the same
+Groovy in the classpath (shared classloader for Groovy).
+More specifically, the case "existing lock default, new lock default"
+above is also OK if the second caller calls from a different
+classloader than the one that originally wrapped the engine
+in the first call.
+
+There is a call to deactivate wrapping again:
+
+```java
+Grengine.Grape.deactivate();
+```
+
+**But normally calling it is _not_ recommended.**
+
+Consider the following scenario:
+The Grengine JAR is loaded more than once (separate classloaders)
+but they all use the same Groovy JDK (single classloader), for example,
+independent web applications in a container, and they are calling
+`deactivate()` in an uncoordinated way, so that one of them
+doing so deactivates Grape with Grengine for all the others.
+
+Plus, the wrapper eliminates the GROOVY-7407 issue also when using
+only the Groovy JDK, but nothing from Grengine except `activate()`.
+
 In more sophisticated use cases where you define the elements of the
 Grengine in more detail, you can directly use the `DefaultGroovyCompiler`
 class.
 The methods `enableGrapeSupport()` and `disableGrapeSupport()` have
-exactly the same effect als the activate/deactivate methods mentioned
+exactly the same effect as the activate/deactivate methods mentioned
 above.
 The only thing you usually have to do in addition, is to modify the
 `CompilerConfiguration` with a call like this, where `runtimeLoader`
@@ -1271,10 +1308,6 @@ private Grengine createGrengine() {
 Note that there are only two things done specifically to support Grape here,
 the activation call and the call to adapt the compiler configuration which
 is then passed to the constructed `CompilerFactory`.
-
-By the way, you might also want to use the activate/deactivate calls simply
-to eliminate the GROOVY-7407 issue when using only the Groovy JDK, but
-nothing from Grengine except for those calls.
 
 ## Grengine as a Framework
 
@@ -1461,8 +1494,8 @@ Some more details (current Grengine 4):
 #### 4.1.0 (23 October 2026)
 
 * Improved: The `GrapeEngine` wrapping for grabbing dependencies
-  with Grape (`@grab ...`) during running scripts has been made
-  more robust, see [Grengine and Grape](#grengine-and-grape). 
+  with Grape (`@Grab ...`) during running scripts has been made
+  more robust, see [Grengine and Grape](#grengine-and-grape).
 
 #### 4.0.0 (19 October 2026)
 
