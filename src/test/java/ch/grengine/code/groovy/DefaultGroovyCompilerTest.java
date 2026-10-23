@@ -16,11 +16,13 @@
 
 package ch.grengine.code.groovy;
 
+import ch.grengine.Grengine;
 import ch.grengine.TestUtil;
 import ch.grengine.code.Code;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.DefaultCode;
 import ch.grengine.code.DefaultSingleSourceCode;
+import ch.grengine.code.groovy.DefaultGroovyCompiler.GrengineGrapeEngine;
 import ch.grengine.except.CompileException;
 import ch.grengine.load.BytecodeClassLoader;
 import ch.grengine.load.LoadMode;
@@ -33,6 +35,7 @@ import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
@@ -49,11 +52,11 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.GROOVY_MAJOR_VERSION;
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
-import static ch.grengine.TestUtil.hasGrapeAsOptionalDependencyWhichIsSinceGroovy6;
+import static ch.grengine.TestUtil.hasGroovyGrapeAsOptionalDependency;
 import static ch.grengine.TestUtil.toRuntimeException;
-import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -62,13 +65,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
 class DefaultGroovyCompilerTest {
-
-    // so far same value for all Groovy versions up to Groovy 4
-    private static final int GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH = 3;
 
     @Test
     void testConstructDefaults() {
@@ -564,24 +565,36 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testEnableDisableGrapeSupportDefault() {
+    void testEnableDisableGrapeSupportDefault_noArg() {
+        testEnableDisableGrapeSupportDefault(true);
+    }
+
+    @Test
+    void testEnableDisableGrapeSupportDefault_lockNull() {
+        testEnableDisableGrapeSupportDefault(false);
+    }
+
+    void testEnableDisableGrapeSupportDefault(final boolean withoutLockArg) {
         try {
 
             // when (enable)
 
-            DefaultGroovyCompiler.enableGrapeSupport();
+            if (withoutLockArg) {
+                DefaultGroovyCompiler.enableGrapeSupport();
+            } else {
+                DefaultGroovyCompiler.enableGrapeSupport(null);
+            }
             GrapeEngine engine = Grape.getInstance();
             GrapeEngine innerEngine;
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            GrengineGrapeEngine ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(ggEngine));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (enable again, must be idempotent)
 
@@ -590,13 +603,13 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, sameInstance(ggEngine));
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(ggEngine));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable)
 
@@ -606,9 +619,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable again, must be idempotent, too)
 
@@ -618,9 +629,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (enable once more)
 
@@ -629,13 +638,12 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(Grape.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(ggEngine));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable)
 
@@ -645,9 +653,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -670,13 +676,12 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            GrengineGrapeEngine ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(lock));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (enable again, must be idempotent)
 
@@ -685,13 +690,13 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, sameInstance(ggEngine));
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(lock));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable)
 
@@ -701,9 +706,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable again, must be idempotent, too)
 
@@ -713,9 +716,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (enable once more)
 
@@ -724,13 +725,12 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(lock));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth,
-                    is(GRAPE_INSTANCE_DEFAULT_CALLEE_DEPTH));
-            innerEngine = ((DefaultGroovyCompiler.GrengineGrapeEngine) engine).innerEngine;
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
+            ggEngine = (GrengineGrapeEngine)engine;
+            assertThat(getLock(ggEngine), is(lock));
+            innerEngine = getInnerEngine(ggEngine);
             assertThat(innerEngine, notNullValue());
-            assertThat(innerEngine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
+            assertThat(innerEngine, not(instanceOf(GrengineGrapeEngine.class)));
 
             // when (disable)
 
@@ -740,9 +740,7 @@ class DefaultGroovyCompilerTest {
             // then
 
             assertThat(engine, notNullValue());
-            assertThat(engine, not(instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class)));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.lock, is(nullValue()));
-            assertThat(DefaultGroovyCompiler.GrengineGrapeEngine.grapeInstanceDefaultCalleeDepth, is(0));
+            assertThat(engine, not(instanceOf(GrengineGrapeEngine.class)));
 
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -761,21 +759,8 @@ class DefaultGroovyCompilerTest {
 
             assertThrowsMessageIs(IllegalStateException.class,
                     () -> DefaultGroovyCompiler.enableGrapeSupport(new Object()),
-                    "Attempt to change lock for wrapped Grape class (unwrap first).");
-        } finally {
-            DefaultGroovyCompiler.disableGrapeSupport();
-        }
-    }
-
-    @Test
-    void testEnableGrapeSupport_lockNull() {
-        try {
-
-            // when/then
-
-            assertThrowsMessageIs(NullPointerException.class,
-                    () -> DefaultGroovyCompiler.enableGrapeSupport(null),
-                    "Lock is null.");
+                    "Unable to wrap GrapeEngine in Grape.class " +
+                            "because it is already wrapped by a Grengine using an incompatible lock.");
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
         }
@@ -880,7 +865,7 @@ class DefaultGroovyCompilerTest {
 
             // then
 
-            assertThat(engine, instanceOf(DefaultGroovyCompiler.GrengineGrapeEngine.class));
+            assertThat(engine, instanceOf(GrengineGrapeEngine.class));
 
             Map<String, Object> args;
             Map<String, Object> dependency;
@@ -958,14 +943,14 @@ class DefaultGroovyCompilerTest {
 
             args = getDefaultArgs();
             args.put("classLoader", compileTimeLoader);
-            uris = engine.resolve(args, (List) null, dependency);
+            uris = engine.resolve(args, (List<?>) null, dependency);
             assertThat(uris.length, is(1));
             assertThat(uris[0].toString(), containsString("guava-18.0.jar"));
 
             args = getDefaultArgs();
             args.put("classLoader", compileTimeLoader);
             args.put("calleeDepth", 4);
-            uris = engine.resolve(args, (List) null, dependency);
+            uris = engine.resolve(args, (List<?>) null, dependency);
             assertThat(uris.length, is(1));
             assertThat(uris[0].toString(), containsString("guava-18.0.jar"));
 
@@ -979,6 +964,58 @@ class DefaultGroovyCompilerTest {
             args = getDefaultArgs();
             args.put("root", "dummy");
             engine.addResolver(args);
+
+        } finally {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
+    void testGrabsIntoRuntimeLoader_defaultArgsAndDependency() throws Exception {
+        testGrabsIntoRuntimeLoader(true);
+    }
+
+    @Test
+    void testGrabsIntoRuntimeLoader_mergedArgs() throws Exception {
+        testGrabsIntoRuntimeLoader(false);
+    }
+
+    // tests that grab via compile time loader also grabs into the runtime loader
+    private void testGrabsIntoRuntimeLoader(final boolean withDependency) throws Exception {
+        try {
+
+            // given
+
+            DefaultGroovyCompiler.enableGrapeSupport();
+
+            final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
+            final CompilerConfiguration config = new CompilerConfiguration();
+            DefaultGroovyCompiler.withGrape(config, runtimeLoader);
+            final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
+                    (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
+                            DefaultGroovyCompiler.GrapeCompilationCustomizer
+                                    .getLoaderIfConfigured(runtimeLoader, config);
+
+            final GrapeEngine engine = Grape.getInstance();
+            final String className = "com.google.common.base.Ascii";
+
+            assertThrows(ClassNotFoundException.class, () -> runtimeLoader.loadClass(className));
+
+            // when
+
+            if (withDependency) {
+                final Map<String, Object> args = getDefaultArgs();
+                args.put("classLoader", compileTimeLoader);
+                engine.grab(args, getGuavaDependency());
+            } else {
+                final Map<String, Object> merged = getDefaultMerged();
+                merged.put("classLoader", compileTimeLoader);
+                engine.grab(merged);
+            }
+
+            // then
+
+            assertThat(runtimeLoader.loadClass(className), notNullValue());
 
         } finally {
             DefaultGroovyCompiler.disableGrapeSupport();
@@ -1019,7 +1056,7 @@ class DefaultGroovyCompilerTest {
                             failed = true;
                         }
                     }))
-                    .collect(toList());
+                    .toList();
 
             // when
 
@@ -1039,7 +1076,7 @@ class DefaultGroovyCompilerTest {
     @Test
     void testWrappingFails_noGrapeEngine() {
 
-        if (!hasGrapeAsOptionalDependencyWhichIsSinceGroovy6()) {
+        if (!hasGroovyGrapeAsOptionalDependency()) {
             return;
         }
 
@@ -1079,33 +1116,138 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testWrappingFails_wrappedByOtherGrengine() {
-
-        // given
-
-        final GrapeEngine innerEngine = Grape.getInstance();
+    void testEnableGrapeOk_defaultToDefaultLock() {
         try {
 
-            // set GrapeEngine instance in Grape class directly
-            // (this is not a different classloader, but triggers the exception because the lock is not set that way)
-            new Grape() {
-                void set() {
-                    Grape.instance = new DefaultGroovyCompiler.GrengineGrapeEngine(Grape.getInstance());
-                }
-            }.set();
+            // given
+            DefaultGroovyCompiler.enableGrapeSupport();
+            GrapeEngine engine = Grape.getInstance();
+
+            // when
+            Grengine.Grape.activate();
+
+            // then (stays at previous instance with compatible lock)
+            assertThat(Grape.getInstance() == engine, is(true));
+
+        } finally {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
+    void testEnableGrapeOk_SpecificToSameSpecificLock() {
+        try {
+
+            // given
+            DefaultGroovyCompiler.enableGrapeSupport(String.class);
+            GrapeEngine engine = Grape.getInstance();
+
+            // when
+            DefaultGroovyCompiler.enableGrapeSupport(String.class);
+
+            // then (stays at previous instance with same lock)
+            assertThat(Grape.getInstance() == engine, is(true));
+
+        } finally {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
+    void testEnableGrapeFails_defaultToSpecificLock() {
+        try {
+
+            // given
+            DefaultGroovyCompiler.enableGrapeSupport();
 
             // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> DefaultGroovyCompiler.enableGrapeSupport(String.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
 
+    @Test
+    void testEnableGrapeFails_specificToDefaultLock() {
+        try {
+
+            // given
+            DefaultGroovyCompiler.enableGrapeSupport(String.class);
+
+            // when/then
             assertThrowsMessageIs(IllegalStateException.class,
                     DefaultGroovyCompiler::enableGrapeSupport,
-                    "Unable to wrap GrapeEngine in Grape.class because " +
-                            "it is already wrapped by a Grengine loaded with a different class loader.");
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
         } finally {
-            new Grape() {
-                void set() {
-                    Grape.instance = innerEngine;
-                }
-            }.set();
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
+    void testEnableGrapeFails_specificToOtherSpecificLock() {
+        try {
+
+            // given
+            DefaultGroovyCompiler.enableGrapeSupport(String.class);
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> DefaultGroovyCompiler.enableGrapeSupport(File.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    // the depth is explicitly declared in GrapeEngine.DEFAULT_CALLEE_DEPTH
+    // with a value of 3 between Groovy versions 3 and at least Groovy 6.0.0;
+    // in earlier Groovy versions it is implicitly 3
+    @Test
+    void testDefaultCalleeDepthStill3() {
+
+        final int expectedDepth = 3;
+
+        // validate for the Groovy used at compile time
+        assertThat(GrapeEngine.DEFAULT_CALLEE_DEPTH, is(expectedDepth));
+
+        // validate for the Groovy loaded at runtime of this test
+        if (GROOVY_MAJOR_VERSION >= 3) {
+            try {
+                final Field field = GrapeEngine.class.getDeclaredField("DEFAULT_CALLEE_DEPTH");
+                final int depth = field.getInt(GrapeEngine.class);
+                assertThat(depth, is(expectedDepth));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                fail(e);
+            }
+        } else {
+            assertThrowsMessageIs(NoSuchFieldException.class,
+                    () -> GrapeEngine.class.getDeclaredField("DEFAULT_CALLEE_DEPTH"),
+                    "DEFAULT_CALLEE_DEPTH");
+        }
+    }
+
+    private static Object getLock(GrengineGrapeEngine engine) {
+        try {
+            final Field lockField = engine.getClass().getDeclaredField("lock");
+            lockField.setAccessible(true);
+            return lockField.get(engine);
+        } catch (Exception e) {
+            return fail(e);
+        }
+    }
+
+    private static GrapeEngine getInnerEngine(GrengineGrapeEngine engine) {
+        try {
+            final Field innerEngineField = engine.getClass().getDeclaredField("innerEngine");
+            innerEngineField.setAccessible(true);
+            return (GrapeEngine)innerEngineField.get(engine);
+        } catch (Exception e) {
+            return fail(e);
         }
     }
 

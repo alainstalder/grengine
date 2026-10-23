@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -49,8 +50,9 @@ public class TestUtil {
     }
     public static final int GROOVY_MAJOR_VERSION = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
 
-    @SuppressWarnings("serial")
     public static class FileThatThrowsInGetCanonicalFile extends File {
+        @Serial
+        private static final long serialVersionUID = 8273644872772335157L;
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }
         @Override public File getCanonicalFile() throws IOException { throw new IOException(); }
@@ -179,33 +181,25 @@ public class TestUtil {
         }
     }
 
-    /**
-     * ASM of Groovy 2.5 cannot load JDK 25 bytecode, which is involved in some unit tests
-     * here if run under JDK 25 (or later). The workaround is to turn off ASM resolving,
-     * which however comes at a certain performance cost.
-     * https://issues.apache.org/jira/browse/GROOVY-12467
-     *
-     * @return true if JDK 25 or later and Groovy < 3, else false.
-     */
+    // ASM of Groovy 2.5 cannot load JDK 25 bytecode, which is involved in some unit tests
+    // here if run under JDK 25 (or later). The workaround is to turn off ASM resolving,
+    // which however comes at a certain performance cost.
+    // https://issues.apache.org/jira/browse/GROOVY-12467
+    // "There aren't any plans to do another 2.5.X release."
     public static boolean hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus() {
         return JDK_MAJOR_VERSION >= 25 && GROOVY_MAJOR_VERSION < 3;
     }
 
-    /**
-     * Since Groovy 6, Grape engines are an optional Maven dependency.
-     *
-     * @return true if Groovy >= 6
-     */
-    public static boolean hasGrapeAsOptionalDependencyWhichIsSinceGroovy6() {
+    // Since Groovy 6, Grape engines are an optional Maven dependency.
+    public static boolean hasGroovyGrapeAsOptionalDependency() {
         return GROOVY_MAJOR_VERSION >= 6;
     }
 
-    /**
-     * The Maven GrapeEngine from groovy-grape-maven has a reported bug
-     * https://issues.apache.org/jira/browse/GROOVY-12458 as of Groovy 6.0.0.
-     *
-     * @return true if the current GrapeEngine is the Maven one
-     */
+    // The Maven GrapeEngine from groovy-grape-maven has a reported bug
+    // https://issues.apache.org/jira/browse/GROOVY-12458 as of Groovy 6.0.0.
+    // As of 2026-10-22 the bug is fixed in the Groovy master branch, but at
+    // is not yet visible into which version(s) a fix would come.
+    // Once a fix is released, the check here can be made more specific.
     public static boolean hasIssue12458MavenGrapeEngine() {
         final GrapeEngine engine = Grape.getInstance();
         return engine != null && "groovy.grape.maven.GrapeMaven".equals(engine.getClass().getName());

@@ -41,8 +41,9 @@ public class DefaultClassReleaser implements ClassReleaser {
     private Object globalClassValue;
     private Method globalClassValueRemoveMethod;
 
-    private static ClassReleaser releaser;
-    private static final Object LOCK = new Object();
+    private static final class ReleaserHolder {
+        private static final ClassReleaser releaser = new DefaultClassReleaser();
+    }
 
     /**
      * gets the singleton instance of the default class releaser.
@@ -50,14 +51,7 @@ public class DefaultClassReleaser implements ClassReleaser {
      * @return singleton instance, never null
      */
     public static ClassReleaser getInstance() {
-        if (releaser == null) {
-            synchronized (LOCK) {
-                if (releaser == null) {
-                    releaser = new DefaultClassReleaser();
-                }
-            }
-        }
-        return releaser;
+        return ReleaserHolder.releaser;
     }
 
     private DefaultClassReleaser() {

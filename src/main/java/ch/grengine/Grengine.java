@@ -940,16 +940,13 @@ public class Grengine extends BaseGrengine {
     }
 
     /**
-     * Convenience class for easily getting a Grengine that works with Grape,
-     * eliminating also a Groovy issue related to Grape (GROOVY-7407).
+     * Convenience class for easily getting a Grengine that works with Grape.
      * <p>
      * Call {@link #activate()} once before using the <code>newGrengine()</code>
      * methods to create a Grengine instance that works with Grape.
      * <p>
      * See the user manual at "Grengine and Grape" and the {@link DefaultGroovyCompiler}
      * class for more information.
-     * <p>
-     * Utility class with only static methods.
      *
      * @since 1.2
      *
@@ -962,10 +959,9 @@ public class Grengine extends BaseGrengine {
         private Grape() {}
 
         /**
-         * activate Grape.
+         * activate Grape for Grengine (with the default lock).
          * <p>
-         * See {@link DefaultGroovyCompiler#enableGrapeSupport()} and
-         * the user manual for more information.
+         * See user manual under "Grengine and Grape" for more info.
          *
          * @since 1.2
          */
@@ -974,12 +970,11 @@ public class Grengine extends BaseGrengine {
         }
 
         /**
-         * activate Grape.
+         * activate Grape for Grengine with the given lock.
          * <p>
-         * See {@link DefaultGroovyCompiler#enableGrapeSupport(Object)} and
-         * the user manual for more information.
+         * See user manual under "Grengine and Grape" for more info.
          *
-         * @param lock lock to use
+         * @param lock lock to use; use default lock if null
          *
          * @since 1.2
          */
@@ -988,23 +983,24 @@ public class Grengine extends BaseGrengine {
         }
 
         /**
-         * deactivate Grape.
+         * deactivate Grape for Grengine - not recommended in some scenarios.
          * <p>
-         * See {@link DefaultGroovyCompiler#disableGrapeSupport()} and the user
-         * manual for more information.
+         * Normally, there is no practical reason to call this method.
          * <p>
-         * Do not call while there is still anything running that might {@code @Grab}
-         * a dependency via {@code groovy.grape.Grape.getInstance()} with the
-         * {@code groovy.grape.Grape} class instance of this classloader.
-         * Calling this method in such a situation can lead to NullPointerExceptions
-         * in the calling code or other unexpected results.
+         * Calling it is explicitly not recommended in the following scenario:
+         * The Grengine JAR is loaded more than once (separate classloaders)
+         * but they all use the same Groovy JDK (single classloader), for example,
+         * independent web applications in a container, and they are calling
+         * {@code deactivate()} in an uncoordinated way, so that one of them
+         * doing so deactivates Grape with Grengine for all the others.
+         * <p>
+         * See user manual under "Grengine and Grape" for more info.
          *
          * @since 1.2
          */
         public static void deactivate() {
             DefaultGroovyCompiler.disableGrapeSupport();
         }
-
 
         /**
          * equivalent to {@link Grengine#Grengine()},

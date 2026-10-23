@@ -1458,6 +1458,12 @@ Some more details (current Grengine 4):
 
 ### Grengine 4
 
+#### 4.1.0 (23 October 2026)
+
+* Improved: The `GrapeEngine` wrapping for grabbing dependencies
+  with Grape (`@grab ...`) during running scripts has been made
+  more robust, see [Grengine and Grape](#grengine-and-grape). 
+
 #### 4.0.0 (19 October 2026)
 
 * Fix: `CompileException` and `ClassNameConflictException` can now

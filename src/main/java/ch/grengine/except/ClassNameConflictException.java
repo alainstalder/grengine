@@ -60,7 +60,7 @@ public class ClassNameConflictException extends GrengineException {
      * that contain a class with that name, but only if the class name
      * occurred also in the parent class loader
      * - converted to a string.
-     *
+     * <p>
      * Empty if had not been checked.
      *
      * @since 4.0.0

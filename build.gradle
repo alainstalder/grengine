@@ -15,7 +15,7 @@ java {
   withJavadocJar()
 }
 
-version = '4.0.1-SNAPSHOT'
+version = '4.1.0-SNAPSHOT'
 
 description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
@@ -64,12 +64,12 @@ javadoc {
     ]
     tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
   }
-  // treat warnings as errors
+  // treat Javadoc warnings as errors
   options.addBooleanOption('Werror', true)
 }
 
 tasks.withType(JavaCompile).configureEach {
-  // treat warnings as errors
+  // treat Java compiler warnings as errors
   options.compilerArgs << "-Xlint:all" << "-Werror"
 }
 
@@ -89,7 +89,6 @@ publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-      // purposely no dependency to Groovy generated since the group ID depends on the Groovy version...
       pom {
         name = 'grengine'
         description = project.description

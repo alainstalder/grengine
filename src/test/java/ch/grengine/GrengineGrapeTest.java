@@ -32,10 +32,12 @@ import java.util.Collections;
 import java.util.List;
 
 import groovy.grape.Grape;
+import groovy.grape.GrapeEngine;
 import groovy.lang.GroovyClassLoader;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
+import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.hasIssue12458MavenGrapeEngine;
 import static ch.grengine.TestUtil.hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -50,10 +52,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class GrengineGrapeTest {
 
-    private static final String GRAPE_SCRIPT = "" +
-            "@Grab('com.google.guava:guava:18.0')\n" +
-            "import com.google.common.base.Ascii\n" +
-            "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"";
+    private static final String GRAPE_SCRIPT = """
+            @Grab('com.google.guava:guava:18.0')
+            import com.google.common.base.Ascii
+            println "Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"""";
 
     @Test
     void testHelloWorldWithGrape_unwrapped() {
@@ -554,31 +556,92 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateDifferentLock() {
-
+    void testActivateOk_defaultToDefaultLock() {
         try {
-            assertThat(Grape.getInstance(), notNullValue());
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
+
+            // given
+            Grengine.Grape.activate();
+            GrapeEngine engine = Grape.getInstance();
 
             // when
+            Grengine.Grape.activate();
 
-            Grengine.Grape.activate(new Object());
-
-            // then
-
-            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
-
-            try {
-                Grengine.Grape.activate(new Object());
-            } catch (IllegalStateException e) {
-                assertThat(e.getMessage(),
-                        is("Attempt to change lock for wrapped Grape class (unwrap first)."));
-            }
+            // then (stays at previous instance with compatible lock)
+            assertThat(Grape.getInstance() == engine, is(true));
 
         } finally {
             Grengine.Grape.deactivate();
         }
+    }
 
+    @Test
+    void testActivateOk_SpecificToSameSpecificLock() {
+        try {
+
+            // given
+            Grengine.Grape.activate(String.class);
+            GrapeEngine engine = Grape.getInstance();
+
+            // when
+            Grengine.Grape.activate(String.class);
+
+            // then (stays at previous instance with same lock)
+            assertThat(Grape.getInstance() == engine, is(true));
+
+        } finally {
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_defaultToSpecificLock() {
+        try {
+
+            // given
+            Grengine.Grape.activate();
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> Grengine.Grape.activate(String.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_specificToDefaultLock() {
+        try {
+
+            // given
+            Grengine.Grape.activate(String.class);
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    Grengine.Grape::activate,
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_specificToOtherSpecificLock() {
+        try {
+
+            // given
+            Grengine.Grape.activate(String.class);
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> Grengine.Grape.activate(File.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            Grengine.Grape.deactivate();
+        }
     }
 
 }
