@@ -955,7 +955,7 @@ public class Grengine extends BaseGrengine {
      */
     public static class Grape {
 
-        // private since 4.0.0 (utility class)
+        // private since 3.2.0 (utility class)
         private Grape() {}
 
         /**

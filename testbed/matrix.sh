@@ -44,7 +44,7 @@ gGroovys=(
   org.apache.groovy:5.1.3:11
   org.apache.groovy:6.0.0:17
 )
-gIvyVersion=2.5.3
+gIvyVersion=2.6.0
 gHamcrestVersion=3.0
 gCommonsIoVersion=2.22.0
 gJunitConsoleVersion=6.1.3

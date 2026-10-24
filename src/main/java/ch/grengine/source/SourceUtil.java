@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.toSet;
  */
 public class SourceUtil {
 
-    // private since 4.0.0 (utility class)
+    // private since 3.2.0 (utility class)
     private SourceUtil() {}
 
     /**
