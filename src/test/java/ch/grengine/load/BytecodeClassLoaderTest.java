@@ -124,10 +124,9 @@ class BytecodeClassLoaderTest {
 
         final DefaultGroovyCompiler c = new DefaultGroovyCompiler();
         final SourceFactory f = new DefaultSourceFactory();
-        final Source s1 = f.fromText("""
-                class Class1 {
-                static class Sub {} }
-                class Side {}""");
+        final Source s1 = f.fromText("class Class1 {\n" +
+                "static class Sub {} }\n" +
+                "class Side {}");
         final Source s2 = f.fromText("package ch.grengine.test\nclass Class2 {}");
         final Source s3 = f.fromText("class Class3 {}");
         final Source s4 = f.fromText("package groovy.util\nclass Expando { def marker12345() { return 1 } }");

@@ -5,10 +5,10 @@
 # Runs the Grengine unit tests against a matrix of Java and Groovy versions,
 # using the jars built by Gradle (no changes to the Gradle build needed).
 #
-# Usage: testbed/matrix.sh [-b|--build] [-j|--java 17,25] [-g|--groovy 4,6.0.0]
+# Usage: testbed/matrix.sh [-b|--build] [-j|--java 8,17] [-g|--groovy 4,6.0.0]
 #
 #   -b, --build    run './gradlew clean jar testClasses' first
-#   -j, --java     comma-separated Java majors (default: 17,21,25)
+#   -j, --java     comma-separated Java majors (default: 8,11,17,21,25)
 #   -g, --groovy   comma-separated Groovy versions or version prefixes
 #                  (default: 2.5.23,2.5.23-indy,3.0.25,3.0.25-indy,
 #                  4.0.33,5.1.3,6.0.0)
@@ -17,7 +17,7 @@
 # -Dgroovy.target.indy=true (Groovy 4+ is always indy).
 #
 # JDKs are taken from SDKMAN (~/.sdkman/candidates/java, newest per major,
-# non-fx preferred); override per major with e.g. MATRIX_JAVA_HOME_17=/path.
+# non-fx preferred); override per major with e.g. MATRIX_JAVA_HOME_11=/path.
 # Groovy 6+ is tested once with groovy-grape-ivy and once with
 # groovy-grape-maven as the Grape engine (dependencies resolved with Gradle).
 #
@@ -33,7 +33,7 @@ gLib=$gWork/lib
 gResults=$gWork/results
 gSdkmanJava=${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java
 
-gJavaMajors=(17 21 25)
+gJavaMajors=(8 11 17 21 25)
 # groovy group:version:minJava[:classifier]
 gGroovys=(
   org.codehaus.groovy:2.5.23:8
@@ -44,10 +44,10 @@ gGroovys=(
   org.apache.groovy:5.1.3:11
   org.apache.groovy:6.0.0:17
 )
-gIvyVersion=2.5.3
+gIvyVersion=2.6.0
 gHamcrestVersion=3.0
 gCommonsIoVersion=2.22.0
-gJunitConsoleVersion=6.1.3
+gJunitConsoleVersion=1.14.4
 
 usage() {
   awk 'NR < 3 { next } /^#/ { sub(/^# ?/, ""); print; next } { exit }' "$0"
@@ -150,7 +150,7 @@ tasks.register('printClasspath') {
 }
 EOF
     local javaHome='' major
-    for major in 25 21 17; do
+    for major in 21 17; do
       javaHome=$(findJavaHome "$major")
       [[ -n $javaHome ]] && break
     done

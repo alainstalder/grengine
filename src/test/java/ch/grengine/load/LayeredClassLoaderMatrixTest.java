@@ -220,13 +220,18 @@ class LayeredClassLoaderMatrixTest {
                 && loadBySource) {
             return "methodTop";
         }
-        return switch (ctx.codeLayersType) {
-            case CODE_LAYERS_CURRENT_FIRST -> "methodLayer1";
-            case CODE_LAYERS_PARENT_FIRST -> switch (ctx.parentClassLoaderType) {
-                case PARENT_IS_REGULAR_CLASS_LOADER -> "methodLayer0";
-                case PARENT_IS_SOURCE_CLASS_LOADER -> "methodParent";
-            };
-        };
+        switch (ctx.codeLayersType) {
+            case CODE_LAYERS_CURRENT_FIRST:
+                return "methodLayer1";
+            case CODE_LAYERS_PARENT_FIRST:
+                switch (ctx.parentClassLoaderType) {
+                    case PARENT_IS_REGULAR_CLASS_LOADER:
+                        return "methodLayer0";
+                    case PARENT_IS_SOURCE_CLASS_LOADER:
+                        return "methodParent";
+                }
+        }
+        throw new RuntimeException("never gets here");
     }
 
     private void testFindBytecodeClassLoaderBySource(final TestContext ctx) {

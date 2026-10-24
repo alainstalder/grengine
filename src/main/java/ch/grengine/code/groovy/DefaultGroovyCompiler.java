@@ -277,11 +277,14 @@ public class DefaultGroovyCompiler implements Compiler {
      * @since 1.0
      */
     protected SourceUnit addToCompilationUnit(final CompilationUnit cu, final Source source, final Sources sources) {
-        if (source instanceof TextSource textSource) {
+        if (source instanceof TextSource) {
+            final TextSource textSource = (TextSource)source;
             return cu.addSource(textSource.getId(), textSource.getText());
-        } else if (source instanceof FileSource fileSource) {
+        } else if (source instanceof FileSource) {
+            final FileSource fileSource = (FileSource)source;
             return cu.addSource(fileSource.getFile());
-        } else if (source instanceof UrlSource urlSource) {
+        } else if (source instanceof UrlSource) {
+            final UrlSource urlSource = (UrlSource)source;
             return cu.addSource(urlSource.getUrl());
         } else {
             throw new CompileException("Don't know how to compile source " + source + ".", sources);

@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -51,7 +50,6 @@ public class TestUtil {
     public static final int GROOVY_MAJOR_VERSION = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
 
     public static class FileThatThrowsInGetCanonicalFile extends File {
-        @Serial
         private static final long serialVersionUID = 8273644872772335157L;
         public static final String ABSOLUTE_PATH = "/fallback/../to/absolute/path";
         public FileThatThrowsInGetCanonicalFile() { super(ABSOLUTE_PATH); }

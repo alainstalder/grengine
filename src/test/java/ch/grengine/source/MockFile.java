@@ -20,7 +20,6 @@ import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serial;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 // so far, mocks only last modified
 public class MockFile extends File {
 
-    @Serial
     private static final long serialVersionUID = 2207971933919660151L;
 
     private final File lastModifiedFile;

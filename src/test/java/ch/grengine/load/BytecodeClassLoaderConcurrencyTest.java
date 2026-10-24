@@ -134,7 +134,7 @@ class BytecodeClassLoaderConcurrencyTest {
         final String packageLoadPrefix = packageName.isEmpty() ? "" : packageName + ".";
         final List<String> classNamesToLoad = Arrays.stream(classNames)
                 .map(className -> packageLoadPrefix + className)
-                .toList();
+                .collect(Collectors.toList());
         final int nClassNamesToLoad = classNamesToLoad.size();
 
         final int nThreads = 10;
@@ -152,7 +152,7 @@ class BytecodeClassLoaderConcurrencyTest {
                         setFailed(true);
                     }
                 }))
-                .toList();
+                .collect(Collectors.toList());
 
         // when
 

@@ -56,7 +56,9 @@ A binding can optionally be indicated by passing a `Binding`
 object or a `Map<String,Object>`.
 
 ```java
-Map<String,Object> map = new HashMap<>(Map.of("x", 5, "y", 2));
+Map<String,Object> map = new HashMap<String,Object>();
+map.put("x", 5);
+map.put("y", 2);
 Binding binding = new Binding(map);
 gren.run("println x+y", binding);
 gren.run(scriptFile, map);
@@ -1462,16 +1464,18 @@ always surprises in practice.
 
 ## Release Notes
 
-Required Java versions in a nutshell:
+### Overview
+* **Grengine 4: JDK 17+** → **active** (`main` branch)
+* **Grengine 3: JDK 8+** (Groovy 6 supported with JDK 17+) → **active** (`grengine3` branch)
+* Grengine 2: JDK 8 (or later) → no new releases planned
+* Grengine 1: JDK 6 (or later) → no new releases planned
+* Grengine 3+4 features are kept in sync
+  and are tested with a matrix of Groovy 6/5/4/3/2.5 x JDK 25/21/17/11/8 for each release.
+* API changes have been minimal and essentially non-breaking since Grengine 1.0.0 (2014).
 
-* Grengine 4: Java 17 or later.
-* Grengine 3+2: Java 8 or later.
-* Grengine 1: Java 6 or later.
+### Some Details
 
-Some more details (current Grengine 4):
-
-* Tested with the matrix Groovy (6 / 5 / 4 / 3 / 2.5) x JDK (25 / 21 / 17).
-* See testbed/matrix.sh in the git repo for exact versions.
+* See testbed/matrix.sh in the git repo for exact tested versions.
 * Groovy 2.5 on JDK 25: Compiling scripts can fail with
   "Unsupported class file major version 69", because Groovy 2.5's bundled
   ASM cannot read JDK 25 class files. (That is a general issue with that
@@ -1479,17 +1483,17 @@ Some more details (current Grengine 4):
   **Workaround:** Turn off ASM resolving in the compiler configuration with
   `config.getOptimizationOptions().put("asmResolving", false)`,
   at some cost in compile performance.
-  (Groovy 2.5 may be end of life since 30 Apr 2026, according to some
-  websites, while there seems to be no such announcement from Apache.)
-  * PS: I opened an issue for this, might also clarify prospects:
-    [GROOVY-12467](https://issues.apache.org/jira/browse/GROOVY-12467)
-* Groovy 6.0.0 with the Maven Grape engine (but not the Ivy engine):
-  `@Grab` in scripts only works if the Grape engine has been wrapped
-  with `Grengine.Grape.activate()`; for details see
-  [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458).
-  (Once that issue is fixed, it should also work without wrapping.)
+  (I reported this as [GROOVY-12467](https://issues.apache.org/jira/browse/GROOVY-12467), but no new Groovy 2.5.x
+  releases are planned, as expected and makes sense to me.)
+* Groovy 6.0.0 with the Maven Grape engine:
+  `@Grab` in scripts only works with `Grengine.Grape.activate()`
+  (but should normally not be used without that anyway);
+  reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458),
+  fixed in Groovy master, not yet released as of 24 Oct 2026.
 
 ### Grengine 4
+
+Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17).
 
 #### 4.1.0 (23 October 2026)
 
@@ -1519,8 +1523,19 @@ Some more details (current Grengine 4):
 
 ### Grengine 3
 
-Since 3.1.1, tested with the matrix Groovy (2.5 / 3 / 4 / 5 / 6) x JDK (8 / 11 / 17 / 21 / 25).<br>
-(Groovy 5 requires JDK 11 or later, Groovy 6 requires JDK 17 or later.)
+Currently still active, API and releases are kept in sync with Grengine 4.
+
+Essentially the only difference is that Grengine 3 is compiled using
+JDK 8 to JDK 8 bytecode whereas Grengine 4 is compiled using JDK 17
+to JDK 17 bytecode. Both Grengine 3 and 4 support Groovy 6 on its
+supported JDKs (JDK 17 and later).
+
+Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
+
+#### 3.2.0 (24 October 2026)
+
+* Backported changes up to Grengine 4.1.0 to Grengine 3, for support with
+  JDK 8 and JDK 11 (Grengine 4 requires JDK 17).
 
 #### 3.1.2 (18 October 2026)
 

@@ -16,7 +16,6 @@
 
 package ch.grengine.except;
 
-import java.io.Serial;
 import java.util.Date;
 
 
@@ -30,7 +29,6 @@ import java.util.Date;
  */
 public class GrengineException extends RuntimeException {
 
-    @Serial
     private static final long serialVersionUID = 393479472945664906L;
 
     /**

@@ -52,10 +52,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class GrengineGrapeTest {
 
-    private static final String GRAPE_SCRIPT = """
-            @Grab('com.google.guava:guava:18.0')
-            import com.google.common.base.Ascii
-            println "Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"""";
+    private static final String GRAPE_SCRIPT = "" +
+            "@Grab('com.google.guava:guava:18.0')\n" +
+            "import com.google.common.base.Ascii\n" +
+            "println \"Grape: 'C' is upper case: ${Ascii.isUpperCase('C' as char)}\"";
 
     @Test
     void testHelloWorldWithGrape_unwrapped() {

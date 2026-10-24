@@ -57,6 +57,7 @@ import static ch.grengine.TestUtil.assertThrowsMessageIs;
 import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.TestUtil.hasGroovyGrapeAsOptionalDependency;
 import static ch.grengine.TestUtil.toRuntimeException;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -1056,7 +1057,7 @@ class DefaultGroovyCompilerTest {
                             failed = true;
                         }
                     }))
-                    .toList();
+                    .collect(toList());
 
             // when
 

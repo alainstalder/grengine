@@ -18,7 +18,6 @@ package ch.grengine.except;
 
 import ch.grengine.code.Code;
 
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ import java.util.Map;
  */
 public class ClassNameConflictException extends GrengineException {
 
-    @Serial
     private static final long serialVersionUID = -7064452473268097551L;
 
     // since 1.0, transient since 4.0.0
@@ -48,7 +46,7 @@ public class ClassNameConflictException extends GrengineException {
      * <p>
      * Empty if had not been checked.
      *
-     * @since 4.0.0
+     * @since 3.2.0
      */
     private final String sameClassNamesInMultipleCodeLayersMapAsString;
 
@@ -63,7 +61,7 @@ public class ClassNameConflictException extends GrengineException {
      * <p>
      * Empty if had not been checked.
      *
-     * @since 4.0.0
+     * @since 3.2.0
      */
     private final String sameClassNamesInParentAndCodeLayersMapAsString;
 
@@ -115,7 +113,7 @@ public class ClassNameConflictException extends GrengineException {
      *
      * @return map converted to a string or empty if had not been checked
      *
-     * @since 4.0.0
+     * @since 3.2.0
      */
     public String getSameClassNamesInMultipleCodeLayersMapAsString() {
         return sameClassNamesInMultipleCodeLayersMapAsString;
@@ -141,7 +139,7 @@ public class ClassNameConflictException extends GrengineException {
      *
      * @return map converted to a string or empty if had not been checked
      *
-     * @since 4.0.0
+     * @since 3.2.0
      */
     public String getSameClassNamesInParentAndCodeLayersMapAsString() {
         return sameClassNamesInParentAndCodeLayersMapAsString;

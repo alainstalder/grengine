@@ -6,11 +6,10 @@ import ch.grengine.source.Source;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -46,7 +45,9 @@ public class UserManualJavaTest {
         setFileText(scriptFile, "println x+y");
         
         //--------------------------------------------
-        Map<String,Object> map = new HashMap<>(Map.of("x", 5, "y", 2));
+        Map<String,Object> map = new HashMap<>();
+        map.put("x", 5);
+        map.put("y", 2);
         Binding binding = new Binding(map);
         gren.run("println x+y", binding);
         gren.run(scriptFile, map);
@@ -85,7 +86,9 @@ public class UserManualJavaTest {
     public void testRunningIndividualScripts_BehindTheScenes_CreateAndRun() throws Exception {
         Grengine gren = new Grengine();
         Class<?> clazz = gren.load("println x+y");
-        Map<String,Object> map = Map.of("x", 5, "y", 2);
+        Map<String,Object> map = new HashMap<>();
+        map.put("x", 5);
+        map.put("y", 2);
         Binding binding = new Binding(map);
         
         //--------------------------------------------
@@ -170,7 +173,9 @@ public class UserManualJavaTest {
         File scriptFile = new File(tempDir, "MyScript.groovy");
         setFileText(scriptFile, "return 2");
         URL scriptUrl = scriptFile.toURI().toURL();
-        Map<String,Object> map = Map.of("x", 5, "y", 2);
+        Map<String,Object> map = new HashMap<>();
+        map.put("x", 5);
+        map.put("y", 2);
         Binding binding = new Binding(map);
 
         //--------------------------------------------
@@ -270,10 +275,9 @@ public class UserManualJavaTest {
     @Test
     public void testInterdependentScripts_DirBasedGrengine_Basic() throws Exception {
 
-        String utilScriptText = """
-                class Util {
-                  def concat(String a, String b) { return "$a:$b" }
-                }""";
+        String utilScriptText = "class Util {\n"
+                + "  def concat(String a, String b) { return \"$a:$b\" }\n"
+                + "}";
         String scriptText = "println new Util().concat('xx', 'yy')";
         File scriptDir = tempDir;
         setFileText(new File(scriptDir, "Util.groovy"), utilScriptText);
@@ -305,8 +309,8 @@ public class UserManualJavaTest {
     }
     
     public static void setFileText(File file, String text)
-            throws IOException {
-        PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
+            throws FileNotFoundException, UnsupportedEncodingException {
+        PrintWriter writer = new PrintWriter(file, "UTF-8");
         writer.write(text);
         writer.close();
     }
