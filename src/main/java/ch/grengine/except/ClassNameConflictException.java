@@ -35,7 +35,7 @@ public class ClassNameConflictException extends GrengineException {
 
     private static final long serialVersionUID = -7064452473268097551L;
 
-    // since 1.0, transient since 4.0.0
+    // since 1.0, transient since 3.2.0
     private final transient Map<String,List<Code>> sameClassNamesInMultipleCodeLayersMap;
 
     /**
@@ -50,7 +50,7 @@ public class ClassNameConflictException extends GrengineException {
      */
     private final String sameClassNamesInMultipleCodeLayersMapAsString;
 
-    // since 1.0, transient since 4.0.0
+    // since 1.0, transient since 3.2.0
     private final transient Map<String,List<Code>> sameClassNamesInParentAndCodeLayersMap;
 
     /**

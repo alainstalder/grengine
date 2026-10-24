@@ -38,7 +38,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class ClassNameConflictAnalyzer {
 
-    // private since 4.0.0 (utility class)
+    // private since 3.2.0 (utility class)
     private ClassNameConflictAnalyzer() {}
     
     /**
