@@ -1465,6 +1465,7 @@ always surprises in practice.
 ## Release Notes
 
 ### Overview
+
 * **Grengine 4: JDK 17+** → **active** (`main` branch)
 * **Grengine 3: JDK 8+** (Groovy 6 supported with JDK 17+) → **active** (`grengine3` branch)
 * Grengine 2: JDK 8 (or later) → no new releases planned
