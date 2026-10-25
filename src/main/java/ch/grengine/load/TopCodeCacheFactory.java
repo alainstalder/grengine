@@ -18,7 +18,7 @@ package ch.grengine.load;
 
 
 /**
- * Factory of {@link TopCodeCache} instances.
+ * Factory of {@link TopCodeCache} instances.
  * 
  * @since 1.0
  * 
