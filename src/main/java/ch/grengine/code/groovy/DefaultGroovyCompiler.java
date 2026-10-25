@@ -443,7 +443,6 @@ public class DefaultGroovyCompiler implements Compiler {
         GrapeCompilationCustomizer(final GroovyClassLoader runtimeLoader) {
             super(CompilePhase.INITIALIZATION);
             this.runtimeLoader = runtimeLoader;
-            //GrengineGrapeEngine.wrap();
         }
 
         static void enableGrape(final CompilerConfiguration config,
