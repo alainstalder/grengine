@@ -1016,7 +1016,8 @@ compiler from Java sources _Java classes_.
   with Groovy 2.5 than with Groovy 3 and 4, and about 1.5 times faster than
   with Groovy 5 and 6; all tested with Zulu JDKs 17/21/25 on macOS 27 ARM.
   This might be worth considering if you want to use different classloaders
-  with shared cached bytecode for session separation.)
+  with shared cached bytecode for session separation.
+  See [Sample Garbage Collection Output](testbed/gc-sample-output.md).)
 * ***Garbage Collection***\
   Classes are stored in _PermGen_ (up to Java 7) resp. _Metaspace_ (Java 8
   and later) plus some associated data on the Heap, at least for Groovy
