@@ -55,7 +55,30 @@ class CompileExceptionTest {
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
-    
+
+    // in normal use sources are not null, but covering
+    @Test
+    void testConstructFromMessage_sourcesNull() {
+
+        // given
+
+        final String msg = "Something.";
+
+        // when
+
+        final CompileException e = new CompileException(msg, null);
+
+        // then
+
+        assertThat(e, instanceOf(GrengineException.class));
+        assertThat(e.getMessage(), is(msg));
+        assertThat(e.getSources(), is(nullValue()));
+        assertThat(e.getSourcesAsString(), is(""));
+        assertThat(e.getCause(), is(nullValue()));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
+    }
+
     @Test
     void testConstructFromMessageAndThrowable() {
 
@@ -76,6 +99,30 @@ class CompileExceptionTest {
         assertThat(e.getCause(), is(cause));
         assertThat(e.getSources(), is(s));
         assertThat(e.getSourcesAsString(), is(s.toString()));
+        assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
+        assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
+    }
+
+    // in normal use sources are not null, but covering
+    @Test
+    void testConstructFromMessageAndThrowable_sourcesNull() {
+
+        // given
+
+        final String msg = "Something.";
+        final Throwable cause = new RuntimeException();
+
+        // when
+
+        final CompileException e = new CompileException(msg, cause, null);
+
+        // then
+
+        assertThat(e, instanceOf(GrengineException.class));
+        assertThat(e.getMessage(), is(msg + " Cause: " + cause));
+        assertThat(e.getCause(), is(cause));
+        assertThat(e.getSources(), is(nullValue()));
+        assertThat(e.getSourcesAsString(), is(""));
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
