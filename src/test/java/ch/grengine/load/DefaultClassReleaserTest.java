@@ -19,6 +19,7 @@ package ch.grengine.load;
 import ch.grengine.Grengine;
 
 import groovy.lang.MetaClass;
+import org.codehaus.groovy.reflection.ClassInfo;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.junit.jupiter.api.Test;
 
@@ -45,25 +46,30 @@ class DefaultClassReleaserTest {
     @Test
     void testReleaseBasic() {
 
-        // hard to test in full detail because depends also on Groovy version,
-        // so only this basic test here, testing elsewhere that allows to GC
+        // cannot test here if actually GCs, that depends
+        // also on Groovy version and JDK version+make
 
         // given
 
         final Class<?> clazz = new Grengine().load("class Class {}");
+        final ClassInfo classInfo1 = ClassInfo.getClassInfo(clazz);
+        final MetaClass metaClass1 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+
+        final ClassInfo classInfo2 = ClassInfo.getClassInfo(clazz);
+        final MetaClass metaClass2 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+        assertThat(classInfo1, sameInstance(classInfo2));
+        assertThat(metaClass1, sameInstance(metaClass2));
 
         // when
 
-        final MetaClass metaClass1 = InvokerHelper.metaRegistry.getMetaClass(clazz);
-
-        final ClassReleaser releaser = DefaultClassReleaser.getInstance();
-        releaser.release(clazz);
-
-        final MetaClass metaClass2 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+        DefaultClassReleaser.getInstance().release(clazz);
 
         // then
 
-        assertThat(metaClass1, not(sameInstance(metaClass2)));
+        final ClassInfo classInfo3 = ClassInfo.getClassInfo(clazz);
+        final MetaClass metaClass3 = InvokerHelper.metaRegistry.getMetaClass(clazz);
+        assertThat(classInfo1, not(sameInstance(classInfo3)));
+        assertThat(metaClass1, not(sameInstance(metaClass3)));
     }
 
 }

@@ -38,6 +38,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
+import static ch.grengine.TestUtil.grapeActivateWithCopy;
+import static ch.grengine.TestUtil.grapeDeactivateWithCopy;
 import static ch.grengine.TestUtil.hasIssue12458MavenGrapeEngine;
 import static ch.grengine.TestUtil.hasIssue12467AsmResolvingOfGroovy2WithJdk25Plus;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -556,7 +558,56 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateOk_defaultToDefaultLock() {
+    void testActivateDeactivate_differentGrengineClasses() {
+
+        try {
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
+
+            // when
+
+            Grengine.Grape.activate();
+            GrapeEngine engine = Grape.getInstance();
+
+            // then
+
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
+
+            // when
+
+            grapeActivateWithCopy();
+
+            // then
+
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is("GrengineGrapeEngine"));
+            assertThat(Grape.getInstance(), sameInstance(engine));
+
+            // when
+
+            grapeDeactivateWithCopy();
+
+            // then
+
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
+
+            // when
+
+            Grengine.Grape.deactivate();
+
+            // then
+
+            assertThat(Grape.getInstance(), notNullValue());
+            assertThat(Grape.getInstance().getClass().getSimpleName(), is(not("GrengineGrapeEngine")));
+
+        } finally {
+            grapeDeactivateWithCopy();
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateOk_defaultToDefaultLock_sameGrengineClasses() {
         try {
 
             // given
@@ -575,7 +626,27 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateOk_SpecificToSameSpecificLock() {
+    void testActivateOk_defaultToDefaultLock_differentGrengineClasses() {
+        try {
+
+            // given
+            grapeActivateWithCopy();
+            GrapeEngine engine = Grape.getInstance();
+
+            // when
+            Grengine.Grape.activate();
+
+            // then (stays at previous instance with compatible lock)
+            assertThat(Grape.getInstance() == engine, is(true));
+
+        } finally {
+            grapeDeactivateWithCopy();
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateOk_specificToSameSpecificLock_sameGrengineClasses() {
         try {
 
             // given
@@ -594,7 +665,27 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateFails_defaultToSpecificLock() {
+    void testActivateOk_specificToSameSpecificLock_differentGrengineClasses() {
+        try {
+
+            // given
+            grapeActivateWithCopy(String.class);
+            GrapeEngine engine = Grape.getInstance();
+
+            // when
+            Grengine.Grape.activate(String.class);
+
+            // then (stays at previous instance with same lock)
+            assertThat(Grape.getInstance() == engine, is(true));
+
+        } finally {
+            grapeDeactivateWithCopy();
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_defaultToSpecificLock_sameGrengineClasses() {
         try {
 
             // given
@@ -611,7 +702,25 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateFails_specificToDefaultLock() {
+    void testActivateFails_defaultToSpecificLock_differentGrengineClasses() {
+        try {
+
+            // given
+            grapeActivateWithCopy();
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> Grengine.Grape.activate(String.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            grapeDeactivateWithCopy();
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_specificToDefaultLock_sameGrengineClasses() {
         try {
 
             // given
@@ -628,7 +737,25 @@ class GrengineGrapeTest {
     }
 
     @Test
-    void testActivateFails_specificToOtherSpecificLock() {
+    void testActivateFails_specificToDefaultLock_differentGrengineClasses() {
+        try {
+
+            // given
+            grapeActivateWithCopy(String.class);
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    Grengine.Grape::activate,
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            grapeDeactivateWithCopy();
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_specificToOtherSpecificLock_sameGrengineClasses() {
         try {
 
             // given
@@ -640,6 +767,24 @@ class GrengineGrapeTest {
                     "Unable to wrap GrapeEngine in Grape.class because it is " +
                             "already wrapped by a Grengine using an incompatible lock.");
         } finally {
+            Grengine.Grape.deactivate();
+        }
+    }
+
+    @Test
+    void testActivateFails_specificToOtherSpecificLock_differentGrengineClasses() {
+        try {
+
+            // given
+            grapeActivateWithCopy(String.class);
+
+            // when/then
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> Grengine.Grape.activate(File.class),
+                    "Unable to wrap GrapeEngine in Grape.class because it is " +
+                            "already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            grapeDeactivateWithCopy();
             Grengine.Grape.deactivate();
         }
     }

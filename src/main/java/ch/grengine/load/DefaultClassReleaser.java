@@ -16,18 +16,12 @@
 
 package ch.grengine.load;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
-import org.codehaus.groovy.reflection.ClassInfo;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 /**
  * Default implementation for releasing class metadata when done using it.
  * <p>
- * Should permit on-the-fly garbage collection of the class, with any Groovy
- * version from 1.7.5 to the version that was current when this version of
- * Groovy was released (see Gradle dependency in the source for exact version).
+ * (Requires Groovy 2.4.8 or later.)
  * 
  * @since 1.1
  * 
@@ -35,11 +29,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
  * @author Made in Switzerland.
  */
 public class DefaultClassReleaser implements ClassReleaser {
-
-    private Object globalClassSet;
-    private Method globalClassSetRemoveMethod;
-    private Object globalClassValue;
-    private Method globalClassValueRemoveMethod;
 
     private static final class ReleaserHolder {
         private static final ClassReleaser releaser = new DefaultClassReleaser();
@@ -55,52 +44,11 @@ public class DefaultClassReleaser implements ClassReleaser {
     }
 
     private DefaultClassReleaser() {
-
-        // ClassInfo#globalClassSet has been in Groovy since at least 1.7.5,
-        // but only contains a remove(Object clazz) method before 2.4.0
-        try {
-            final Field globalClassSetField = ClassInfo.class.getDeclaredField("globalClassSet");
-            globalClassSetField.setAccessible(true);
-            globalClassSet = globalClassSetField.get(ClassInfo.class);
-            globalClassSetRemoveMethod = globalClassSet.getClass().getMethod("remove", Object.class);
-            globalClassSetRemoveMethod.setAccessible(true);
-        } catch (Exception ignore) {
-            globalClassSetRemoveMethod = null;
-        }
-
-        // ClassInfo#globalClassValue has been added to Groovy in 2.4.0
-        try {
-            final Field globalClassValueField = ClassInfo.class.getDeclaredField("globalClassValue");
-            globalClassValueField.setAccessible(true);
-            globalClassValue = globalClassValueField.get(ClassInfo.class);
-            globalClassValueRemoveMethod = globalClassValue.getClass().getMethod("remove", Class.class);
-            globalClassValueRemoveMethod.setAccessible(true);
-        } catch (Exception ignore) {
-            globalClassValueRemoveMethod = null;
-        }
     }
 
     @Override
     public void release(Class<?> clazz) {
-
-        // has been in Groovy since at least 1.7.5.
         InvokerHelper.removeClass(clazz);
-
-        // globalClassSet.remove(clazz);
-        if (globalClassSetRemoveMethod != null) {
-            try {
-                globalClassSetRemoveMethod.invoke(globalClassSet, clazz);
-            } catch (Exception ignore) {
-            }
-        }
-
-        // globalClassValue.remove(clazz);
-        if (globalClassValueRemoveMethod != null) {
-            try {
-                globalClassValueRemoveMethod.invoke(globalClassValue, clazz);
-            } catch (Exception ignore) {
-            }
-        }
     }
 
 }

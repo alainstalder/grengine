@@ -146,7 +146,7 @@ public class DefaultGroovyCompiler implements Compiler {
     public static CompilerConfiguration withGrape(final CompilerConfiguration config,
             final GroovyClassLoader runtimeLoader) {
         requireNonNull(config, "Compiler configuration is null.");
-        GrapeCompilationCustomizer.enableGrape(config, runtimeLoader);
+        GrapeCompilationCustomizer.withGrape(config, runtimeLoader);
         return config;
     }
 
@@ -183,7 +183,7 @@ public class DefaultGroovyCompiler implements Compiler {
      * <p>
      * See user manual under "Grengine and Grape" for more info.
      *
-     * @param lock the lock to use; use default lock if null
+     * @param lock the lock to use; uses default lock if null
      *
      * @since 1.2
      */
@@ -446,10 +446,9 @@ public class DefaultGroovyCompiler implements Compiler {
         GrapeCompilationCustomizer(final GroovyClassLoader runtimeLoader) {
             super(CompilePhase.INITIALIZATION);
             this.runtimeLoader = runtimeLoader;
-            //GrengineGrapeEngine.wrap();
         }
 
-        static void enableGrape(final CompilerConfiguration config,
+        static void withGrape(final CompilerConfiguration config,
                 final GroovyClassLoader runtimeLoader) {
             config.addCompilationCustomizers(new GrapeCompilationCustomizer(runtimeLoader));
         }
@@ -522,7 +521,7 @@ public class DefaultGroovyCompiler implements Compiler {
                     if (engine instanceof GrengineGrapeEngine) {
                         otherLock = ((GrengineGrapeEngine)engine).lock;
                     } else {
-                        // use reflection to get the lock
+                        // get lock with reflection
                         final Field lockField;
                         try {
                             lockField = engine.getClass().getDeclaredField("lock");
@@ -649,7 +648,7 @@ public class DefaultGroovyCompiler implements Compiler {
                 return ((CompileTimeGroovyClassLoader) obj).runtimeLoader;
             }
             if (obj != null && CompileTimeGroovyClassLoader.class.getName().equals(obj.getClass().getName())) {
-                // get the runtime loader with reflection
+                // get runtime loader with reflection
                 final Field runtimeLoaderField;
                 try {
                     runtimeLoaderField = obj.getClass().getDeclaredField("runtimeLoader");

@@ -1010,7 +1010,13 @@ compiler from Java sources _Java classes_.
   this is apparently mainly expensive because some security checks have to
   be made on the bytecode. For Groovy classes, it is mainly expensive
   because some metadata is needed to later efficiently call methods
-  dynamically, and the like.
+  dynamically, and the like.\
+  (**Note:** Experimentally in Oct 2026, loading, creating and running a small
+  script from cached bytecode in a new loader was about 1.3 times faster
+  with Groovy 2.5 than with Groovy 3 and 4, and about 1.5 times faster than
+  with Groovy 5 and 6; all tested with Zulu JDKs 17/21/25 on macOS 27 ARM.
+  This might be worth considering if you want to use different classloaders
+  with shared cached bytecode for session separation.)
 * ***Garbage Collection***\
   Classes are stored in _PermGen_ (up to Java 7) resp. _Metaspace_ (Java 8
   and later) plus some associated data on the Heap, at least for Groovy
@@ -1067,10 +1073,10 @@ Example 2:
 
 ```java
 Grengine gren = new Grengine();
-Loader loaderA = gren2.newAttachedLoader();
+Loader loaderA = gren.newAttachedLoader();
 gren.run(loaderA, "int x=0; [1,2,3].each { x+=it }; x");
 loaderA.close();
-Loader loaderD = gren2.newDetachedLoader();
+Loader loaderD = gren.newDetachedLoader();
 gren.run(loaderD, "int x=0; [1,2,3].each { x+=it }; x");
 loaderD.close();
 gren.close();
@@ -1489,8 +1495,7 @@ always surprises in practice.
 * Groovy 6.0.0 with the Maven Grape engine:
   `@Grab` in scripts only works with `Grengine.Grape.activate()`
   (but should normally not be used without that anyway);
-  reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458),
-  fixed in Groovy master, not yet released as of 24 Oct 2026.
+  reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458) in Oct 2026.
 
 ### Grengine 4
 
@@ -1540,7 +1545,7 @@ Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
 
 #### 3.1.2 (18 October 2026)
 
-* Fix: The published POM no longer declares a runtime dependency on Groovy.<br>
+* Fix: The published POM no longer declares a runtime dependency on Groovy.\
   (That had accidentally slipped in with 3.1.0 two years ago.)
 * Fix: Workaround for
   [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458)

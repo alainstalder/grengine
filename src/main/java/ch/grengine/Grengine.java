@@ -974,7 +974,7 @@ public class Grengine extends BaseGrengine {
          * <p>
          * See user manual under "Grengine and Grape" for more info.
          *
-         * @param lock lock to use; use default lock if null
+         * @param lock lock to use; uses default lock if null
          *
          * @since 1.2
          */
