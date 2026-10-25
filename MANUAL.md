@@ -1144,6 +1144,27 @@ at least in cases where there are parallel request to grab
 the same artifact (if using the same loaded "Groovy" classes).
 See JIRA issue for details.
 
+\* In October 2026, I also discovered that you can set a timeout
+in Ivy that improves the situation somewhat. In the Grape config
+(`~/.groovy/grapeConfig.xml`, or the file named in the system property
+`-Dgrape.config=...`, instead of the built-in `defaultGrapeConfig.xml`;
+I am not aware of something similar for the Maven Grape engine) set:
+```xml
+  <ivysettings>
+    <timeout-constraints>
+      <timeout-constraint name="grape" connectionTimeout="30000" readTimeout="60000"/>
+    </timeout-constraints>
+    <settings defaultResolver="downloadGrapes"/>
+    <caches lockStrategy="artifact-lock-nio"/>
+    <resolvers> 
+      <chain name="downloadGrapes" returnFirst="true">
+        ... (as in the default) ...
+        <ibiblio name="ibiblio" timeoutConstraint="grape" m2compatible="true"/>
+      </chain>
+    </resolvers>
+  </ivysettings>
+```
+
 Grengine provides easy support for alleviating GROOVY-7407 in practice, except
 across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
 
