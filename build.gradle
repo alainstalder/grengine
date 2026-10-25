@@ -1,31 +1,31 @@
-
 plugins {
   id 'java'
   id 'maven-publish'
   id 'jacoco'
 }
 
+description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
+
+version = '3.2.1-SNAPSHOT'
+
+ext {
+    javaVersion='8' // won't change anymore for Grengine 3
+    groovyVersion='4.0.33' // JDK 8+, dito
+    junitVersion='5.14.4'
+    junitPlatformVersion='1.14.4'
+    hamcrestVersion='3.0'
+    ivyVersion='2.6.0'
+    commonsIoVersion='2.22.0'
+}
+
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(javaVersion)
     vendor = JvmVendorSpec.AZUL // Zulu
     implementation = JvmImplementation.VENDOR_SPECIFIC
   }
   withSourcesJar()
   withJavadocJar()
-}
-
-version = '3.2.1-SNAPSHOT'
-
-description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
-
-ext {
-  groovyVersion='4.0.33' // JDK 8+
-  junitVersion='5.14.4'
-  junitPlatformVersion='1.14.4'
-  hamcrestVersion='3.0'
-  ivyVersion='2.6.0'
-  commonsIoVersion='2.22.0'
 }
 
 jar {
@@ -55,17 +55,32 @@ repositories {
   mavenCentral()
 }
 
+// fetching element-list files for Groovy Javadoc links from the Groovy JAR
+// from Maven Central, because the Groovy site was often unresponsive
+configurations {
+  groovyJavadoc
+}
+dependencies {
+  groovyJavadoc "org.apache.groovy:groovy:$groovyVersion:javadoc@jar"
+}
+def groovyElementListDir = layout.buildDirectory.dir('tmp/groovyElementList')
+tasks.register('extractGroovyElementList', Copy) {
+  from({ zipTree(configurations.groovyJavadoc.singleFile) })
+  include 'element-list'
+  rename 'element-list', 'package-list'
+  into groovyElementListDir
+}
+
 javadoc {
+  dependsOn(extractGroovyElementList)
   configure(options) {
     windowTitle = "Grengine - $project.version"
     header = 'Grengine'
     author = true
-    links = [
-      'https://docs.oracle.com/javase/8/docs/api/',
-      // on JDK 8 could only resolve with local offline links
-      //'https://docs.groovy-lang.org/' + groovyVersion + '/html/api/'
-    ]
-    tags = [ 'grengine.scriptthrows:a:Throws (out of Groovy script):' ]
+    links = ['https://docs.oracle.com/javase/' + javaVersion + '/docs/api/']
+    linksOffline('https://docs.groovy-lang.org/' + groovyVersion + '/html/api/',
+      groovyElementListDir.get().asFile.path)
+    tags = ['grengine.scriptthrows:a:Throws (out of Groovy script):']
   }
   // treat Javadoc warnings as errors - not supported in JDK 8
   //options.addBooleanOption('Werror', true)
