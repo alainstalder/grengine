@@ -22,6 +22,8 @@ import ch.grengine.code.Code;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.DefaultCode;
 import ch.grengine.code.DefaultSingleSourceCode;
+import ch.grengine.code.groovy.DefaultGroovyCompiler.CompileTimeGroovyClassLoader;
+import ch.grengine.code.groovy.DefaultGroovyCompiler.GrapeCompilationCustomizer;
 import ch.grengine.code.groovy.DefaultGroovyCompiler.GrengineGrapeEngine;
 import ch.grengine.except.CompileException;
 import ch.grengine.load.BytecodeClassLoader;
@@ -71,6 +73,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 class DefaultGroovyCompilerTest {
+
+    private static class GrapeImplState {
+
+        static final String GRAPE_IMPL_KEY = "groovy.grape.impl";
+
+        final String implValue;
+        final GrapeEngine engine;
+
+        GrapeImplState(final String implValue, final GrapeEngine engine) {
+            this.implValue = implValue;
+            this.engine = engine;
+        }
+    }
 
     @Test
     void testConstructDefaults() {
@@ -537,12 +552,12 @@ class DefaultGroovyCompilerTest {
         assertThat(config2, sameInstance(config));
         assertThat(config.getCompilationCustomizers().size(), is(1));
         assertThat(config.getCompilationCustomizers().get(0),
-                instanceOf(DefaultGroovyCompiler.GrapeCompilationCustomizer.class));
+                instanceOf(GrapeCompilationCustomizer.class));
 
         // when
 
-        final DefaultGroovyCompiler.GrapeCompilationCustomizer customizer =
-                (DefaultGroovyCompiler.GrapeCompilationCustomizer) config.getCompilationCustomizers().get(0);
+        final GrapeCompilationCustomizer customizer =
+                (GrapeCompilationCustomizer) config.getCompilationCustomizers().get(0);
 
         // then
 
@@ -662,6 +677,39 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
+    void testEnableDisableGrapeSupport_sameLockSetByDifferentGrengineClasses() {
+        try {
+
+            // given
+
+            final Object lock = new Object();
+            enableGrapeSupportWithCopy(lock);
+
+            // when
+
+            DefaultGroovyCompiler.enableGrapeSupport(lock);
+
+            // then
+
+            assertThat(Grape.getInstance(), not(instanceOf(GrengineGrapeEngine.class)));
+            assertThat(Grape.getInstance().getClass().getName(), is(GrengineGrapeEngine.class.getName()));
+
+            // when
+
+            DefaultGroovyCompiler.disableGrapeSupport();
+
+            // then
+
+            assertThat(Grape.getInstance(), not(instanceOf(GrengineGrapeEngine.class)));
+            assertThat(Grape.getInstance().getClass().getName(), not(GrengineGrapeEngine.class.getName()));
+
+        } finally {
+            disableGrapeSupportWithCopy();
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
     void testEnableDisableGrapeSupportSpecificLock() {
         try {
 
@@ -749,7 +797,7 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testEnableGrapeSupport_differentLock() {
+    void testEnableGrapeSupport_differentLockSetBySameGrengineClasses() {
         try {
 
             // given
@@ -768,6 +816,26 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
+    void testEnableGrapeSupport_differentLockSetByDifferentGrengineClasses() {
+        try {
+
+            // given
+
+            enableGrapeSupportWithCopy();
+
+            // when/then
+
+            assertThrowsMessageIs(IllegalStateException.class,
+                    () -> DefaultGroovyCompiler.enableGrapeSupport(new Object()),
+                    "Unable to wrap GrapeEngine in Grape.class " +
+                            "because it is already wrapped by a Grengine using an incompatible lock.");
+        } finally {
+            disableGrapeSupportWithCopy();
+            DefaultGroovyCompiler.disableGrapeSupport();
+        }
+    }
+
+    @Test
     void testGetLoaderIfConfigured() {
 
         // given
@@ -778,7 +846,7 @@ class DefaultGroovyCompilerTest {
 
         // when
 
-        GroovyClassLoader loader = DefaultGroovyCompiler.GrapeCompilationCustomizer
+        GroovyClassLoader loader = GrapeCompilationCustomizer
                 .getLoaderIfConfigured(parent, config);
 
         // then
@@ -788,17 +856,17 @@ class DefaultGroovyCompilerTest {
         // when
 
         DefaultGroovyCompiler.withGrape(config, parent);
-        loader = DefaultGroovyCompiler.GrapeCompilationCustomizer
+        loader = GrapeCompilationCustomizer
                 .getLoaderIfConfigured(parent, config);
 
         // then
 
-        assertThat(loader, instanceOf(DefaultGroovyCompiler.CompileTimeGroovyClassLoader.class));
+        assertThat(loader, instanceOf(CompileTimeGroovyClassLoader.class));
 
         // when
 
-        DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
-                (DefaultGroovyCompiler.CompileTimeGroovyClassLoader) loader;
+        CompileTimeGroovyClassLoader compileTimeLoader =
+                (CompileTimeGroovyClassLoader) loader;
 
         // then
 
@@ -841,9 +909,9 @@ class DefaultGroovyCompilerTest {
             final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
             final CompilerConfiguration config1 = new CompilerConfiguration();
             DefaultGroovyCompiler.withGrape(config1, runtimeLoader);
-            final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
-                    (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
-                            DefaultGroovyCompiler.GrapeCompilationCustomizer
+            final CompileTimeGroovyClassLoader compileTimeLoader =
+                    (CompileTimeGroovyClassLoader)
+                            GrapeCompilationCustomizer
                                     .getLoaderIfConfigured(runtimeLoader, config1);
 
             final CompilerConfiguration config2 = new CompilerConfiguration();
@@ -851,9 +919,9 @@ class DefaultGroovyCompilerTest {
 
             // when
 
-            DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoaderWithNullRuntimeLoaderInside =
-                    (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
-                            DefaultGroovyCompiler.GrapeCompilationCustomizer
+            CompileTimeGroovyClassLoader compileTimeLoaderWithNullRuntimeLoaderInside =
+                    (CompileTimeGroovyClassLoader)
+                            GrapeCompilationCustomizer
                                     .getLoaderIfConfigured(null, config2);
 
             // then
@@ -972,17 +1040,28 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testGrabsIntoRuntimeLoader_defaultArgsAndDependency() throws Exception {
-        testGrabsIntoRuntimeLoader(true);
+    void testGrabsIntoRuntimeLoader_defaultArgsAndDependency_sameGrengineClasses() throws Exception {
+        testGrabsIntoRuntimeLoader(true, true);
     }
 
     @Test
-    void testGrabsIntoRuntimeLoader_mergedArgs() throws Exception {
-        testGrabsIntoRuntimeLoader(false);
+    void testGrabsIntoRuntimeLoader_mergedArgs_sameGrengineClasses() throws Exception {
+        testGrabsIntoRuntimeLoader(false, true);
+    }
+
+    @Test
+    void testGrabsIntoRuntimeLoader_defaultArgsAndDependency_differentGrengineClasses() throws Exception {
+        testGrabsIntoRuntimeLoader(true, false);
+    }
+
+    @Test
+    void testGrabsIntoRuntimeLoader_mergedArgs_differentGrengineClasses() throws Exception {
+        testGrabsIntoRuntimeLoader(false, false);
     }
 
     // tests that grab via compile time loader also grabs into the runtime loader
-    private void testGrabsIntoRuntimeLoader(final boolean withDependency) throws Exception {
+    private void testGrabsIntoRuntimeLoader(final boolean withDependency, final boolean sameGrengineClasses)
+            throws Exception {
         try {
 
             // given
@@ -991,11 +1070,23 @@ class DefaultGroovyCompilerTest {
 
             final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
             final CompilerConfiguration config = new CompilerConfiguration();
-            DefaultGroovyCompiler.withGrape(config, runtimeLoader);
-            final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
-                    (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
-                            DefaultGroovyCompiler.GrapeCompilationCustomizer
-                                    .getLoaderIfConfigured(runtimeLoader, config);
+
+            final GroovyClassLoader compileTimeLoader;
+            if (sameGrengineClasses) {
+                DefaultGroovyCompiler.withGrape(config, runtimeLoader);
+                compileTimeLoader = GrapeCompilationCustomizer.getLoaderIfConfigured(runtimeLoader, config);
+            } else {
+                callCopy(DefaultGroovyCompiler.class, "withGrape",
+                        new Class<?>[]{CompilerConfiguration.class, GroovyClassLoader.class},
+                        config, runtimeLoader);
+                compileTimeLoader = (GroovyClassLoader)
+                        callCopy(GrapeCompilationCustomizer.class, "getLoaderIfConfigured",
+                                new Class<?>[]{ClassLoader.class, CompilerConfiguration.class},
+                                runtimeLoader, config);
+                // ensure that really a different class instance
+                assertThat(compileTimeLoader, not(instanceOf(CompileTimeGroovyClassLoader.class)));
+                assertThat(compileTimeLoader.getClass().getName(), is(CompileTimeGroovyClassLoader.class.getName()));
+            }
 
             final GrapeEngine engine = Grape.getInstance();
             final String className = "com.google.common.base.Ascii";
@@ -1036,9 +1127,9 @@ class DefaultGroovyCompilerTest {
             final GroovyClassLoader runtimeLoader = new GroovyClassLoader();
             final CompilerConfiguration config = new CompilerConfiguration();
             DefaultGroovyCompiler.withGrape(config, runtimeLoader);
-            final DefaultGroovyCompiler.CompileTimeGroovyClassLoader compileTimeLoader =
-                    (DefaultGroovyCompiler.CompileTimeGroovyClassLoader)
-                            DefaultGroovyCompiler.GrapeCompilationCustomizer
+            final CompileTimeGroovyClassLoader compileTimeLoader =
+                    (CompileTimeGroovyClassLoader)
+                            GrapeCompilationCustomizer
                                     .getLoaderIfConfigured(runtimeLoader, config);
 
             final GrapeEngine engine = Grape.getInstance();
@@ -1075,26 +1166,17 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testWrappingFails_noGrapeEngine() {
+    void testWrappingFailsIfNoGrapeEngine() {
 
         if (!hasGroovyGrapeAsOptionalDependency()) {
             return;
         }
 
-        final String grapeImplKey = "groovy.grape.impl";
-        final String grapeImplValue = System.getProperty(grapeImplKey);
-        final GrapeEngine innerEngine = Grape.getInstance();
-
         // given
 
-        try {
-            System.setProperty(grapeImplKey, "no.such.GrapeEngine");
-            new Grape() {
-                void set() {
-                    Grape.instance = null;
-                }
-            }.set();
+        final GrapeImplState grapeImplState = setNoGrapeImplementation();
 
+        try {
             // when/then
 
             assertThrowsMessageIs(IllegalStateException.class,
@@ -1103,16 +1185,32 @@ class DefaultGroovyCompilerTest {
                             "no GrapeEngine available (since Groovy 6 that requires a separate " +
                             "Maven dependency like groovy-grape-ivy or groovy-grape-maven).");
         } finally {
-            if (grapeImplValue == null) {
-                System.clearProperty(grapeImplKey);
-            } else {
-                System.setProperty(grapeImplKey, grapeImplValue);
-            }
-            new Grape() {
-                void set() {
-                    Grape.instance = innerEngine;
-                }
-            }.set();
+            restoreGrapeImplementation(grapeImplState);
+        }
+    }
+
+    @Test
+    void testUnwrappingIdempotentIfNoGrapeEngine() {
+
+        if (!hasGroovyGrapeAsOptionalDependency()) {
+            return;
+        }
+
+        // given
+
+        final GrapeImplState grapeImplState = setNoGrapeImplementation();
+
+        try {
+            // when
+
+            DefaultGroovyCompiler.disableGrapeSupport();
+
+            // then
+
+            assertThat(Grape.getInstance(), is(nullValue()));
+
+        } finally {
+            restoreGrapeImplementation(grapeImplState);
         }
     }
 
@@ -1136,7 +1234,7 @@ class DefaultGroovyCompilerTest {
     }
 
     @Test
-    void testEnableGrapeOk_SpecificToSameSpecificLock() {
+    void testEnableGrapeOk_specificToSameSpecificLock() {
         try {
 
             // given
@@ -1252,15 +1350,44 @@ class DefaultGroovyCompilerTest {
         }
     }
 
-    public static void enableGrapeSupportWithCopy() {
+    private static GrapeImplState setNoGrapeImplementation() {
+        final GrapeImplState grapeImplState = new GrapeImplState(
+                System.getProperty(GrapeImplState.GRAPE_IMPL_KEY),
+                Grape.getInstance()
+        );
+        System.setProperty(GrapeImplState.GRAPE_IMPL_KEY, "no.such.GrapeEngine");
+        new Grape() {
+            void set() {
+                Grape.instance = null;
+            }
+        }.set();
+        assertThat(Grape.getInstance(), is(nullValue()));
+        return grapeImplState;
+    }
+
+    private static void restoreGrapeImplementation(final GrapeImplState grapeImplState) {
+        if (grapeImplState.implValue == null) {
+            System.clearProperty(GrapeImplState.GRAPE_IMPL_KEY);
+        } else {
+            System.setProperty(GrapeImplState.GRAPE_IMPL_KEY, grapeImplState.implValue);
+        }
+        new Grape() {
+            void set() {
+                Grape.instance = grapeImplState.engine;
+            }
+        }.set();
+        assertThat(Grape.getInstance(), not(nullValue()));
+    }
+
+    private static void enableGrapeSupportWithCopy() {
         callCopy(DefaultGroovyCompiler.class, "enableGrapeSupport", new Class<?>[]{});
     }
 
-    public static void enableGrapeSupportWithCopy(final Object lock) {
+    private static void enableGrapeSupportWithCopy(final Object lock) {
         callCopy(DefaultGroovyCompiler.class, "enableGrapeSupport", new Class<?>[]{Object.class}, lock);
     }
 
-    public static void disableGrapeSupportWithCopy() {
+    private static void disableGrapeSupportWithCopy() {
         callCopy(DefaultGroovyCompiler.class, "disableGrapeSupport", new Class<?>[]{});
     }
 

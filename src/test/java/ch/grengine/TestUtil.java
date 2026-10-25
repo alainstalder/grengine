@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -209,12 +210,13 @@ public class TestUtil {
         callCopy(Grengine.Grape.class, "deactivate", new Class<?>[]{});
     }
 
-    public static Object callCopy(final Class<?> clazz, final String method,
+    public static Object callCopy(final Class<?> clazz, final String methodName,
             final Class<?>[] methodArgClasses, final Object... callArgs) {
         try {
-            return GRENGINE_COPY_CLASS_LOADER.loadClass(clazz.getName())
-                    .getMethod(method, methodArgClasses)
-                    .invoke(null, callArgs);
+            final Method method = GRENGINE_COPY_CLASS_LOADER.loadClass(clazz.getName())
+                    .getDeclaredMethod(methodName, methodArgClasses);
+            method.setAccessible(true);
+            return method.invoke(null, callArgs);
         } catch (InvocationTargetException e) {
             if (e.getCause() instanceof RuntimeException) {
                 throw (RuntimeException) e.getCause();
