@@ -6,12 +6,17 @@
 # using the jars built by Gradle (no changes to the Gradle build needed).
 #
 # Usage: testbed/matrix.sh [-b|--build] [-j|--java 17,25] [-g|--groovy 4,6.0.0]
+#                          [--gc] [--gc-secs 20]
 #
 #   -b, --build    run './gradlew clean jar testClasses' first
 #   -j, --java     comma-separated Java majors (default: 17,21,25)
 #   -g, --groovy   comma-separated Groovy versions or version prefixes
 #                  (default: 2.5.23,2.5.23-indy,3.0.25,3.0.25-indy,
 #                  4.0.33,5.1.3,6.0.0)
+#   --gc           run the class garbage collection check
+#                  (testbed/classgc/GrengineClassGc.java) instead of
+#                  the unit tests, with -XX:MaxMetaspaceSize=64m
+#   --gc-secs      seconds per cell for --gc (default: 20)
 #
 # The -indy cells use the indy Groovy jar and compile with
 # -Dgroovy.target.indy=true (Groovy 4+ is always indy).
@@ -22,6 +27,7 @@
 # groovy-grape-maven as the Grape engine (dependencies resolved with Gradle).
 #
 # Results: testbed/work/results/<cell>.log, JUnit XML in .../<cell>/
+# (with --gc: testbed/work/results/<cell>-gc.log)
 #
 # (Written for bash 3.2, as shipped with macOS.)
 
@@ -170,16 +176,21 @@ summaryCount() {
 gBuild=0
 gJavaFilter=''
 gGroovyFilter=''
+gGc=0
+gGcSecs=20
 while (( $# > 0 )); do
   case $1 in
     -b|--build) gBuild=1 ;;
     -j|--java) shift; gJavaFilter=${1:-} ;;
     -g|--groovy) shift; gGroovyFilter=${1:-} ;;
+    --gc) gGc=1 ;;
+    --gc-secs) shift; gGcSecs=${1:-} ;;
     -h|--help) usage ;;
     *) usage 2 ;;
   esac
   shift
 done
+[[ $gGcSecs =~ ^[0-9]+$ ]] || die "--gc-secs requires a number of seconds"
 
 cd "$gRoot" || die "cannot cd to $gRoot"
 
@@ -196,26 +207,29 @@ for f in build/libs/grengine-*.jar; do
 done
 [[ -n $gMainJar ]] || die "no grengine jar in build/libs (use --build)"
 
-gTestRoot=''
-for f in build/libs/grengine-*-tests.jar; do
-  [[ -f $f ]] && gTestRoot=$gRoot/$f
-done
-if [[ -z $gTestRoot ]]; then
-  [[ -d build/classes/java/test ]] || die "no compiled tests (use --build)"
-  gTestRoot=$gRoot/build/classes/java/test
-fi
-
 mkdir -p "$gLib" "$gResults" "$gWork/grapes"
 
-gJunitJar=$(fetch "org.junit.platform:junit-platform-console-standalone:$gJunitConsoleVersion")
-gCommonCp="$gMainJar:$gTestRoot:$(fetch "org.hamcrest:hamcrest:$gHamcrestVersion"):$(fetch "commons-io:commons-io:$gCommonsIoVersion")"
-
 echo "main:  $gMainJar"
-echo "tests: $gTestRoot"
+if (( gGc )); then
+  echo "gc:    $gGcSecs secs per cell"
+else
+  gTestRoot=''
+  for f in build/libs/grengine-*-tests.jar; do
+    [[ -f $f ]] && gTestRoot=$gRoot/$f
+  done
+  if [[ -z $gTestRoot ]]; then
+    [[ -d build/classes/java/test ]] || die "no compiled tests (use --build)"
+    gTestRoot=$gRoot/build/classes/java/test
+  fi
+  gJunitJar=$(fetch "org.junit.platform:junit-platform-console-standalone:$gJunitConsoleVersion")
+  gCommonCp="$gMainJar:$gTestRoot:$(fetch "org.hamcrest:hamcrest:$gHamcrestVersion"):$(fetch "commons-io:commons-io:$gCommonsIoVersion")"
+  echo "tests: $gTestRoot"
+fi
 echo
 
 gFailedCells=0
-gSummary=$gResults/summary.txt
+gCells=0
+gSummary=$gResults/summary$( (( gGc )) && echo -gc ).txt
 : > "$gSummary"
 
 runCell() {
@@ -249,6 +263,35 @@ runCell() {
     gFailedCells=$((gFailedCells + 1))
   fi
   printf '%-34s %s\n' "$id" "$result" | tee -a "$gSummary"
+  gCells=$((gCells + 1))
+}
+
+runGcCell() {
+  local id=$1 javaHome=$2 cp=$3
+  shift 3
+  local log=$gResults/$id.log
+  local classes=$gWork/classgc/$id
+  rm -rf "$classes"
+  mkdir -p "$classes"
+  local status
+  if "$javaHome/bin/javac" -nowarn -d "$classes" -cp "$cp" \
+      "$gRoot/testbed/classgc/GrengineClassGc.java" > "$log" 2>&1; then
+    "$javaHome/bin/java" "$@" -XX:MaxMetaspaceSize=64m -Xmx256m \
+      -cp "$classes:$cp" GrengineClassGc -secs "$gGcSecs" >> "$log" 2>&1
+    status=$?
+  else
+    status=$?
+  fi
+  local gcResult result
+  gcResult=$(sed -n 's/^RESULT //p' "$log" | tail -1)
+  if (( status == 0 )); then
+    result="OK      gc: ${gcResult#OK }"
+  else
+    result="FAILED  gc: ${gcResult:-no result} (exit $status), see $log"
+    gFailedCells=$((gFailedCells + 1))
+  fi
+  printf '%-34s %s\n' "$id" "$result" | tee -a "$gSummary"
+  gCells=$((gCells + 1))
 }
 
 for javaMajor in "${gJavaMajors[@]}"; do
@@ -275,7 +318,10 @@ for javaMajor in "${gJavaMajors[@]}"; do
     jvmArgs=()
     [[ $classifier == indy ]] && jvmArgs=(-Dgroovy.target.indy=true)
 
-    if (( groovyMajor >= 6 )); then
+    if (( gGc )); then
+      runGcCell "java$javaMajor-groovy$label-gc" "$javaHome" "$gMainJar:$groovyCp" \
+        ${jvmArgs[@]+"${jvmArgs[@]}"}
+    elif (( groovyMajor >= 6 )); then
       runCell "java$javaMajor-groovy$version-ivy" "$javaHome" \
         "$gCommonCp:$(resolve "$group:groovy-grape-ivy:$version")"
       runCell "java$javaMajor-groovy$version-maven" "$javaHome" \
@@ -286,6 +332,11 @@ for javaMajor in "${gJavaMajors[@]}"; do
     fi
   done
 done
+
+if (( gCells == 0 )); then
+  echo "no cells selected (Java majors: ${gJavaMajors[*]}, see --help)" | tee -a "$gSummary"
+  gFailedCells=1
+fi
 
 echo
 echo "summary: $gSummary"
