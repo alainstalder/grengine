@@ -146,7 +146,7 @@ public class DefaultGroovyCompiler implements Compiler {
     public static CompilerConfiguration withGrape(final CompilerConfiguration config,
             final GroovyClassLoader runtimeLoader) {
         requireNonNull(config, "Compiler configuration is null.");
-        GrapeCompilationCustomizer.enableGrape(config, runtimeLoader);
+        GrapeCompilationCustomizer.withGrape(config, runtimeLoader);
         return config;
     }
 
@@ -445,7 +445,7 @@ public class DefaultGroovyCompiler implements Compiler {
             this.runtimeLoader = runtimeLoader;
         }
 
-        static void enableGrape(final CompilerConfiguration config,
+        static void withGrape(final CompilerConfiguration config,
                 final GroovyClassLoader runtimeLoader) {
             config.addCompilationCustomizers(new GrapeCompilationCustomizer(runtimeLoader));
         }
