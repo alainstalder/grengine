@@ -20,8 +20,11 @@ import ch.grengine.TestUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -502,7 +505,7 @@ class SourceUtilTest {
 
         assertThat(textRead, is(text));
     }
-    
+
     @Test
     void testReadUrlTextNothingThere() throws Exception {
 
@@ -517,6 +520,39 @@ class SourceUtilTest {
         assertThrowsMessageStartsWith(IOException.class,
                 () -> SourceUtil.readUrlText(url, "UTF-8"),
                 "Could not open stream for URL '" + url + "':");
+    }
+
+    @Test
+    void testReadUrlTextScannerThrows() throws Exception {
+
+        // given
+
+        final IOException readException = new IOException("read failed");
+        final URLStreamHandler handlerThatThrowsAtRead = new URLStreamHandler() {
+            @Override
+            protected URLConnection openConnection(final URL u) {
+                return new URLConnection(u) {
+                    @Override
+                    public void connect() {}
+                    @Override
+                    public InputStream getInputStream() {
+                        return new InputStream() {
+                            @Override
+                            public int read() throws IOException {
+                                throw readException;
+                            }
+                        };
+                    }
+                };
+            }
+        };
+        final URL url = new URL(null, "test:throws", handlerThatThrowsAtRead);
+
+        // when/then
+
+        assertThrowsMessageIs(IOException.class,
+                () -> SourceUtil.readUrlText(url, "UTF-8"),
+                "Could not read from URL '" + url + "': " + readException);
     }
 
 }
