@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
-import groovy.grape.Grape;
 import groovy.grape.GrapeEngine;
 import groovy.lang.GroovySystem;
 import org.apache.commons.io.FileUtils;
@@ -49,6 +49,9 @@ public class TestUtil {
         JDK_MAJOR_VERSION = Integer.parseInt(v.startsWith("1.") ? v.substring(2) : v);
     }
     public static final int GROOVY_MAJOR_VERSION = Integer.parseInt(GroovySystem.getVersion().split("\\.")[0]);
+
+    public static final GrengineCopyClassLoader GRENGINE_COPY_CLASS_LOADER =
+            new GrengineCopyClassLoader(TestUtil.class.getClassLoader());
 
     public static class FileThatThrowsInGetCanonicalFile extends File {
         @Serial
@@ -181,6 +184,47 @@ public class TestUtil {
         }
     }
 
+    /**
+     * Activates Grape with separately loaded Grengine classes,
+     * with the default lock.
+     */
+    public static void grapeActivateWithCopy() {
+        callCopy(Grengine.Grape.class, "activate", new Class<?>[]{});
+    }
+
+    /**
+     * Activates Grape with separately loaded Grengine classes,
+     * with the given lock.
+     *
+     * @param lock lock to use; uses default lock if null
+     */
+    public static void grapeActivateWithCopy(final Object lock) {
+        callCopy(Grengine.Grape.class, "activate", new Class<?>[]{Object.class}, lock);
+    }
+
+    /**
+     * Deactivates Grape with separately loaded Grengine classes.
+     */
+    public static void grapeDeactivateWithCopy() {
+        callCopy(Grengine.Grape.class, "deactivate", new Class<?>[]{});
+    }
+
+    public static Object callCopy(final Class<?> clazz, final String method,
+            final Class<?>[] methodArgClasses, final Object... callArgs) {
+        try {
+            return GRENGINE_COPY_CLASS_LOADER.loadClass(clazz.getName())
+                    .getMethod(method, methodArgClasses)
+                    .invoke(null, callArgs);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) e.getCause();
+            }
+            return fail(e);
+        } catch (ReflectiveOperationException e) {
+            return fail(e);
+        }
+    }
+
     // ASM of Groovy 2.5 cannot load JDK 25 bytecode, which is involved in some unit tests
     // here if run under JDK 25 (or later). The workaround is to turn off ASM resolving,
     // which however comes at a certain performance cost.
@@ -201,7 +245,7 @@ public class TestUtil {
     // is not yet visible into which version(s) a fix would come.
     // Once a fix is released, the check here can be made more specific.
     public static boolean hasIssue12458MavenGrapeEngine() {
-        final GrapeEngine engine = Grape.getInstance();
+        final GrapeEngine engine = groovy.grape.Grape.getInstance();
         return engine != null && "groovy.grape.maven.GrapeMaven".equals(engine.getClass().getName());
     }
 

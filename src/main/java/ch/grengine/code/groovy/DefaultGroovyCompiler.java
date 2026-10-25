@@ -183,7 +183,7 @@ public class DefaultGroovyCompiler implements Compiler {
      * <p>
      * See user manual under "Grengine and Grape" for more info.
      *
-     * @param lock the lock to use; use default lock if null
+     * @param lock the lock to use; uses default lock if null
      *
      * @since 1.2
      */
@@ -519,7 +519,7 @@ public class DefaultGroovyCompiler implements Compiler {
                     if (engine instanceof GrengineGrapeEngine) {
                         otherLock = ((GrengineGrapeEngine)engine).lock;
                     } else {
-                        // use reflection to get the lock
+                        // get lock with reflection
                         final Field lockField;
                         try {
                             lockField = engine.getClass().getDeclaredField("lock");
@@ -646,7 +646,7 @@ public class DefaultGroovyCompiler implements Compiler {
                 return ((CompileTimeGroovyClassLoader) obj).runtimeLoader;
             }
             if (obj != null && CompileTimeGroovyClassLoader.class.getName().equals(obj.getClass().getName())) {
-                // get the runtime loader with reflection
+                // get runtime loader with reflection
                 final Field runtimeLoaderField;
                 try {
                     runtimeLoaderField = obj.getClass().getDeclaredField("runtimeLoader");

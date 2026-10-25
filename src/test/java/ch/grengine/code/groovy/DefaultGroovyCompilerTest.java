@@ -54,6 +54,7 @@ import org.junit.jupiter.api.Test;
 
 import static ch.grengine.TestUtil.GROOVY_MAJOR_VERSION;
 import static ch.grengine.TestUtil.assertThrowsMessageIs;
+import static ch.grengine.TestUtil.callCopy;
 import static ch.grengine.TestUtil.createTestDir;
 import static ch.grengine.TestUtil.hasGroovyGrapeAsOptionalDependency;
 import static ch.grengine.TestUtil.toRuntimeException;
@@ -1249,6 +1250,18 @@ class DefaultGroovyCompilerTest {
         } catch (Exception e) {
             return fail(e);
         }
+    }
+
+    public static void enableGrapeSupportWithCopy() {
+        callCopy(DefaultGroovyCompiler.class, "enableGrapeSupport", new Class<?>[]{});
+    }
+
+    public static void enableGrapeSupportWithCopy(final Object lock) {
+        callCopy(DefaultGroovyCompiler.class, "enableGrapeSupport", new Class<?>[]{Object.class}, lock);
+    }
+
+    public static void disableGrapeSupportWithCopy() {
+        callCopy(DefaultGroovyCompiler.class, "disableGrapeSupport", new Class<?>[]{});
     }
 
 }
