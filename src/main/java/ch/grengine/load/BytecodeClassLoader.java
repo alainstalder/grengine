@@ -16,14 +16,12 @@
 
 package ch.grengine.load;
 
-import ch.grengine.source.Source;
 import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
 import ch.grengine.except.LoadException;
+import ch.grengine.source.Source;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
@@ -47,18 +45,6 @@ import static java.util.Objects.requireNonNull;
  */
 public class BytecodeClassLoader extends SourceClassLoader {
 
-    // available in Java 9 and later
-    private static final Method GET_DEFINED_PACKAGE_METHOD;
-    static {
-        Method method;
-        try {
-            method = BytecodeClassLoader.class.getMethod("getDefinedPackage", String.class);
-        } catch (NoSuchMethodException e) {
-            method = null;
-        }
-        GET_DEFINED_PACKAGE_METHOD = method;
-    }
-    
     private final LoadMode loadMode;
     private final Code code;
     private final Map<String,Object> locks = new HashMap<>();
@@ -121,7 +107,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         // define package if not already defined
         if (packageName != null) {
             synchronized (packageNameLock) {
-                if (getDefinedPackageOrPackage(packageName) == null) {
+                if (getDefinedPackage(packageName) == null) {
                     definePackage(packageName);
                 }
             }
@@ -328,19 +314,6 @@ public class BytecodeClassLoader extends SourceClassLoader {
      */
     public Code getCode() {
         return code;
-    }
-
-    // uses getDefinedPackage() for Java 9 and later, with fallback to getPackage()
-    @SuppressWarnings("deprecation")
-    private Package getDefinedPackageOrPackage(String name) {
-        if (GET_DEFINED_PACKAGE_METHOD == null) {
-            return getPackage(name);
-        }
-        try {
-            return (Package)GET_DEFINED_PACKAGE_METHOD.invoke(this, name);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            return getPackage(name);
-        }
     }
 
 }
