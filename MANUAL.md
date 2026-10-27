@@ -1514,8 +1514,9 @@ always surprises in practice.
   releases are planned, as expected and makes sense to me.)
 * Groovy 6.0.0 with the Maven Grape engine:
   `@Grab` in scripts only works with `Grengine.Grape.activate()`
-  (but should normally not be used without that anyway);
-  reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458) in Oct 2026.
+  (but should normally not be used without that anyway).
+  Reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458),
+  which is already fixed and planned to be included in Groovy 6.0.1.
 
 ### Grengine 4
 
