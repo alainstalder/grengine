@@ -16,14 +16,14 @@
 
 package ch.grengine.load;
 
+import ch.grengine.code.Code;
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.SingleSourceCode;
 import ch.grengine.engine.LayeredEngine;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
-import ch.grengine.code.Code;
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.SingleSourceCode;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -501,13 +501,13 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
 
         /**
-         * sets whether to use the a top code cache or not,
+         * sets whether to use the top code cache or not,
          * along with the top code cache (OK to pass null if setting to false),
          * default is not to use a top code cache.
          * <p>
          * Note that the default is the opposite in the {@link LayeredEngine}.
          *
-         * @param isWithTopCodeCache whether to use the a top code cache or not
+         * @param isWithTopCodeCache whether to use the top code cache or not
          * @param topCodeCache top code cache (OK to pass null if setting to false)
          *
          * @return this, for chaining calls
@@ -585,9 +585,9 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
         
         /**
-         * gets whether to use the a top code cache or not.
+         * gets whether to use the top code cache or not.
          *
-         * @return whether to use the a top code cache or not
+         * @return whether to use the top code cache or not
          * 
          * @since 1.0
          */
