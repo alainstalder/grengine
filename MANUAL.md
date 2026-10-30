@@ -29,7 +29,7 @@
   Note, however, that class loading is a rather expensive operation
   with limited garbage collection, hence this feature does not scale
   well with larger numbers of sessions (more details further below).
-  
+
 * _Safety_: Grengine works with Java VM 8 or later and works with
   basically any Groovy version that runs on Java 8 or later.
   The interface between Grengine and the Groovy JDK is so narrow
@@ -566,7 +566,7 @@ problematic:
   behavior in calls in other threads.
 * Script dependencies: For example, two classes in separate scripts
   may refer to each other; this cannot be handled with sequential calls.
-  
+
 The correct handling of dependencies between scripts is also a (minor) issue
 if you add a script directory to a `GroovyClassLoader`, but that approach
 already covers more cases in practice. For example
