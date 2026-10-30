@@ -16,12 +16,12 @@
 
 package ch.grengine;
 
+import ch.grengine.engine.Engine;
+import ch.grengine.engine.Loader;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.CreateException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
-import ch.grengine.engine.Engine;
-import ch.grengine.engine.Loader;
 import ch.grengine.source.SourceFactory;
 
 import java.io.Closeable;
