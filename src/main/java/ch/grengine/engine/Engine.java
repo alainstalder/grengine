@@ -17,12 +17,12 @@
 package ch.grengine.engine;
 
 import ch.grengine.Grengine;
+import ch.grengine.code.Code;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.CompileException;
 import ch.grengine.except.LoadException;
 import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
-import ch.grengine.code.Code;
 
 import java.io.Closeable;
 import java.util.List;

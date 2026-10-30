@@ -16,8 +16,8 @@
 
 package ch.grengine.sources;
 
-import ch.grengine.source.Source;
 import ch.grengine.code.CompilerFactory;
+import ch.grengine.source.Source;
 
 import java.util.Set;
 
