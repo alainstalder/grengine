@@ -1545,7 +1545,7 @@ Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17).
 
 ### Grengine 3
 
-Currently still active, API and releases are kept in sync with Grengine 4.
+Currently still active; API and releases are kept in sync with Grengine 4.
 
 Essentially the only difference is that Grengine 3 is compiled using
 JDK 8 to JDK 8 bytecode whereas Grengine 4 is compiled using JDK 17
