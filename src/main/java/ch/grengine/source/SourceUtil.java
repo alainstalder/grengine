@@ -122,7 +122,7 @@ public class SourceUtil {
     }
     
     /**
-     * creates a source set from the given map of of desired class name to script text,
+     * creates a source set from the given map of desired class name to script text,
      * using the given source factory.
      *
      * @param sourceFactory source factory
