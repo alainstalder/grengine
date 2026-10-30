@@ -270,16 +270,8 @@ public class DefaultSourceFactory implements SourceFactory {
         }
         
     }
-    
-    private static class TrackingInfo {
-        final long lastChecked;
-        final long lastModified;
-        final String textHash;
-        private TrackingInfo(final long lastChecked, final long lastModified, final String textHash) {
-            this.lastChecked = lastChecked;
-            this.lastModified = lastModified;
-            this.textHash = textHash;
-        }
+
+    private record TrackingInfo(long lastChecked, long lastModified, String textHash) {
     }
     
     
