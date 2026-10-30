@@ -271,7 +271,7 @@ public class DefaultSourceFactory implements SourceFactory {
         
     }
     
-    private class TrackingInfo {
+    private static class TrackingInfo {
         final long lastChecked;
         final long lastModified;
         final String textHash;
