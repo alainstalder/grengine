@@ -74,17 +74,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class DefaultGroovyCompilerTest {
 
-    private static class GrapeImplState {
-
+    private record GrapeImplState(String implValue, GrapeEngine engine) {
         static final String GRAPE_IMPL_KEY = "groovy.grape.impl";
-
-        final String implValue;
-        final GrapeEngine engine;
-
-        GrapeImplState(final String implValue, final GrapeEngine engine) {
-            this.implValue = implValue;
-            this.engine = engine;
-        }
     }
 
     @Test
