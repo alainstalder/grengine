@@ -20,8 +20,6 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 
 /**
  * Default implementation for releasing class metadata when done using it.
- * <p>
- * (Requires Groovy 2.4.8 or later.)
  * 
  * @since 1.1
  * 
