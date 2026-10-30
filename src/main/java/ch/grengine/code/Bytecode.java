@@ -28,10 +28,10 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class Bytecode {
-    
+
     private final String className;
     private final byte[] bytes;
-    
+
     /**
      * constructor from class name and bytecode bytes.
      *
@@ -48,7 +48,7 @@ public class Bytecode {
         this.className = className;
         this.bytes = bytes;
     }
-       
+
     /**
      * gets the class name.
      *
@@ -59,7 +59,7 @@ public class Bytecode {
     public String getClassName() {
         return className;
     }
-    
+
     /**
      * gets the bytecode bytes.
      *

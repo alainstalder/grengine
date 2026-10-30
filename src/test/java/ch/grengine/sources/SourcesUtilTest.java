@@ -83,7 +83,7 @@ class SourcesUtilTest {
         assertThat(s.getSourceSet().size(), is(1));
         assertThat(s.getSourceSet().contains(m), is(true));
     }
-    
+
     @Test
     void testSourceToSourcesSpecificCompilerFactorySourceNull() {
 
@@ -93,7 +93,7 @@ class SourcesUtilTest {
                 () -> SourcesUtil.sourceToSources(null, new DefaultGroovyCompilerFactory()),
                 "Source is null.");
     }
-    
+
     @Test
     void testSourceToSourcesSpecificCompilerFactoryNull() {
 
@@ -104,7 +104,7 @@ class SourcesUtilTest {
                 "Compiler factory is null.");
     }
 
-    
+
     @Test
     void testSourceSetToSourcesDefaultCompilerFactory() {
 
@@ -146,7 +146,7 @@ class SourcesUtilTest {
                 () -> SourcesUtil.sourceSetToSources(new HashSet<>(), null),
                 "Name is null.");
     }
-    
+
     @Test
     void testSourceSetToSourcesSpecificCompilerFactory() {
 

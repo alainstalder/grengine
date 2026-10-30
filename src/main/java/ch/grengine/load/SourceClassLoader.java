@@ -30,7 +30,7 @@ import ch.grengine.source.Source;
  * @author Made in Switzerland.
  */
 public abstract class SourceClassLoader extends ClassLoader implements Cloneable {
-    
+
     /**
      * constructor from parent class loader.
      *
@@ -57,7 +57,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * @since 1.0
      */
     public abstract Class<?> loadMainClass(Source source);
-    
+
     /**
      * loads a class with the given name and from the given source.
      * <p>
@@ -74,7 +74,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * @since 1.0
      */
     public abstract Class<?> loadClass(Source source, String name);
-    
+
     /**
      * tries to find the bytecode class loader that can load classes that were created
      * by compiling the given source.
@@ -86,7 +86,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * @since 1.0
      */
     public abstract BytecodeClassLoader findBytecodeClassLoaderBySource(Source source);
-    
+
     /**
      * gets the load mode.
      *
@@ -95,7 +95,7 @@ public abstract class SourceClassLoader extends ClassLoader implements Cloneable
      * @since 1.0
      */
     public abstract LoadMode getLoadMode();
-    
+
     /**
      * creates a clone with identical behavior, typically sharing the same bytecode.
      *

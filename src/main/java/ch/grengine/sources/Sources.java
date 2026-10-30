@@ -35,7 +35,7 @@ import java.util.Set;
  * @author Made in Switzerland.
  */
 public interface Sources {
-    
+
     /**
      * updates the source set, if necessary, and returns it.
      *
@@ -44,7 +44,7 @@ public interface Sources {
      * @since 1.0
      */
     Set<Source> getSourceSet();
-    
+
     /**
      * updates the source set, if necessary, and returns the last modified
      * of when last found changed.
@@ -58,7 +58,7 @@ public interface Sources {
      * @since 1.0
      */
     long getLastModified();
-    
+
     /**
      * gets the name of the sources.
      *
@@ -76,7 +76,7 @@ public interface Sources {
      * @since 1.0
      */
     CompilerFactory getCompilerFactory();
-    
+
     /**
      * returns a string suitable for logging.
      *

@@ -38,7 +38,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class BytecodeClassLoaderConcurrencyTest {
-    
+
     private class SlowBytecodeClassLoader extends BytecodeClassLoader {
         private final long delayDefinePackageMs;
         private final long delayDefineClassMs;
@@ -49,7 +49,7 @@ class BytecodeClassLoaderConcurrencyTest {
             this.delayDefinePackageMs = delayDefinePackageMs;
             this.delayDefineClassMs = delayDefineClassMs;
         }
-        
+
         // slow down within the synchronized block where the class is defined
         void definePackage(final String packageName) {
             if (delayDefinePackageMs != 0) {

@@ -593,8 +593,8 @@ public class Grengine extends BaseGrengine {
                 .setSourceFactory(sourceFactory)
                 .setSourcesLayers(sources);
     }
-    
-    
+
+
     /**
      * gets the builder.
      *
@@ -628,7 +628,7 @@ public class Grengine extends BaseGrengine {
     }
 
     private void updateEngineIfSourcesLayersModifiedInternal() {
-        
+
         // check if lastChecked is 0 to make sure layers are set once if latency is infinite
         // check both boundaries of the interval to exclude problems with leap seconds etc.
         long diff = System.currentTimeMillis() - lastChecked;
@@ -650,17 +650,17 @@ public class Grengine extends BaseGrengine {
             lastChecked = System.currentTimeMillis();
             return;
         }
-        
+
         // layers have changed, update engine...
-        
+
         synchronized(this) {
-            
+
             // prevent multiple updates
             diff = System.currentTimeMillis() - lastChecked;
             if (lastChecked != 0 && diff >= 0 && diff < latencyMs) {
                 return;
             }
-            
+
             lastModifiedList = lastModifiedListNew;
             try {
                 engine.setCodeLayersBySource(sourcesLayers);
@@ -713,7 +713,7 @@ public class Grengine extends BaseGrengine {
         return engine.loadClass(loader, name);
     }
 
-    
+
     /**
      * Builder for instances of {@link Grengine}.
      * 
@@ -723,22 +723,22 @@ public class Grengine extends BaseGrengine {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         /**
          * the default latency (5000ms = five seconds).
          * 
          * @since 1.0
          */
         public static final long DEFAULT_LATENCY_MS = 5000L;
-        
+
         private boolean isCommitted;
-        
+
         private Engine engine;
         private SourceFactory sourceFactory;
         private List<Sources> sourcesLayers;
         private UpdateExceptionNotifier updateExceptionNotifier;
         private long latencyMs = -1;
-        
+
         /**
          * constructor.
          * 
@@ -747,7 +747,7 @@ public class Grengine extends BaseGrengine {
         public Builder() {
             isCommitted = false;
         }
-        
+
         /**
          * sets the engine, default is a new instance of {@link LayeredEngine}
          * with default settings.
@@ -781,7 +781,7 @@ public class Grengine extends BaseGrengine {
             this.sourceFactory = sourceFactory;
             return this;
         }
-        
+
         /**
          * sets the sources layers, default is no layers.
          *
@@ -797,7 +797,7 @@ public class Grengine extends BaseGrengine {
             this.sourcesLayers = sourcesLayers;
             return this;
         }
-        
+
         /**
          * sets the sources layers, default is no layers.
          *
@@ -827,7 +827,7 @@ public class Grengine extends BaseGrengine {
             this.updateExceptionNotifier = updateExceptionNotifier;
             return this;
         }
-        
+
         /**
          * sets the latency in milliseconds for checking if need to
          * recompile sources layers, default is {@link #DEFAULT_LATENCY_MS}.
@@ -855,7 +855,7 @@ public class Grengine extends BaseGrengine {
         public Engine getEngine() {
             return engine;
         }
-        
+
         /**
          * gets the source factory for creating sources.
          *
@@ -866,7 +866,7 @@ public class Grengine extends BaseGrengine {
         public SourceFactory getSourceFactory() {
             return sourceFactory;
         }
-        
+
         /**
          * gets the sources layers.
          *
@@ -877,7 +877,7 @@ public class Grengine extends BaseGrengine {
         public List<Sources> getSourcesLayers() {
             return sourcesLayers;
         }
-        
+
         /**
          * gets the update notification notifier.
          *
@@ -888,7 +888,7 @@ public class Grengine extends BaseGrengine {
         public UpdateExceptionNotifier getUpdateExceptionNotifier() {
             return updateExceptionNotifier;
         }
-        
+
         /**
          * gets the latency in milliseconds.
          *
@@ -899,7 +899,7 @@ public class Grengine extends BaseGrengine {
         public long getLatencyMs() {
             return latencyMs;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (engine == null) {
@@ -918,7 +918,7 @@ public class Grengine extends BaseGrengine {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link Grengine}.
          *
@@ -930,7 +930,7 @@ public class Grengine extends BaseGrengine {
             commit();
             return new Grengine(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

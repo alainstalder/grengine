@@ -32,9 +32,9 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultFileSource extends BaseSource implements FileSource {
-    
+
     private final File file;
-    
+
     /**
      * constructor from script file.
      * <p>
@@ -53,12 +53,12 @@ public class DefaultFileSource extends BaseSource implements FileSource {
         this.file = SourceUtil.toCanonicalOrAbsoluteFile(file);
         id = this.file.getPath();
     }
-    
+
     @Override
     public long getLastModified() {
         return getFile().lastModified();
     }
-    
+
     @Override
     public File getFile() {
         return file;

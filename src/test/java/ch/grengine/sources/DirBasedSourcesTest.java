@@ -16,14 +16,14 @@
 
 package ch.grengine.sources;
 
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.MockSourceFactory;
-import ch.grengine.source.Source;
 import ch.grengine.TestUtil;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.DefaultFileSource;
+import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.MockFile;
+import ch.grengine.source.MockSourceFactory;
+import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
 
 import java.io.File;
@@ -45,7 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class DirBasedSourcesTest {
-    
+
     private final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
     @Test
@@ -61,7 +61,7 @@ class DirBasedSourcesTest {
         final DirBasedSources s = builder.build();
 
         // then
-        
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), CoreMatchers.is(builder));
         assertThat(s.getDir().getPath(), is(dir.getCanonicalPath()));
@@ -84,7 +84,7 @@ class DirBasedSourcesTest {
 
         assertThat(s.getSourceSet().isEmpty(), is(true));
     }
-    
+
     @Test
     void testConstructAllDefined() throws Exception {
 
@@ -108,7 +108,7 @@ class DirBasedSourcesTest {
                 .build();
 
         // then
-        
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), CoreMatchers.is(builder));
         assertThat(s.getDir().getPath(), is(dir.getCanonicalPath()));
@@ -130,7 +130,7 @@ class DirBasedSourcesTest {
 
         assertThat(s.getSourceSet().isEmpty(), is(true));
     }
-    
+
     @Test
     void testConstructDirNull() {
 
@@ -140,7 +140,7 @@ class DirBasedSourcesTest {
                 () -> new DirBasedSources.Builder(null),
                 "Dir is null.");
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() throws Exception {
 
@@ -156,7 +156,7 @@ class DirBasedSourcesTest {
                 () -> builder.setName("name"),
                 "Builder already used.");
     }
-    
+
     @Test
     void testGetSourcesNoSubDirsDefaultExtensions() throws Exception {
 
@@ -185,7 +185,7 @@ class DirBasedSourcesTest {
         assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
         assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
-    
+
     @Test
     void testGetSourcesWithSubDirsDefaultExtensions() throws Exception {
 
@@ -214,7 +214,7 @@ class DirBasedSourcesTest {
         assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible2"))), is(isWindows));
         assertThat(set.contains(new DefaultFileSource(m.get("fileUnixInvisible3"))), is(isWindows));
     }
-    
+
     @Test
     void testGetSourcesNoSubDirsSpecificExtensions() throws Exception {
 
@@ -298,7 +298,7 @@ class DirBasedSourcesTest {
 
         assertThat(set.isEmpty(), is(true));
     }
-    
+
     @Test
     void testLastModified() throws Exception {
 
@@ -372,7 +372,7 @@ class DirBasedSourcesTest {
         assertThat(lastMod4, is(lastMod5));
     }
 
-    
+
     private static Map<String,File> createFiles(File dir) throws Exception {
         final File subDir = new File(dir, "foo");
         final File subSubDir = new File(subDir, "bar");
@@ -393,7 +393,7 @@ class DirBasedSourcesTest {
         m.put("fileUnixInvisible1", new MockFile(dir, ".groovy"));
         m.put("fileUnixInvisible2", new MockFile(dir, ".UnixInvisible.groovy"));
         m.put("fileUnixInvisible3", new MockFile(subDir, ".groovy"));
-        
+
         TestUtil.setFileText(m.get("file"), "println 'file'");
         TestUtil.setFileText(m.get("fileGoo"), "println 'fileGoo'");
         TestUtil.setFileText(m.get("fileNoExt"), "println 'fileNoExt'");
@@ -404,8 +404,8 @@ class DirBasedSourcesTest {
         TestUtil.setFileText(m.get("fileUnixInvisible1"), "println 'fileUnixInvisible1'");
         TestUtil.setFileText(m.get("fileUnixInvisible2"), "println 'fileUnixInvisible2'");
         TestUtil.setFileText(m.get("fileUnixInvisible3"), "println 'fileUnixInvisible3'");
-        
+
         return m;
     }
-    
+
 }

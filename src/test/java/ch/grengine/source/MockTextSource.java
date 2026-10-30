@@ -18,22 +18,22 @@ package ch.grengine.source;
 
 // allows to set script text and last modified (thus only effective for same source instance)
 public class MockTextSource extends DefaultTextSource {
-    
+
     private volatile String text;
     private volatile long lastModified;
     private volatile RuntimeException runtimeEx;
-    
+
     public MockTextSource(final String text) {
         super(text);
         this.text = text;
         lastModified = 0;
     }
-    
+
     public MockTextSource(final String text, final String name) {
         super(text, name);
         lastModified = 0;
     }
-    
+
     public void setText(final String text) {
         this.text = text;
     }
@@ -45,11 +45,11 @@ public class MockTextSource extends DefaultTextSource {
         }
         return text;
     }
-    
+
     public void setThrowAtGetText(final RuntimeException runtimeEx) {
         this.runtimeEx = runtimeEx;
     }
-    
+
     public void setLastModified(final long lastModified) {
         this.lastModified = lastModified;
     }

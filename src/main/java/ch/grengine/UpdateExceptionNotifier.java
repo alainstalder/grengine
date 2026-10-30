@@ -28,7 +28,7 @@ import ch.grengine.except.GrengineException;
  * @author Made in Switzerland.
  */
 public interface UpdateExceptionNotifier {
-    
+
     /**
      * notification callback.
      * 

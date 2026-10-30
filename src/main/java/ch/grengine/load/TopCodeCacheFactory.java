@@ -26,7 +26,7 @@ package ch.grengine.load;
  * @author Made in Switzerland.
  */
 public interface TopCodeCacheFactory {
-    
+
     /**
      * creates a new {@link TopCodeCache} instance with given parent class loader.
      *

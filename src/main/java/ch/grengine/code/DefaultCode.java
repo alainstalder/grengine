@@ -34,11 +34,11 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultCode implements Code {
-    
+
     private final String sourcesName;
     private final Map<Source,CompiledSourceInfo> compiledSourceInfoMap;
     private final Map<String,Bytecode> bytecodeMap;
-    
+
     /**
      * constructor (typically called by the compiler).
      * 
@@ -59,17 +59,17 @@ public class DefaultCode implements Code {
         this.compiledSourceInfoMap = compiledSourceInfoMap;
         this.bytecodeMap = bytecodeMap;
     }
-    
+
     @Override
     public String getSourcesName() {
         return sourcesName;
     }
-    
+
     @Override
     public boolean isForSource(final Source source) {
         return compiledSourceInfoMap.containsKey(source);
     }
-    
+
     @Override
     public String getMainClassName(final Source source) {
         final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
@@ -78,7 +78,7 @@ public class DefaultCode implements Code {
         }
         return info.getMainClassName();
     }
-    
+
     @Override
     public Set<String> getClassNames(final Source source) {
         final CompiledSourceInfo info = compiledSourceInfoMap.get(source);
@@ -106,7 +106,7 @@ public class DefaultCode implements Code {
     public Bytecode getBytecode(final String className) {
         return bytecodeMap.get(className);
     }
-    
+
     @Override
     public Set<String> getClassNameSet() {
         return bytecodeMap.keySet();

@@ -32,7 +32,7 @@ public class MockFile extends File {
     private static final long serialVersionUID = 2207971933919660151L;
 
     private final File lastModifiedFile;
-    
+
     public MockFile(final String pathname) {
         super(pathname);
         lastModifiedFile = new File(new File(pathname).getPath() + ".lastModified");

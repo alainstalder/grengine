@@ -26,7 +26,7 @@ package ch.grengine.source;
  * @author Made in Switzerland.
  */
 public interface TextSource extends Source {
-    
+
     /**
      * gets the script text.
      *

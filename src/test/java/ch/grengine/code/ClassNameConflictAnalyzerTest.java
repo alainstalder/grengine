@@ -92,7 +92,7 @@ public class ClassNameConflictAnalyzerTest {
         assertThat(fileList.size(), is(1));
         assertThat(codeLayers.get(2), CoreMatchers.is(fileList.get(0)));
     }
-    
+
     @Test
     void testGetAllClassOriginsCodeLayersNull() {
 
@@ -102,8 +102,8 @@ public class ClassNameConflictAnalyzerTest {
                 () -> ClassNameConflictAnalyzer.getAllClassNamesMap(null),
                 "Code layers are null.");
     }
-    
-    
+
+
     @Test
     void testClassOriginsWithDuplicates() {
 
@@ -129,7 +129,7 @@ public class ClassNameConflictAnalyzerTest {
         assertThat(codeLayers.get(0), CoreMatchers.is(twiceList.get(0)));
         assertThat(codeLayers.get(1), CoreMatchers.is(twiceList.get(1)));
     }
-    
+
     @Test
     void testClassOriginsWithDuplicatesCodeLayersNull() {
 
@@ -139,8 +139,8 @@ public class ClassNameConflictAnalyzerTest {
                 () -> ClassNameConflictAnalyzer.getSameClassNamesInMultipleCodeLayersMap(null),
                 "Code layers are null.");
     }
-    
-    
+
+
     @Test
     void testDetermineClassOriginsWithDuplicateInParent() {
 
@@ -167,7 +167,7 @@ public class ClassNameConflictAnalyzerTest {
         assertThat(fileList.size(), is(1));
         assertThat(codeLayers.get(2), CoreMatchers.is(fileList.get(0)));
     }
-    
+
     @Test
     void testDetermineClassOriginsWithDuplicateInParentParentNull() {
 
@@ -178,7 +178,7 @@ public class ClassNameConflictAnalyzerTest {
                 null, new LinkedList<>()),
                 "Parent class loader is null.");
     }
-    
+
     @Test
     void testDetermineClassOriginsWithDuplicateInParentCodeLayersNull() {
 
@@ -195,7 +195,7 @@ public class ClassNameConflictAnalyzerTest {
                 "Code layers are null.");
     }
 
-    
+
     public static List<Code> getTestCodeLayers() {
         final SourceFactory f = new DefaultSourceFactory();
         final Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +

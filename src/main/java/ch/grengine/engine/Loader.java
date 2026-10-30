@@ -115,7 +115,7 @@ public class Loader implements Closeable {
         }
         this.sourceClassLoader = sourceClassLoader;
     }
-    
+
     /**
      * gets the loader number.
      *
@@ -126,7 +126,7 @@ public class Loader implements Closeable {
     public long getNumber() {
         return number;
     }
-    
+
     /**
      * gets whether the loader is attached to the engine or not.
      *
@@ -137,7 +137,7 @@ public class Loader implements Closeable {
     public boolean isAttached() {
         return isAttached;
     }
-   
+
     /**
      * two loaders are equal if and only if their loader number and their engine ID are equal.
      *
@@ -149,7 +149,7 @@ public class Loader implements Closeable {
         final Loader loader = (Loader)obj;
         return this.number == loader.number && this.engineId == loader.engineId;
     }
-    
+
     /**
      * implementation based on loader number and engine ID.
      * 
@@ -188,5 +188,5 @@ public class Loader implements Closeable {
     public void close() {
         sourceClassLoader.releaseClasses(classReleaser);
     }
-    
+
 }

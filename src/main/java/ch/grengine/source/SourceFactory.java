@@ -29,7 +29,7 @@ import java.net.URL;
  * @author Made in Switzerland.
  */
 public interface SourceFactory {
-    
+
     /**
      * gets source from script text.
      *
@@ -40,7 +40,7 @@ public interface SourceFactory {
      * @since 1.0
      */
     Source fromText(String text);
-    
+
     /**
      * gets source from script text and desired class name.
      *
@@ -52,7 +52,7 @@ public interface SourceFactory {
      * @since 1.0
      */
     Source fromText(String text, String desiredClassName);
-    
+
     /**
      * gets source from script file.
      *
@@ -63,7 +63,7 @@ public interface SourceFactory {
      * @since 1.0
      */
     Source fromFile(File file);
-    
+
     /**
      * gets source from script URL.
      *

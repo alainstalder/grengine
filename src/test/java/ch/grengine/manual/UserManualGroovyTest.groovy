@@ -12,16 +12,16 @@ class UserManualGroovyTest {
 
     @TempDir
     public File tempDir
-    
+
     @Test
     void testRunningIndividualScripts_BindingWithGroovy() throws Exception {
         Grengine gren = new Grengine()
-        
+
         //--------------------------------------------
         gren.run('println x+y', [ 'x' : 5, 'y' : 2 ])
         //--------------------------------------------
     }
-    
+
     @Test
     void testInterdependentScripts_DirBasedGrengine_DirChanges() throws Exception {
 
@@ -31,7 +31,7 @@ class UserManualGroovyTest {
         new File(scriptDir, "Util.groovy").setText(utilScriptText)
         new File(scriptDir, "Test.groovy").setText(scriptText)
         Grengine gren = new Grengine(scriptDir)
-        
+
         //--------------------------------------------
         def utilFile = new File(scriptDir, 'Util.groovy')
         def newUtilFile = new File(scriptDir, 'NewUtil.groovy')
@@ -45,7 +45,7 @@ class UserManualGroovyTest {
         gren.run(testFile)
         //--------------------------------------------
     }
-    
+
     @Test
     void testInterdependentScripts_DirBasedGrengine_Options() throws Exception {
 
@@ -54,13 +54,13 @@ class UserManualGroovyTest {
         File scriptDir = tempFolder.getRoot()
         new File(scriptDir, "Util.groovy").setText(utilScriptText)
         new File(scriptDir, "Test.groovy").setText(scriptText)
-        
+
         //--------------------------------------------
         def config = new CompilerConfiguration()
         config.setScriptExtensions([ "groovy", "funky" ] as Set)
         def gren = new Grengine(config, scriptDir, DirMode.WITH_SUBDIRS_RECURSIVE)
         //--------------------------------------------
     }
-    
-    
+
+
 }

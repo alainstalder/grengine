@@ -49,9 +49,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Made in Switzerland.
  */
 public class LayeredClassLoader extends SourceClassLoader {
-    
+
     private final Builder builder;
-    
+
     private List<Code> codeLayers;
     // the class loader on top, without top code cache
     private ClassLoader staticTopLoader;
@@ -76,7 +76,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         this.builder = builder.commit();
         fromCodeLayers();
     }
-    
+
     /**
      * constructor from builder, based on sources to compile to code layers
      * or on already compiled code layers.
@@ -98,17 +98,17 @@ public class LayeredClassLoader extends SourceClassLoader {
             fromCodeLayers();
         }
     }
-    
+
     private void fromCodeLayers() {
         createLoadersFromCodeLayers();
         initTopCodeCache();
     }
-    
+
     private void fromSourcesLayers() {
         createLoadersFromSourcesLayers();
         initTopCodeCache();
     }
-    
+
     private void createLoadersFromCodeLayers() {
         staticTopLoader = builder.getParent();
         codeLayers = builder.getCodeLayers();
@@ -117,7 +117,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             classLoaderQueue.add(new WeakReference<>((BytecodeClassLoader) staticTopLoader));
         });
     }
-    
+
     private void createLoadersFromSourcesLayers() {
         staticTopLoader = builder.getParent();
         final List<Sources> sourcesLayers = builder.getSourcesLayers();
@@ -133,7 +133,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         // can be reused without recompiling (e.g. for clone())
         builder.setCodeLayersAfterCreating(codeLayers);
     }
-    
+
     private void initTopCodeCache() {
         isWithTopCodeCache = builder.isWithTopCodeCache();
         if (isWithTopCodeCache) {
@@ -147,7 +147,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
     }
 
-        
+
     @Override
     protected Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
         // can only be done statically...
@@ -183,12 +183,12 @@ public class LayeredClassLoader extends SourceClassLoader {
      */
     @Override
     public Class<?> loadMainClass(final Source source) {
-        
+
         // loading from code layers only?
         if (!isWithTopCodeCache) {
             return BytecodeClassLoader.loadMainClassBySource(staticTopLoader, source);
         }
-        
+
         // code layers version available and is up-to-date or parent first?
         final BytecodeClassLoader staticLoader = findBytecodeClassLoaderBySource(source);
         if (staticLoader != null) {
@@ -228,7 +228,7 @@ public class LayeredClassLoader extends SourceClassLoader {
      */
     @Override
     public Class<?> loadClass(final Source source, final String name) {
-        
+
         // loading from static layers only?
         if (!isWithTopCodeCache) {
             return BytecodeClassLoader.loadClassBySourceAndName(staticTopLoader, source, name);
@@ -292,12 +292,12 @@ public class LayeredClassLoader extends SourceClassLoader {
         }
         return loader;
     }
-    
+
     @Override
     public LoadMode getLoadMode() {
         return builder.getLoadMode();
     }
-    
+
     /**
      * creates a clone with the same code layers
      * and with shared top code cache.
@@ -324,7 +324,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             }
         } while (ref != null);
     }
-    
+
     /**
      * creates a clone with the same code layers
      * and a separate top code cache
@@ -343,7 +343,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         detachedClone.builder.setTopCodeCacheAfterCreating(detachedClone.topCodeCache);
         return detachedClone;
     }
-    
+
     /**
      * gets the code layers.
      *
@@ -354,7 +354,7 @@ public class LayeredClassLoader extends SourceClassLoader {
     public List<Code> getCodeLayers() {
         return codeLayers;
     }
-    
+
     /**
      * gets the builder.
      *
@@ -365,7 +365,7 @@ public class LayeredClassLoader extends SourceClassLoader {
     public Builder getBuilder() {
         return builder;
     }
-    
+
     /**
      * gets the top code cache.
      *
@@ -376,8 +376,8 @@ public class LayeredClassLoader extends SourceClassLoader {
     public TopCodeCache getTopCodeCache() {
         return topCodeCache;
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link LayeredClassLoader}.
      * 
@@ -387,19 +387,19 @@ public class LayeredClassLoader extends SourceClassLoader {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private ClassLoader parent;
         private LoadMode loadMode;
-        
+
         private List<Sources> sourcesLayers;
         private List<Code> codeLayers;
-        
+
         private boolean isWithTopCodeCache;
         private LoadMode topLoadMode;
         private TopCodeCache topCodeCache;
-        
+
         /**
          * constructor.
          * 
@@ -424,7 +424,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             this.parent = parent;
             return this;
         }
-        
+
         /**
          * sets the load mode for the (static) code layers, default is "current first".
          *
@@ -454,7 +454,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             this.sourcesLayers = sourcesLayers;
             return this;
         }
-        
+
         /**
          * sets the sources layers, default is no layers.
          *
@@ -482,11 +482,11 @@ public class LayeredClassLoader extends SourceClassLoader {
             this.codeLayers = codeLayers;
             return this;
         }
-        
+
         private void setCodeLayersAfterCreating(final List<Code> codeLayers) {
             this.codeLayers = codeLayers;
         }
-        
+
         /**
          * sets the code layers, default is no layers.
          *
@@ -520,7 +520,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             this.topCodeCache = topCodeCache;
             return this;
         }
-        
+
         private void setTopCodeCacheAfterCreating(TopCodeCache topCodeCache) {
             this.topCodeCache = topCodeCache;
         }
@@ -539,7 +539,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             this.topLoadMode = topLoadMode;
             return this;
         }
-        
+
         /**
          * gets the parent class loader.
          *
@@ -550,7 +550,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public ClassLoader getParent() {
             return parent;
         }
-        
+
         /**
          * gets the load mode for the (static) code layers.
          *
@@ -561,7 +561,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public LoadMode getLoadMode() {
             return loadMode;
         }
-        
+
         /**
          * gets the sources layers.
          *
@@ -572,7 +572,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public List<Sources> getSourcesLayers() {
             return sourcesLayers;
         }
-        
+
         /**
          * gets the code layers.
          *
@@ -583,7 +583,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public List<Code> getCodeLayers() {
             return codeLayers;
         }
-        
+
         /**
          * gets whether to use the top code cache or not.
          *
@@ -594,7 +594,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public boolean isWithTopCodeCache() {
             return isWithTopCodeCache;
         }
-        
+
         /**
          * gets the top code cache.
          *
@@ -605,7 +605,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public TopCodeCache getTopCodeCache() {
             return topCodeCache;
         }
-        
+
         /**
          * gets the top load mode.
          *
@@ -616,7 +616,7 @@ public class LayeredClassLoader extends SourceClassLoader {
         public LoadMode getTopLoadMode() {
             return topLoadMode;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (parent == null) {
@@ -638,7 +638,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link LayeredClassLoader}
          * based on already compiled code layers.
@@ -651,7 +651,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             commit();
             return new LayeredClassLoader(this);
         }
-        
+
         /**
          * builds a new instance of {@link LayeredClassLoader}
          * based on sources to compile to code layers.
@@ -666,7 +666,7 @@ public class LayeredClassLoader extends SourceClassLoader {
             commit();
             return new LayeredClassLoader(this, true);
         }
-        
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

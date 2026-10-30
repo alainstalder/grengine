@@ -91,7 +91,7 @@ public class SourceUtil {
                 .map(sourceFactory::fromText)
                 .collect(toSet());
     }
-    
+
     /**
      * creates a source set from the given script texts,
      * using the given source factory.
@@ -106,7 +106,7 @@ public class SourceUtil {
     public static Set<Source> textsToSourceSet(final SourceFactory sourceFactory, final String... texts) {
         return textsToSourceSet(sourceFactory, Arrays.asList(texts));
     }
-    
+
     /**
      * creates a source set from the given map of desired class name to script text,
      * using the default source factory.
@@ -120,7 +120,7 @@ public class SourceUtil {
     public static Set<Source> textsToSourceSet(final Map<String,String> texts) {
         return textsToSourceSet(new DefaultSourceFactory(), texts);
     }
-    
+
     /**
      * creates a source set from the given map of desired class name to script text,
      * using the given source factory.
@@ -138,7 +138,7 @@ public class SourceUtil {
                 .collect(toSet());
     }
 
-    
+
     /**
      * creates a source set from the given collections of script files,
      * using the default source factory.
@@ -152,7 +152,7 @@ public class SourceUtil {
     public static Set<Source> filesToSourceSet(final Collection<File> files) {
         return filesToSourceSet(new DefaultSourceFactory(), files);
     }
-    
+
     /**
      * creates a source set from the given script files,
      * using the default source factory.
@@ -166,7 +166,7 @@ public class SourceUtil {
     public static Set<Source> filesToSourceSet(final File... files) {
         return filesToSourceSet(new DefaultSourceFactory(), files);
     }
-    
+
     /**
      * creates a source set from the given collections of script files,
      * using the given source factory.
@@ -183,7 +183,7 @@ public class SourceUtil {
                 .map(sourceFactory::fromFile)
                 .collect(toSet());
     }
-    
+
     /**
      * creates a source set from the given script files,
      * using the given source factory.
@@ -198,8 +198,8 @@ public class SourceUtil {
     public static Set<Source> filesToSourceSet(final SourceFactory sourceFactory, final File... files) {
         return filesToSourceSet(sourceFactory, Arrays.asList(files));
     }
-    
-    
+
+
     /**
      * creates a source set from the given collections of script URLs,
      * using the default source factory.
@@ -213,7 +213,7 @@ public class SourceUtil {
     public static Set<Source> urlsToSourceSet(final Collection<URL> urls) {
         return urlsToSourceSet(new DefaultSourceFactory(), urls);
     }
-    
+
     /**
      * creates a source set from the given script URLs,
      * using the default source factory.
@@ -227,7 +227,7 @@ public class SourceUtil {
     public static Set<Source> urlsToSourceSet(final URL... urls) {
         return urlsToSourceSet(new DefaultSourceFactory(), urls);
     }
-    
+
     /**
      * creates a source set from the given collections of script URLs,
      * using the given source factory.
@@ -244,7 +244,7 @@ public class SourceUtil {
                 .map(sourceFactory::fromUrl)
                 .collect(toSet());
     }
-    
+
     /**
      * creates a source set from the given script URLs,
      * using the given source factory.
@@ -259,8 +259,8 @@ public class SourceUtil {
     public static Set<Source> urlsToSourceSet(final SourceFactory sourceFactory, final URL... urls) {
         return urlsToSourceSet(sourceFactory, Arrays.asList(urls));
     }
-    
-    
+
+
     /**
      * converts the given source to a set of source that contains only the given source.
      *
@@ -299,7 +299,7 @@ public class SourceUtil {
         return new HashSet<>(Arrays.asList(sourceArray));
     }
 
-    
+
     /**
      * calculates a cryptographic hash function (message digest).
      * <p>
@@ -410,7 +410,7 @@ public class SourceUtil {
 
         return text;
     }
-    
+
     /**
      * converts the given file to the canonical file, with fallback
      * to the absolute file if getting the canonical file failed.

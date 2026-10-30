@@ -42,23 +42,23 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultSourceFactory implements SourceFactory {
-            
+
     private final Builder builder;
-    
+
     private final boolean trackTextSourceId;
     // key is script text, value is ID of text source
     private final Map<String,String> textSourceIdTrackingMap;
-    
+
     private final boolean trackFileSourceLastModified;
     // key is file id, value is file last modified
     private final Map<String,Long> fileLastModifiedTrackingMap;
     private final long fileLastModifiedLatencyMs;
     private volatile long fileLastModifiedLastChecked;
-    
+
     private final boolean trackUrlContent;
     private final long urlTrackingLatencyMs;
     private final Map<Source,TrackingInfo> urlContentTrackingMap;
-    
+
     /**
      * constructor from builder.
      *
@@ -71,12 +71,12 @@ public class DefaultSourceFactory implements SourceFactory {
 
         trackTextSourceId = builder.isTrackTextSourceIds();
         textSourceIdTrackingMap = new ConcurrentHashMap<>();
-        
+
         trackFileSourceLastModified = builder.isTrackFileSourceLastModified();
         fileLastModifiedTrackingMap = new ConcurrentHashMap<>();
         fileLastModifiedLatencyMs = builder.getFileLastModifiedTrackingLatencyMs();
         fileLastModifiedLastChecked = 0;
-        
+
         trackUrlContent = builder.isTrackUrlContent();
         urlTrackingLatencyMs = builder.getUrlTrackingLatencyMs();
         urlContentTrackingMap = new ConcurrentHashMap<>();
@@ -126,7 +126,7 @@ public class DefaultSourceFactory implements SourceFactory {
             return new DefaultUrlSource(url);
         }
     }
-    
+
     /**
      * clears the cache of URL content hashes.
      * 
@@ -135,7 +135,7 @@ public class DefaultSourceFactory implements SourceFactory {
     public void clearCache() {
         urlContentTrackingMap.clear();
     }
-    
+
     /**
      * gets the builder.
      *
@@ -147,11 +147,11 @@ public class DefaultSourceFactory implements SourceFactory {
         return builder;
     }
 
-    
+
     class SourceIdTrackingTextSource extends BaseSource implements TextSource {
-        
+
         private final String text;
-        
+
         public SourceIdTrackingTextSource(final String text) {
             requireNonNull(text, "Text is null.");
             id = textSourceIdTrackingMap.get(text);
@@ -179,15 +179,15 @@ public class DefaultSourceFactory implements SourceFactory {
             return this.getClass().getSimpleName() + "[ID=" + getId() +
                     ", text='" + SourceUtil.getTextStartNoLineBreaks(getText(), 200) + "']";
         }
-        
+
         @Override
         public String getText() {
             return text;
         }
 
     }
-    
-    
+
+
     private long getFileSourceLastModified(File file, String id) {
         Long lastMod = fileLastModifiedTrackingMap.get(id);
         if (lastMod == null) {
@@ -206,13 +206,13 @@ public class DefaultSourceFactory implements SourceFactory {
         fileLastModifiedLastChecked = System.currentTimeMillis();
         return lastMod;
     }
-    
+
     class LastModifiedTrackingFileSource extends DefaultFileSource {
-        
+
         public LastModifiedTrackingFileSource(File file) {
             super(file);
         }
-        
+
         @Override
         public long getLastModified() {
             return getFileSourceLastModified(getFile(), id);
@@ -220,13 +220,13 @@ public class DefaultSourceFactory implements SourceFactory {
 
     }
 
-    
+
     class ContentTrackingUrlSource extends DefaultUrlSource {
-        
+
         private ContentTrackingUrlSource(URL url) {
             super(url);
         }
-        
+
         private String getTextHash() {
             try {
                 return SourceUtil.md5(SourceUtil.readUrlText(getUrl(), "UTF-8"));
@@ -234,7 +234,7 @@ public class DefaultSourceFactory implements SourceFactory {
                 return "could-not-read-url-text";
             }
         }
-        
+
         @Override
         public long getLastModified() {
 
@@ -268,9 +268,9 @@ public class DefaultSourceFactory implements SourceFactory {
                 }
             }
         }
-        
+
     }
-    
+
     private static class TrackingInfo {
         final long lastChecked;
         final long lastModified;
@@ -281,8 +281,8 @@ public class DefaultSourceFactory implements SourceFactory {
             this.textHash = textHash;
         }
     }
-    
-    
+
+
     /**
      * Builder for {@link SourceFactory} instances.
      * 
@@ -292,7 +292,7 @@ public class DefaultSourceFactory implements SourceFactory {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         /**
          * default latency for tracking URL content (60000ms = one minute).
          * 
@@ -306,15 +306,15 @@ public class DefaultSourceFactory implements SourceFactory {
          * @since 1.0.1
          */
         public static final long DEFAULT_FILE_LAST_MODIFIED_TRACKING_LATENCY_MS = 1000L;
-        
+
         private boolean isCommitted;
-        
+
         private boolean trackTextSourceIds = false;
         private boolean trackFileSourceLastModified = false;
         private long fileLastModifiedTrackingLatencyMs = -1;
         private boolean trackUrlContent = false;
         private long urlTrackingLatencyMs = -1;
-        
+
         /**
          * constructor.
          * 
@@ -442,7 +442,7 @@ public class DefaultSourceFactory implements SourceFactory {
         public long getFileLastModifiedTrackingLatencyMs() {
             return fileLastModifiedTrackingLatencyMs;
         }
-        
+
         /**
          * gets whether to track URL content.
          *
@@ -464,7 +464,7 @@ public class DefaultSourceFactory implements SourceFactory {
         public long getUrlTrackingLatencyMs() {
             return urlTrackingLatencyMs;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (urlTrackingLatencyMs < 0) {
@@ -477,7 +477,7 @@ public class DefaultSourceFactory implements SourceFactory {
             }
             return this;
         }
-        
+
         /**
          * builds an instance of {@link DefaultSourceFactory}.
          *
@@ -489,7 +489,7 @@ public class DefaultSourceFactory implements SourceFactory {
             commit();
             return new DefaultSourceFactory(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

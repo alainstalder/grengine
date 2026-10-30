@@ -26,7 +26,7 @@ package ch.grengine.source;
  * @author Made in Switzerland.
  */
 public interface Source {
-    
+
     /**
      * gets the unique ID of this source.
      *
@@ -35,7 +35,7 @@ public interface Source {
      * @since 1.0
      */
     String getId();
-    
+
     /**
      * gets the date and time the source was last recognized to have been modified,
      * in milliseconds since 1970.
@@ -49,7 +49,7 @@ public interface Source {
      * @since 1.0
      */
     long getLastModified();
-    
+
     /**
      * two sources are equal if and only if their source IDs are equal.
      *
@@ -58,7 +58,7 @@ public interface Source {
      * @since 1.0
      */
     boolean equals(Object obj);
-    
+
     /**
      * returns the hash code of the source ID.
      *
@@ -67,7 +67,7 @@ public interface Source {
      * @since 1.0
      */
     int hashCode();
-    
+
     /**
      * returns a string suitable for logging.
      *

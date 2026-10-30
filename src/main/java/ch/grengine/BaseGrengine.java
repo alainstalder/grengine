@@ -45,14 +45,14 @@ import groovy.lang.Script;
  * @author Made in Switzerland.
  */
 public abstract class BaseGrengine implements Closeable {
-    
+
     /**
      * the engine that powers this Grengine.
      * 
      * @since 1.0
      */
     protected Engine engine;
-    
+
     /**
      * the source factory used to create instances of {@link Source},
      * often implicitly from script text, file or URL.
@@ -60,14 +60,14 @@ public abstract class BaseGrengine implements Closeable {
      * @since 1.0
      */
     protected SourceFactory sourceFactory;
-    
+
     /**
      * the default loader instance, which is implicitly used when no specific loader is indicated.
      * 
      * @since 1.0
      */
     protected Loader loader;
-    
+
     /**
      * constructor.
      * 
@@ -75,9 +75,9 @@ public abstract class BaseGrengine implements Closeable {
      */
     protected BaseGrengine() {
     }
-        
+
     // Engine...
-    
+
     /**
      * gets the engine.
      *
@@ -101,7 +101,7 @@ public abstract class BaseGrengine implements Closeable {
     public Loader getLoader() {
         return engine.getLoader();
     }
-    
+
     /**
      * creates and gets a new attached loader, backed by the same bytecode
      * as all other shared loaders created by this engine
@@ -114,7 +114,7 @@ public abstract class BaseGrengine implements Closeable {
     public Loader newAttachedLoader() {
         return engine.newAttachedLoader();
     }
-    
+
     /**
      * creates and gets a new detached loader, backed initially by the same
      * bytecode as all attached loaders created by this engine,
@@ -133,7 +133,7 @@ public abstract class BaseGrengine implements Closeable {
     public Loader newDetachedLoader() {
         return engine.newDetachedLoader();
     }
-    
+
     /**
      * loads the main class of the given source from the given loader.
      * <p>
@@ -299,7 +299,7 @@ public abstract class BaseGrengine implements Closeable {
     }
 
     // SourceFactory...
-    
+
     /**
      * gets the source factory used to create instances of {@link Source},
      * often implicitly from script text or file or URL.
@@ -353,7 +353,7 @@ public abstract class BaseGrengine implements Closeable {
     public Source source(final File file) {
         return sourceFactory.fromFile(file);
     }
-    
+
     /**
      * gets source from script URL.
      *
@@ -368,9 +368,9 @@ public abstract class BaseGrengine implements Closeable {
     public Source source(final URL url) {
         return sourceFactory.fromUrl(url);
     }
-    
+
     // Grengine...
-    
+
     /**
      * loads a class (default loader, text-based source),
      * compiling first if necessary.
@@ -471,7 +471,7 @@ public abstract class BaseGrengine implements Closeable {
     public Class<?> load(final Loader loader, final File file) {
         return load(loader, sourceFactory.fromFile(file));
     }
-    
+
     /**
      * loads a class (default loader, URL-based source),
      * compiling first if necessary.
@@ -537,8 +537,8 @@ public abstract class BaseGrengine implements Closeable {
     public Class<?> load(final Loader loader, final Source source) {
         return loadMainClass(loader, source);
     }
-    
-    
+
+
     /**
      * creates an instance of {@link Script} from the given class.
      *
@@ -556,8 +556,8 @@ public abstract class BaseGrengine implements Closeable {
             throw new CreateException("Could not create script for class " + clazz.getCanonicalName() + ".", e);
         }
     }
-    
-    
+
+
     /**
      * creates a script (default loader, text-based source),
      * compiling and loading first if necessary.
@@ -574,7 +574,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final String text) {
         return create(loader, sourceFactory.fromText(text));
     }
-    
+
     /**
      * creates a script (given loader, text-based source),
      * compiling and loading first if necessary.
@@ -592,7 +592,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Loader loader, final String text) {
         return create(loader, sourceFactory.fromText(text));
     }
-    
+
     /**
      * creates a script (default loader, text-based source with desired class name),
      * compiling and loading first if necessary.
@@ -610,7 +610,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final String text, final String desiredClassName) {
         return create(loader, sourceFactory.fromText(text, desiredClassName));
     }
-    
+
     /**
      * creates a script (given loader, text-based source with desired class name),
      * compiling and loading first if necessary.
@@ -629,7 +629,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Loader loader, final String text, final String desiredClassName) {
         return create(loader, sourceFactory.fromText(text, desiredClassName));
     }
-    
+
     /**
      * creates a script (default loader, file-based source),
      * compiling and loading first if necessary.
@@ -646,7 +646,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final File file) {
         return create(loader, sourceFactory.fromFile(file));
     }
-    
+
     /**
      * creates a script (given loader, file-based source),
      * compiling and loading first if necessary.
@@ -664,7 +664,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Loader loader, final File file) {
         return create(loader, sourceFactory.fromFile(file));
     }
-    
+
     /**
      * creates a script (default loader, URL-based source),
      * compiling and loading first if necessary.
@@ -681,7 +681,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final URL url) {
         return create(loader, sourceFactory.fromUrl(url));
     }
-    
+
     /**
      * creates a script (given loader, URL-based source),
      * compiling and loading first if necessary.
@@ -699,7 +699,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Loader loader, final URL url) {
         return create(loader, sourceFactory.fromUrl(url));
     }
-    
+
     /**
      * creates a script (default loader, given source),
      * compiling and loading first if necessary.
@@ -716,7 +716,7 @@ public abstract class BaseGrengine implements Closeable {
     public Script create(final Source source) {
         return create(loader, source);
     }
-    
+
     /**
      * creates a script (given loader, given source),
      * compiling and loading first if necessary.
@@ -884,8 +884,8 @@ public abstract class BaseGrengine implements Closeable {
         }
         return new Binding(map);
     }
-        
-    
+
+
     /**
      * runs the given script (empty binding).
      * <p>
@@ -901,7 +901,7 @@ public abstract class BaseGrengine implements Closeable {
     public Object run(final Script script) {
         return run(script, new Binding());
     }
-    
+
     /**
      * runs the given script (given binding).
      * <p>
@@ -918,7 +918,7 @@ public abstract class BaseGrengine implements Closeable {
     public Object run(final Script script, final Map<String,Object> bindingMap) {
         return run(script, new Binding(bindingMap));
     }
-    
+
     /**
      * runs the given script (given binding).
      * <p>
@@ -936,8 +936,8 @@ public abstract class BaseGrengine implements Closeable {
         script.setBinding(binding);
         return script.run();
     }
-    
-    
+
+
     /**
      * creates and runs a script (default loader, text-based source, empty binding),
      * compiling and loading first if necessary.
@@ -1177,7 +1177,7 @@ public abstract class BaseGrengine implements Closeable {
         return run(loader, sourceFactory.fromText(text, desiredClassName), binding);
     }
 
-    
+
     /**
      * creates and runs a script (default loader, file-based source, empty binding),
      * compiling and loading first if necessary.
@@ -1293,7 +1293,7 @@ public abstract class BaseGrengine implements Closeable {
         return run(loader, sourceFactory.fromFile(file), binding);
     }
 
-    
+
     /**
      * creates and runs a script (default loader, URL-based source, empty binding),
      * compiling and loading first if necessary.
@@ -1409,7 +1409,7 @@ public abstract class BaseGrengine implements Closeable {
         return run(loader, sourceFactory.fromUrl(url), binding);
     }
 
-    
+
     /**
      * creates and runs a script (default loader, given source, empty binding),
      * compiling and loading first if necessary.

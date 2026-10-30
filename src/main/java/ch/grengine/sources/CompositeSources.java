@@ -42,9 +42,9 @@ import static java.util.stream.Collectors.toSet;
  * @author Made in Switzerland.
  */
 public class CompositeSources extends BaseSources {
-    
+
     private final Builder builder;
-    
+
     private final List<Sources> sourcesList;
 
     /**
@@ -61,7 +61,7 @@ public class CompositeSources extends BaseSources {
         sourcesList.addAll(builder.getSourcesCollection());
         super.init(builder.getName(), builder.getCompilerFactory(), builder.getLatencyMs());
     }
-    
+
     @Override
     protected Set<Source> getSourceSetNew() {
         return sourcesList.stream()
@@ -69,7 +69,7 @@ public class CompositeSources extends BaseSources {
                 .flatMap(Set::stream)
                 .collect(toSet());
     }
-        
+
     /**
      * gets the builder.
      *
@@ -81,7 +81,7 @@ public class CompositeSources extends BaseSources {
         return builder;
     }
 
-    
+
     /**
      * Builder for instances of {@link CompositeSources}.
      * 
@@ -91,21 +91,21 @@ public class CompositeSources extends BaseSources {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         /**
          * the default latency (5000ms = five seconds).
          * 
          * @since 1.0
          */
         public static final long DEFAULT_LATENCY_MS = 5000L;
-        
+
         private boolean isCommitted;
-        
+
         private final Collection<Sources> sourcesCollection;
         private String name;
         private CompilerFactory compilerFactory;
         private long latencyMs = -1;
-        
+
         /**
          * constructor from a collection of sources.
          *
@@ -181,7 +181,7 @@ public class CompositeSources extends BaseSources {
         public Collection<Sources> getSourcesCollection() {
             return sourcesCollection;
         }
-        
+
         /**
          * gets the sources name.
          *
@@ -192,7 +192,7 @@ public class CompositeSources extends BaseSources {
         public String getName() {
             return name;
         }
-        
+
         /**
          * gets the compiler factory.
          *
@@ -203,7 +203,7 @@ public class CompositeSources extends BaseSources {
         public CompilerFactory getCompilerFactory() {
             return compilerFactory;
         }
-        
+
         /**
          * gets the latency in milliseconds.
          *
@@ -214,7 +214,7 @@ public class CompositeSources extends BaseSources {
         public long getLatencyMs() {
             return latencyMs;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (name == null) {
@@ -230,7 +230,7 @@ public class CompositeSources extends BaseSources {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link CompositeSources}.
          *
@@ -242,7 +242,7 @@ public class CompositeSources extends BaseSources {
             commit();
             return new CompositeSources(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

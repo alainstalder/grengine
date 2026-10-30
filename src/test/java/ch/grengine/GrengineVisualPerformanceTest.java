@@ -54,7 +54,7 @@ public class GrengineVisualPerformanceTest {
                     scriptDir.getCanonicalPath() + "'.");
         }
         Runnable runner;
-        
+
         System.out.printf("Grengine Visual Performance Test%n");
         System.out.printf("================================%n");
         System.out.println();
@@ -67,7 +67,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println();
         System.out.printf("Duration of each run: %d ms%n", RUN_DURATION_NS / (1000L * 1000L));
         System.out.printf("Number of runs: %d%n", N_RUNS);
-        
+
         System.out.println();
         System.out.println("Reference: Compile each time");
         System.out.println("----------------------------");
@@ -103,17 +103,17 @@ public class GrengineVisualPerformanceTest {
 
         // no layers, all code running in dynamic top code cache (load mode "parent first")
         final Grengine gren = new Grengine();
-        
+
         final Grengine grenOptimized = new Grengine.Builder()
             .setSourceFactory(new DefaultSourceFactory.Builder()
                 .setTrackTextSourceIds(true)
                 .setTrackFileSourceLastModified(true)
                 .build())    
             .build();
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run("return 2"));
         printRunInfo(runForDuration(runner));
-        
+
         System.out.println();
         System.out.println("  Run script by script text, with caching text source ID:");
         System.out.println("    grenOptimized.run(\"return 2\");");
@@ -122,17 +122,17 @@ public class GrengineVisualPerformanceTest {
 
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> grenOptimized.run("return 2"));
         printRunInfo(runForDuration(runner));
-        
+
         System.out.println();
         System.out.println("  Run script by script file:");
         System.out.println("    File scriptFile = <some file which contains \"return 2\">;");
         System.out.println("    gren.run(scriptFile);");
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calls scriptFile.lastModified() at each run.");
-        
+
         final File scriptFile = new File(scriptDir, "Return.groovy");
         TestUtil.setFileText(scriptFile, "return 2");
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(scriptFile));
         printRunInfo(runForDuration(runner));
 
@@ -141,7 +141,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("    grenOptimized.run(scriptFile);");
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Calls scriptFile.lastModified() only during the first run.");
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> grenOptimized.run(scriptFile));
         printRunInfo(runForDuration(runner));
 
@@ -151,12 +151,12 @@ public class GrengineVisualPerformanceTest {
         System.out.println("    grenOptimized.run(scriptFile);");
         System.out.println("  NOTE: Compiles only once during the first run.");
         System.out.println("  NOTE: Not tracking script modifications.");
-        
+
         final URL scriptUrl = scriptFile.toURI().toURL();
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(scriptUrl));
         printRunInfo(runForDuration(runner));
-        
+
         System.out.println();
         System.out.println("  Load script class only once, but create a new Script instance at each run:");
         System.out.println("    Class<?> scriptClass = gren.load(\"return 2\");");
@@ -165,7 +165,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Creates a new Script instance at each run.");
 
         final Class<?> scriptClass = gren.load("return 2");
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(gren.create(scriptClass)));
         printRunInfo(runForDuration(runner));
 
@@ -177,7 +177,7 @@ public class GrengineVisualPerformanceTest {
         System.out.println("  NOTE: Creates no Script instances during runs.");
 
         final Script script = gren.create(scriptClass);
-        
+
         runner = () -> IntStream.range(0, N_INNER).forEach(all -> gren.run(script));
         printRunInfo(runForDuration(runner));
     }

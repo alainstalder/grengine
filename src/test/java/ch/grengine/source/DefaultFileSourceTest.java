@@ -53,7 +53,7 @@ class DefaultFileSourceTest {
         System.out.println(s);
         assertThat(s.toString(), CoreMatchers.is("DefaultFileSource[ID=" + s.getId() + "]"));
     }
-    
+
     @Test
     void testConstructFromFileWithFileNull() {
 

@@ -40,7 +40,7 @@ public class ClassNameConflictAnalyzer {
 
     // private since 3.2.0 (utility class)
     private ClassNameConflictAnalyzer() {}
-    
+
     /**
      * gets a map of class name to a list of all {@link Code} layers
      * that contain a class with that name.
@@ -88,7 +88,7 @@ public class ClassNameConflictAnalyzer {
         });
         return originsWithDuplicates;
     }
-    
+
     /**
      * gets a map of class name to a list of all {@link Code} layers
      * that contain a class with that name, but only if the class name

@@ -49,7 +49,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class BytecodeClassLoaderTest {
-    
+
     @Test
     void testConstructAndGetters() {
 
@@ -69,7 +69,7 @@ class BytecodeClassLoaderTest {
         assertThat(loader.getLoadMode(), CoreMatchers.is(LoadMode.CURRENT_FIRST));
         assertThat(loader.getCode(), is(code));
     }
-    
+
     @Test
     void testConstructParentNull() {
 
@@ -84,7 +84,7 @@ class BytecodeClassLoaderTest {
                 () -> new BytecodeClassLoader(null, LoadMode.CURRENT_FIRST, code),
                 "Parent class loader is null.");
     }
-    
+
     @Test
     void testConstructLoadModeNull() {
 
@@ -100,7 +100,7 @@ class BytecodeClassLoaderTest {
                 () -> new BytecodeClassLoader(parent, null, code),
                 "Load mode is null.");
     }
-    
+
     @Test
     void testConstructCodeNull() {
 
@@ -331,8 +331,8 @@ class BytecodeClassLoaderTest {
     void testParentSourceClassLoaderParentFirst() throws Exception {
         testParentSourceClassLoader(LoadMode.PARENT_FIRST);
     }
-    
-    
+
+
     @Test
     void testParentIsSourceClassLoaderCurrentFirst() throws Exception {
         testParentSourceClassLoader(LoadMode.CURRENT_FIRST);
@@ -402,7 +402,7 @@ class BytecodeClassLoaderTest {
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Main class 'Class1' not found for source. Source: " + s1);
     }
-    
+
     @Test
     void testStaticLoadMainBySourceAndName() {
 
@@ -443,7 +443,7 @@ class BytecodeClassLoaderTest {
                 "Inconsistent code: " + inconsistentCode + "." +
                         " Class 'Class33NoBytecode' not found for source. Source: " + s1);
     }
-    
+
     @Test
     void testClone() {
 
@@ -524,7 +524,7 @@ class BytecodeClassLoaderTest {
     }
 
     private static class ThrowingBytecodeClassLoader extends BytecodeClassLoader {
-        
+
         ThrowingBytecodeClassLoader(BytecodeClassLoader loader) {
             super(loader.getParent(), loader.getLoadMode(), loader.getCode());
         }
@@ -532,9 +532,9 @@ class BytecodeClassLoaderTest {
         Class<?> defineClass(String name, byte[] bytes) {
             throw new RuntimeException("unit test");
         }
-        
+
     }
-    
+
     @Test
     void testThrowsInSynchronizedBlock() {
 

@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Made in Switzerland.
  */
 public interface SingleSourceCode extends Code {
-    
+
     /**
      * gets the main class name for the single source.
      *
@@ -57,7 +57,7 @@ public interface SingleSourceCode extends Code {
      * @since 1.0
      */
     long getLastModifiedAtCompileTime();
-    
+
     /**
      * gets the source.
      *

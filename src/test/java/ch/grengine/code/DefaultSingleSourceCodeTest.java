@@ -16,8 +16,8 @@
 
 package ch.grengine.code;
 
-import ch.grengine.source.Source;
 import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ class DefaultSingleSourceCodeTest {
     void testConstructPlusGetters() {
 
         // given
-        
+
         final Source m1 = new MockSource("id1");
         final Source mNotPartOfCode = new MockSource("id3");
         final String name1 = "MainClassName1";
@@ -70,7 +70,7 @@ class DefaultSingleSourceCodeTest {
         assertThat(code.getBytecode(name1).getBytes()[0], is((byte)1));
         assertThat(code.getBytecode("SomeOtherClassName"), is(nullValue()));
         assertThat(code.getBytecode(null), is(nullValue()));
-        
+
         assertThat(code.isForSource(m1), is(true));
         assertThat(code.isForSource(mNotPartOfCode), is(false));
         assertThat(code.isForSource(null), is(false));
@@ -115,7 +115,7 @@ class DefaultSingleSourceCodeTest {
         assertThat(codeString.endsWith("classes:[MainClassName1, MainClassName1#Sub]]") ||
                 codeString.endsWith("classes:[MainClassName1#Sub, MainClassName1]]"), is(true));
     }
-    
+
     @Test
     void testConstructSourcesNameNull() {
 
@@ -125,7 +125,7 @@ class DefaultSingleSourceCodeTest {
                 () -> new DefaultSingleSourceCode(null, new HashMap<>(), new HashMap<>()),
                 "Sources name is null.");
     }
-    
+
     @Test
     void testConstructCompiledSourceInfoMapNull() {
 
@@ -135,7 +135,7 @@ class DefaultSingleSourceCodeTest {
                 () -> new DefaultSingleSourceCode("name", null, new HashMap<>()),
                 "Compiled source info map is null.");
     }
-    
+
     @Test
     void testConstructBytecodeMapNull() {
 
@@ -145,7 +145,7 @@ class DefaultSingleSourceCodeTest {
                 () -> new DefaultSingleSourceCode("name", new HashMap<>(), null),
                 "Bytecode map is null.");
     }
-    
+
     @Test
     void testConstructNotSingleSource() {
 

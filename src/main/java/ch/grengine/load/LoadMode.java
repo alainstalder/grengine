@@ -36,7 +36,7 @@ package ch.grengine.load;
  * @author Made in Switzerland.
  */
 public enum LoadMode {
-    
+
     /**
      * tries to load from the parent class loader first,
      * then (if not found) from the current class loader.

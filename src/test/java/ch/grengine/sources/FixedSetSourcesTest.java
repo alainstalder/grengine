@@ -16,11 +16,11 @@
 
 package ch.grengine.sources;
 
+import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.MockSource;
 import ch.grengine.source.Source;
 import ch.grengine.source.SourceUtil;
-import ch.grengine.code.CompilerFactory;
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
 import java.util.Set;
 
@@ -50,7 +50,7 @@ class FixedSetSourcesTest {
         final FixedSetSources s = builder.build();
 
         // then
-        
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
         assertThat(s.getSourceSet(), is(set));
@@ -63,7 +63,7 @@ class FixedSetSourcesTest {
         assertThat(s.getBuilder().getLatencyMs(), is(FixedSetSources.Builder.DEFAULT_LATENCY_MS));
         assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
     }
-    
+
     @Test
     void testConstructAllDefined() throws Exception {
 
@@ -84,7 +84,7 @@ class FixedSetSourcesTest {
                 .build();
 
         // then
-        
+
         Thread.sleep(30);
         assertThat(s.getBuilder(), is(builder));
         assertThat(s.getSourceSet(), is(set));
@@ -96,7 +96,7 @@ class FixedSetSourcesTest {
         assertThat(s.getBuilder().getLatencyMs(), is(200L));
         assertThat(s.getLastModified() < System.currentTimeMillis(), is(true));
     }
-    
+
     @Test
     void testConstructSourceSetNull() {
 
@@ -106,7 +106,7 @@ class FixedSetSourcesTest {
                 () -> new FixedSetSources.Builder(null),
                 "Source set is null.");
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() {
 
@@ -124,7 +124,7 @@ class FixedSetSourcesTest {
                 () -> builder.setName("name"),
                 "Builder already used.");
     }
-    
+
     @Test
     void testLastModified() throws Exception {
 

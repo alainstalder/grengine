@@ -16,14 +16,14 @@
 
 package ch.grengine.load;
 
+import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.Source;
+import ch.grengine.source.SourceFactory;
 import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
-import ch.grengine.code.Code;
-import ch.grengine.source.SourceFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,12 +44,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class LayeredClassLoaderTest {
-    
+
     @Test
     void testConstructFromCodeLayersDefaults() {
 
         // given
-        
+
         final LayeredClassLoader.Builder builder = new LayeredClassLoader.Builder();
 
         // when
@@ -186,7 +186,7 @@ class LayeredClassLoaderTest {
         assertThat(loader.getBuilder().getTopLoadMode(), is(LoadMode.CURRENT_FIRST));
         assertThat(loader.getBuilder().getTopCodeCache(), is(loader.getTopCodeCache()));
     }
-    
+
     @Test
     void testSetLayersWithVarargs() {
 
@@ -211,7 +211,7 @@ class LayeredClassLoaderTest {
         final Code code2 = codeLayers.get(1);
         final Sources sources1 = sourcesLayers.get(0);
         final Sources sources2 = sourcesLayers.get(1);
-        
+
         builder.setCodeLayers(code1, code2);
         final List<Code> codeLayersRead = builder.getCodeLayers();
 
@@ -232,7 +232,7 @@ class LayeredClassLoaderTest {
         assertThat(sourcesLayersRead.get(0), is(sources1));
         assertThat(sourcesLayersRead.get(1), is(sources2));
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() {
 
@@ -247,8 +247,8 @@ class LayeredClassLoaderTest {
                 () -> builder.setLoadMode(LoadMode.CURRENT_FIRST),
                 "Builder already used.");
     }
-    
-    
+
+
     @Test
     void testClone_NoTopCodeCache() {
 
@@ -268,7 +268,7 @@ class LayeredClassLoaderTest {
         assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
         assertThat(clone.getTopCodeCache(), is(nullValue()));
     }
-    
+
     @Test
     void testClone_WithTopCodeCache() {
 
@@ -292,7 +292,7 @@ class LayeredClassLoaderTest {
         assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
         assertThat(clone.getTopCodeCache(), CoreMatchers.is(topCodeCache));
     }
-    
+
     @Test
     void testCloneWithSeparateTopCodeCache_NoTopCodeCache() {
 
@@ -312,7 +312,7 @@ class LayeredClassLoaderTest {
         assertThat(clone.getLoadMode(), is(loader.getLoadMode()));
         assertThat(clone.getTopCodeCache(), is(nullValue()));
     }
-    
+
     @Test
     void testCloneWithSeparateTopCodeCache_WithTopCodeCache() {
 
@@ -388,8 +388,8 @@ class LayeredClassLoaderTest {
         assertThat(releaser.countClassesWithName("Class2$Class3"), is(1));
         assertThat(releaser.countClassesWithName("Class4"), is(2));
     }
-    
-    
+
+
     private static List<Sources> getTestSourcesLayers() {
         final SourceFactory f = new DefaultSourceFactory();
         final Source s1 = f.fromText("public class Twice { public def get() { return Inner1.get() }\n" +
@@ -402,7 +402,7 @@ class LayeredClassLoaderTest {
         final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "sources2");
         return Arrays.asList(sources1, sources2);
     }
-    
+
     private static List<Code> getTestCodeLayers(final ClassLoader parent) {
         final List<Sources> sourcesLayers = getTestSourcesLayers();
         final DefaultGroovyCompiler c = new DefaultGroovyCompiler(parent);

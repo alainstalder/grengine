@@ -40,7 +40,7 @@ import java.util.List;
  * @author Made in Switzerland.
  */
 public interface Engine extends Closeable {
-    
+
     /**
      * gets the default attached loader.
      *
@@ -49,7 +49,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Loader getLoader();
-    
+
     /**
      * creates and gets a new attached loader, backed by the same bytecode
      * as all other shared loaders created by this engine
@@ -60,7 +60,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Loader newAttachedLoader();
-    
+
     /**
      * creates and gets a new detached loader, backed initially by the same
      * bytecode as all attached loaders created by this engine,
@@ -77,7 +77,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Loader newDetachedLoader();
-    
+
     /**
      * loads the main class of the given source from the given loader.
      * <p>
@@ -95,7 +95,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Class<?> loadMainClass(Loader loader, Source source);
-    
+
     /**
      * loads a class with the given name and from the given source from the given loader.
      * <p>
@@ -114,7 +114,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Class<?> loadClass(Loader loader, Source source, String name);
-    
+
     /**
      * loads a class by name from the given loader.
      * <p>
@@ -130,7 +130,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     Class<?> loadClass(Loader loader, String name);
-    
+
     /**
      * sets (replaces) code layers of the engine, based on already compiled code layers.
      * <p>
@@ -145,7 +145,7 @@ public interface Engine extends Closeable {
      * @since 1.0
      */
     void setCodeLayers(List<Code> codeLayers);
-    
+
     /**
      * sets (replaces) code layers of the engine, based on sources to compile to code layers.
      * <p>

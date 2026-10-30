@@ -31,7 +31,7 @@ class SourceSetStateTest {
     void testConstructAndUpdate() throws Exception {
 
         // given
-        
+
         final MockSource m1 = new MockSource("id1");
         final MockSource m2 = new MockSource("id2");
         final Set<Source> set = SourceUtil.sourceArrayToSourceSet(m1, m2);
@@ -58,7 +58,7 @@ class SourceSetStateTest {
         assertThat(s2.getLastModified(), is(s1.getLastModified()));
         assertThat(s1.getLastChecked() < s2.getLastChecked(), is(true));
         assertThat(s2.getLastModified() < System.currentTimeMillis(), is(true));
-        
+
         // when (same set with second source different last modified)
 
         m2.setLastModified(1);
@@ -71,7 +71,7 @@ class SourceSetStateTest {
         assertThat(s2.getLastModified() < s3.getLastModified(), is(true));
         assertThat(s3.getLastModified(), is(s3.getLastChecked()));
         assertThat(s3.getLastModified() < System.currentTimeMillis(), is(true));
-        
+
         // when (additional source)
 
         final MockSource m3 = new MockSource("id3");
@@ -112,7 +112,7 @@ class SourceSetStateTest {
         assertThat(s6.getLastModified(), is(s6.getLastChecked()));
         assertThat(s6.getLastModified() < System.currentTimeMillis(), is(true));
     }
-    
+
     @Test
     void testConstructWithSourceSetNull() {
 
@@ -122,7 +122,7 @@ class SourceSetStateTest {
                 () -> new SourceSetState(null),
                 "Source set is null.");
     }
-    
+
     @Test
     void testUpdateWithSourceSetNull() {
 

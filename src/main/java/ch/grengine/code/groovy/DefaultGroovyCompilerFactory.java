@@ -35,7 +35,7 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultGroovyCompilerFactory implements CompilerFactory {
-    
+
     /**
      * default script extensions, namely just the single extension "groovy".
      * 
@@ -43,10 +43,10 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
      */
     public static final Set<String> DEFAULT_SCRIPT_EXTENSIONS =
             CompilerConfiguration.DEFAULT.getScriptExtensions();
-    
+
     private final Builder builder;
     private final CompilerConfiguration compilerConfiguration;
-    
+
     /**
      * constructor from builder.
      *
@@ -82,7 +82,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
                 .setCompilerConfiguration(requireNonNull(compilerConfiguration, "Compiler configuration is null."))
         );
     }
-    
+
     @Override
     public Compiler newCompiler(final ClassLoader parent) {
         return new DefaultGroovyCompiler.Builder()
@@ -112,8 +112,8 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
     public CompilerConfiguration getCompilerConfiguration() {
         return compilerConfiguration;
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link DefaultGroovyCompilerFactory}.
      * 
@@ -123,11 +123,11 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private CompilerConfiguration compilerConfiguration;
-        
+
         /**
          * constructor.
          * 
@@ -136,7 +136,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
         public Builder() {
             isCommitted = false;
         }
-        
+
         /**
          * sets the compiler configuration,
          * default is a new instance of {@link CompilerConfiguration} with default settings.
@@ -152,7 +152,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
             this.compilerConfiguration = compilerConfiguration;
             return this;
         }
-        
+
         /**
          * gets the compiler configuration.
          *
@@ -163,7 +163,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
         public CompilerConfiguration getCompilerConfiguration() {
             return compilerConfiguration;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (compilerConfiguration == null) {
@@ -173,7 +173,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link DefaultGroovyCompilerFactory}.
          *
@@ -185,7 +185,7 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
             commit();
             return new DefaultGroovyCompilerFactory(this);
        }
-        
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");
@@ -194,5 +194,5 @@ public class DefaultGroovyCompilerFactory implements CompilerFactory {
 
     }
 
-    
+
 }

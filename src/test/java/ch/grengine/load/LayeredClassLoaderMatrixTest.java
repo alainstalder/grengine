@@ -139,24 +139,24 @@ class LayeredClassLoaderMatrixTest {
         ctx.sNotInCodeLayers = new DefaultTextSource("class NotInCodeLayers {}");
         final Set<Source> sourceSet = SourceUtil.sourceArrayToSourceSet(ctx.sMain, ctx.sExpando);
         final Sources sources = SourcesUtil.sourceSetToSources(sourceSet, "test");
-        
+
         // code parent class loader if source class loader
         TestUtil.setFileText(ctx.fMain, "class Main { def methodParent() {} }\nclass Side { def methodParent() {} }");
         TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodParent() {} }");
         ctx.codeParent = new DefaultGroovyCompiler().compile(sources);
-        
+
         // code layer 0
         TestUtil.setFileText(ctx.fMain, "class Main { def methodLayer0() {} }\nclass Side { def methodLayer0() {} }");
         TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodLayer0() {} }");
         final Code codeLayer0 = new DefaultGroovyCompiler().compile(sources);
-        
+
         // code layer 1
         TestUtil.setFileText(ctx.fMain, "class Main { def methodLayer1() {} }\nclass Side { def methodLayer1() {} }");
         TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodLayer1() {} }");
         final Code codeLayer1 = new DefaultGroovyCompiler().compile(sources);
 
         ctx.codeLayers = Arrays.asList(codeLayer0, codeLayer1);
-        
+
         // prepare files for top code cache
         TestUtil.setFileText(ctx.fMain, "class Main { def methodTop() {} }\nclass Side { def methodTop() {} }");
         TestUtil.setFileText(ctx.fExpando, "package groovy.util\nclass Expando  { def methodTop() {} }");

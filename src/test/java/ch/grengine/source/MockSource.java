@@ -18,23 +18,23 @@ package ch.grengine.source;
 
 
 public class MockSource extends BaseSource {
-    
+
     private long lastModified;
-    
+
     public MockSource(final String id) {
         this.id = id;
     }
-        
+
     @Override
     public long getLastModified() {
         return lastModified;
     }
-    
+
     public MockSource setLastModified(final long lastModified) {
         this.lastModified = lastModified;
         return this;
     }
-    
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "[ID='" + id + "', lastModified=" + lastModified + "]";

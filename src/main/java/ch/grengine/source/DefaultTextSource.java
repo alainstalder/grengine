@@ -40,9 +40,9 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultTextSource extends BaseSource implements TextSource {
-    
+
     private final String text;
-    
+
     /**
      * constructor from script text.
      * <p>
@@ -86,7 +86,7 @@ public class DefaultTextSource extends BaseSource implements TextSource {
         return this.getClass().getSimpleName() + "[ID=" + getId() +
                 ", text='" + SourceUtil.getTextStartNoLineBreaks(getText(), 200) + "']";
     }
-    
+
     @Override
     public String getText() {
         return text;

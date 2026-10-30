@@ -65,7 +65,7 @@ class LayeredEngineTest {
     void testConstructDefaults() {
 
         // given
-        
+
         final LayeredEngine.Builder builder = new LayeredEngine.Builder();
 
         // when
@@ -189,7 +189,7 @@ class LayeredEngineTest {
     private Source s4;
     private List<Sources> sourcesLayers;
     private List<Code> codeLayers;
-    
+
     private void prepareCode(final File dir, final int offs) throws Exception {
         final MockFile f1 = new MockFile(dir, "Script1.groovy");
         s1 = new MockFileSource(f1);
@@ -205,10 +205,10 @@ class LayeredEngineTest {
         final Set<Source> sourceSet2 = SourceUtil.sourceArrayToSourceSet(s1, s2, s3);
         final Sources sources2 = SourcesUtil.sourceSetToSources(sourceSet2, "test");
         sourcesLayers = Arrays.asList(sources1, sources2);
-        
+
         TestUtil.setFileText(f3, "public class Script3 extends Script { public def run() { return 300 } }");
         final Code code1 = new DefaultGroovyCompiler().compile(sources1);
-        
+
         TestUtil.setFileText(f1, "return " + offs + "+100");
         TestUtil.setFileText(f2, "public class Script2 extends Script { public def run() { return Sub.get() } }\n" +
                 "public class Sub { static int x=" + offs + "+200; static def get() { return x++ } }");
@@ -216,10 +216,10 @@ class LayeredEngineTest {
         assertThat(f1.setLastModified(offs), is(true));
         assertThat(f2.setLastModified(offs), is(true));
         final Code code2 = new DefaultGroovyCompiler().compile(sources2);
-        
+
         codeLayers = Arrays.asList(code1, code2);
     }
-    
+
     @Test
     void testFromCodeLayersNoTopCodeCache() throws Exception {
 
@@ -231,7 +231,7 @@ class LayeredEngineTest {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
                 .build();
-        
+
         engine.setCodeLayers(codeLayers);
 
         final Loader loader = engine.getLoader();
@@ -322,7 +322,7 @@ class LayeredEngineTest {
         // when
 
         prepareCode(dir, 2000);
-        
+
         // no change even though file modification date has changed
         // (could not load differently from static because already loaded, but from top code cache)
         clazz11 = engine.loadMainClass(loader, s1);
@@ -359,7 +359,7 @@ class LayeredEngineTest {
         assertThat(script1D.run(), is(1100));
 
         // when
-        
+
         clazz21 = engine.loadMainClass(loader, s2);
         clazz22 = engine.loadMainClass(attachedLoader2, s2);
         script21 = (Script)clazz21.getConstructor().newInstance();
@@ -381,7 +381,7 @@ class LayeredEngineTest {
                 "Could not load class 'DoesNotExist235134'. " +
                         "Cause: java.lang.ClassNotFoundException: DoesNotExist235134");
     }
-    
+
     @Test
     void testFromCodeLayersNoTopCodeCacheParentFirst() throws Exception {
 
@@ -413,7 +413,7 @@ class LayeredEngineTest {
         assertThat(script31.run(), is(300));
         assertThat(script32.run(), is(300));
         assertThat(script32.run(), is(300));
-        
+
         // when (class exists in parent, but not source based, so uses one in layer)
 
         final Class<?> clazz4 = engine.loadMainClass(loader, s4);
@@ -437,7 +437,7 @@ class LayeredEngineTest {
         assertThat(classSub21, not(sameInstance(classSub22)));
         clazz31.getConstructor().newInstance();
         clazz32.getConstructor().newInstance();
-        
+
         // when (current layer first, so layer version counts)
 
         Class<?> clazz4direct = engine.loadClass(attachedLoader3, "groovy.util.Expando");
@@ -446,10 +446,10 @@ class LayeredEngineTest {
 
         assertThat(clazz4direct.getConstructor().newInstance(), not(instanceOf(Script.class)));
     }
-    
+
     @Test
     void testFromCodeLayersNoTopCodeCacheClassNameConflictChecks() throws Exception {
-        
+
         // given
 
         final File dir = createTestDir();
@@ -501,7 +501,7 @@ class LayeredEngineTest {
                         "classes in code layers and parent: [groovy.util.Expando]");
     }
 
-    
+
     @Test
     void testFromSourcesLayersNoTopCodeCache() throws Exception {
 
@@ -513,15 +513,15 @@ class LayeredEngineTest {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(false)
                 .build();
-        
+
         engine.setCodeLayersBySource(sourcesLayers);
-        
+
         final Loader loader = engine.getLoader();
         final Loader attachedLoader2 = engine.newAttachedLoader();
         final Loader detachedLoader = engine.newDetachedLoader();
 
         // when
-        
+
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
@@ -539,7 +539,7 @@ class LayeredEngineTest {
         assertThat(script1D.run(), is(1100));
 
         // when
-        
+
         Class<?> clazz21 = engine.loadMainClass(loader, s2);
         Class<?> clazz22 = engine.loadMainClass(attachedLoader2, s2);
         Script script21 = (Script)clazz21.getConstructor().newInstance();
@@ -555,9 +555,9 @@ class LayeredEngineTest {
         assertThat(script22.run(), is(1202));
 
         // when
-        
+
         prepareCode(dir,2000);
-        
+
         // no change even though file modification date has changed
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
@@ -608,7 +608,7 @@ class LayeredEngineTest {
         assertThat(script22.run(), is(2201));
         assertThat(script22.run(), is(2202));
     }
-    
+
     @Test
     void testFromCodeLayersTopCodeCacheParentFirst() throws Exception {
 
@@ -620,15 +620,15 @@ class LayeredEngineTest {
         final LayeredEngine engine = new LayeredEngine.Builder()
                 .setWithTopCodeCache(true)
                 .build();
-        
+
         engine.setCodeLayers(codeLayers);
-        
+
         final Loader loader = engine.getLoader();
         final Loader attachedLoader2 = engine.newAttachedLoader();
         final Loader detachedLoader = engine.newDetachedLoader();
 
         // when
-        
+
         Class<?> clazz11 = engine.loadMainClass(loader, s1);
         Class<?> clazz12 = engine.loadMainClass(attachedLoader2, s1);
         Class<?> clazz1D = engine.loadMainClass(detachedLoader, s1);
@@ -664,7 +664,7 @@ class LayeredEngineTest {
         // when
 
         prepareCode(dir, 2000);
-        
+
         // no change even though file modification date has changed
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
@@ -730,7 +730,7 @@ class LayeredEngineTest {
                 .setWithTopCodeCache(true)
                 .setTopLoadMode(LoadMode.CURRENT_FIRST)
                 .build();
-        
+
         engine.setCodeLayers(codeLayers);
 
         final Loader loader = engine.getLoader();
@@ -774,7 +774,7 @@ class LayeredEngineTest {
         // when
 
         prepareCode(dir, 2000);
-        
+
         // file modification date has changed,
         // change must become available immediately via top code cache
         clazz11 = engine.loadMainClass(loader, s1);

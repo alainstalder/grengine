@@ -40,7 +40,7 @@ import ch.grengine.source.Source;
  * @author Made in Switzerland.
  */
 public interface TopCodeCache {
-        
+
     /**
      * gets the code from the cache, recompiling the given source if it had been modified.
      *
@@ -54,7 +54,7 @@ public interface TopCodeCache {
      * @since 1.0
      */
     SingleSourceCode getUpToDateCode(Source source);
-    
+
     /**
      * sets the parent class loader and clears the cache.
      * 
@@ -65,7 +65,7 @@ public interface TopCodeCache {
      * @since 1.0
      */
     void setParent(final ClassLoader parent);
-    
+
     /**
      * gets the parent class loader.
      *
@@ -81,7 +81,7 @@ public interface TopCodeCache {
      * @since 1.0
      */
     void clear();
-    
+
     /**
      * creates a clone with the same cached bytecode.
      *

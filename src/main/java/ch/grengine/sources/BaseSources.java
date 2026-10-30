@@ -45,7 +45,7 @@ public abstract class BaseSources implements Sources {
      */
     public BaseSources() {
     }
-    
+
     /**
      * initialize.
      * 
@@ -61,7 +61,7 @@ public abstract class BaseSources implements Sources {
         this.latencyMs = latencyMs;
         state = new SourceSetState(getSourceSetNew());
     }
-    
+
     /**
      * gets the updated source set.
      *
@@ -70,18 +70,18 @@ public abstract class BaseSources implements Sources {
      * @since 1.0
      */
     protected abstract Set<Source> getSourceSetNew();
-        
+
     @Override
     public Set<Source> getSourceSet() {
-        
+
         SourceSetState stateNow = state;
-        
+
         // check both boundaries of the interval to exclude problems with leap seconds etc.
         long diff = System.currentTimeMillis() - stateNow.getLastChecked();
         if (diff >= 0 && diff < latencyMs) {
             return stateNow.getSourceSet();
         }
-        
+
         synchronized(this) {
             // prevent multiple updates
             stateNow = state;
@@ -93,13 +93,13 @@ public abstract class BaseSources implements Sources {
             return state.getSourceSet();
         }
     }
-    
+
     @Override
     public long getLastModified() {
         getSourceSet();
         return state.getLastModified();
     }
-    
+
     @Override
     public String getName() {
         return name;
@@ -109,10 +109,10 @@ public abstract class BaseSources implements Sources {
     public CompilerFactory getCompilerFactory() {
         return compilerFactory;
     }
-    
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + "[name='" + getName() + "']";
     }
-    
+
 }

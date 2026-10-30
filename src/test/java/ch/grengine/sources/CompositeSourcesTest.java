@@ -16,12 +16,12 @@
 
 package ch.grengine.sources;
 
-import ch.grengine.source.MockSource;
-import ch.grengine.source.SourceUtil;
 import ch.grengine.TestUtil;
 import ch.grengine.code.CompilerFactory;
 import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.source.DefaultFileSource;
+import ch.grengine.source.MockSource;
+import ch.grengine.source.SourceUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ class CompositeSourcesTest {
         assertThat(s.getSourceSet().contains(m1), is(true));
         assertThat(s.getSourceSet().contains(new DefaultFileSource(file)), is(true));
     }
-    
+
     @Test
     void testConstructAllDefined() throws Exception {
 
@@ -119,7 +119,7 @@ class CompositeSourcesTest {
         assertThat(s.getSourceSet().contains(m1), is(true));
         assertThat(s.getSourceSet().contains(new DefaultFileSource(file)), is(true));
     }
-    
+
     @Test
     void testConstructSourcesCollectionNull() {
 
@@ -145,7 +145,7 @@ class CompositeSourcesTest {
                 () -> builder.setName("name"),
                 "Builder already used.");
     }
-    
+
     @Test
     void testLastModified() throws Exception {
 
@@ -189,7 +189,7 @@ class CompositeSourcesTest {
         assertThat(lastMod2, is(s.getLastModified()));
 
         // when
-        
+
         m1.setLastModified(1);
 
         // then
@@ -200,5 +200,5 @@ class CompositeSourcesTest {
         Thread.sleep(120);
         assertThat(lastMod3, is(s.getLastModified()));
     }
-    
+
 }

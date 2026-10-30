@@ -76,7 +76,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class GrengineTest {
-    
+
     @Test
     void testHelloWorld() {
         new Grengine().run("println 'hello world'");

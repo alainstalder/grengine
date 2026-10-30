@@ -33,7 +33,7 @@ class DirModeTest {
         assertThat(DirMode.valueOf(DirMode.NO_SUBDIRS.toString()), CoreMatchers.is(DirMode.NO_SUBDIRS));
         assertThat(DirMode.valueOf(DirMode.WITH_SUBDIRS_RECURSIVE.toString()), CoreMatchers.is(DirMode.WITH_SUBDIRS_RECURSIVE));
     }
-    
+
     @Test
     void testValues() {
 

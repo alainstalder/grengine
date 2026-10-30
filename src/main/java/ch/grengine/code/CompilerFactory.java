@@ -26,7 +26,7 @@ package ch.grengine.code;
  * @author Made in Switzerland.
  */
 public interface CompilerFactory {
-    
+
     /**
      * creates a new {@link Compiler} instance with given parent class loader.
      *

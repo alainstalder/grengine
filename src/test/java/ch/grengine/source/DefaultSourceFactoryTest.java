@@ -160,7 +160,7 @@ class DefaultSourceFactoryTest {
         assertThat(s.getId(), not(sameInstance(s2.getId())));
         assertThat(text, is(((TextSource) s).getText()));
     }
-    
+
     @Test
     void testFromFileNoLastModifiedTracking() throws Exception {
 
@@ -184,7 +184,7 @@ class DefaultSourceFactoryTest {
         assertThat(s.getLastModified(), is(lastMod));
         assertThat(s.getLastModified(), is(lastMod));
     }
-        
+
     @Test
     void testFromFileWithLastModifiedTracking() throws Exception {
 
@@ -210,13 +210,13 @@ class DefaultSourceFactoryTest {
         assertThat(s, CoreMatchers.is(new DefaultFileSource(file)));
         assertThat(s.getLastModified(), is(lastMod));
         assertThat(s.getLastModified(), is(lastMod));
-       
+
         while (s.getLastModified() == lastMod) {
             TestUtil.setFileText(file, "println 2");
             Thread.sleep(50);
         }
     }
-        
+
     @Test
     void testFromUrlNoTracking() throws Exception {
 
@@ -239,7 +239,7 @@ class DefaultSourceFactoryTest {
         assertThat(s, CoreMatchers.is(new DefaultUrlSource(url)));
         assertThat(s.getLastModified(), is(0L));
     }
-    
+
     @Test
     void testFromUrlWithTrackingNoLatency() throws Exception {
 
@@ -264,7 +264,7 @@ class DefaultSourceFactoryTest {
         assertThat(s, instanceOf(DefaultSourceFactory.ContentTrackingUrlSource.class));
         assertThat(s, CoreMatchers.is(new DefaultUrlSource(url)));
         assertThat(s.getLastModified(), is(not(0L)));
-        
+
         // wait a bit, last modified must remain unchanged
         long lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
@@ -301,7 +301,7 @@ class DefaultSourceFactoryTest {
 
         Thread.sleep(30);
         assertThat(lastModifiedOld, is(not(s.getLastModified())));
-        
+
         // wait a bit, last modified must remain unchanged
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
@@ -315,7 +315,7 @@ class DefaultSourceFactoryTest {
 
         Thread.sleep(30);
         assertThat(lastModifiedOld, is(not(s.getLastModified())));
-        
+
         // wait a bit, last modified must remain unchanged
         lastModifiedOld = s.getLastModified();
         Thread.sleep(30);
@@ -330,7 +330,7 @@ class DefaultSourceFactoryTest {
         Thread.sleep(30);
         assertThat(lastModifiedOld, is(not(s.getLastModified())));
     }
-    
+
     @Test
     void testFromUrlWithTrackingWithLatency() throws Exception {
 
@@ -355,7 +355,7 @@ class DefaultSourceFactoryTest {
         assertThat(s, instanceOf(DefaultSourceFactory.ContentTrackingUrlSource.class));
         assertThat(s, CoreMatchers.is(new DefaultUrlSource(url)));
         assertThat(s.getLastModified(), is(not(0L)));
-        
+
         // wait a bit, last modified must remain unchanged
         final long lastModifiedOld = s.getLastModified();
         Thread.sleep(80);
@@ -379,7 +379,7 @@ class DefaultSourceFactoryTest {
         Thread.sleep(80);
         assertThat(lastModifiedOld, is(not(s.getLastModified())));
     }
-    
+
     @Test
     void testConstructWithTextSourceIdTrackingFromTextWithTextNull() {
 
@@ -395,7 +395,7 @@ class DefaultSourceFactoryTest {
                 () -> sf.fromText(null),
                 "Text is null.");
     }
-    
+
     @Test
     void testConstructWithTextSourceIdTrackingFromTextAndNameWithTextNull() {
 

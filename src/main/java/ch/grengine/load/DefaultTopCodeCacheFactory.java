@@ -31,10 +31,10 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
-    
+
     private final Builder builder;
     private final CompilerFactory compilerFactory;
-    
+
     /**
      * constructor from builder.
      *
@@ -46,7 +46,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         this.builder = builder.commit();
         compilerFactory = builder.getCompilerFactory();
     }
-    
+
     /**
      * constructor from defaults for all settings.
      * 
@@ -55,7 +55,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
     public DefaultTopCodeCacheFactory() {
         this(new Builder());
     }
-    
+
     /**
      * constructor from given compiler factory and defaults for all other settings.
      *
@@ -69,7 +69,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         this(new Builder().setCompilerFactory(compilerFactory));
         requireNonNull(compilerFactory, "Compiler factory is null.");
     }
-    
+
     @Override
     public TopCodeCache newTopCodeCache(final ClassLoader parent) {
         return new DefaultTopCodeCache.Builder(parent)
@@ -98,8 +98,8 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
     public CompilerFactory getCompilerFactory() {
         return compilerFactory;
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link DefaultTopCodeCacheFactory}.
      * 
@@ -109,11 +109,11 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private CompilerFactory compilerFactory;
-        
+
         /**
          * constructor.
          * 
@@ -122,7 +122,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         public Builder() {
             isCommitted = false;
         }
-        
+
         /**
          * sets the compiler factory,
          * default is a new instance of {@link DefaultGroovyCompilerFactory} with default settings.
@@ -138,7 +138,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
             this.compilerFactory = compilerFactory;
             return this;
         }
-        
+
         /**
          * gets the compiler factory.
          *
@@ -149,7 +149,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
         public CompilerFactory getCompilerFactory() {
             return compilerFactory;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (compilerFactory == null) {
@@ -159,7 +159,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link DefaultTopCodeCacheFactory}.
          *
@@ -171,7 +171,7 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
             commit();
             return new DefaultTopCodeCacheFactory(this);
        }
-        
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");
@@ -180,5 +180,5 @@ public class DefaultTopCodeCacheFactory implements TopCodeCacheFactory {
 
     }
 
-    
+
 }

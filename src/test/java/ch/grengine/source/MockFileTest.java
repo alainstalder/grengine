@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 
 class MockFileTest {
-    
+
     @Test
     void testMockFile() throws Exception {
 

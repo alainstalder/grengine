@@ -48,7 +48,7 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DirBasedSources extends BaseSources {
-        
+
     private final Builder builder;
 
     private final File dir;
@@ -66,12 +66,12 @@ public class DirBasedSources extends BaseSources {
     @SuppressWarnings("this-escape")
     protected DirBasedSources(final Builder builder) {
         this.builder = builder.commit();
-        
+
         dir = builder.getDir();
         dirMode = builder.getDirMode();
         scriptExtensions = builder.getScriptExtensions();
         sourceFactory = builder.getSourceFactory();
-        
+
         super.init(builder.getName(), builder.getCompilerFactory(), builder.getLatencyMs());
     }
 
@@ -99,7 +99,7 @@ public class DirBasedSources extends BaseSources {
     public File getDir() {
         return dir;
     }
-    
+
     /**
      * gets the dir mode.
      *
@@ -110,7 +110,7 @@ public class DirBasedSources extends BaseSources {
     public DirMode getDirMode() {
         return dirMode;
     }
-    
+
     /**
      * gets the set of script extensions.
      *
@@ -121,7 +121,7 @@ public class DirBasedSources extends BaseSources {
     public Set<String> getScriptExtensions() {
         return scriptExtensions;
     }
-    
+
     /**
      * gets the builder.
      *
@@ -133,7 +133,7 @@ public class DirBasedSources extends BaseSources {
         return builder;
     }
 
-    
+
     private void fromDirectoryAddRecursively(final Set<Source> sources, final File file, final boolean firstDir) {
         if (!firstDir && file.isHidden()) {
             return;
@@ -158,8 +158,8 @@ public class DirBasedSources extends BaseSources {
             }
         }
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link DirBasedSources}.
      * 
@@ -169,7 +169,7 @@ public class DirBasedSources extends BaseSources {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         /**
          * the default latency (5000ms = five seconds).
          * 
@@ -178,7 +178,7 @@ public class DirBasedSources extends BaseSources {
         public static final long DEFAULT_LATENCY_MS = 5000L;
 
         private boolean isCommitted;
-        
+
         private final File dir;
         private DirMode dirMode;
         private Set<String> scriptExtensions;
@@ -186,7 +186,7 @@ public class DirBasedSources extends BaseSources {
         private CompilerFactory compilerFactory;
         private SourceFactory sourceFactory;
         private long latencyMs = -1;
-        
+
         /**
          * constructor from script file directory.
          * <p>
@@ -204,7 +204,7 @@ public class DirBasedSources extends BaseSources {
             this.dir = SourceUtil.toCanonicalOrAbsoluteFile(dir);
             isCommitted = false;
         }
-        
+
         /**
          * sets the dir mode, default is not to scan subdirectories.
          *
@@ -331,7 +331,7 @@ public class DirBasedSources extends BaseSources {
         public File getDir() {
             return dir;
         }
-        
+
         /**
          * gets the dir mode.
          *
@@ -353,7 +353,7 @@ public class DirBasedSources extends BaseSources {
         public Set<String> getScriptExtensions() {
             return scriptExtensions;
         }
-        
+
         /**
          * gets the sources name.
          *
@@ -364,7 +364,7 @@ public class DirBasedSources extends BaseSources {
         public String getName() {
             return name;
         }
-        
+
         /**
          * gets the compiler factory.
          *
@@ -375,7 +375,7 @@ public class DirBasedSources extends BaseSources {
         public CompilerFactory getCompilerFactory() {
             return compilerFactory;
         }
-        
+
         /**
          * gets the source factory.
          *
@@ -397,7 +397,7 @@ public class DirBasedSources extends BaseSources {
         public long getLatencyMs() {
             return latencyMs;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (dirMode == null) {
@@ -422,7 +422,7 @@ public class DirBasedSources extends BaseSources {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link DirBasedSources}.
          *
@@ -434,7 +434,7 @@ public class DirBasedSources extends BaseSources {
             commit();
             return new DirBasedSources(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

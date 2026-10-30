@@ -36,12 +36,12 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class CompiledSourceInfo {
-    
+
     private final Source source;
     private final String mainClassName;
     private final Set<String> classNames;
     private final long lastModifiedAtCompileTime;
-    
+
     /**
      * constructor.
      * 

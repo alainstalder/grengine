@@ -43,7 +43,7 @@ class GrengineExceptionTest {
         assertThat(e.getDateThrown().getTime() <= System.currentTimeMillis(), is(true));
         assertThat(e.getDateThrown().getTime() + 60000 > System.currentTimeMillis(), is(true));
     }
-    
+
     @Test
     void testConstructFromMessageAndThrowable() {
 
