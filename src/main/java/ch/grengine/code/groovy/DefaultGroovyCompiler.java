@@ -514,26 +514,7 @@ public class DefaultGroovyCompiler implements Compiler {
 
                 // if already wrapped by a GrengineGrapeEngine, only allow if compatible lock
                 if (GrengineGrapeEngine.class.getName().equals(engine.getClass().getName())) {
-                    final Object otherLock;
-                    if (engine instanceof GrengineGrapeEngine) {
-                        otherLock = ((GrengineGrapeEngine)engine).lock;
-                    } else {
-                        // get lock with reflection
-                        final Field lockField;
-                        try {
-                            lockField = engine.getClass().getDeclaredField("lock");
-                        } catch (NoSuchFieldException e) {
-                            throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class because " +
-                                    "it is already wrapped by a Grengine using a different mechanism.");
-                        }
-                        lockField.setAccessible(true);
-                        try {
-                            otherLock = lockField.get(engine);
-                        } catch (IllegalAccessException e) {
-                            throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class because " +
-                                    "it is already wrapped by a Grengine using an unobtainable lock.");
-                        }
-                    }
+                    final Object otherLock = getOtherLock(engine);
                     if (lock == null && engine == otherLock) {
                         // already wrapped with the default lock of the engine (compatible)
                         return;
@@ -553,6 +534,28 @@ public class DefaultGroovyCompiler implements Compiler {
                         Grape.instance = grengineGrapeEngine;
                     }
                 }.wrap();
+            }
+        }
+
+        private static Object getOtherLock(final GrapeEngine engine) {
+            if (engine instanceof GrengineGrapeEngine) {
+                return ((GrengineGrapeEngine)engine).lock;
+            } else {
+                // get lock with reflection
+                final Field lockField;
+                try {
+                    lockField = engine.getClass().getDeclaredField("lock");
+                } catch (NoSuchFieldException e) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class because " +
+                            "it is already wrapped by a Grengine using a different mechanism.");
+                }
+                lockField.setAccessible(true);
+                try {
+                    return lockField.get(engine);
+                } catch (IllegalAccessException e) {
+                    throw new IllegalStateException("Unable to wrap GrapeEngine in Grape.class because " +
+                            "it is already wrapped by a Grengine using an unobtainable lock.");
+                }
             }
         }
 
