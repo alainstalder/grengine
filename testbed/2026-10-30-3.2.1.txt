@@ -1,0 +1,40 @@
+java8: ~/.sdkman/candidates/java/8.0.504+1-zulu
+java8-groovy2.5.23                 OK      383/383 passed
+java8-groovy2.5.23-indy            OK      383/383 passed
+java8-groovy3.0.25                 OK      383/383 passed
+java8-groovy3.0.25-indy            OK      383/383 passed
+java8-groovy4.0.33                 OK      383/383 passed
+java11: ~/.sdkman/candidates/java/11.0.32+1.1-zulu
+java11-groovy2.5.23                OK      383/383 passed
+java11-groovy2.5.23-indy           OK      383/383 passed
+java11-groovy3.0.25                OK      383/383 passed
+java11-groovy3.0.25-indy           OK      383/383 passed
+java11-groovy4.0.33                OK      383/383 passed
+java11-groovy5.1.3                 OK      383/383 passed
+java17: ~/.sdkman/candidates/java/17.0.20+1.1-zulu
+java17-groovy2.5.23                OK      383/383 passed
+java17-groovy2.5.23-indy           OK      383/383 passed
+java17-groovy3.0.25                OK      383/383 passed
+java17-groovy3.0.25-indy           OK      383/383 passed
+java17-groovy4.0.33                OK      383/383 passed
+java17-groovy5.1.3                 OK      383/383 passed
+java17-groovy6.0.0-ivy             OK      383/383 passed
+java17-groovy6.0.0-maven           OK      383/383 passed
+java21: ~/.sdkman/candidates/java/21.0.12+1.1-zulu
+java21-groovy2.5.23                OK      383/383 passed
+java21-groovy2.5.23-indy           OK      383/383 passed
+java21-groovy3.0.25                OK      383/383 passed
+java21-groovy3.0.25-indy           OK      383/383 passed
+java21-groovy4.0.33                OK      383/383 passed
+java21-groovy5.1.3                 OK      383/383 passed
+java21-groovy6.0.0-ivy             OK      383/383 passed
+java21-groovy6.0.0-maven           OK      383/383 passed
+java25: ~/.sdkman/candidates/java/25.0.4+1.1-zulu
+java25-groovy2.5.23                OK      383/383 passed
+java25-groovy2.5.23-indy           OK      383/383 passed
+java25-groovy3.0.25                OK      383/383 passed
+java25-groovy3.0.25-indy           OK      383/383 passed
+java25-groovy4.0.33                OK      383/383 passed
+java25-groovy5.1.3                 OK      383/383 passed
+java25-groovy6.0.0-ivy             OK      383/383 passed
+java25-groovy6.0.0-maven           OK      383/383 passed
