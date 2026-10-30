@@ -1506,9 +1506,9 @@ always surprises in practice.
 
 Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17).
 
-#### 4.1.1 (30 October 2026)
+#### 4.x.y (XX Yyyyy ZZZZ)
 
-* Requires Groovy 2.4.8 or later; tested with 2.5 and later.
+* Changed: Requires Groovy 2.4.8+ (else released classes leak memory).
 * Fix: Tiny fixes in Javadoc.
 * Added: Unit tests with Grape locks from different classloaders.
 * Updated: My email in the pom.
@@ -1552,9 +1552,9 @@ supported JDKs (JDK 17 and later).
 
 Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
 
-#### 3.2.1 (30 October 2026)
+#### 3.x.y (XX Yyyyy ZZZZ)
 
-* Requires Groovy 2.4.8 or later; tested with 2.5 and later.
+* Changed: Requires Groovy 2.4.8+ (else released classes leak memory).
 * Fix: Tiny fixes in Javadoc.
 * Added: Unit tests with Grape locks from different classloaders.
 * Updated: My email in the pom.
