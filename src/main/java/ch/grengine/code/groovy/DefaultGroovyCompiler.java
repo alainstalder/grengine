@@ -64,7 +64,7 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultGroovyCompiler implements Compiler {
-    
+
     private final Builder builder;
     private final ClassLoader parent;
     private final CompilerConfiguration config;
@@ -84,7 +84,7 @@ public class DefaultGroovyCompiler implements Compiler {
         final GroovyClassLoader loader = GrapeCompilationCustomizer.getLoaderIfConfigured(parent, config);
         groovyClassLoader = (loader == null) ? new GroovyClassLoader(parent, config) : loader;
     }
-    
+
     /**
      * constructor from parent class loader set to the context class loader of the current thread
      * and from default compiler configuration.
@@ -109,7 +109,7 @@ public class DefaultGroovyCompiler implements Compiler {
                 .setParent(requireNonNull(parent, "Parent class loader is null."))
         );
     }
-    
+
     /**
      * constructor from given parent class loader and compiler configuration.
      *
@@ -255,14 +255,14 @@ public class DefaultGroovyCompiler implements Compiler {
             }
             //System.out.println("--- compile ---");
             return code;
-            
+
         } catch (CompileException e) {
             throw e;
         } catch (Throwable t) {
             throw new CompileException("Compile failed for sources " + sources + ".", t, sources);
         }
     }
-    
+
     /**
      * adds the given source to the given compilation unit and returns the resulting source unit.
      *
@@ -309,7 +309,7 @@ public class DefaultGroovyCompiler implements Compiler {
     public ClassLoader getParent() {
         return parent;
     }
-    
+
     /**
      * gets the compiler configuration.
      *
@@ -320,8 +320,8 @@ public class DefaultGroovyCompiler implements Compiler {
     public CompilerConfiguration getCompilerConfiguration() {
         return config;
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link DefaultGroovyCompiler}.
      * 
@@ -331,9 +331,9 @@ public class DefaultGroovyCompiler implements Compiler {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private ClassLoader parent;
         private CompilerConfiguration compilerConfiguration;
 
@@ -361,7 +361,7 @@ public class DefaultGroovyCompiler implements Compiler {
             this.parent = parent;
             return this;
         }
-        
+
         /**
          * sets the compiler configuration,
          * default is a new instance of {@link CompilerConfiguration} with default settings.
@@ -388,7 +388,7 @@ public class DefaultGroovyCompiler implements Compiler {
         public ClassLoader getParent() {
             return parent;
         }
-        
+
         /**
          * gets the compiler configuration.
          *
@@ -412,7 +412,7 @@ public class DefaultGroovyCompiler implements Compiler {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link DefaultGroovyCompiler}.
          *
@@ -424,7 +424,7 @@ public class DefaultGroovyCompiler implements Compiler {
             commit();
             return new DefaultGroovyCompiler(this);
         }
-        
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

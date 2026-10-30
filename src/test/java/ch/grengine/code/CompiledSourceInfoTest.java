@@ -16,8 +16,8 @@
 
 package ch.grengine.code;
 
-import ch.grengine.source.Source;
 import ch.grengine.source.MockSource;
+import ch.grengine.source.Source;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -55,7 +55,7 @@ class CompiledSourceInfoTest {
         assertThat(info.toString().startsWith("CompiledSourceInfo[source=MockSource[ID='id1', lastModified=0], " +
                 "mainClassName=MainClassName, classNames=" + names + ", lastModifiedAtCompileTime="), is(true));
     }
-    
+
     @Test
     void testConstructSourceNull() {
 
@@ -66,7 +66,7 @@ class CompiledSourceInfoTest {
                         new HashSet<>(), 0),
                 "Source is null.");
     }
-    
+
     @Test
     void testConstructMainClassNameNull() {
 
@@ -78,7 +78,7 @@ class CompiledSourceInfoTest {
                         new HashSet<>(), 0),
                 "Main class name is null.");
     }
-    
+
     @Test
     void testConstructClassNamesNull() {
 

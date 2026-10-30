@@ -31,7 +31,7 @@ class LoadModeTest {
         assertThat(LoadMode.valueOf(LoadMode.CURRENT_FIRST.toString()), is(LoadMode.CURRENT_FIRST));
         assertThat(LoadMode.valueOf(LoadMode.PARENT_FIRST.toString()), is(LoadMode.PARENT_FIRST));
     }
-    
+
     @Test
     void testValues() {
 

@@ -16,8 +16,8 @@
 
 package ch.grengine.load;
 
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class DefaultTopCodeCacheTest {
     void testConstructAndGettersAndMore() {
 
         // given
-        
+
         final CompilerFactory compilerFactory = new DefaultGroovyCompilerFactory();
         final ClassLoader parent = Thread.currentThread().getContextClassLoader().getParent();
         final DefaultTopCodeCache.Builder builder = new DefaultTopCodeCache.Builder(parent);
@@ -54,7 +54,7 @@ class DefaultTopCodeCacheTest {
         assertThat(c1.getParent(), is(parent));
 
         // when
-        
+
         final ClassLoader parentNew = Thread.currentThread().getContextClassLoader();
         c1.setParent(parentNew);
 
@@ -89,7 +89,7 @@ class DefaultTopCodeCacheTest {
 
         assertThat(c3.getParent(), is(parentNew));
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() {
 
@@ -119,7 +119,7 @@ class DefaultTopCodeCacheTest {
                 () -> c.setParent(null),
                 "Parent class loader is null.");
     }
-    
+
     // most functionality is tested in LayeredClassLoaderTest
 
 }

@@ -54,14 +54,14 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class LayeredEngine implements Engine {
-    
+
     private final Builder builder;
 
     private final EngineId engineId = new EngineId();
-    
+
     private final boolean isWithTopCodeCache;
     private final TopCodeCache topCodeCache;
-    
+
     // default loader (number 0)
     private final Loader loader;
     // next loader number to use
@@ -75,10 +75,10 @@ public class LayeredEngine implements Engine {
     // map of all detached loaders created by this engine,
     // only needed for closing classes
     private final Map<Loader,EngineId> detachedLoaders = new WeakHashMap<>();
-    
+
     private final Lock read;
     private final Lock write;
-    
+
     /**
      * constructor from builder.
      *
@@ -88,7 +88,7 @@ public class LayeredEngine implements Engine {
      */
     protected LayeredEngine(final Builder builder) {
         this.builder = builder.commit();
-        
+
         isWithTopCodeCache = builder.isWithTopCodeCache();
         if (isWithTopCodeCache) {
             topCodeCache = builder.getTopCodeCacheFactory().newTopCodeCache(null);
@@ -99,7 +99,7 @@ public class LayeredEngine implements Engine {
         if (isWithTopCodeCache) {
             topCodeCache.setParent(layeredClassLoader);
         }
-        
+
         nextLoaderNumber = 0;
         loader = new Loader(engineId, nextLoaderNumber++, true, builder.getClassReleaser(), layeredClassLoader);
         attachedLoaders.put(loader, engineId);
@@ -108,7 +108,7 @@ public class LayeredEngine implements Engine {
         read = lock.readLock();
         write = lock.writeLock();
     }
-    
+
     private LayeredClassLoader newLayeredClassLoaderFromCodeLayers(final List<Code> codeLayers) {
         return new LayeredClassLoader.Builder()
                 .setParent(builder.getParent())
@@ -118,7 +118,7 @@ public class LayeredEngine implements Engine {
                 .setTopLoadMode(builder.getTopLoadMode())
                 .buildFromCodeLayers();
     }
-    
+
     private LayeredClassLoader newLayeredClassLoaderFromSourceSetLayers(final List<Sources> sourcesLayers) {
         return new LayeredClassLoader.Builder()
                 .setParent(builder.getParent())
@@ -133,7 +133,7 @@ public class LayeredEngine implements Engine {
     public Loader getLoader() {
         return loader;
     }
-    
+
     /**
      * creates and gets a new attached loader, backed by the same bytecode
      * as all other shared loaders created by this engine,
@@ -154,7 +154,7 @@ public class LayeredEngine implements Engine {
             write.unlock();
         }
     }
-    
+
     /**
      * creates and gets a new detached loader, backed initially by the same
      * bytecode as all attached loaders created by this engine (code layers
@@ -182,7 +182,7 @@ public class LayeredEngine implements Engine {
             write.unlock();
         }
     }
-    
+
     private SourceClassLoader getSourceClassLoader(final Loader loader) {
         read.lock();
         try {
@@ -190,19 +190,19 @@ public class LayeredEngine implements Engine {
         } finally {
             read.unlock();
         }
-        
+
     }
-    
+
     @Override
     public Class<?> loadMainClass(final Loader loader, final Source source) {
         return getSourceClassLoader(loader).loadMainClass(source);
     }
-    
+
     @Override
     public Class<?> loadClass(final Loader loader, final Source source, final String name) {
         return getSourceClassLoader(loader).loadClass(source, name);
     }
-    
+
     @Override
     public Class<?> loadClass(final Loader loader, final String name) {
         try {
@@ -211,7 +211,7 @@ public class LayeredEngine implements Engine {
             throw new LoadException("Could not load class '" + name + "'.", t);
         }
     }
-            
+
     @Override
     public void setCodeLayers(final List<Code> codeLayers) {
         requireNonNull(codeLayers, "Code layers are null.");
@@ -233,7 +233,7 @@ public class LayeredEngine implements Engine {
             throw new ClassNameConflictException("Found " + nConflicts + " class name conflict(s).",
                     sameClassNamesInMultipleCodeLayersMap, sameClassNamesInParentAndCodeLayersMap);
         }
-        
+
         write.lock();
         try {
             final Map<Loader,EngineId> attachedLoadersNonWeak = new HashMap<>(attachedLoaders);
@@ -247,7 +247,7 @@ public class LayeredEngine implements Engine {
             write.unlock();
         }
     }
-    
+
     @Override
     public void setCodeLayersBySource(final List<Sources> sourcesLayers) {
         requireNonNull(sourcesLayers, "Sources layers are null.");
@@ -271,7 +271,7 @@ public class LayeredEngine implements Engine {
     public ClassLoader asClassLoader(final Loader loader) {
         return new LoaderBasedClassLoader(loader);
     }
-    
+
     // class loader based on a loader of this engine
     private class LoaderBasedClassLoader extends ClassLoader {
 
@@ -317,21 +317,21 @@ public class LayeredEngine implements Engine {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private ClassLoader parent;
         private LoadMode loadMode;
-        
+
         private boolean isWithTopCodeCache = true;
         private TopCodeCacheFactory topCodeCacheFactory;  
         private LoadMode topLoadMode;
 
         private ClassReleaser classReleaser;
-        
+
         private boolean allowSameClassNamesInMultipleCodeLayers = true;
         private boolean allowSameClassNamesInParentAndCodeLayers = true;
-        
+
         /**
          * constructor.
          * 
@@ -355,7 +355,7 @@ public class LayeredEngine implements Engine {
             this.parent = parent;
             return this;
         }
-        
+
         /**
          * sets the load mode for the (static) code layers, default is "current first".
          *
@@ -371,7 +371,7 @@ public class LayeredEngine implements Engine {
             this.loadMode = loadMode;
             return this;
         }
-        
+
         /**
          * sets whether to use the top code cache or not,
          * default is true.
@@ -438,7 +438,7 @@ public class LayeredEngine implements Engine {
             this.classReleaser = classReleaser;
             return this;
         }
-        
+
         /**
          * sets whether to allow the same class names in multiple code layers, default is true.
          *
@@ -455,7 +455,7 @@ public class LayeredEngine implements Engine {
             this.allowSameClassNamesInMultipleCodeLayers = allowSameClassNamesInMultipleCodeLayers;
             return this;
         }
-        
+
         /**
          * sets whether to allow the same class names in code layers and parent class loader, default is true.
          *
@@ -483,7 +483,7 @@ public class LayeredEngine implements Engine {
         public ClassLoader getParent() {
             return parent;
         }
-        
+
         /**
          * gets the load mode for the (static) code layers.
          *
@@ -494,7 +494,7 @@ public class LayeredEngine implements Engine {
         public LoadMode getLoadMode() {
             return loadMode;
         }
-        
+
         /**
          * gets whether to use the top code cache or not.
          *
@@ -505,7 +505,7 @@ public class LayeredEngine implements Engine {
         public boolean isWithTopCodeCache() {
             return isWithTopCodeCache;
         }
-        
+
         /**
          * gets the load mode for the top code cache.
          *
@@ -538,7 +538,7 @@ public class LayeredEngine implements Engine {
         public TopCodeCacheFactory getTopCodeCacheFactory() {
             return topCodeCacheFactory;
         }
-        
+
         /**
          * gets whether to allow the same class names in multiple code layers.
          *
@@ -560,7 +560,7 @@ public class LayeredEngine implements Engine {
         public boolean isAllowSameClassNamesInParentAndCodeLayers() {
             return allowSameClassNamesInParentAndCodeLayers;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (parent == null) {
@@ -582,7 +582,7 @@ public class LayeredEngine implements Engine {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link LayeredEngine}.
          *
@@ -594,7 +594,7 @@ public class LayeredEngine implements Engine {
             commit();
             return new LayeredEngine(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

@@ -29,7 +29,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class DefaultClassReleaserTest {
-    
+
     @Test
     void testGetInstance() {
 

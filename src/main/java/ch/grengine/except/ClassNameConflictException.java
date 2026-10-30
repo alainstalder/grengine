@@ -94,7 +94,7 @@ public class ClassNameConflictException extends GrengineException {
                 (sameClassNamesInParentAndCodeLayersMap == null) ? ""
                         : sameClassNamesInParentAndCodeLayersMap.toString();
     }
-    
+
     /**
      * gets a map of class name to a list of all {@link Code} layers
      * that contain a class with that name, but only if the class name

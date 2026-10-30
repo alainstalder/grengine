@@ -21,7 +21,7 @@ import java.io.File;
 
 // so far only mocks file-based source
 public class MockSourceFactory extends DefaultSourceFactory {
-            
+
     public MockSourceFactory() {
     }
 

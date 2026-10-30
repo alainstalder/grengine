@@ -32,12 +32,12 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class SourceSetState {
-    
+
     private final Set<Source> sourceSet;
     private final Map<Source,Long> lastModifiedMap;
     private final long lastChecked;
     private final long lastModified;
-    
+
     private SourceSetState(final Set<Source> sourceSet, final Map<Source,Long> lastModifiedMap,
             final long lastChecked, final long lastModified) {
         this.sourceSet = sourceSet;
@@ -45,7 +45,7 @@ public class SourceSetState {
         this.lastChecked = lastChecked;
         this.lastModified = lastModified;
     }
-    
+
     /**
      * constructor from source set.
      *
@@ -63,7 +63,7 @@ public class SourceSetState {
         lastChecked = now;
         lastModified = now;
     }
-    
+
     /**
      * gets the source set.
      *
@@ -96,7 +96,7 @@ public class SourceSetState {
     public long getLastModified() {
         return lastModified;
     }
-    
+
     /**
      * returns a new instance with given source set and updated last checked and last modified.
      *
@@ -119,7 +119,7 @@ public class SourceSetState {
         final long lastModifiedNew = hasChanged ? lastCheckedNew : lastModified;
         return new SourceSetState(sourceSetNew, lastModifiedMapNew, lastCheckedNew, lastModifiedNew);
     }
-    
+
     private static Map<Source,Long> getLastModifiedMap(final Set<Source> sourceSet) {
         return sourceSet.stream()
                 .collect(Collectors.toMap(source -> source, Source::getLastModified));

@@ -29,7 +29,7 @@ import ch.grengine.sources.Sources;
  * @author Made in Switzerland.
  */
 public interface Compiler {
-    
+
     /**
      * compiles the given sources to an instance of {@link Code} in memory.
      *

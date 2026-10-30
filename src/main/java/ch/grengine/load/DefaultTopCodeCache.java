@@ -42,11 +42,11 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultTopCodeCache implements TopCodeCache {
-    
+
     private final Builder builder;
     private volatile State state;
     private final CompilerFactory compilerFactory;
-        
+
     /**
      * constructor from builder.
      *
@@ -59,7 +59,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         state = new State(builder.getParent());
         compilerFactory = builder.getCompilerFactory();
     }
-    
+
     @Override
     public SingleSourceCode getUpToDateCode(final Source source) {
 
@@ -69,7 +69,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         if (code != null && code.getLastModifiedAtCompileTime() == source.getLastModified()) {
             return code;
         }
-        
+
         synchronized(this) {
             // prevent multiple compilations
             code = stateNow.cache.get(source);
@@ -82,13 +82,13 @@ public class DefaultTopCodeCache implements TopCodeCache {
             return code;
         }
     }
-    
+
     @Override
     public void setParent(final ClassLoader parent) {
         requireNonNull(parent, "Parent class loader is null.");
         state = new State(parent);
     }
-    
+
     @Override
     public ClassLoader getParent() {
         return state.parent;
@@ -129,8 +129,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
     public CompilerFactory getCompilerFactory() {
         return compilerFactory;
     }
-    
-    
+
+
     private static class State {
         private final ClassLoader parent;
         private final Map<Source,SingleSourceCode> cache;
@@ -139,8 +139,8 @@ public class DefaultTopCodeCache implements TopCodeCache {
             cache = new ConcurrentHashMap<>();
         }
     }
-    
-    
+
+
     /**
      * Builder for instances of {@link DefaultTopCodeCache}.
      * 
@@ -150,12 +150,12 @@ public class DefaultTopCodeCache implements TopCodeCache {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         private boolean isCommitted;
-        
+
         private final ClassLoader parent;
         private CompilerFactory compilerFactory;
-        
+
         /**
          * constructor from parent class loader.
          *
@@ -183,7 +183,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
             this.compilerFactory = compilerFactory;
             return this;
         }
-        
+
         /**
          * gets the parent class loader.
          *
@@ -194,7 +194,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         public ClassLoader getParent() {
             return parent;
         }
-        
+
         /**
          * gets the compiler factory.
          *
@@ -205,7 +205,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
         public CompilerFactory getCompilerFactory() {
             return compilerFactory;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (compilerFactory == null) {
@@ -215,7 +215,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link DefaultGroovyCompiler}.
          *
@@ -227,7 +227,7 @@ public class DefaultTopCodeCache implements TopCodeCache {
             commit();
             return new DefaultTopCodeCache(this);
         }
-        
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

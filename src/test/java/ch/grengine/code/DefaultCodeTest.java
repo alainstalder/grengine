@@ -113,7 +113,7 @@ class DefaultCodeTest {
 
         assertThat(code.toString(), is("DefaultCode[sourcesName='sourcesName', sources:2, classes:3]"));
     }
-    
+
     @Test
     void testConstructSourcesNameNull() {
 
@@ -123,7 +123,7 @@ class DefaultCodeTest {
                 () -> new DefaultCode(null, new HashMap<>(), new HashMap<>()),
                 "Sources name is null.");
     }
-    
+
     @Test
     void testConstructCompiledSourceInfoMapNull() {
 
@@ -133,7 +133,7 @@ class DefaultCodeTest {
                 () -> new DefaultCode("name", null, new HashMap<>()),
                 "Compiled source info map is null.");
     }
-    
+
     @Test
     void testConstructBytecodeMapNull() {
 

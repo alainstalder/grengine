@@ -38,7 +38,7 @@ public class SourcesUtil {
 
     // private since 3.2.0 (utility class)
     private SourcesUtil() {}
-    
+
     /**
      * converts a source to sources with name set to the source ID
      * and with the default Groovy compiler factory.
@@ -70,7 +70,7 @@ public class SourcesUtil {
         requireNonNull(source, "Source is null.");
         return sourceSetToSources(SourceUtil.sourceToSourceSet(source), source.getId(), compilerFactory);
     }
-    
+
     /**
      * converts a set of source to sources with the given name
      * and with the default Groovy compiler factory.
@@ -86,7 +86,7 @@ public class SourcesUtil {
     public static Sources sourceSetToSources(final Set<Source> sourceSet, final String name) {
         return sourceSetToSources(sourceSet, name, new DefaultGroovyCompilerFactory());
     }
-    
+
     /**
      * converts a set of source to sources with the given name
      * and with the given compiler factory.

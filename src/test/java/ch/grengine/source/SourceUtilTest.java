@@ -62,7 +62,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
         assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
-    
+
     @Test
     void testTextsToSourceSetNoNamesWithFactoryWithArrayVarargs() {
 
@@ -101,7 +101,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
         assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
-    
+
     @Test
     void testTextsToSourceSetNoNamesNoFactoryWithArrayVarargs() {
 
@@ -120,7 +120,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultTextSource(text1)), is(true));
         assertThat(sourceSet.contains(new DefaultTextSource(text2)), is(true));
     }
-    
+
     @Test
     void testTextsToSourceSetWithNamesWithFactory() {
 
@@ -168,8 +168,8 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultTextSource(text1, name1)), is(true));
         assertThat(sourceSet.contains(new DefaultTextSource(text2, name2)), is(true));
     }
-    
-    
+
+
     @Test
     void testFilesToSourceSetWithFactoryWithCollection() {
 
@@ -248,7 +248,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultFileSource(file2)), is(true));
     }
 
-    
+
     @Test
     void testUrlsToSourceSetWithFactoryWithCollection() throws Exception {
 
@@ -327,7 +327,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(new DefaultUrlSource(url2)), is(true));
     }
 
-    
+
     @Test
     void testSourceToSourceSet() {
 
@@ -344,7 +344,7 @@ class SourceUtilTest {
         assertThat(sourceSet.size(), is(1));
         assertThat(sourceSet.contains(source), is(true));
     }
-    
+
     @Test
     void testSourceCollectionToSourceSet() {
 
@@ -364,7 +364,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(source1), is(true));
         assertThat(sourceSet.contains(source2), is(true));
     }
-    
+
     @Test
     void testSourceArrayVarargsToSourceSet() {
 
@@ -383,7 +383,7 @@ class SourceUtilTest {
         assertThat(sourceSet.contains(source1), is(true));
         assertThat(sourceSet.contains(source2), is(true));
     }
-    
+
 
     @Test
     void testMd5() {
@@ -398,7 +398,7 @@ class SourceUtilTest {
         assertThat(SourceUtil.md5("ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789"), is("D174AB98D277D9F5A5611C2C9F419D9F"));
         assertThat(SourceUtil.md5("12345678901234567890123456789012345678901234567890123456789012345678901234567890"), is("57EDF4A22BE3C955AC49DA2E2107B67A"));
     }
-    
+
     @Test
     void testHash() {
 
@@ -406,7 +406,7 @@ class SourceUtilTest {
 
         assertThat(SourceUtil.hash("abc", "MD5"), is("900150983CD24FB0D6963F7D28E17F72"));
     }
-    
+
     @Test
     void testHashUnsupportedDigestAlgorithm() {
 
@@ -416,7 +416,7 @@ class SourceUtilTest {
                 () -> SourceUtil.hash("abc", "BatHash"),
                 "No message digest BatHash.");
     }
-    
+
     @Test
     void testGetTextStartNoLineBreaksNullText() {
 
@@ -424,7 +424,7 @@ class SourceUtilTest {
 
         assertThat(SourceUtil.getTextStartNoLineBreaks(null, 0), is(nullValue()));
     }
-    
+
     @Test
     void testGetTextStartNoLineBreaksNegMaxLen() {
 
@@ -434,7 +434,7 @@ class SourceUtilTest {
                 () -> SourceUtil.getTextStartNoLineBreaks("hello", -1),
                 "Max len (-1) is negative.");
     }
-    
+
     @Test
     void testGetTextStartNoLineBreaksMaxLenLessThan10() {
 
@@ -485,7 +485,7 @@ class SourceUtilTest {
 
         assertThat(textRead, is(text));
     }
-    
+
     @Test
     void testReadUrlTextEmptyText() throws Exception {
 

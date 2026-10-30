@@ -39,7 +39,7 @@ public class FixedSetSources extends BaseSources {
     private final Builder builder;
 
     private final Set<Source> sourceSet;
-    
+
     /**
      * constructor from builder.
      *
@@ -53,12 +53,12 @@ public class FixedSetSources extends BaseSources {
         sourceSet = builder.getSourceSet();
         super.init(builder.getName(), builder.getCompilerFactory(), builder.getLatencyMs());
     }
-    
+
     @Override
     protected Set<Source> getSourceSetNew() {
         return sourceSet;
     }
-    
+
     /**
      * gets the builder.
      *
@@ -69,8 +69,8 @@ public class FixedSetSources extends BaseSources {
     public Builder getBuilder() {
         return builder;
     }    
-    
-    
+
+
     /**
      * Builder for instances of {@link FixedSetSources}.
      * 
@@ -80,21 +80,21 @@ public class FixedSetSources extends BaseSources {
      * @author Made in Switzerland.
      */
     public static class Builder {
-        
+
         /**
          * the default latency (5000ms = five seconds).
          * 
          * @since 1.0
          */
         public static final long DEFAULT_LATENCY_MS = 5000L;
-        
+
         private boolean isCommitted;
-        
+
         private final Set<Source> sourceSet;
         private String name;
         private CompilerFactory compilerFactory;
         private long latencyMs = -1;
-        
+
         /**
          * constructor from fixed source set.
          *
@@ -109,7 +109,7 @@ public class FixedSetSources extends BaseSources {
             this.sourceSet = sourceSet;
             isCommitted = false;
         }
-        
+
         /**
          * sets the sources name, default is a generated random ID.
          *
@@ -170,7 +170,7 @@ public class FixedSetSources extends BaseSources {
         public Set<Source> getSourceSet() {
             return sourceSet;
         }
-        
+
         /**
          * gets the sources name.
          *
@@ -181,7 +181,7 @@ public class FixedSetSources extends BaseSources {
         public String getName() {
             return name;
         }
-        
+
         /**
          * gets the compiler factory.
          *
@@ -192,7 +192,7 @@ public class FixedSetSources extends BaseSources {
         public CompilerFactory getCompilerFactory() {
             return compilerFactory;
         }
-        
+
         /**
          * gets the latency in milliseconds.
          *
@@ -203,7 +203,7 @@ public class FixedSetSources extends BaseSources {
         public long getLatencyMs() {
             return latencyMs;
         }
-        
+
         private Builder commit() {
             if (!isCommitted) {
                 if (name == null) {
@@ -219,7 +219,7 @@ public class FixedSetSources extends BaseSources {
             }
             return this;
         }
-        
+
         /**
          * builds a new instance of {@link FixedSetSources}.
          *
@@ -231,7 +231,7 @@ public class FixedSetSources extends BaseSources {
             commit();
             return new FixedSetSources(this);
         }
-                
+
         private void check() {
             if (isCommitted) {
                 throw new IllegalStateException("Builder already used.");

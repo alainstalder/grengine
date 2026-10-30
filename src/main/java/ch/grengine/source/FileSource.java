@@ -28,7 +28,7 @@ import java.io.File;
  * @author Made in Switzerland.
  */
 public interface FileSource extends Source {
-    
+
     /**
      * gets the canonical file of this source, with fallback to the absolute file.
      * <p>

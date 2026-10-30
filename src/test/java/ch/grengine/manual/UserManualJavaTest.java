@@ -38,13 +38,13 @@ public class UserManualJavaTest {
         gren.run(URI.create("https://somewhere.org/MyScript.groovy").toURL());
         //--------------------------------------------
     }
-    
+
     @Test
     public void testRunningIndividualScripts_Binding() throws Exception {
         Grengine gren = new Grengine();
         File scriptFile= new File(tempDir, "MyScript.groovy");
         setFileText(scriptFile, "println x+y");
-        
+
         //--------------------------------------------
         Map<String,Object> map = new HashMap<>(Map.of("x", 5, "y", 2));
         Binding binding = new Binding(map);
@@ -52,11 +52,11 @@ public class UserManualJavaTest {
         gren.run(scriptFile, map);
         //--------------------------------------------
     }
-    
+
     @Test
     public void testRunningIndividualScripts_BindingWithJava() throws Exception {
         Grengine gren = new Grengine();
-        
+
         //--------------------------------------------
         gren.run("println x+y", gren.binding("x", 5, "y", 2));
         //--------------------------------------------
@@ -75,28 +75,28 @@ public class UserManualJavaTest {
         gren.run(sameLongAndComplexScript);
         //--------------------------------------------
     }
-    
+
     @Test
     public void testRunningIndividualScripts_BehindTheScenes_Compile() throws Exception {
         System.out.println(new SomeGeneratedClassName().run());
     }
-    
+
     @Test
     public void testRunningIndividualScripts_BehindTheScenes_CreateAndRun() throws Exception {
         Grengine gren = new Grengine();
         Class<?> clazz = gren.load("println x+y");
         Map<String,Object> map = Map.of("x", 5, "y", 2);
         Binding binding = new Binding(map);
-        
+
         //--------------------------------------------
         Script script = (Script)clazz.getConstructor().newInstance();
         script.setBinding(binding);
         Object obj = script.run();
         //--------------------------------------------
-        
+
         System.out.println(obj);
     }
-    
+
     @Test
     @SuppressWarnings("unchecked")
     public void testRunningIndividualScripts_BehindTheScenes_TextBasedScripts_ClassNames() throws Exception {
@@ -113,7 +113,7 @@ public class UserManualJavaTest {
         gren.run(scriptText);
         gren.run(scriptText);
         //--------------------------------------------
-        
+
         gcl.close();
     }
 
@@ -122,7 +122,7 @@ public class UserManualJavaTest {
         GroovyShell shell = new GroovyShell();
         Grengine gren = new Grengine();
         Script script = shell.parse("return 2");
-        
+
         //--------------------------------------------
         long t0 = System.nanoTime();
         for (int i=0; i<1000; i++) shell.evaluate("return 2");
@@ -141,7 +141,7 @@ public class UserManualJavaTest {
     public void testRunningIndividualScripts_BehindTheScenes_TextBasedScripts_DesiredClassName() throws Exception {
         GroovyShell shell = new GroovyShell();
         Grengine gren = new Grengine();
-        
+
         //--------------------------------------------
         gren.run("println this.class.name", "MyScript");
         shell.evaluate("println this.class.name", "MyScript");
@@ -154,7 +154,7 @@ public class UserManualJavaTest {
         Grengine gren = new Grengine();
         File scriptFile = new File(tempDir, "MyScript.groovy");
         setFileText(scriptFile, "return 2");
-        
+
         long t0 = System.nanoTime();
         for (int i=0; i<1000; i++) shell.evaluate(scriptFile);
         long t1 = System.nanoTime();
@@ -197,7 +197,7 @@ public class UserManualJavaTest {
         obj = gren.run("return x", "MyDesiredClassName", binding);
         // ...
         //--------------------------------------------
-        
+
         System.out.println(obj);
     }
 
@@ -210,7 +210,7 @@ public class UserManualJavaTest {
         Class<?> clazz;
         Script script;
         Object obj;
-        
+
         //--------------------------------------------
         Source textSource = gren.source("return 2");
         Source textSourceWithName = gren.source("return 2", "MyScript");
@@ -224,7 +224,7 @@ public class UserManualJavaTest {
         script = gren.create(fileSource);
         obj = gren.run(urlSource, gren.binding("x", 5));
         //--------------------------------------------
-        
+
         System.out.println(clazz);
         System.out.println(script);
         System.out.println(obj);
@@ -235,9 +235,9 @@ public class UserManualJavaTest {
         Grengine gren = new Grengine();
         File scriptFile = new File(tempDir, "MyScript.groovy");
         setFileText(scriptFile, "return 2");
-        
+
         for (int i=0; i<1000; i++) gren.run("return 55");
-        
+
         //--------------------------------------------
         Grengine grenDefault = new Grengine();
         Grengine grenTweaked= new Grengine.Builder()
@@ -266,7 +266,7 @@ public class UserManualJavaTest {
         System.out.printf("Script File - Tweaked:  %8.3f ms%n", (t4-t3)/1000000.0);
         //--------------------------------------------
     }    
-    
+
     @Test
     public void testInterdependentScripts_DirBasedGrengine_Basic() throws Exception {
 
@@ -279,7 +279,7 @@ public class UserManualJavaTest {
         setFileText(new File(scriptDir, "Util.groovy"), utilScriptText);
         setFileText(new File(scriptDir, "Test.groovy"), scriptText);
 
-        
+
         //--------------------------------------------
         //File scriptDir = new File(".");
         Grengine gren = new Grengine(scriptDir);
@@ -287,30 +287,30 @@ public class UserManualJavaTest {
         gren.run("println new Util().concat('xx', 'yy')");
         //--------------------------------------------
 
-        
+
         /*File utilScriptFile = new File(scriptDir, "Util.groovy");
         File scriptFile = new File(scriptDir, "Test.groovy");
         GroovyShell shell = new GroovyShell();
         Grengine gren = new Grengine();
-        
+
         System.out.println(new File(".").getAbsolutePath());
         shell.parse(utilScriptFile);
         shell.evaluate(scriptFile);
         gren.load(utilScriptFile);
         gren.run(scriptFile);
-        
+
         setFileText(utilScriptFile, util2ScriptText);
         shell.parse(utilScriptFile);
         shell.evaluate(scriptFile);*/
     }
-    
+
     public static void setFileText(File file, String text)
             throws IOException {
         PrintWriter writer = new PrintWriter(file, StandardCharsets.UTF_8);
         writer.write(text);
         writer.close();
     }
-    
+
     public static String getFileText(File file) throws FileNotFoundException {
         try (Scanner scan = new Scanner(file)) {
             scan.useDelimiter("\\A");

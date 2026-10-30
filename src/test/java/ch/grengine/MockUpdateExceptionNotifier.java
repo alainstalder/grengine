@@ -20,9 +20,9 @@ import ch.grengine.except.GrengineException;
 
 
 public class MockUpdateExceptionNotifier implements UpdateExceptionNotifier {
-    
+
     private GrengineException lastUpdateException;
-    
+
     public MockUpdateExceptionNotifier(final GrengineException lastUpdateException) {
         this.lastUpdateException = lastUpdateException;
     }
@@ -31,7 +31,7 @@ public class MockUpdateExceptionNotifier implements UpdateExceptionNotifier {
     public void notify(final GrengineException updateException) {
         lastUpdateException = updateException;
     }
-    
+
     public GrengineException getLastUpdateException() {
         return lastUpdateException;
     }

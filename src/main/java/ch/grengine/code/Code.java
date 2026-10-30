@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Made in Switzerland.
  */
 public interface Code {
-    
+
     /**
      * gets the name of the originating {@link Sources} instance,
      * or a similar name that can help a human reader to identify
@@ -58,7 +58,7 @@ public interface Code {
      * @since 1.0
      */
     boolean isForSource(Source source);
-    
+
     /**
      * gets the main class name of the given source.
      *
@@ -71,7 +71,7 @@ public interface Code {
      * @since 1.0
      */
     String getMainClassName(Source source);
-    
+
     /**
      * gets all class names of the given source.
      *
@@ -121,7 +121,7 @@ public interface Code {
      * @since 1.0
      */
     Bytecode getBytecode(String className);
-        
+
     /**
      * gets the set of all class names for which bytecode is in this code.
      * <p>
@@ -133,7 +133,7 @@ public interface Code {
      * @since 1.0
      */
     Set<String> getClassNameSet();
-    
+
     /**
      * returns a string suitable for logging.
      *

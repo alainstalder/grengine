@@ -45,7 +45,7 @@ class DefaultGroovyCompilerFactoryTest {
         assertThat(cf.getCompilerConfiguration(), is(notNullValue()));
         assertThat(cf.getCompilerConfiguration(), is(cf.getBuilder().getCompilerConfiguration()));
     }
-    
+
     @Test
     void testConstructAllDefined() {
 
@@ -66,7 +66,7 @@ class DefaultGroovyCompilerFactoryTest {
         assertThat(cf.getCompilerConfiguration(), is(config));
         assertThat(cf.getCompilerConfiguration(), is(cf.getBuilder().getCompilerConfiguration()));
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() {
 
@@ -81,7 +81,7 @@ class DefaultGroovyCompilerFactoryTest {
                 () -> builder.setCompilerConfiguration(new CompilerConfiguration()),
                 "Builder already used.");
     }
-    
+
     @Test
     void testConstructorDefaultCompilerConfiguration() {
 
@@ -99,7 +99,7 @@ class DefaultGroovyCompilerFactoryTest {
         assertThat(dc.getCompilerConfiguration(), is(cf.getCompilerConfiguration()));
         assertThat(dc.getParent(), is(parent));
     }
-    
+
     @Test
     void testConstructorSpecificCompilerConfiguration() {
 

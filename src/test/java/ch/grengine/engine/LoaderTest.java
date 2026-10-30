@@ -16,17 +16,17 @@
 
 package ch.grengine.engine;
 
+import ch.grengine.code.Code;
 import ch.grengine.code.DefaultCode;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.load.BytecodeClassLoader;
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
-import ch.grengine.code.Code;
 import ch.grengine.load.LoadMode;
 import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.load.SourceClassLoader;
+import ch.grengine.source.DefaultSourceFactory;
+import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
@@ -101,7 +101,7 @@ class LoaderTest {
         assertThat(detachedLoader.toString().startsWith("Loader[engineId=ch.grengine.engine.EngineId@"), is(true));
         assertThat(detachedLoader.toString().endsWith(", number=17, isAttached=false]"), is(true));
     }
-    
+
     @Test
     void testConstructEngineIdNull() {
 
@@ -118,7 +118,7 @@ class LoaderTest {
                 () -> new Loader(null, 0, false, classLoader),
                 "Engine ID is null.");
     }
-    
+
     @Test
     void testConstructSourceClassLoaderNull() {
 
@@ -171,7 +171,7 @@ class LoaderTest {
         assertThat(releaser.countClassesWithName("Class2"), is(1));
         assertThat(releaser.countClassesWithName("Class2$Class3"), is(1));
     }
-    
+
     @Test
     void testEquals() {
 

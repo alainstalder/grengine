@@ -35,9 +35,9 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultUrlSource extends BaseSource implements UrlSource {
-    
+
     private final URL url;
-    
+
     /**
      * constructor from URL.
      *
@@ -52,7 +52,7 @@ public class DefaultUrlSource extends BaseSource implements UrlSource {
         id = url.toString();
         this.url = url;
     }
-    
+
     @Override
     public URL getUrl() {
         return url;

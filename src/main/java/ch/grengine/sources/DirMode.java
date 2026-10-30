@@ -27,14 +27,14 @@ package ch.grengine.sources;
  * @author Made in Switzerland.
  */
 public enum DirMode {
-    
+
     /**
      * parse only just the given directory, but none of its subdirectories.
      * 
      * @since 1.0
      */
     NO_SUBDIRS,
-    
+
     /**
      * parse the given directory, plus recursively all of its subdirectories.
      * 

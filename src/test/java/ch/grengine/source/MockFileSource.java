@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 // so far, mocks only last modified
 public class MockFileSource extends DefaultFileSource {
-    
+
     private MockFile mockFile;
-    
+
     public MockFileSource(final File file) {
         super(file);
         try {
@@ -35,12 +35,12 @@ public class MockFileSource extends DefaultFileSource {
             fail(e);
         }
     }
-    
+
     @Override
     public long getLastModified() {
         return mockFile.lastModified();
     }
-    
+
     @Override
     public File getFile() {
         return mockFile;

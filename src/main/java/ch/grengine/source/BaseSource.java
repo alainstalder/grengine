@@ -27,14 +27,14 @@ package ch.grengine.source;
  * @author Made in Switzerland.
  */
 public abstract class BaseSource implements Source {
-    
+
     /**
      * the source id.
      * 
      * @since 1.0
      */
     protected String id;
-    
+
     /**
      * protected constructor.
      * 
@@ -42,7 +42,7 @@ public abstract class BaseSource implements Source {
      */
     protected BaseSource() {
     }
-    
+
     /**
      * gets the protected member variable {@code id}.
      *
@@ -54,7 +54,7 @@ public abstract class BaseSource implements Source {
     public String getId() {
         return id;
     }
-    
+
     /**
      * always returns 0.
      *
@@ -66,7 +66,7 @@ public abstract class BaseSource implements Source {
     public long getLastModified() {
         return 0;
     }
-    
+
     /**
      * implementation based on the protected member variable {@code id}.
      * 
@@ -77,7 +77,7 @@ public abstract class BaseSource implements Source {
         if (!(obj instanceof Source)) return false;
         return getId().equals(((Source)obj).getId());
     }
-    
+
     /**
      * implementation based on the protected member variable {@code id}.
      * 

@@ -54,7 +54,7 @@ class DefaultUrlSourceTest {
         System.out.println(s);
         assertThat(s.toString(), CoreMatchers.is("DefaultUrlSource[ID=" + s.getId() + "]"));
     }
-    
+
     @Test
     void testConstructFromUrlWithUrlNull() {
 
@@ -64,7 +64,7 @@ class DefaultUrlSourceTest {
                 () -> new DefaultUrlSource(null),
                 "URL is null.");
     }
-        
+
     @Test
     void testEquals() throws Exception {
 

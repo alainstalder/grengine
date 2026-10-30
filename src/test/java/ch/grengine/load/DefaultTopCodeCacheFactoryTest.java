@@ -16,8 +16,8 @@
 
 package ch.grengine.load;
 
-import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 import ch.grengine.code.CompilerFactory;
+import ch.grengine.code.groovy.DefaultGroovyCompilerFactory;
 
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +51,7 @@ class DefaultTopCodeCacheFactoryTest {
         assertThat(cf.getCompilerFactory(), is(compilerFactory));
 
         // when
-        
+
         final DefaultTopCodeCache c = (DefaultTopCodeCache)cf.newTopCodeCache(parent);
 
         // then
@@ -72,7 +72,7 @@ class DefaultTopCodeCacheFactoryTest {
         assertThat(cf.getCompilerFactory(), is(notNullValue()));
         assertThat(cf.getCompilerFactory(), instanceOf(DefaultGroovyCompilerFactory.class));
     }
-    
+
     @Test
     void testConstructFromCompilerFactory() {
 
@@ -88,7 +88,7 @@ class DefaultTopCodeCacheFactoryTest {
 
         assertThat(cf.getCompilerFactory(), is(compilerFactory));
     }
-    
+
     @Test
     void testConstructFromCompilerFactoryNull() {
 
@@ -98,7 +98,7 @@ class DefaultTopCodeCacheFactoryTest {
                 () -> new DefaultTopCodeCacheFactory((CompilerFactory)null),
                 "Compiler factory is null.");
     }
-    
+
     @Test
     void testModifyBuilderAfterUse() {
 

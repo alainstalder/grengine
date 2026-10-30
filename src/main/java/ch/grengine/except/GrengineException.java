@@ -48,7 +48,7 @@ public class GrengineException extends RuntimeException {
      * @since 1.0
      */
     private final Date dateThrown = new Date();
-    
+
     /**
      * constructor from exception message.
      *
@@ -73,7 +73,7 @@ public class GrengineException extends RuntimeException {
         super(message, cause);
         this.message = message + (cause == null ? "" : " Cause: " + cause);
     }
-    
+
     /**
      * gets the exception message given in the constructor,
      * with the exception message of the causing throwable appended,
@@ -86,7 +86,7 @@ public class GrengineException extends RuntimeException {
     public String getMessage() {
         return message;
     }
-    
+
     /**
      * gets the date (with time) when the exception was thrown.
      *

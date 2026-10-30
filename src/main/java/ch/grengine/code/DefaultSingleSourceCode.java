@@ -34,7 +34,7 @@ import static java.util.Objects.requireNonNull;
  * @author Made in Switzerland.
  */
 public class DefaultSingleSourceCode implements SingleSourceCode {
-    
+
     private final String sourcesName;
     private final Set<Source> sourceSet;
     private final Source source;
@@ -43,7 +43,7 @@ public class DefaultSingleSourceCode implements SingleSourceCode {
     private final long lastModifiedAtCompileTime;
     private final Set<String> classNameSet;
     private final Map<String,Bytecode> bytecodeMap;
-    
+
     /**
      * constructor (typically called by the compiler).
      * 

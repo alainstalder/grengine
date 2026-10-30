@@ -60,7 +60,7 @@ class BytecodeTest {
         assertThat(bytecode.toString().startsWith("Bytecode[className=MyScript, bytes=["), is(true));
         assertThat(bytecode.toString().endsWith("]"), is(true));
     }
-    
+
     @Test
     void testConstructWithNameNull() {
 
@@ -74,7 +74,7 @@ class BytecodeTest {
                 () -> new Bytecode(null, bytes),
                 "Class name is null.");
     }
-    
+
     @Test
     void testConstructWithBytesNull() {
 

@@ -49,7 +49,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
     private final Code code;
     private final Map<String,Object> locks = new HashMap<>();
     private final Queue<WeakReference<Class<?>>> classQueue = new ConcurrentLinkedQueue<>();
-    
+
     /**
      * constructor.
      * 
@@ -68,7 +68,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         this.loadMode = loadMode;
         this.code = code;
     }
-    
+
     /*
      * Default calling sequence of loadClass(..) from Oracle Javadoc:
      * 
@@ -162,15 +162,15 @@ public class BytecodeClassLoader extends SourceClassLoader {
         if ((clazz = loadClassFromBytecode(name)) != null) {
             return clazz;
         }
-        
+
         // not found
         throw new ClassNotFoundException(name);
     }
 
-    
+
     @Override
     protected Class<?> loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-        
+
         if (loadMode != LoadMode.CURRENT_FIRST) {
             return super.loadClass(name, resolve);
         }
@@ -186,12 +186,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
         }
         return clazz;
     }
-    
+
     @Override
     public Class<?> loadMainClass(final Source source) {
         return loadMainClassBySource(this, source);
     }
-    
+
     @Override
     public Class<?> loadClass(final Source source, final String name) {
         return loadClassBySourceAndName(this, source, name);
@@ -217,12 +217,12 @@ public class BytecodeClassLoader extends SourceClassLoader {
         }
         return loader;
     }
-    
+
     @Override
     public LoadMode getLoadMode() {
         return loadMode;
     }
-    
+
     /**
      * Helper method for loading the main class of the given source from the given class loader.
      *
@@ -244,7 +244,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         }
         return clazz;
     }
-    
+
     /**
      * Helper method for loading a class with the given name and from the given source
      * from the given class loader.
@@ -282,7 +282,7 @@ public class BytecodeClassLoader extends SourceClassLoader {
         }
         return loader;
     }
-    
+
     @Override
     public BytecodeClassLoader clone() {
         return new BytecodeClassLoader(getParent(), loadMode, code);
