@@ -16,10 +16,10 @@
 
 package ch.grengine.load;
 
-import ch.grengine.source.Source;
 import ch.grengine.code.Bytecode;
 import ch.grengine.code.Code;
 import ch.grengine.except.LoadException;
+import ch.grengine.source.Source;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
