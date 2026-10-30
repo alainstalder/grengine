@@ -16,24 +16,24 @@
 
 package ch.grengine.engine;
 
+import ch.grengine.TestUtil;
+import ch.grengine.code.Code;
 import ch.grengine.code.groovy.DefaultGroovyCompiler;
 import ch.grengine.except.ClassNameConflictException;
 import ch.grengine.except.LoadException;
+import ch.grengine.load.ClassReleaser;
 import ch.grengine.load.DefaultClassReleaser;
 import ch.grengine.load.DefaultTopCodeCacheFactory;
-import ch.grengine.source.DefaultSourceFactory;
-import ch.grengine.source.MockFileSource;
-import ch.grengine.source.Source;
-import ch.grengine.source.SourceUtil;
-import ch.grengine.TestUtil;
-import ch.grengine.code.Code;
-import ch.grengine.load.ClassReleaser;
 import ch.grengine.load.LoadMode;
 import ch.grengine.load.RecordingClassReleaser;
 import ch.grengine.load.TopCodeCacheFactory;
+import ch.grengine.source.DefaultSourceFactory;
 import ch.grengine.source.DefaultTextSource;
 import ch.grengine.source.MockFile;
+import ch.grengine.source.MockFileSource;
+import ch.grengine.source.Source;
 import ch.grengine.source.SourceFactory;
+import ch.grengine.source.SourceUtil;
 import ch.grengine.sources.Sources;
 import ch.grengine.sources.SourcesUtil;
 
@@ -558,7 +558,7 @@ class LayeredEngineTest {
         
         prepareCode(dir,2000);
         
-        // no change even though file modification date has change
+        // no change even though file modification date has changed
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
@@ -665,7 +665,7 @@ class LayeredEngineTest {
 
         prepareCode(dir, 2000);
         
-        // no change even though file modification date has change
+        // no change even though file modification date has changed
         clazz11 = engine.loadMainClass(loader, s1);
         clazz12 = engine.loadMainClass(attachedLoader2, s1);
         script11 = (Script)clazz11.getConstructor().newInstance();
