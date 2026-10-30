@@ -16,19 +16,19 @@
 
 package ch.grengine.engine;
 
-import ch.grengine.except.ClassNameConflictException;
-import ch.grengine.except.LoadException;
-import ch.grengine.load.DefaultClassReleaser;
-import ch.grengine.load.DefaultTopCodeCacheFactory;
-import ch.grengine.source.Source;
 import ch.grengine.code.ClassNameConflictAnalyzer;
 import ch.grengine.code.Code;
+import ch.grengine.except.ClassNameConflictException;
+import ch.grengine.except.LoadException;
 import ch.grengine.load.ClassReleaser;
+import ch.grengine.load.DefaultClassReleaser;
+import ch.grengine.load.DefaultTopCodeCacheFactory;
 import ch.grengine.load.LayeredClassLoader;
 import ch.grengine.load.LoadMode;
 import ch.grengine.load.SourceClassLoader;
 import ch.grengine.load.TopCodeCache;
 import ch.grengine.load.TopCodeCacheFactory;
+import ch.grengine.source.Source;
 import ch.grengine.sources.Sources;
 
 import java.util.HashMap;
@@ -373,12 +373,12 @@ public class LayeredEngine implements Engine {
         }
         
         /**
-         * sets whether to use the a top code cache or not,
+         * sets whether to use the top code cache or not,
          * default is true.
          * <p>
          * Note that the default is the opposite in the {@link LayeredClassLoader}.
          *
-         * @param isWithTopCodeCache whether to use the a top code cache or not
+         * @param isWithTopCodeCache whether to use the top code cache or not
          * 
          * @return this, for chaining calls
          * @throws IllegalStateException if the builder had already been used to build an instance
@@ -496,9 +496,9 @@ public class LayeredEngine implements Engine {
         }
         
         /**
-         * gets whether to use the a top code cache or not.
+         * gets whether to use the top code cache or not.
          *
-         * @return whether to use the a top code cache or not
+         * @return whether to use the top code cache or not
          * 
          * @since 1.0
          */
