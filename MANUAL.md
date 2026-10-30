@@ -1032,22 +1032,6 @@ compiler from Java sources _Java classes_.
   Note that by default on Java VMs there is typically no limit set for
   Metaspace (but there is for PermGen), so setting a limit is crucial in
   practice when using Groovy.
-* ***Garbage Collection Bugs***\
-  In the past, several Groovy versions had failed at garbage collecting
-  Groovy classes and their class loaders, resulting finally in an
-  `OutOfMemoryError` due to exhaustion of PermGen/Metaspace or the Heap,
-  whichever limit was reached first. From Groovy 2.4.0 to 2.4.7 you had to
-  make sure you set the system property `groovy.use.classvalue=true` in the
-  context of Grengine (or when using the Groovy JDK to compile and run
-  scripts). Note that under different circumstances, like the
-  one described in [GROOVY-7591](https://issues.apache.org/jira/browse/GROOVY-7591)
-  [Use of ClassValue causes major memory leak] you would instead have had to
-  set it to false! That Groovy bug is actually in turn due to an issue in
-  Oracle/OpenJDK Java VMs regarding garbage collection under some
-  circumstances, more precisely a general issue that also affects a new
-  feature (`ClassValue`) introduced in order to make thing easier(!) for
-  dynamic languages in the Java VM, see
-  [JDK-8136353](https://bugs.openjdk.java.net/browse/JDK-8136353).
 
 In a setup in which you don't know when a loaded class will not be needed
 any more, and you want or need to load many Groovy classes repeatedly,
@@ -1524,6 +1508,15 @@ always surprises in practice.
 
 Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17).
 
+#### 4.1.1 (30 October 2026)
+
+* Requires Groovy 2.4.8 or later; tested with 2.5 and later.
+* Fix: Tiny fixes in Javadoc.
+* Added: Unit tests with Grape locks from different classloaders.
+* Updated: My email in the pom.
+* Internal change: Renamed the package-private method `enableGrape()`
+  in `GrapeCompilationCustomizer` to the less misleading `withGrape()`.
+
 #### 4.1.0 (23 October 2026)
 
 * Improved: The `GrapeEngine` wrapping for grabbing dependencies
@@ -1560,6 +1553,15 @@ to JDK 17 bytecode. Both Grengine 3 and 4 support Groovy 6 on its
 supported JDKs (JDK 17 and later).
 
 Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
+
+#### 3.2.1 (30 October 2026)
+
+* Requires Groovy 2.4.8 or later; tested with 2.5 and later.
+* Fix: Tiny fixes in Javadoc.
+* Added: Unit tests with Grape locks from different classloaders.
+* Updated: My email in the pom.
+* Internal change: Renamed the package-private method `enableGrape()`
+  in `GrapeCompilationCustomizer` to the less misleading `withGrape()`.
 
 #### 3.2.0 (24 October 2026)
 
