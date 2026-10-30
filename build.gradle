@@ -6,7 +6,7 @@ plugins {
 
 description = 'Grengine is an engine for running and embedding Groovy in a Java VM.'
 
-version = '3.2.1'
+version = '3.2.2-SNAPSHOT'
 
 ext {
     javaVersion='8' // won't change anymore for Grengine 3
