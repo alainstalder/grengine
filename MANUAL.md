@@ -1121,15 +1121,13 @@ across different class loaders for the Grape classes or different Java VMs
 [[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407)
 has been nominally marked as "resolved" upstream.
 The added default setting for the underlying Ivy is an improvement,
-at least presumably in some cases,
-while the issue(s) in the underlying Ivy are not resolved,
-i.e. the workaround described below is still very helpful in practice,
-at least in cases where there are parallel request to grab
-the same artifact (if using the same loaded "Groovy" classes).
-See JIRA issue for details.
+at least in some cases, while not all concurrency issues are resolved,
+esp. since the `GrapeIvy` engine itself does not synchronize access
+to its internals, nor does `GrapeMaven` (see the testbed notes).
 
-\* In October 2026, I also discovered that you can set a timeout
-in Ivy that improves the situation somewhat. In the Grape config
+\* In October 2026, I discovered that you can set a timeout
+in Ivy that improves the situation somewhat (but does not make
+`GrapeIvy` thread-safe). In the Grape config
 (`~/.groovy/grapeConfig.xml`, or the file named in the system property
 `-Dgrape.config=...`, instead of the built-in `defaultGrapeConfig.xml`;
 I am not aware of something similar for the Maven Grape engine) set:
@@ -1140,7 +1138,7 @@ I am not aware of something similar for the Maven Grape engine) set:
     </timeout-constraints>
     <settings defaultResolver="downloadGrapes"/>
     <caches lockStrategy="artifact-lock-nio"/>
-    <resolvers> 
+    <resolvers>
       <chain name="downloadGrapes" returnFirst="true">
         ... (as in the default) ...
         <ibiblio name="ibiblio" timeoutConstraint="grape" m2compatible="true"/>
@@ -1149,7 +1147,9 @@ I am not aware of something similar for the Maven Grape engine) set:
   </ivysettings>
 ```
 (Submitted as [[GROOVY-12640]](https://issues.apache.org/jira/browse/GROOVY-12640)
-in early November 2026.)
+in early November 2026. Note that if Ivy hangs forever, so do Grengine
+Groovy compilations that use Grape, hence this fix is also useful for
+Grengine operation.)
 
 Grengine provides easy support for alleviating [GROOVY-7407] in practice, except
 across different Java VMs, and prevents [GROOVY-8108] from affecting Grengine.
