@@ -1105,18 +1105,18 @@ to the classpath in a static initializer, which may or may not run before
 classes from those dependencies are attempted to be loaded by the Java VM.
 (This is a general issue that affects loading of any classes compiled from
 sources that grab dependencies with Grape, see
-[GROOVY-8108](https://issues.apache.org/jira/browse/GROOVY-8108).)
+[[GROOVY-8108]](https://issues.apache.org/jira/browse/GROOVY-8108).)
 
 Moreover, there is an open bug* in Groovy Grape,
-[GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407),
+[[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407),
 which is hard to fix in full generality. Namely, grabs are only thread-safe
 if they all go through the same GroovyClassLoader.
 They are not if you use different GroovyClassLoader instances, and also not
 across different class loaders for the Grape classes or different Java VMs
-([GROOVY-8097](https://issues.apache.org/jira/browse/GROOVY-8097)).
+([[GROOVY-8097]](https://issues.apache.org/jira/browse/GROOVY-8097)).
 
 \* As of January 2025
-[GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+[[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407)
 has been nominally marked as "resolved" upstream.
 The added default setting for the underlying Ivy is an improvement,
 at least presumably in some cases,
@@ -1146,9 +1146,11 @@ I am not aware of something similar for the Maven Grape engine) set:
     </resolvers>
   </ivysettings>
 ```
+(Submitted as [[GROOVY-12640]](https://issues.apache.org/jira/browse/GROOVY-12640)
+in early November 2026.)
 
-Grengine provides easy support for alleviating GROOVY-7407 in practice, except
-across different Java VMs, and prevents GROOVY-8108 from affecting Grengine.
+Grengine provides easy support for alleviating [GROOVY-7407] in practice, except
+across different Java VMs, and prevents [GROOVY-8108] from affecting Grengine.
 
 Optionally the `GrapeEngine` in the `Grape.class`, which is obtained with
 `Grape.getInstance()` – and before Groovy 6 always an instance of a class called
@@ -1164,7 +1166,7 @@ webapp and not installed at the Tomcat level.
 Also part of the wrapper is a mechanism where you can optionally pass the runtime
 GroovyClassLoader while compiling via a `CompilationCustomizer`, with the effect
 that grabs are made on both the runtime class loader and the compile time class
-loader, thus eliminating GROOVY-8108.
+loader, thus eliminating [GROOVY-8108].
 
 In practice, things are quite easy to use.
 For a Grengine that uses Grape and is based on sources in a given directory,
@@ -1184,7 +1186,7 @@ Grengine gren = Grengine.Grape.newGrengine(dir);
 The first call wraps the `GrapeEngine` in the `Grape` class, which has a
 "global" impact on all Groovy scripts and classes that grab dependencies,
 but this does no harm to others, in fact it has no effect on them,
-except that it eliminates the GROOVY-7407 issue within the scope of the
+except that it eliminates the [GROOVY-7407] issue within the scope of the
 loaded `Grape.class`.
 (With the exception of performance: If one grab takes a few seconds because
 it has to download a dependency from a remote repository, any other scripts
@@ -1239,7 +1241,7 @@ independent web applications in a container, and they are calling
 `deactivate()` in an uncoordinated way, so that one of them
 doing so deactivates Grape with Grengine for all the others.
 
-Plus, the wrapper eliminates the GROOVY-7407 issue also when using
+Plus, the wrapper eliminates the [GROOVY-7407] issue also when using
 only the Groovy JDK, but nothing from Grengine except `activate()`.
 
 In more sophisticated use cases where you define the elements of the
@@ -1494,12 +1496,12 @@ always surprises in practice.
   **Workaround:** Turn off ASM resolving in the compiler configuration with
   `config.getOptimizationOptions().put("asmResolving", false)`,
   at some cost in compile performance.
-  (I reported this as [GROOVY-12467](https://issues.apache.org/jira/browse/GROOVY-12467), but no new Groovy 2.5.x
-  releases are planned, as expected and makes sense to me.)
+  (I reported this as [[GROOVY-12467]](https://issues.apache.org/jira/browse/GROOVY-12467),
+  but no new Groovy 2.5.x releases are planned, as expected and makes sense to me.)
 * Groovy 6.0.0 with the Maven Grape engine:
   `@Grab` in scripts only works with `Grengine.Grape.activate()`
   (but should normally not be used without that anyway).
-  Reported as [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458),
+  Reported as [[GROOVY-12458]](https://issues.apache.org/jira/browse/GROOVY-12458),
   which is already fixed and planned to be included in Groovy 6.0.1.
 
 ### Grengine 4
@@ -1571,13 +1573,13 @@ Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
 * Fix: The published POM no longer declares a runtime dependency on Groovy.\
   (That had accidentally slipped in with 3.1.0 two years ago.)
 * Fix: Workaround for
-  [GROOVY-12458](https://issues.apache.org/jira/browse/GROOVY-12458)
+  [[GROOVY-12458]](https://issues.apache.org/jira/browse/GROOVY-12458)
   (`@Grab` with the Maven Grape engine of Groovy 6).
 
 #### 3.1.1 (17 October 2026)
 
 * Fix: The workaround for the Grape concurrency issue
-  [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+  [[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407)
   now also works with Groovy 6.
   (Previously it assumed the `GrapeEngine` to be an instance of
   `groovy.grape.GrapeIvy`, but with Groovy 6, GrapeEngines come from
@@ -1594,7 +1596,7 @@ Tested with the matrix Groovy (6/5/4/3/2.5) x JDK (25/21/17/11/8).
 #### 3.0.2 (26 February 2023)
 
 * Fix: The workaround for the Grape concurrency issue
-  [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+  [[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407)
   now also works with Groovy 3 and 4.
 
 #### 3.0.1 (25 February 2023)
@@ -1648,7 +1650,7 @@ or `GroovyClassLoader` (or any other class loader).
 #### 1.2.0 (4 March 2017)
 
 * New/Fix: Extended support for Grape with Grengine and an easy-to-use
-  workaround for [GROOVY-7407](https://issues.apache.org/jira/browse/GROOVY-7407)
+  workaround for [[GROOVY-7407]](https://issues.apache.org/jira/browse/GROOVY-7407)
   that can also be used independently when only using the Groovy JDK.
 
 #### 1.1.1 (24 February 2017)
